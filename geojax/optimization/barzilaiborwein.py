@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field, replace
 from typing import Any, List, Optional
 import math
 import time
 
+from .linesearch import BacktrackingArmijo, LineSearchProtocol, LineSearchState
 from .minimize import (
     Array,
     InfoEntry,
@@ -14,13 +15,12 @@ from .minimize import (
     StopFn,
     as_float,
     cost_and_grad,
-    cost_value,
+    gradient_value,
     inner,
     make_info,
     print_iteration,
     print_iteration_header,
     require,
-    retract,
     stopping_reason,
     transport,
     tree_lincomb,
@@ -36,10 +36,9 @@ class BarzilaiBorwein:
     initial_stepsize: float = 1.0
     min_stepsize: float = 1e-12
     max_stepsize: float = 1e12
-    backtrack: bool = True
-    contraction_factor: float = 0.5
-    suff_decr: float = 1e-4
-    max_backtracks: int = 20
+    line_search: LineSearchProtocol = field(
+        default_factory=lambda: BacktrackingArmijo(normalize_step=False)
+    )
     tolgradnorm: float = 1e-6
     maxiter: int = 1000
     maxtime: float = math.inf
@@ -54,6 +53,7 @@ class BarzilaiBorwein:
         start_time = time.perf_counter()
         info: List[InfoEntry] = []
         alpha = float(self.initial_stepsize)
+        search_state: LineSearchState | None = None
 
         f, g = cost_and_grad(problem, x)
         gnorm = M.norm(x, g)
@@ -75,34 +75,27 @@ class BarzilaiBorwein:
             print_iteration(info[-1], self.verbosity)
             reason = stopping_reason(problem, x, info, self)
             if reason:
-                info[-1] = InfoEntry(**{**info[-1].__dict__, "reason": reason})
+                info[-1] = replace(info[-1], reason=reason)
                 if self.verbosity >= 1:
                     print(reason)
                 break
 
             d = tree_neg(g)
-            df0 = as_float(inner(M, x, g, d))
-            trial_alpha = alpha
-            newx = retract(M, x, d, trial_alpha)
-            newf = cost_value(problem, newx)
-            bt = 0
-            if self.backtrack:
-                f0 = as_float(f)
-                while (
-                    as_float(newf) > f0 + self.suff_decr * trial_alpha * df0
-                    and bt < self.max_backtracks
-                ):
-                    trial_alpha *= self.contraction_factor
-                    newx = retract(M, x, d, trial_alpha)
-                    newf = cost_value(problem, newx)
-                    bt += 1
-            if as_float(newf) > as_float(f) and self.backtrack:
-                trial_alpha = 0.0
-                newx = x
-                newf = f
-
-            newf, newg = cost_and_grad(problem, newx)
-            step = transport(M, x, newx, tree_lincomb(trial_alpha, d))
+            df0 = inner(M, x, g, d)
+            result = self.line_search.search(
+                problem,
+                x,
+                d,
+                f,
+                df0,
+                state=search_state,
+                initial_alpha=alpha,
+            )
+            search_state = result.state
+            newx = result.point
+            newf = result.cost
+            newg = result.gradient if result.gradient is not None else gradient_value(problem, newx)
+            step = transport(M, x, newx, tree_lincomb(result.alpha, d))
             oldg = transport(M, x, newx, g)
             y = tree_sub(newg, oldg)
             sy = as_float(inner(M, newx, step, y))
@@ -123,15 +116,14 @@ class BarzilaiBorwein:
 
             x, f, g = newx, newf, newg
             gnorm = M.norm(x, g)
-            stepsize = as_float(M.norm(x, step)) if trial_alpha != 0.0 else 0.0
             info.append(
                 make_info(
                     iter=info[-1].iter + 1,
                     cost=f,
                     gradnorm=gnorm,
-                    stepsize=stepsize,
+                    stepsize=result.stepsize,
                     start_time=start_time,
-                    linesearch=None,
+                    linesearch=result.stats,
                     problem=problem,
                     x=x,
                     solver=self,

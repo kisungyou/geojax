@@ -14,7 +14,7 @@ is a list of per-iteration records.
 from __future__ import annotations
 
 from dataclasses import dataclass, field, fields, replace
-from typing import Any, Callable, Dict, List, Mapping, MutableMapping, Optional, Tuple
+from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple
 import math
 import time
 
@@ -143,12 +143,15 @@ class Minimize:
 
 @dataclass(frozen=True)
 class LineSearchStats:
-    """Statistics returned by the Armijo backtracking line search."""
+    """Common diagnostics returned by a line-search strategy."""
 
     costevals: int
     stepsize: float
     alpha: float
     accepted: bool
+    gradevals: int = 0
+    method: str = ""
+    reason: str = ""
 
 
 @dataclass(frozen=True)
@@ -323,6 +326,19 @@ def cost_and_grad(problem: Any, x: Array) -> tuple[Array, Array]:
     return c, M.egrad_to_rgrad(x, eg)
 
 
+def gradient_value(problem: Any, x: Array) -> Array:
+    """Return only the Riemannian gradient at ``x``."""
+    M = require(problem, "M")
+    cost_fn = require(problem, "cost")
+    grad_fn = get(problem, "grad", None)
+    egrad_fn = get(problem, "egrad", None)
+    if grad_fn is not None:
+        return grad_fn(x)
+    if egrad_fn is not None:
+        return M.egrad_to_rgrad(x, egrad_fn(x))
+    return M.egrad_to_rgrad(x, jax.grad(cost_fn)(x))
+
+
 def cost_value(problem: Any, x: Array) -> Array:
     """Return ``cost(x)``."""
     return require(problem, "cost")(x)
@@ -337,77 +353,6 @@ def precondition_gradient(problem: Any, x: Array, grad: Array) -> Array:
 
 
 precondition = precondition_gradient
-
-
-def line_search_backtracking(
-    problem: Any,
-    x: Array,
-    direction: Array,
-    f0: Array,
-    df0: Array,
-    options: Any,
-    lsmem: MutableMapping[str, float],
-) -> tuple[float, Array, LineSearchStats]:
-    """Manopt-inspired Armijo backtracking line search.
-
-    The trial point is ``retr_x(alpha * direction)``.  The returned
-    ``stepsize`` is the Riemannian norm of the trial displacement.
-    """
-    M = require(problem, "M")
-
-    norm_d = as_float(M.norm(x, direction))
-    if not math.isfinite(norm_d) or norm_d <= 0.0:
-        stats = LineSearchStats(costevals=0, stepsize=0.0, alpha=0.0, accepted=False)
-        return 0.0, x, stats
-
-    f0_float = as_float(f0)
-    df0_float = as_float(df0)
-    if not math.isfinite(df0_float) or df0_float >= 0.0:
-        stats = LineSearchStats(costevals=0, stepsize=0.0, alpha=0.0, accepted=False)
-        return 0.0, x, stats
-
-    alpha = math.nan
-    if "f0" in lsmem and df0_float != 0.0:
-        alpha = 2.0 * (f0_float - float(lsmem["f0"])) / df0_float
-        alpha = float(getattr(options, "ls_optimism", 2.0)) * alpha
-
-    eps = as_float(jnp.finfo(jnp.asarray(f0).dtype).eps)
-    if not math.isfinite(alpha) or alpha * norm_d <= eps:
-        alpha = float(getattr(options, "ls_initial_stepsize", 1.0)) / norm_d
-
-    contraction = float(getattr(options, "ls_contraction_factor", 0.5))
-    suff_decr = float(getattr(options, "ls_suff_decr", 2.0**-13))
-    max_steps = int(getattr(options, "ls_max_steps", 25))
-
-    newx = retract(M, x, direction, alpha)
-    newf = cost_value(problem, newx)
-    costevals = 1
-
-    while as_float(newf) > f0_float + suff_decr * alpha * df0_float:
-        alpha *= contraction
-        newx = retract(M, x, direction, alpha)
-        newf = cost_value(problem, newx)
-        costevals += 1
-        if costevals >= max_steps:
-            break
-
-    accepted = as_float(newf) <= f0_float
-    if not accepted:
-        alpha = 0.0
-        newx = x
-
-    stepsize = float(alpha * norm_d)
-    lsmem["f0"] = f0_float
-    lsmem["df0"] = df0_float
-    lsmem["stepsize"] = stepsize
-
-    stats = LineSearchStats(
-        costevals=costevals,
-        stepsize=stepsize,
-        alpha=float(alpha),
-        accepted=accepted,
-    )
-    return stepsize, newx, stats
 
 
 def make_info(
@@ -531,10 +476,10 @@ __all__ = [
     "transport",
     "pair_mean",
     "cost_and_grad",
+    "gradient_value",
     "cost_value",
     "precondition_gradient",
     "precondition",
-    "line_search_backtracking",
     "make_info",
     "stopping_reason",
     "print_iteration_header",

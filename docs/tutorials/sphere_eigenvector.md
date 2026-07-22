@@ -34,7 +34,14 @@ from geojax.geometry import Sphere
 from geojax.optimization import ConjugateGradient, Minimize
 
 plt.rcParams.update({
-    "figure.dpi": 120,
+    "figure.dpi": 200,
+    "savefig.dpi": 240,
+    "font.size": 11,
+    "axes.titlesize": 12,
+    "axes.labelsize": 11,
+    "xtick.labelsize": 10,
+    "ytick.labelsize": 10,
+    "legend.fontsize": 9,
     "axes.spines.top": False,
     "axes.spines.right": False,
 })
@@ -85,23 +92,29 @@ theta0 = jnp.arctan2(x0[1], x0[0])
 theta_hat = jnp.arctan2(x_hat[1], x_hat[0])
 gradnorm = jnp.array([max(row.gradnorm, 1e-16) for row in history])
 
-fig, axes = plt.subplots(1, 3, figsize=(13.2, 3.8))
+fig, axes = plt.subplots(1, 3, figsize=(13.8, 4.4))
 
 ax = axes[0]
 ax.plot(circle[:, 0], circle[:, 1], color="#64748b", linewidth=1.5)
-for vector, color, label, style in [
-    (x0, "#b45309", "initial", "-"),
-    (x_exact, "#334155", "exact", "--"),
-    (x_hat, "#0f766e", "GeoJAX", "-"),
+for vector, color, label, style, linewidth in [
+    (x0, "#b45309", "initial", "-", 2.6),
+    (x_exact, "#2563eb", "exact", (0, (1.4, 1.4)), 5.2),
+    (x_hat, "#0f766e", "GeoJAX", "-", 2.3),
 ]:
     ax.plot([0, vector[0]], [0, vector[1]], color=color, linestyle=style,
-            linewidth=2.5, label=label)
-    ax.scatter(vector[0], vector[1], color=color, s=35, zorder=3)
+            linewidth=linewidth, label=label)
+    if label == "exact":
+        ax.scatter(
+            vector[0], vector[1], facecolors="none", edgecolors=color,
+            linewidth=2.0, s=95, zorder=3,
+        )
+    else:
+        ax.scatter(vector[0], vector[1], color=color, s=38, zorder=4)
 ax.axhline(0, color="#cbd5e1", linewidth=0.8)
 ax.axvline(0, color="#cbd5e1", linewidth=0.8)
 ax.set(xlim=(-1.15, 1.15), ylim=(-1.15, 1.15), aspect="equal",
        title="Vectors in Cartesian coordinates", xlabel="$x_1$", ylabel="$x_2$")
-ax.legend(frameon=False)
+vector_legend = ax.get_legend_handles_labels()
 
 ax = axes[1]
 ax.plot(theta, landscape, color="#334155", linewidth=2)
@@ -115,11 +128,17 @@ ax.semilogy(jnp.arange(len(history)), gradnorm, color="#0f766e", linewidth=2)
 ax.set(title="Solver convergence", xlabel="iteration", ylabel="gradient norm")
 ax.grid(alpha=0.2)
 
-fig.tight_layout()
+fig.legend(
+    *vector_legend,
+    frameon=False,
+    loc="upper left",
+    bbox_to_anchor=(0.045, 0.995),
+    ncol=3,
+)
+fig.tight_layout(rect=(0.0, 0.0, 1.0, 0.90))
 plt.show()
 ```
 
 The estimated vector agrees with the direct eigendecomposition up to numerical
 precision. More importantly, every iterate remains on the unit circle; no
 penalty or post-hoc normalization is needed in the optimization model.
-

@@ -1,3 +1,7 @@
+---
+html_theme.sidebar_secondary.remove: true
+---
+
 # GeoJAX
 
 GeoJAX is a JAX-native toolkit for computations on Riemannian manifolds. It
@@ -23,18 +27,45 @@ problem = Minimize(
 eigenvector, value, info = problem.solve()
 ```
 
-## Read by task
+<div class="landing-grid">
+  <a class="landing-card" href="getting_started/index.html">
+    <div class="landing-card-icon" aria-hidden="true">
+      <i class="fa-solid fa-rocket"></i>
+    </div>
+    <h2>Getting started</h2>
+    <p>Install GeoJAX and solve a first optimization problem on a manifold.</p>
+  </a>
 
-- **New to manifold optimization?** Start with [Getting started](getting_started/index.md).
-- **Want a complete computation?** Open the [tutorials](tutorials/index.md); every result and figure is executed during the documentation build.
-- **Need concepts and conventions?** Use the [user guide](guide/index.md).
-- **Looking up a symbol?** Go directly to the [API reference](api/index.md).
+  <a class="landing-card" href="tutorials/index.html">
+    <div class="landing-card-icon" aria-hidden="true">
+      <i class="fa-solid fa-flask"></i>
+    </div>
+    <h2>Tutorials</h2>
+    <p>Work through executable mathematical examples with computed figures.</p>
+  </a>
+
+  <a class="landing-card" href="guide/index.html">
+    <div class="landing-card-icon" aria-hidden="true">
+      <i class="fa-solid fa-book-open"></i>
+    </div>
+    <h2>User guide</h2>
+    <p>Understand geometry conventions, representations, and solver choices.</p>
+  </a>
+
+  <a class="landing-card" href="api/index.html">
+    <div class="landing-card-icon" aria-hidden="true">
+      <i class="fa-solid fa-code"></i>
+    </div>
+    <h2>API reference</h2>
+    <p>Look up public geometries, optimization problems, and solver classes.</p>
+  </a>
+</div>
 
 ```{admonition} Scope
 :class: note
-GeoJAX is alpha software. Geometry and first-order optimization are the most
-mature layers; second-order methods and derivative-free solvers should be used
-with the numerical limitations documented in this site.
+GeoJAX is alpha software. The API favors explicit geometry and derivative
+contracts while its expanding solver set is validated on small scientific
+problems and executable tutorials.
 ```
 
 ```{toctree}

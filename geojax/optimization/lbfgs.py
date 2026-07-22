@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field, replace
 from typing import Any, List, Optional
 import math
 import time
 
+from .linesearch import AdaptiveArmijo, LineSearchProtocol, LineSearchState
 from .minimize import (
     Array,
     InfoEntry,
@@ -14,8 +15,8 @@ from .minimize import (
     StopFn,
     as_float,
     cost_and_grad,
+    gradient_value,
     inner,
-    line_search_backtracking,
     make_info,
     print_iteration,
     print_iteration_header,
@@ -37,11 +38,7 @@ class LBFGS:
     maxtime: float = math.inf
     minstepsize: float = 1e-10
     verbosity: int = 2
-    ls_contraction_factor: float = 0.5
-    ls_optimism: float = 2.0
-    ls_suff_decr: float = 2.0**-13
-    ls_max_steps: int = 25
-    ls_initial_stepsize: float = 1.0
+    line_search: LineSearchProtocol = field(default_factory=AdaptiveArmijo)
     cautious_update: bool = True
     cautious_threshold: float = 1e-10
     statsfun: Optional[StatsFn] = None
@@ -51,7 +48,7 @@ class LBFGS:
         M = require(problem, "M")
         x = require(problem, "x0")
         start_time = time.perf_counter()
-        lsmem: dict[str, float] = {}
+        search_state: LineSearchState | None = None
         memory: list[tuple[Array, Array, float]] = []
         info: List[InfoEntry] = []
 
@@ -75,7 +72,7 @@ class LBFGS:
             print_iteration(info[-1], self.verbosity)
             reason = stopping_reason(problem, x, info, self)
             if reason:
-                info[-1] = InfoEntry(**{**info[-1].__dict__, "reason": reason})
+                info[-1] = replace(info[-1], reason=reason)
                 if self.verbosity >= 1:
                     print(reason)
                 break
@@ -84,10 +81,20 @@ class LBFGS:
             if as_float(inner(M, x, g, d)) >= 0.0:
                 d = tree_neg(g)
             df0 = inner(M, x, g, d)
-            stepsize, newx, lsstats = line_search_backtracking(problem, x, d, f, df0, self, lsmem)
-            newf, newg = cost_and_grad(problem, newx)
+            result = self.line_search.search(
+                problem,
+                x,
+                d,
+                f,
+                df0,
+                state=search_state,
+            )
+            search_state = result.state
+            newx = result.point
+            newf = result.cost
+            newg = result.gradient if result.gradient is not None else gradient_value(problem, newx)
 
-            step = transport(M, x, newx, tree_lincomb(lsstats.alpha, d))
+            step = transport(M, x, newx, tree_lincomb(result.alpha, d))
             oldg = transport(M, x, newx, g)
             y = tree_sub(newg, oldg)
             sy = as_float(inner(M, newx, step, y))
@@ -113,9 +120,9 @@ class LBFGS:
                     iter=info[-1].iter + 1,
                     cost=f,
                     gradnorm=gnorm,
-                    stepsize=stepsize,
+                    stepsize=result.stepsize,
                     start_time=start_time,
-                    linesearch=lsstats,
+                    linesearch=result.stats,
                     problem=problem,
                     x=x,
                     solver=self,

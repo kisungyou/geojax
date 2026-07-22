@@ -59,7 +59,6 @@ def solve_largest_eigenvector(
         maxiter=maxiter,
         minstepsize=1e-14,
         verbosity=verbosity,
-        ls_initial_stepsize=1.0,
     )
 
     problem = Minimize(M=M, cost=cost, x0=x0, solver=solver)

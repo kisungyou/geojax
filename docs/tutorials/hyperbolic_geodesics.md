@@ -46,6 +46,19 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from geojax.geometry import Hyperboloid
+
+plt.rcParams.update({
+    "figure.dpi": 200,
+    "savefig.dpi": 240,
+    "font.size": 11,
+    "axes.titlesize": 12,
+    "axes.labelsize": 11,
+    "xtick.labelsize": 10,
+    "ytick.labelsize": 10,
+    "legend.fontsize": 9,
+    "axes.spines.top": False,
+    "axes.spines.right": False,
+})
 ```
 
 ## Build unit tangent directions

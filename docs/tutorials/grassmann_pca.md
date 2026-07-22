@@ -32,6 +32,19 @@ import matplotlib.pyplot as plt
 from geojax.geometry import Grassmann, GrassmannProjection
 from geojax.optimization import ConjugateGradient, Minimize
 
+plt.rcParams.update({
+    "figure.dpi": 200,
+    "savefig.dpi": 240,
+    "font.size": 11,
+    "axes.titlesize": 12,
+    "axes.labelsize": 11,
+    "xtick.labelsize": 10,
+    "ytick.labelsize": 10,
+    "legend.fontsize": 9,
+    "axes.spines.top": False,
+    "axes.spines.right": False,
+})
+
 key = jax.random.key(12)
 angle = 0.65
 rotation = jnp.array([
@@ -133,7 +146,7 @@ ax.plot(*(line[:, None] * estimate[None, :]).T, color="#0f766e", linewidth=2,
         label="GeoJAX")
 ax.set(title="Leading one-dimensional subspace", xlabel="$x_1$", ylabel="$x_2$", zlabel="$x_3$")
 ax.set_box_aspect((1, 1, 0.75))
-ax.legend(frameon=False)
+ax.legend(frameon=False, fontsize=9)
 
 ax = fig.add_subplot(1, 2, 2)
 costs = jnp.array([row.cost for row in history])

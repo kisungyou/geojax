@@ -72,6 +72,17 @@ through an executable GeoJAX solution and a visual report of the result.
     </div>
   </a>
 
+  <a class="tutorial-card" href="solver_comparison.html">
+    <div class="tutorial-card-media">
+      <img src="../_static/tutorials/solver-comparison.png" alt="Optimization paths, convergence histories, and iteration counts in a curved valley">
+    </div>
+    <div class="tutorial-card-body">
+      <p class="tutorial-card-meta">Optimization / Solver choice</p>
+      <h2>Comparing solvers in a curved valley</h2>
+      <p>Contrast first-order, Hessian-based, and least-squares methods on one visual two-dimensional objective.</p>
+    </div>
+  </a>
+
 </div>
 
 ## Geometry in pictures
@@ -111,6 +122,7 @@ grassmann_pca
 spd_frechet_mean
 kendall_hand_shapes
 rigid_registration
+solver_comparison
 hyperbolic_geodesics
 torus_geodesics
 ```

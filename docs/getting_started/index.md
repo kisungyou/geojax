@@ -2,10 +2,22 @@
 
 ## Installation
 
-GeoJAX requires Python 3.11 or newer. Install the package from the project root:
+GeoJAX requires Python 3.11 or newer. Choose either the published package or
+the current GitHub source. The distribution name, import package, repository
+slug, and PyPI project are all lowercase `geojax`.
+
+### Option 1: PyPI
 
 ```bash
-python -m pip install -e .
+python -m pip install geojax
+```
+
+### Option 2: GitHub source
+
+```bash
+git clone https://github.com/kisungyou/geojax.git
+cd geojax
+python -m pip install .
 ```
 
 ## First optimization problem

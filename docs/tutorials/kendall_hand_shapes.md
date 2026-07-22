@@ -62,6 +62,19 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from geojax.geometry import KendallShape
+
+plt.rcParams.update({
+    "figure.dpi": 200,
+    "savefig.dpi": 240,
+    "font.size": 11,
+    "axes.titlesize": 12,
+    "axes.labelsize": 11,
+    "xtick.labelsize": 10,
+    "ytick.labelsize": 10,
+    "legend.fontsize": 9,
+    "axes.spines.top": False,
+    "axes.spines.right": False,
+})
 ```
 
 ## Load the landmark data
@@ -289,7 +302,7 @@ distance_axis.set(
 )
 distance_axis.set_aspect("equal")
 distance_axis.grid(alpha=0.2)
-distance_axis.legend(frameon=False, fontsize=7)
+distance_axis.legend(frameon=False, fontsize=9)
 
 convergence_axis = fig.add_subplot(grid[1, 2])
 for label, history in enumerate(mean_histories):

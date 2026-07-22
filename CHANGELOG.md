@@ -4,6 +4,15 @@
 
 ## 0.1.0 - 2026-07-21
 
+- Added shared `ConstantStep`, `BacktrackingArmijo`, `AdaptiveArmijo`, and
+  `StrongWolfe` line-search strategies and migrated the existing gradient
+  solvers away from private Armijo implementations.
+- Added `AdaptiveRegularizationCubics` and matrix-free `NewtonCG`.
+- Added `LeastSquares` with Jacobian/adjoint products, together with
+  `GaussNewton` and `LevenbergMarquardt`.
+- Added `FiniteSum`, stochastic step schedules, and `StochasticGradient`.
+- Added Product-specific `AlternatingGradient` and a visual solver-comparison
+  tutorial.
 - Added a dedicated optimization protocol page covering problem, derivative,
   solver-state, Hessian-vector, PyTree, and diagnostic contracts.
 - Reworked the website wordmark in Sora, with the `JAX` name in the GeoJAX

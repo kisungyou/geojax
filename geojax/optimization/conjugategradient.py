@@ -7,13 +7,13 @@ The public entry point is :func:`conjugategradient`::
 This implements the main structure of Manopt's MATLAB
 ``conjugategradient.m`` in a compact JAX-oriented form: optional
 preconditioning, transported search directions, several common beta rules,
-Powell restart, Armijo backtracking line search and Manopt-like iteration
+Powell restart, a pluggable line search and Manopt-like iteration
 statistics.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass, fields, replace
+from dataclasses import dataclass, field, replace
 from typing import Any, List, Mapping, Optional
 import math
 import time
@@ -29,9 +29,9 @@ from .minimize import (
     StopFn,
     as_options,
     cost_and_grad,
+    gradient_value,
     initial_point,
     inner,
-    line_search_backtracking,
     make_info,
     precondition,
     require,
@@ -41,6 +41,7 @@ from .minimize import (
     tree_sub,
     transport,
 )
+from .linesearch import AdaptiveArmijo, LineSearchProtocol, LineSearchState
 
 
 @dataclass(frozen=True)
@@ -61,11 +62,7 @@ class ConjugateGradientOptions:
     beta_type: str = "H-S"
     orth_value: float = math.inf
 
-    ls_contraction_factor: float = 0.5
-    ls_optimism: float = 2.0
-    ls_suff_decr: float = 2.0**-13
-    ls_max_steps: int = 25
-    ls_initial_stepsize: float = 1.0
+    line_search: LineSearchProtocol = field(default_factory=AdaptiveArmijo)
 
     statsfun: Optional[StatsFn] = None
     stopfun: Optional[StopFn] = None
@@ -78,22 +75,6 @@ class ConjugateGradient(ConjugateGradientOptions):
 
     def solve(self, problem: Any) -> tuple[Array, float, List[InfoEntry]]:
         return conjugategradient(problem, getattr(problem, "x0", None), self)
-
-
-def _as_options(
-    options: Optional[ConjugateGradientOptions | Mapping[str, Any]],
-) -> ConjugateGradientOptions:
-    if options is None:
-        return ConjugateGradientOptions()
-    if isinstance(options, ConjugateGradientOptions):
-        return options
-    if isinstance(options, Mapping):
-        valid = {f.name for f in fields(ConjugateGradientOptions)}
-        unknown = set(options) - valid
-        if unknown:
-            raise ValueError(f"Unknown conjugategradient option(s): {sorted(unknown)}")
-        return ConjugateGradientOptions(**dict(options))
-    raise TypeError("options must be None, a mapping, or ConjugateGradientOptions")
 
 
 def _finite_scalar(value: Any, default: float = 0.0) -> float:
@@ -228,7 +209,7 @@ def conjugategradient(
 
     sol = initial_point(problem, x, options.key)
     start_time = time.perf_counter()
-    lsmem: dict[str, float] = {}
+    search_state: LineSearchState | None = None
     info: List[InfoEntry] = []
 
     cost_value, grad = cost_and_grad(problem, sol)
@@ -281,11 +262,21 @@ def conjugategradient(
             df0_float = -gradPgrad_float
             beta = 0.0
 
-        stepsize, newsol, lsstats = line_search_backtracking(
-            problem, sol, desc_dir, cost_value, df0, options, lsmem
+        result = options.line_search.search(
+            problem,
+            sol,
+            desc_dir,
+            cost_value,
+            df0,
+            state=search_state,
         )
+        search_state = result.state
+        newsol = result.point
 
-        newcost, newgrad = cost_and_grad(problem, newsol)
+        newcost = result.cost
+        newgrad = (
+            result.gradient if result.gradient is not None else gradient_value(problem, newsol)
+        )
         newgradnorm = M.norm(newsol, newgrad)
         Pnewgrad = precondition(problem, newsol, newgrad)
         newgradPnewgrad = inner(M, newsol, newgrad, Pnewgrad)
@@ -318,9 +309,9 @@ def conjugategradient(
                 iter=current.iter + 1,
                 cost=cost_value,
                 gradnorm=gradnorm,
-                stepsize=stepsize,
+                stepsize=result.stepsize,
                 start_time=start_time,
-                linesearch=lsstats,
+                linesearch=result.stats,
                 problem=problem,
                 x=sol,
                 options=options,

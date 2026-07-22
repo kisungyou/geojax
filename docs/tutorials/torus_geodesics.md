@@ -27,6 +27,19 @@ import numpy as np
 
 from geojax.geometry import Torus
 
+plt.rcParams.update({
+    "figure.dpi": 200,
+    "savefig.dpi": 240,
+    "font.size": 11,
+    "axes.titlesize": 12,
+    "axes.labelsize": 11,
+    "xtick.labelsize": 10,
+    "ytick.labelsize": 10,
+    "legend.fontsize": 9,
+    "axes.spines.top": False,
+    "axes.spines.right": False,
+})
+
 M = Torus(size=2)
 x = jnp.array([2.75, 2.45])
 y = jnp.array([-2.60, -2.20])

@@ -81,6 +81,7 @@ html_theme_options = {
     "footer_end": ["sphinx-version"],
 }
 html_sidebars = {
+    "index": [],
     "getting_started/index": [],
     "**": ["search-field", "sidebar-nav-bs"],
 }

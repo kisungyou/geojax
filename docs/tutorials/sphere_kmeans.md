@@ -32,7 +32,14 @@ import numpy as np
 from geojax.geometry import Sphere
 
 plt.rcParams.update({
-    "figure.dpi": 120,
+    "figure.dpi": 200,
+    "savefig.dpi": 240,
+    "font.size": 11,
+    "axes.titlesize": 12,
+    "axes.labelsize": 11,
+    "xtick.labelsize": 10,
+    "ytick.labelsize": 10,
+    "legend.fontsize": 9,
     "axes.spines.top": False,
     "axes.spines.right": False,
 })
@@ -134,7 +141,7 @@ for cluster, color in enumerate(palette):
     center = np.asarray(centers[cluster])
     axes[1].scatter(*center, marker="*", s=210, color=color, edgecolor="white", linewidth=1.0)
 axes[1].set_title("Intrinsic k-means result")
-axes[1].legend(frameon=False, fontsize=8, loc="upper center")
+axes[1].legend(frameon=False, fontsize=9, loc="center")
 
 axes[2].plot(objective_history, marker="o", color="#007C83", linewidth=2)
 axes[2].set(
@@ -156,4 +163,3 @@ ordinary arithmetic mean of angles would not have that invariance.
 - Increase the cluster spread until points approach the cut locus.
 - Replace `Sphere(size=2)` with `Sphere(size=3)` and draw clusters on $S^2$.
 - Use several random initializations and retain the smallest final objective.
-

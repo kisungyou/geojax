@@ -28,18 +28,26 @@ JAX scalar cost functions, and class-style solvers combine the two.
 
 ## Installation
 
-GeoJAX requires Python 3.11 or newer. After the first PyPI release, install it
-with:
+GeoJAX requires Python 3.11 or newer. The human-facing project name is
+**GeoJAX**; the Python package, repository slug, and PyPI distribution are all
+lowercase **`geojax`**. Install it with:
+
+**PyPI**
 
 ```bash
 python -m pip install geojax
 ```
 
-For development from a local checkout:
+**GitHub source**
 
 ```bash
-python -m pip install -e ".[dev,docs,examples]"
+git clone https://github.com/kisungyou/geojax.git
+cd geojax
+python -m pip install .
 ```
+
+For development, replace the final command with
+`python -m pip install -e ".[dev,docs,examples]"`.
 
 ## Quick Start
 
@@ -86,8 +94,16 @@ The public solver set is:
 - `TrustRegions`
 - `BarzilaiBorwein`
 - `LBFGS`
+- `NewtonCG`
 - `ParticleSwarm`
 - `NelderMead`
+- `AdaptiveRegularizationCubics`
+- `GaussNewton` and `LevenbergMarquardt` for `LeastSquares`
+- `StochasticGradient` for `FiniteSum`
+- `AlternatingGradient` for `Product` geometries
+
+Gradient solvers share public fixed-step, Armijo, adaptive Armijo, and
+strong-Wolfe line-search strategies.
 
 See the
 [geometry guide](https://www.kisungyou.com/geojax/guide/geometry.html),
