@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.1.0 - 2026-07-21
+
 - Added a dedicated optimization protocol page covering problem, derivative,
   solver-state, Hessian-vector, PyTree, and diagnostic contracts.
 - Reworked the website wordmark in Sora, with the `JAX` name in the GeoJAX
@@ -37,7 +39,6 @@
   map, geodesic operations, distance, and an isometric optimization transport.
 - Added a self-contained visual tutorial for rigid landmark registration in
   `SE(2)`.
-## 0.2.0 - 2026-05-02
 
 - Standardized geometry constructors and the class-style optimization API.
 - Added geometry protocol helpers, batch helpers, Hyperboloid, and Torus.
@@ -49,7 +50,5 @@
 - Added `SphereExtrinsic` and changed `GrassmannProjection` to expose
   orthonormal-frame points while evaluating its geometry in projector
   coordinates.
-
-## 0.1.0
 
 - Initial alpha package structure for geometry, optimization, and examples.

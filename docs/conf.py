@@ -11,7 +11,7 @@ sys.path.insert(0, str(ROOT))
 
 project = "GeoJAX"
 author = "GeoJAX contributors"
-release = "0.2.0"
+release = "0.1.0"
 
 extensions = [
     "myst_nb",

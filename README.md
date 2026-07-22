@@ -12,7 +12,7 @@ optimization. Geometry objects provide manifold primitives, models provide
 JAX scalar cost functions, and class-style solvers combine the two.
 
 > [!IMPORTANT]
-> GeoJAX is alpha software. The 0.2 series deliberately favors a coherent
+> GeoJAX is alpha software. The 0.1 series deliberately favors a coherent
 > scientific API over backward compatibility.
 
 ## Highlights
@@ -89,10 +89,12 @@ The public solver set is:
 - `ParticleSwarm`
 - `NelderMead`
 
-See the [geometry guide](docs/guide/geometry.md),
-[optimization guide](docs/guide/optimization.md), and
-[executable tutorials](docs/tutorials/index.md) for the mathematical and
-computational conventions.
+See the
+[geometry guide](https://github.com/kisungyou/GeoJAX/blob/main/docs/guide/geometry.md),
+[optimization guide](https://github.com/kisungyou/GeoJAX/blob/main/docs/guide/optimization.md),
+and
+[executable tutorials](https://github.com/kisungyou/GeoJAX/tree/main/docs/tutorials)
+for the mathematical and computational conventions.
 
 ## Documentation
 
@@ -118,15 +120,23 @@ python -m build
 python -m twine check dist/*
 ```
 
-The [geometry protocol](docs/development/geometry_protocol.md) and
-[optimization protocol](docs/development/optimization_protocol.md) describe
-the contracts expected from new implementations.
+The
+[geometry protocol](https://github.com/kisungyou/GeoJAX/blob/main/docs/development/geometry_protocol.md)
+and
+[optimization protocol](https://github.com/kisungyou/GeoJAX/blob/main/docs/development/optimization_protocol.md)
+describe the contracts expected from new implementations. Maintainers can
+follow the
+[release checklist](https://github.com/kisungyou/GeoJAX/blob/main/RELEASING.md)
+for manual TestPyPI and PyPI publication.
 
 ## Citation
 
-Academic users can cite the project using [`CITATION.cff`](CITATION.cff).
-Release history is recorded in [`CHANGELOG.md`](CHANGELOG.md).
+Academic users can cite the project using
+[`CITATION.cff`](https://github.com/kisungyou/GeoJAX/blob/main/CITATION.cff).
+Release history is recorded in
+[`CHANGELOG.md`](https://github.com/kisungyou/GeoJAX/blob/main/CHANGELOG.md).
 
 ## License
 
-GeoJAX is released under the [MIT License](LICENSE).
+GeoJAX is released under the
+[MIT License](https://github.com/kisungyou/GeoJAX/blob/main/LICENSE).
