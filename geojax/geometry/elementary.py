@@ -1,0 +1,436 @@
+"""Elementary matrix, probability, and hyperbolic geometries."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Any, Sequence
+
+import jax
+import jax.numpy as jnp
+
+from .base import GeometryMixin, Shape, as_sample_shape
+
+Array = Any
+
+
+def _safe_divide(numerator: Array, denominator: Array, eps: float) -> Array:
+    return numerator / jnp.where(jnp.abs(denominator) > eps, denominator, 1.0)
+
+
+def _parse_matrix_size(size: int | Sequence[int], name: str) -> tuple[int, int]:
+    if isinstance(size, int):
+        raise ValueError(f"{name} size must be a pair.")
+    parsed = tuple(int(value) for value in size)
+    if len(parsed) != 2 or min(parsed) < 1:
+        raise ValueError(f"{name} size must be a pair of positive integers.")
+    return parsed
+
+
+@dataclass(frozen=True, init=False)
+class Oblique(GeometryMixin):
+    """Matrices whose columns have unit Euclidean norm.
+
+    ``Oblique(size=(n, m))`` is the efficient matrix representation of a
+    product of ``m`` copies of the sphere ``S^(n-1)``.
+    """
+
+    size: tuple[int, int]
+    atol: float
+    eps: float
+
+    def __init__(self, size: int | Sequence[int], *, atol: float = 1e-6, eps: float = 1e-12):
+        object.__setattr__(self, "size", _parse_matrix_size(size, "Oblique"))
+        object.__setattr__(self, "atol", float(atol))
+        object.__setattr__(self, "eps", float(eps))
+
+    @property
+    def n(self) -> int:
+        return self.size[0]
+
+    @property
+    def m(self) -> int:
+        return self.size[1]
+
+    @property
+    def shape(self) -> tuple[int, int]:
+        return self.size
+
+    @property
+    def dim(self) -> int:
+        return self.m * (self.n - 1)
+
+    def belongs(self, X: Array, atol: float | None = None) -> Array:
+        tol = self.atol if atol is None else atol
+        norms = jnp.linalg.norm(jnp.asarray(X), axis=-2)
+        return jnp.all(jnp.abs(norms - 1.0) <= tol, axis=-1)
+
+    def project(self, A: Array) -> Array:
+        A = jnp.asarray(A)
+        norms = jnp.linalg.norm(A, axis=-2, keepdims=True)
+        fallback = jnp.zeros_like(A).at[..., 0, :].set(1.0)
+        return jnp.where(norms > self.eps, A / jnp.maximum(norms, self.eps), fallback)
+
+    normalize = project
+
+    def is_tangent(self, X: Array, U: Array, atol: float | None = None) -> Array:
+        tol = self.atol if atol is None else atol
+        radial = jnp.sum(jnp.asarray(X) * jnp.asarray(U), axis=-2)
+        return jnp.all(jnp.abs(radial) <= tol, axis=-1)
+
+    def tangent_project(self, X: Array, U: Array) -> Array:
+        X = jnp.asarray(X)
+        U = jnp.asarray(U)
+        return U - X * jnp.sum(X * U, axis=-2, keepdims=True)
+
+    projection = tangent_project
+    proj = tangent_project
+    to_tangent = tangent_project
+
+    def inner(self, X: Array, U: Array, V: Array) -> Array:
+        del X
+        return jnp.sum(jnp.asarray(U) * jnp.asarray(V), axis=(-2, -1))
+
+    def norm(self, X: Array, U: Array) -> Array:
+        return jnp.sqrt(jnp.maximum(self.inner(X, U, U), 0.0))
+
+    def exp(self, X: Array, U: Array) -> Array:
+        X = jnp.asarray(X)
+        U = self.tangent_project(X, U)
+        lengths = jnp.linalg.norm(U, axis=-2, keepdims=True)
+        sinc = jnp.where(
+            lengths > self.eps,
+            jnp.sin(lengths) / jnp.maximum(lengths, self.eps),
+            1.0 - lengths**2 / 6.0,
+        )
+        return X * jnp.cos(lengths) + U * sinc
+
+    def log(self, X: Array, Y: Array) -> Array:
+        X = jnp.asarray(X)
+        Y = jnp.asarray(Y)
+        dots = jnp.clip(jnp.sum(X * Y, axis=-2, keepdims=True), -1.0, 1.0)
+        angles = jnp.arccos(dots)
+        direction = Y - dots * X
+        lengths = jnp.linalg.norm(direction, axis=-2, keepdims=True)
+        result = jnp.where(
+            lengths > self.eps,
+            angles * direction / jnp.maximum(lengths, self.eps),
+            jnp.zeros_like(direction),
+        )
+        at_cut = (1.0 + dots) <= self.atol
+        return jnp.where(at_cut, jnp.full_like(result, jnp.nan), result)
+
+    def dist(self, X: Array, Y: Array) -> Array:
+        dots = jnp.clip(jnp.sum(jnp.asarray(X) * jnp.asarray(Y), axis=-2), -1.0, 1.0)
+        angles = jnp.arccos(dots)
+        return jnp.linalg.norm(angles, axis=-1)
+
+    def transport(self, X: Array, Y: Array, U: Array) -> Array:
+        X = jnp.asarray(X)
+        Y = jnp.asarray(Y)
+        U = self.tangent_project(X, U)
+        dots = jnp.sum(X * Y, axis=-2, keepdims=True)
+        coefficients = jnp.sum(U * Y, axis=-2, keepdims=True) / (1.0 + dots)
+        result = U - coefficients * (X + Y)
+        return jnp.where((1.0 + dots) <= self.atol, jnp.full_like(result, jnp.nan), result)
+
+    transp = transport
+
+    def egrad_to_rgrad(self, X: Array, egrad: Array) -> Array:
+        return self.tangent_project(X, egrad)
+
+    egrad2rgrad = egrad_to_rgrad
+
+    def random_point(self, key: Array, sample_shape: Shape = ()) -> Array:
+        normal = jax.random.normal(key, shape=as_sample_shape(sample_shape) + self.shape)
+        return self.project(normal)
+
+    def random_tangent(
+        self,
+        key: Array,
+        X: Array,
+        *,
+        scale: float | Array = 1.0,
+        normalize: bool = False,
+    ) -> Array:
+        tangent = self.tangent_project(X, jax.random.normal(key, shape=jnp.shape(X)))
+        if normalize:
+            length = self.norm(X, tangent)[..., None, None]
+            tangent = jnp.where(length > self.eps, tangent / length, tangent)
+        return scale * tangent
+
+
+@dataclass(frozen=True, init=False)
+class ProbabilitySimplex(GeometryMixin):
+    """Interior probability simplex with the Fisher--Rao metric."""
+
+    size: int
+    atol: float
+    eps: float
+
+    def __init__(self, size: int, *, atol: float = 1e-6, eps: float = 1e-10):
+        size = int(size)
+        if size < 2:
+            raise ValueError("ProbabilitySimplex size must be at least 2.")
+        object.__setattr__(self, "size", size)
+        object.__setattr__(self, "atol", float(atol))
+        object.__setattr__(self, "eps", float(eps))
+
+    @property
+    def shape(self) -> tuple[int]:
+        return (self.size,)
+
+    @property
+    def dim(self) -> int:
+        return self.size - 1
+
+    def belongs(self, p: Array, atol: float | None = None) -> Array:
+        tol = self.atol if atol is None else atol
+        p = jnp.asarray(p)
+        return (jnp.min(p, axis=-1) > 0.0) & (jnp.abs(jnp.sum(p, axis=-1) - 1.0) <= tol)
+
+    def project(self, p: Array) -> Array:
+        p = jnp.maximum(jnp.asarray(p), self.eps)
+        return p / jnp.sum(p, axis=-1, keepdims=True)
+
+    normalize = project
+
+    def is_tangent(self, p: Array, u: Array, atol: float | None = None) -> Array:
+        del p
+        tol = self.atol if atol is None else atol
+        return jnp.abs(jnp.sum(jnp.asarray(u), axis=-1)) <= tol
+
+    def tangent_project(self, p: Array, u: Array) -> Array:
+        del p
+        u = jnp.asarray(u)
+        return u - jnp.mean(u, axis=-1, keepdims=True)
+
+    projection = tangent_project
+    proj = tangent_project
+    to_tangent = tangent_project
+
+    def inner(self, p: Array, u: Array, v: Array) -> Array:
+        p = self.project(p)
+        return jnp.sum(jnp.asarray(u) * jnp.asarray(v) / p, axis=-1)
+
+    def norm(self, p: Array, u: Array) -> Array:
+        return jnp.sqrt(jnp.maximum(self.inner(p, u, u), 0.0))
+
+    def exp(self, p: Array, u: Array) -> Array:
+        p = self.project(p)
+        u = self.tangent_project(p, u)
+        length = self.norm(p, u)[..., None]
+        root = jnp.sqrt(p)
+        direction = u / jnp.maximum(root * length, self.eps)
+        next_root = jnp.cos(0.5 * length) * root + jnp.sin(0.5 * length) * direction
+        result = next_root**2
+        result = result / jnp.sum(result, axis=-1, keepdims=True)
+        valid = jnp.all(next_root > 0.0, axis=-1, keepdims=True) | (length <= self.eps)
+        return jnp.where(valid, result, jnp.full_like(result, jnp.nan))
+
+    def retr(self, p: Array, u: Array, t: float | Array = 1.0) -> Array:
+        """Positive normalized-addition retraction used by optimizers."""
+        return self.project(jnp.asarray(p) + t * self.tangent_project(p, u))
+
+    def log(self, p: Array, q: Array) -> Array:
+        p = self.project(p)
+        q = self.project(q)
+        root_p = jnp.sqrt(p)
+        root_q = jnp.sqrt(q)
+        cosine = jnp.clip(jnp.sum(root_p * root_q, axis=-1, keepdims=True), -1.0, 1.0)
+        angle = jnp.arccos(cosine)
+        scale = jnp.where(
+            angle > self.eps,
+            2.0 * angle / jnp.maximum(jnp.sin(angle), self.eps),
+            2.0,
+        )
+        return self.tangent_project(p, scale * root_p * (root_q - cosine * root_p))
+
+    def dist(self, p: Array, q: Array) -> Array:
+        affinity = jnp.sum(jnp.sqrt(self.project(p) * self.project(q)), axis=-1)
+        return 2.0 * jnp.arccos(jnp.clip(affinity, -1.0, 1.0))
+
+    def transport(self, p: Array, q: Array, u: Array) -> Array:
+        p = self.project(p)
+        q = self.project(q)
+        root_p = jnp.sqrt(p)
+        root_q = jnp.sqrt(q)
+        sphere_p = 2.0 * root_p
+        sphere_q = 2.0 * root_q
+        sphere_u = self.tangent_project(p, u) / root_p
+        denominator = 4.0 + jnp.sum(sphere_p * sphere_q, axis=-1, keepdims=True)
+        coefficient = jnp.sum(sphere_u * sphere_q, axis=-1, keepdims=True) / denominator
+        sphere_v = sphere_u - coefficient * (sphere_p + sphere_q)
+        return self.tangent_project(q, root_q * sphere_v)
+
+    transp = transport
+
+    def egrad_to_rgrad(self, p: Array, egrad: Array) -> Array:
+        p = self.project(p)
+        egrad = jnp.asarray(egrad)
+        return p * (egrad - jnp.sum(p * egrad, axis=-1, keepdims=True))
+
+    egrad2rgrad = egrad_to_rgrad
+
+    def random_point(self, key: Array, sample_shape: Shape = ()) -> Array:
+        values = jax.random.exponential(key, shape=as_sample_shape(sample_shape) + self.shape)
+        return self.project(values)
+
+    def random_tangent(
+        self,
+        key: Array,
+        p: Array,
+        *,
+        scale: float | Array = 1.0,
+        normalize: bool = False,
+    ) -> Array:
+        tangent = self.tangent_project(p, jax.random.normal(key, shape=jnp.shape(p)))
+        if normalize:
+            length = self.norm(p, tangent)[..., None]
+            tangent = jnp.where(length > self.eps, tangent / length, tangent)
+        return scale * tangent
+
+
+@dataclass(frozen=True, init=False)
+class PoincareBall(GeometryMixin):
+    """Poincaré ball model of curvature-minus-one hyperbolic space."""
+
+    size: int
+    atol: float
+    eps: float
+
+    def __init__(self, size: int, *, atol: float = 1e-6, eps: float = 1e-10):
+        size = int(size)
+        if size < 1:
+            raise ValueError("PoincareBall size must be positive.")
+        object.__setattr__(self, "size", size)
+        object.__setattr__(self, "atol", float(atol))
+        object.__setattr__(self, "eps", float(eps))
+
+    @property
+    def shape(self) -> tuple[int]:
+        return (self.size,)
+
+    @property
+    def dim(self) -> int:
+        return self.size
+
+    def belongs(self, x: Array, atol: float | None = None) -> Array:
+        tol = self.atol if atol is None else atol
+        return jnp.linalg.norm(jnp.asarray(x), axis=-1) < 1.0 + tol
+
+    def project(self, x: Array) -> Array:
+        x = jnp.asarray(x)
+        norm = jnp.linalg.norm(x, axis=-1, keepdims=True)
+        radius = 1.0 - self.eps
+        return jnp.where(norm < radius, x, radius * x / jnp.maximum(norm, self.eps))
+
+    normalize = project
+
+    def is_tangent(self, x: Array, u: Array, atol: float | None = None) -> Array:
+        del x, atol
+        return jnp.all(jnp.isfinite(jnp.asarray(u)), axis=-1)
+
+    def tangent_project(self, x: Array, u: Array) -> Array:
+        del x
+        return jnp.asarray(u)
+
+    projection = tangent_project
+    proj = tangent_project
+    to_tangent = tangent_project
+
+    def conformal_factor(self, x: Array) -> Array:
+        squared_norm = jnp.sum(jnp.asarray(x) ** 2, axis=-1)
+        return 2.0 / jnp.maximum(1.0 - squared_norm, self.eps)
+
+    def inner(self, x: Array, u: Array, v: Array) -> Array:
+        factor = self.conformal_factor(x)
+        return factor**2 * jnp.sum(jnp.asarray(u) * jnp.asarray(v), axis=-1)
+
+    def norm(self, x: Array, u: Array) -> Array:
+        return jnp.sqrt(jnp.maximum(self.inner(x, u, u), 0.0))
+
+    def mobius_add(self, x: Array, y: Array) -> Array:
+        x = jnp.asarray(x)
+        y = jnp.asarray(y)
+        x2 = jnp.sum(x * x, axis=-1, keepdims=True)
+        y2 = jnp.sum(y * y, axis=-1, keepdims=True)
+        xy = jnp.sum(x * y, axis=-1, keepdims=True)
+        numerator = (1.0 + 2.0 * xy + y2) * x + (1.0 - x2) * y
+        denominator = 1.0 + 2.0 * xy + x2 * y2
+        return numerator / jnp.maximum(denominator, self.eps)
+
+    def exp(self, x: Array, u: Array) -> Array:
+        x = self.project(x)
+        u = jnp.asarray(u)
+        euclidean_norm = jnp.linalg.norm(u, axis=-1, keepdims=True)
+        factor = self.conformal_factor(x)[..., None]
+        scale = jnp.tanh(0.5 * factor * euclidean_norm) / jnp.maximum(euclidean_norm, self.eps)
+        step = jnp.where(euclidean_norm > self.eps, scale * u, u)
+        return self.project(self.mobius_add(x, step))
+
+    def log(self, x: Array, y: Array) -> Array:
+        x = self.project(x)
+        y = self.project(y)
+        displacement = self.mobius_add(-x, y)
+        length = jnp.linalg.norm(displacement, axis=-1, keepdims=True)
+        factor = self.conformal_factor(x)[..., None]
+        scale = 2.0 * jnp.arctanh(jnp.minimum(length, 1.0 - self.eps))
+        scale = scale / jnp.maximum(factor * length, self.eps)
+        return jnp.where(length > self.eps, scale * displacement, jnp.zeros_like(displacement))
+
+    def dist(self, x: Array, y: Array) -> Array:
+        displacement = self.mobius_add(-self.project(x), self.project(y))
+        length = jnp.linalg.norm(displacement, axis=-1)
+        return 2.0 * jnp.arctanh(jnp.minimum(length, 1.0 - self.eps))
+
+    def _gyration(self, u: Array, v: Array, w: Array) -> Array:
+        u2 = jnp.sum(u * u, axis=-1, keepdims=True)
+        v2 = jnp.sum(v * v, axis=-1, keepdims=True)
+        uv = jnp.sum(u * v, axis=-1, keepdims=True)
+        uw = jnp.sum(u * w, axis=-1, keepdims=True)
+        vw = jnp.sum(v * w, axis=-1, keepdims=True)
+        a = -uw * v2 + vw + 2.0 * uv * vw
+        b = -vw * u2 - uw
+        denominator = 1.0 + 2.0 * uv + u2 * v2
+        return w + 2.0 * (a * u + b * v) / jnp.maximum(denominator, self.eps)
+
+    def transport(self, x: Array, y: Array, u: Array) -> Array:
+        x = self.project(x)
+        y = self.project(y)
+        rotated = self._gyration(y, -x, jnp.asarray(u))
+        return (self.conformal_factor(x) / self.conformal_factor(y))[..., None] * rotated
+
+    transp = transport
+
+    def egrad_to_rgrad(self, x: Array, egrad: Array) -> Array:
+        factor = self.conformal_factor(x)[..., None]
+        return jnp.asarray(egrad) / factor**2
+
+    egrad2rgrad = egrad_to_rgrad
+
+    def random_point(self, key: Array, sample_shape: Shape = ()) -> Array:
+        sample_shape = as_sample_shape(sample_shape)
+        key_direction, key_radius = jax.random.split(key)
+        direction = jax.random.normal(key_direction, shape=sample_shape + self.shape)
+        direction /= jnp.maximum(jnp.linalg.norm(direction, axis=-1, keepdims=True), self.eps)
+        radius = 0.8 * jax.random.uniform(key_radius, shape=sample_shape + (1,)) ** (
+            1.0 / self.size
+        )
+        return radius * direction
+
+    def random_tangent(
+        self,
+        key: Array,
+        x: Array,
+        *,
+        scale: float | Array = 1.0,
+        normalize: bool = False,
+    ) -> Array:
+        tangent = jax.random.normal(key, shape=jnp.shape(x))
+        if normalize:
+            length = self.norm(x, tangent)[..., None]
+            tangent = jnp.where(length > self.eps, tangent / length, tangent)
+        return scale * tangent
+
+
+__all__ = ["Oblique", "ProbabilitySimplex", "PoincareBall"]
