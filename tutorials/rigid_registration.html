@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=84122c46" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=24d0db4c" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
@@ -54,7 +54,7 @@
     <link rel="icon" href="../_static/geojax-gj-favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Geodesics on the Hyperboloid" href="hyperbolic_geodesics.html" />
+    <link rel="next" title="Comparing solvers in a curved valley" href="solver_comparison.html" />
     <link rel="prev" title="Hand Poses in Kendall Shape Space" href="kendall_hand_shapes.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -384,6 +384,7 @@
 <li class="toctree-l1"><a class="reference internal" href="spd_frechet_mean.html">Comparing Fréchet Means of SPD Matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="kendall_hand_shapes.html">Hand Poses in Kendall Shape Space</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Rigid landmark registration in SE(2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solver_comparison.html">Comparing solvers in a curved valley</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hyperbolic_geodesics.html">Geodesics on the Hyperboloid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="torus_geodesics.html">Wrapped geodesics on the flat torus</a></li>
 </ul>
@@ -485,7 +486,14 @@ determinant one at every iteration; no rotation penalty is needed.</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">geojax.optimization</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConjugateGradient</span><span class="p">,</span> <span class="n">Minimize</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-    <span class="s2">&quot;figure.dpi&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span>
+    <span class="s2">&quot;figure.dpi&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="s2">&quot;savefig.dpi&quot;</span><span class="p">:</span> <span class="mi">240</span><span class="p">,</span>
+    <span class="s2">&quot;font.size&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+    <span class="s2">&quot;axes.titlesize&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+    <span class="s2">&quot;axes.labelsize&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+    <span class="s2">&quot;xtick.labelsize&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s2">&quot;ytick.labelsize&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s2">&quot;legend.fontsize&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
     <span class="s2">&quot;axes.spines.top&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
     <span class="s2">&quot;axes.spines.right&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">})</span>
@@ -613,7 +621,7 @@ last panel reports the objective decrease.</p>
 
 
 <span class="n">landmark_panel</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">initial</span><span class="p">,</span> <span class="s2">&quot;Initial transformation&quot;</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
 <span class="n">landmark_panel</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">aligned</span><span class="p">,</span> <span class="s2">&quot;Estimated registration&quot;</span><span class="p">,</span> <span class="n">show_residuals</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="n">iterations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">history</span><span class="p">))</span>
@@ -627,7 +635,7 @@ last panel reports the objective decrease.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/9f112e5344279f0324ad56462bb97be9e601b7457f426652ac588e4e78846b94.png" src="../_images/9f112e5344279f0324ad56462bb97be9e601b7457f426652ac588e4e78846b94.png" />
+<img alt="../_images/968e9529503945dde798bd163aa7017d46f3fe126cf54d800c440f79d6d43732.png" src="../_images/968e9529503945dde798bd163aa7017d46f3fe126cf54d800c440f79d6d43732.png" />
 </div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">SpecialOrthogonal</span></code> can be used alone when translation is known or absent.
@@ -658,11 +666,11 @@ Riemannian exponential of the canonical product metric, while
       </div>
     </a>
     <a class="right-next"
-       href="hyperbolic_geodesics.html"
+       href="solver_comparison.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Geodesics on the Hyperboloid</p>
+        <p class="prev-next-title">Comparing solvers in a curved valley</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

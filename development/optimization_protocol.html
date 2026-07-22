@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=84122c46" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=24d0db4c" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
@@ -443,19 +443,21 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="optimization-protocol">
 <h1>Optimization protocol<a class="headerlink" href="#optimization-protocol" title="Link to this heading">#</a></h1>
-<p>GeoJAX optimization separates a problem description from the algorithm that
-solves it. The public entry point is</p>
+<p>GeoJAX separates four roles:</p>
+<ol class="arabic simple">
+<li><p>a geometry defines points and tangent operations,</p></li>
+<li><p>a problem defines an objective and derivative products,</p></li>
+<li><p>an optional line search globalizes a search direction, and</p></li>
+<li><p>a solver owns iteration state and stopping rules.</p></li>
+</ol>
+<p>The public entry point is</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">Minimize</span><span class="p">(</span><span class="n">M</span><span class="o">=</span><span class="n">M</span><span class="p">,</span> <span class="n">cost</span><span class="o">=</span><span class="n">cost</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="n">solver</span><span class="p">)</span>
 <span class="n">solution</span><span class="p">,</span> <span class="n">final_cost</span><span class="p">,</span> <span class="n">history</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">Minimize</span></code> owns the manifold, objective, initial point, derivative hooks, and
-random key. A solver owns algorithmic options and implements <code class="docutils literal notranslate"><span class="pre">solve(problem)</span></code>.
-This boundary lets one solver work with every geometry that supplies the
-operations it needs.</p>
-<section id="problem-contract">
-<h2>Problem contract<a class="headerlink" href="#problem-contract" title="Link to this heading">#</a></h2>
-<p>Every problem provides:</p>
+<section id="general-problem-contract">
+<h2>General problem contract<a class="headerlink" href="#general-problem-contract" title="Link to this heading">#</a></h2>
+<p>Every <code class="docutils literal notranslate"><span class="pre">Minimize</span></code> problem provides:</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Field</p></th>
@@ -464,37 +466,63 @@ operations it needs.</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">M</span></code></p></td>
-<td><p>Geometry satisfying the manifold protocol</p></td>
+<td><p>geometry satisfying the manifold protocol</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cost(x)</span></code></p></td>
-<td><p>Scalar JAX objective to minimize</p></td>
+<td><p>scalar JAX objective</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">x0</span></code></p></td>
-<td><p>Initial manifold point; projected before solving</p></td>
+<td><p>initial point, projected before solving</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">solver</span></code></p></td>
-<td><p>Class-style solver with <code class="docutils literal notranslate"><span class="pre">solve(problem)</span></code></p></td>
+<td><p>class-style object implementing <code class="docutils literal notranslate"><span class="pre">solve(problem)</span></code></p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>The optional fields are <code class="docutils literal notranslate"><span class="pre">grad</span></code>, <code class="docutils literal notranslate"><span class="pre">egrad</span></code>, <code class="docutils literal notranslate"><span class="pre">precon</span></code>, <code class="docutils literal notranslate"><span class="pre">ehess_vec</span></code>,
-<code class="docutils literal notranslate"><span class="pre">rhess_vec</span></code>, and <code class="docutils literal notranslate"><span class="pre">key</span></code>. If <code class="docutils literal notranslate"><span class="pre">x0</span></code> is omitted, <code class="docutils literal notranslate"><span class="pre">Minimize</span></code> draws one with
-<code class="docutils literal notranslate"><span class="pre">M.random_point</span></code>.</p>
-<p>For a metric <span class="math notranslate nohighlight">\(g_x\)</span>, the Riemannian gradient is defined by</p>
+<p>Optional fields are <code class="docutils literal notranslate"><span class="pre">grad</span></code>, <code class="docutils literal notranslate"><span class="pre">egrad</span></code>, <code class="docutils literal notranslate"><span class="pre">precon</span></code>, <code class="docutils literal notranslate"><span class="pre">ehess_vec</span></code>, <code class="docutils literal notranslate"><span class="pre">rhess_vec</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">key</span></code>. If <code class="docutils literal notranslate"><span class="pre">x0</span></code> is omitted, <code class="docutils literal notranslate"><span class="pre">Minimize</span></code> draws a point with <code class="docutils literal notranslate"><span class="pre">M.random_point</span></code>.</p>
+<p>For a metric <span class="math notranslate nohighlight">\(g_x\)</span>, the Riemannian gradient is characterized by</p>
 <div class="math notranslate nohighlight">
 \[
-g_x(\operatorname{grad} f(x), u) = \mathrm{D}f(x)[u]
-\qquad\text{for every }u\in T_x\mathcal{M}.
+g_x(\operatorname{grad} f(x),u)=\mathrm Df(x)[u]
+\qquad\text{for all }u\in T_x\mathcal M.
 \]</div>
-<p>GeoJAX obtains this vector in the following order:</p>
+<p>GeoJAX obtains it in this order:</p>
 <ol class="arabic simple">
-<li><p>Use the supplied Riemannian <code class="docutils literal notranslate"><span class="pre">grad(x)</span></code>.</p></li>
-<li><p>Convert a supplied ambient <code class="docutils literal notranslate"><span class="pre">egrad(x)</span></code> with <code class="docutils literal notranslate"><span class="pre">M.egrad_to_rgrad</span></code>.</p></li>
-<li><p>Differentiate <code class="docutils literal notranslate"><span class="pre">cost</span></code> with JAX and convert the ambient result.</p></li>
+<li><p>use a supplied Riemannian <code class="docutils literal notranslate"><span class="pre">grad(x)</span></code>,</p></li>
+<li><p>convert a supplied ambient <code class="docutils literal notranslate"><span class="pre">egrad(x)</span></code> with <code class="docutils literal notranslate"><span class="pre">M.egrad_to_rgrad</span></code>, or</p></li>
+<li><p>differentiate <code class="docutils literal notranslate"><span class="pre">cost</span></code> with JAX and convert the ambient result.</p></li>
 </ol>
-<p>Supplying <code class="docutils literal notranslate"><span class="pre">grad</span></code> therefore takes precedence over both <code class="docutils literal notranslate"><span class="pre">egrad</span></code> and automatic
-differentiation.</p>
+</section>
+<section id="specialized-problem-contracts">
+<h2>Specialized problem contracts<a class="headerlink" href="#specialized-problem-contracts" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">LeastSquares</span></code> defines</p>
+<div class="math notranslate nohighlight">
+\[
+f(x)=\frac12\lVert r(x)\rVert_2^2,
+\qquad
+\operatorname{grad} f(x)=J_x^*r(x),
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(J_x=\mathrm Dr(x)\)</span> and the adjoint is taken between the Euclidean
+residual metric and <span class="math notranslate nohighlight">\(g_x\)</span>. It adds:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>residual_value(x)
+residual_norm(x)
+jacobian_vec(x, u)
+adjoint_jacobian(x, z)
+normal_operator(x, u, damping=0)
+</pre></div>
+</div>
+<p>JAX supplies Jacobian-vector and vector-Jacobian products by default, so no
+dense Jacobian is formed. User callbacks may replace either product.</p>
+<p><code class="docutils literal notranslate"><span class="pre">FiniteSum</span></code> defines</p>
+<div class="math notranslate nohighlight">
+\[
+f(x)=\frac1N\sum_{i=1}^{N} f_i(x)
+\]</div>
+<p>and adds <code class="docutils literal notranslate"><span class="pre">sample_batch(key,</span> <span class="pre">batch_size)</span></code> and
+<code class="docutils literal notranslate"><span class="pre">batch_cost_and_grad(x,</span> <span class="pre">indices)</span></code>. A stochastic solver should consume those
+methods instead of assuming that samples are stored in one array.</p>
 </section>
 <section id="solver-contract">
 <h2>Solver contract<a class="headerlink" href="#solver-contract" title="Link to this heading">#</a></h2>
@@ -507,25 +535,58 @@ differentiation.</p>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">InfoEntry</span><span class="p">]]:</span> <span class="o">...</span>
 </pre></div>
 </div>
-<p>The returned point must belong to <code class="docutils literal notranslate"><span class="pre">problem.M</span></code>. The scalar is the final objective
-value as a Python <code class="docutils literal notranslate"><span class="pre">float</span></code>. The history contains one <code class="docutils literal notranslate"><span class="pre">InfoEntry</span></code> for the initial
-state and one for every completed outer iteration.</p>
-<p>All solvers expose compatible stopping fields where applicable:</p>
+<p>The returned point belongs to <code class="docutils literal notranslate"><span class="pre">problem.M</span></code>; the scalar is a Python <code class="docutils literal notranslate"><span class="pre">float</span></code>; and
+the history has one row for the initial point plus one per completed outer
+iteration. Solvers expose compatible stopping fields where meaningful:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>tolgradnorm, maxiter, maxtime, minstepsize,
 verbosity, statsfun, stopfun
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">statsfun(problem,</span> <span class="pre">x,</span> <span class="pre">entry)</span></code> may return additional values for
-<code class="docutils literal notranslate"><span class="pre">entry.extra</span></code>. <code class="docutils literal notranslate"><span class="pre">stopfun(problem,</span> <span class="pre">x,</span> <span class="pre">entry)</span></code> returns <code class="docutils literal notranslate"><span class="pre">(stop,</span> <span class="pre">reason)</span></code> and is
-evaluated after the standard stopping rules.</p>
+<p><code class="docutils literal notranslate"><span class="pre">statsfun(problem,</span> <span class="pre">x,</span> <span class="pre">entry)</span></code> returns optional values for <code class="docutils literal notranslate"><span class="pre">entry.extra</span></code>.
+<code class="docutils literal notranslate"><span class="pre">stopfun(problem,</span> <span class="pre">x,</span> <span class="pre">entry)</span></code> returns <code class="docutils literal notranslate"><span class="pre">(stop,</span> <span class="pre">reason)</span></code> after standard stopping
+rules are evaluated.</p>
 </section>
-<section id="geometry-operations-by-solver-family">
-<h2>Geometry operations by solver family<a class="headerlink" href="#geometry-operations-by-solver-family" title="Link to this heading">#</a></h2>
-<p>The exact set of required operations depends on the algorithm.</p>
+<section id="line-search-contract">
+<h2>Line-search contract<a class="headerlink" href="#line-search-contract" title="Link to this heading">#</a></h2>
+<p>A public strategy implements:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">LineSearchProtocol</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">search</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">problem</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">,</span>
+        <span class="n">direction</span><span class="p">,</span>
+        <span class="n">cost</span><span class="p">,</span>
+        <span class="n">directional_derivative</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">initial_alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LineSearchResult</span><span class="p">:</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>The result contains the accepted point, cost, optional gradient, displacement
+norm, tangent multiplier, diagnostics, and state for the next search. A solver
+must reuse <code class="docutils literal notranslate"><span class="pre">result.cost</span></code> and <code class="docutils literal notranslate"><span class="pre">result.gradient</span></code> when present rather than
+recomputing them.</p>
+<p>For a retraction <span class="math notranslate nohighlight">\(R_x\)</span> and descent direction <span class="math notranslate nohighlight">\(d\)</span>, Armijo accepts <span class="math notranslate nohighlight">\(\alpha&gt;0\)</span>
+when</p>
+<div class="math notranslate nohighlight">
+\[
+f(R_x(\alpha d))
+\leq f(x)+c_1\alpha\,g_x(\operatorname{grad}f(x),d).
+\]</div>
+<p><code class="docutils literal notranslate"><span class="pre">StrongWolfe</span></code> also checks a curvature condition by pairing the new gradient
+with the transported original direction. This is the exact curve derivative
+for geodesics with parallel transport and a standard vector-transport proxy
+for general retractions.</p>
+<p>Line searches live in <code class="docutils literal notranslate"><span class="pre">geojax.optimization.linesearch</span></code>; solvers must not embed
+private Armijo loops.</p>
+</section>
+<section id="geometry-requirements">
+<h2>Geometry requirements<a class="headerlink" href="#geometry-requirements" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Solver family</p></th>
-<th class="head"><p>Geometry operations consumed</p></th>
+<th class="head"><p>Geometry and problem operations consumed</p></th>
 </tr>
 </thead>
 <tbody>
@@ -533,85 +594,100 @@ evaluated after the standard stopping rules.</p>
 <td><p><code class="docutils literal notranslate"><span class="pre">egrad_to_rgrad</span></code>, <code class="docutils literal notranslate"><span class="pre">inner</span></code>, <code class="docutils literal notranslate"><span class="pre">norm</span></code>, <code class="docutils literal notranslate"><span class="pre">retr</span></code> or <code class="docutils literal notranslate"><span class="pre">exp</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Conjugate gradient, BB, L-BFGS</p></td>
-<td><p>First-order operations plus <code class="docutils literal notranslate"><span class="pre">transport</span></code> and tangent linear combinations</p></td>
+<td><p>first-order operations plus <code class="docutils literal notranslate"><span class="pre">transport</span></code> and tangent linear combinations</p></td>
 </tr>
-<tr class="row-even"><td><p>Trust regions</p></td>
-<td><p>First-order operations plus <code class="docutils literal notranslate"><span class="pre">rhess_vec</span></code>, preconditioning, and tangent zero/linear combinations</p></td>
+<tr class="row-even"><td><p>Newton-CG</p></td>
+<td><p>first-order operations plus <code class="docutils literal notranslate"><span class="pre">rhess_vec</span></code> and optional preconditioning</p></td>
+</tr>
+<tr class="row-odd"><td><p>Trust regions and cubic regularization</p></td>
+<td><p>Newton operations plus tangent model solves and acceptance diagnostics</p></td>
+</tr>
+<tr class="row-even"><td><p>Gauss–Newton and LM</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">LeastSquares</span></code> Jacobian, adjoint-Jacobian, and normal-operator products</p></td>
+</tr>
+<tr class="row-odd"><td><p>Stochastic gradient</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">FiniteSum</span></code> sampling and mini-batch gradient methods</p></td>
+</tr>
+<tr class="row-even"><td><p>Alternating gradient</p></td>
+<td><p>first-order operations and Product pytree leaf structure</p></td>
 </tr>
 <tr class="row-odd"><td><p>Particle swarm</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">random_point</span></code>, <code class="docutils literal notranslate"><span class="pre">random_tangent</span></code>, <code class="docutils literal notranslate"><span class="pre">log</span></code>, <code class="docutils literal notranslate"><span class="pre">retr</span></code> or <code class="docutils literal notranslate"><span class="pre">exp</span></code>, <code class="docutils literal notranslate"><span class="pre">transport</span></code>, <code class="docutils literal notranslate"><span class="pre">norm</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Nelder-Mead</p></td>
+<tr class="row-even"><td><p>Nelder–Mead</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">exp</span></code>, <code class="docutils literal notranslate"><span class="pre">log</span></code>, <code class="docutils literal notranslate"><span class="pre">dist</span></code>, and midpoint-like averaging</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>New solvers should call the shared helpers in <code class="docutils literal notranslate"><span class="pre">geojax.optimization.minimize</span></code>
-for retraction, transport, tangent arithmetic, derivative evaluation, stopping,
-and history construction. This keeps fallback behavior and PyTree handling
-consistent across algorithms.</p>
+<p>New implementations should call the helpers in
+<code class="docutils literal notranslate"><span class="pre">geojax.optimization.minimize</span></code> for retraction, transport, tangent arithmetic,
+derivative evaluation, stopping, and history construction.</p>
 </section>
-<section id="second-order-derivatives">
-<h2>Second-order derivatives<a class="headerlink" href="#second-order-derivatives" title="Link to this heading">#</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">Minimize.rhess_vec(x,</span> <span class="pre">u)</span></code> first uses a user-supplied Riemannian
-Hessian-vector product. Otherwise it differentiates the available gradient and,
-when the geometry provides <code class="docutils literal notranslate"><span class="pre">ehess_to_rhess</span></code>, performs the geometry-specific
-conversion. The final fallback tangent-projects the ambient Hessian-vector
-product.</p>
-<p>For the quadratic trust-region model,</p>
+<section id="second-order-products">
+<h2>Second-order products<a class="headerlink" href="#second-order-products" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Minimize.rhess_vec(x,</span> <span class="pre">u)</span></code> first uses a user callback. Otherwise it
+differentiates the available gradient and invokes <code class="docutils literal notranslate"><span class="pre">M.ehess_to_rhess</span></code> when the
+geometry supplies that conversion. The final fallback tangent-projects an
+ambient Hessian-vector product.</p>
+<p>Newton-CG approximately solves</p>
 <div class="math notranslate nohighlight">
 \[
-m_x(\eta)
-= f(x)
-+ g_x(\operatorname{grad}f(x),\eta)
-+ \frac{1}{2}g_x(\eta,\operatorname{Hess}f(x)[\eta]),
+\operatorname{Hess}f(x)[\eta]=-\operatorname{grad}f(x)
 \]</div>
-<p>the preferred extension point is a supplied <code class="docutils literal notranslate"><span class="pre">rhess_vec</span></code>. The tangent-projected
-fallback is useful for prototyping but is not an exact Riemannian Hessian on
-every embedded or quotient geometry.</p>
+<p>with the shared tangent conjugate-gradient routine. The routine reports
+residual convergence and non-positive curvature, and the outer solver falls
+back to a descent direction when needed.</p>
+<p>Trust regions use the quadratic model</p>
+<div class="math notranslate nohighlight">
+\[
+m_x(\eta)=f(x)
++g_x(\operatorname{grad}f(x),\eta)
++\frac12g_x(\eta,\operatorname{Hess}f(x)[\eta]),
+\]</div>
+<p>subject to a radius. Adaptive cubic regularization adds
+<span class="math notranslate nohighlight">\(\sigma\lVert\eta\rVert_x^3/3\)</span> and adapts <span class="math notranslate nohighlight">\(\sigma\)</span> using actual versus
+predicted decrease. Both methods place model diagnostics in <code class="docutils literal notranslate"><span class="pre">InfoEntry.extra</span></code>.</p>
 </section>
-<section id="pytree-states">
-<h2>PyTree states<a class="headerlink" href="#pytree-states" title="Link to this heading">#</a></h2>
-<p>Points, gradients, search directions, and Hessian-vector products may be JAX
-PyTrees. Solver implementations must use the shared tree helpers rather than
-raw array expressions:</p>
+<section id="pytree-tangent-state">
+<h2>PyTree tangent state<a class="headerlink" href="#pytree-tangent-state" title="Link to this heading">#</a></h2>
+<p>Points, gradients, search directions, momentum, and Hessian products may be
+JAX pytrees. Solver implementations use shared helpers rather than raw array
+expressions:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tree_neg</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 <span class="n">tree_lincomb</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span>
 <span class="n">tree_zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Every returned tangent must have the same tree structure as its base point.
-Product geometries additionally require each point tree to match the geometry
-tree leaf for leaf.</p>
+<p>Every tangent returned by a solver has the same tree structure as its base
+point. Product geometries additionally require points to match the factor tree
+leaf for leaf. <code class="docutils literal notranslate"><span class="pre">AlternatingGradient</span></code> addresses blocks by deterministic flattened
+leaf index but returns the original nested structure.</p>
 </section>
 <section id="iteration-records">
 <h2>Iteration records<a class="headerlink" href="#iteration-records" title="Link to this heading">#</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">InfoEntry</span></code> has the common fields</p>
+<p><code class="docutils literal notranslate"><span class="pre">InfoEntry</span></code> has common fields</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>iter, cost, gradnorm, stepsize, time,
 linesearch, beta, reason, extra
 </pre></div>
 </div>
-<p>Gradient-based solvers store the Riemannian gradient norm in <code class="docutils literal notranslate"><span class="pre">gradnorm</span></code>.
-Derivative-free methods may use <code class="docutils literal notranslate"><span class="pre">NaN</span></code> or an algorithm-specific convergence
-quantity, so downstream reporting should also inspect the solver type and
-<code class="docutils literal notranslate"><span class="pre">entry.extra</span></code>. Algorithm-specific diagnostics such as trust-region acceptance,
-boundary hits, and negative curvature belong in <code class="docutils literal notranslate"><span class="pre">extra</span></code>.</p>
+<p>Line-search counts and multipliers belong in <code class="docutils literal notranslate"><span class="pre">linesearch</span></code>. Trust ratios,
+regularization or damping values, inner iteration counts, stochastic learning
+rates, and block summaries belong in <code class="docutils literal notranslate"><span class="pre">extra</span></code>. A terminating history row always
+has a nonempty <code class="docutils literal notranslate"><span class="pre">reason</span></code>.</p>
 </section>
 <section id="extension-checklist">
 <h2>Extension checklist<a class="headerlink" href="#extension-checklist" title="Link to this heading">#</a></h2>
 <p>A new solver should:</p>
 <ol class="arabic simple">
-<li><p>Be a public class with <code class="docutils literal notranslate"><span class="pre">solve(problem)</span></code> and <code class="docutils literal notranslate"><span class="pre">requires_gradient</span></code>.</p></li>
-<li><p>Accept the shared stopping and callback options where meaningful.</p></li>
-<li><p>Use manifold retractions, transports, inner products, and norms rather than
-ambient substitutes.</p></li>
-<li><p>Use PyTree-safe tangent arithmetic.</p></li>
-<li><p>Create every history row with <code class="docutils literal notranslate"><span class="pre">make_info</span></code> and store solver-specific values in
-<code class="docutils literal notranslate"><span class="pre">InfoEntry.extra</span></code>.</p></li>
-<li><p>Return <code class="docutils literal notranslate"><span class="pre">(solution,</span> <span class="pre">final_cost,</span> <span class="pre">history)</span></code> with a nonempty stopping reason.</p></li>
-<li><p>Include a small manifold optimization test and a Product-PyTree test when the
-algorithm performs tangent arithmetic.</p></li>
+<li><p>expose a public class with <code class="docutils literal notranslate"><span class="pre">solve(problem)</span></code> and <code class="docutils literal notranslate"><span class="pre">requires_gradient</span></code>,</p></li>
+<li><p>use the most specific problem contract it needs,</p></li>
+<li><p>accept shared stopping and callback options where meaningful,</p></li>
+<li><p>use the public line-search protocol when globalizing a direction,</p></li>
+<li><p>perform PyTree-safe tangent arithmetic,</p></li>
+<li><p>construct history rows with <code class="docutils literal notranslate"><span class="pre">make_info</span></code>,</p></li>
+<li><p>return <code class="docutils literal notranslate"><span class="pre">(solution,</span> <span class="pre">final_cost,</span> <span class="pre">history)</span></code>, and</p></li>
+<li><p>include focused Euclidean, curved-manifold, and Product tests as applicable.</p></li>
 </ol>
 </section>
 </section>
@@ -663,11 +739,13 @@ algorithm performs tangent arithmetic.</p></li>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-contract">Problem contract</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#general-problem-contract">General problem contract</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#specialized-problem-contracts">Specialized problem contracts</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solver-contract">Solver contract</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#geometry-operations-by-solver-family">Geometry operations by solver family</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#second-order-derivatives">Second-order derivatives</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pytree-states">PyTree states</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#line-search-contract">Line-search contract</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#geometry-requirements">Geometry requirements</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#second-order-products">Second-order products</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pytree-tangent-state">PyTree tangent state</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#iteration-records">Iteration records</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extension-checklist">Extension checklist</a></li>
 </ul>

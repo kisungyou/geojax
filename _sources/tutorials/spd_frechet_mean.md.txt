@@ -60,6 +60,19 @@ from geojax.geometry import (
     SPDLogEuclidean,
 )
 from geojax.optimization import BarzilaiBorwein, Minimize
+
+plt.rcParams.update({
+    "figure.dpi": 200,
+    "savefig.dpi": 240,
+    "font.size": 11,
+    "axes.titlesize": 12,
+    "axes.labelsize": 11,
+    "xtick.labelsize": 10,
+    "ytick.labelsize": 10,
+    "legend.fontsize": 9,
+    "axes.spines.top": False,
+    "axes.spines.right": False,
+})
 ```
 
 ## Construct covariance observations
@@ -227,7 +240,7 @@ mean_colors = {
 for index, (matrix, color) in enumerate(zip(samples, sample_colors), start=1):
     draw_covariance(axes[0], matrix, color, label=f"$P_{index}$", linewidth=1.6)
 format_covariance_axis(axes[0], "Observed covariances")
-axes[0].legend(frameon=False, fontsize=7, ncol=2)
+axes[0].legend(frameon=False, fontsize=9, ncol=2)
 
 draw_covariance(axes[1], initial, "#475569", linewidth=3.0)
 format_covariance_axis(axes[1], "Arithmetic mean")
@@ -252,7 +265,7 @@ axes[5].set(
     ylabel="gradient norm",
 )
 axes[5].grid(alpha=0.25)
-axes[5].legend(frameon=False, fontsize=8)
+axes[5].legend(frameon=False, fontsize=9)
 
 plt.show()
 ```
@@ -272,4 +285,3 @@ respected:
 
 Changing `samples` is enough to repeat the comparison in higher dimensions;
 only the ellipse visualization is specific to $\operatorname{SPD}(2)$.
-

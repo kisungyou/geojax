@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=84122c46" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=24d0db4c" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
@@ -55,7 +55,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Wrapped geodesics on the flat torus" href="torus_geodesics.html" />
-    <link rel="prev" title="Rigid landmark registration in SE(2)" href="rigid_registration.html" />
+    <link rel="prev" title="Comparing solvers in a curved valley" href="solver_comparison.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -384,6 +384,7 @@
 <li class="toctree-l1"><a class="reference internal" href="spd_frechet_mean.html">Comparing Fréchet Means of SPD Matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="kendall_hand_shapes.html">Hand Poses in Kendall Shape Space</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rigid_registration.html">Rigid landmark registration in SE(2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solver_comparison.html">Comparing solvers in a curved valley</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Geodesics on the Hyperboloid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="torus_geodesics.html">Wrapped geodesics on the flat torus</a></li>
 </ul>
@@ -479,6 +480,19 @@ both on the hyperboloid and after projection into the Poincaré disk.</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">geojax.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hyperboloid</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+    <span class="s2">&quot;figure.dpi&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="s2">&quot;savefig.dpi&quot;</span><span class="p">:</span> <span class="mi">240</span><span class="p">,</span>
+    <span class="s2">&quot;font.size&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+    <span class="s2">&quot;axes.titlesize&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+    <span class="s2">&quot;axes.labelsize&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+    <span class="s2">&quot;xtick.labelsize&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s2">&quot;ytick.labelsize&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s2">&quot;legend.fontsize&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+    <span class="s2">&quot;axes.spines.top&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;axes.spines.right&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">})</span>
 </pre></div>
 </div>
 </div>
@@ -612,7 +626,7 @@ meet the disk boundary orthogonally.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/c20dd98bcea2e881d88e9af09197a6674452baba8a95ce180f7116bfce6f02ef.png" src="../_images/c20dd98bcea2e881d88e9af09197a6674452baba8a95ce180f7116bfce6f02ef.png" />
+<img alt="../_images/038c72d55e2131beaa37211bf3b4cae30d3b103e501a7cea1afdb2d6ab25f897.png" src="../_images/038c72d55e2131beaa37211bf3b4cae30d3b103e501a7cea1afdb2d6ab25f897.png" />
 </div>
 </div>
 <p>The curves are the same geodesics in two coordinate models. The hyperboloid
@@ -642,12 +656,12 @@ compact picture that is often easier to interpret.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="rigid_registration.html"
+       href="solver_comparison.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Rigid landmark registration in SE(2)</p>
+        <p class="prev-next-title">Comparing solvers in a curved valley</p>
       </div>
     </a>
     <a class="right-next"

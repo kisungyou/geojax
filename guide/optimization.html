@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=84122c46" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=24d0db4c" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
@@ -46,6 +46,8 @@
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=fd10adb8"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'guide/optimization';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="canonical" href="https://www.kisungyou.com/geojax/guide/optimization.html" />
@@ -446,6 +448,45 @@
 <span class="n">solution</span><span class="p">,</span> <span class="n">final_cost</span><span class="p">,</span> <span class="n">history</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>The cost is a scalar JAX function. Supply a Riemannian <code class="docutils literal notranslate"><span class="pre">grad</span></code>, an ambient
+<code class="docutils literal notranslate"><span class="pre">egrad</span></code>, or let JAX differentiate the cost and let the geometry convert the
+result.</p>
+<section id="problem-forms">
+<h2>Problem forms<a class="headerlink" href="#problem-forms" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Minimize</span></code> represents a general smooth objective</p>
+<div class="math notranslate nohighlight">
+\[
+\min_{x\in\mathcal M} f(x).
+\]</div>
+<p>For a residual map <span class="math notranslate nohighlight">\(r:\mathcal M\to\mathbb R^m\)</span>, <code class="docutils literal notranslate"><span class="pre">LeastSquares</span></code> constructs</p>
+<div class="math notranslate nohighlight">
+\[
+f(x)=\frac12\lVert r(x)\rVert_2^2
+\]</div>
+<p>and provides matrix-free products with the residual Jacobian <span class="math notranslate nohighlight">\(J_x\)</span> and its
+adjoint <span class="math notranslate nohighlight">\(J_x^*\)</span>. <code class="docutils literal notranslate"><span class="pre">GaussNewton</span></code> and <code class="docutils literal notranslate"><span class="pre">LevenbergMarquardt</span></code> consume this richer
+contract directly.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">LeastSquares</span><span class="p">(</span>
+    <span class="n">M</span><span class="o">=</span><span class="n">M</span><span class="p">,</span>
+    <span class="n">residual</span><span class="o">=</span><span class="n">residual</span><span class="p">,</span>
+    <span class="n">x0</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+    <span class="n">solver</span><span class="o">=</span><span class="n">LevenbergMarquardt</span><span class="p">(),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">FiniteSum</span></code> represents <span class="math notranslate nohighlight">\(f(x)=N^{-1}\sum_{i=1}^N f_i(x)\)</span> without requiring
+<code class="docutils literal notranslate"><span class="pre">StochasticGradient</span></code> to evaluate every term at every update.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">FiniteSum</span><span class="p">(</span>
+    <span class="n">M</span><span class="o">=</span><span class="n">M</span><span class="p">,</span>
+    <span class="n">loss</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="n">per_sample_loss</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span>
+    <span class="n">num_terms</span><span class="o">=</span><span class="n">N</span><span class="p">,</span>
+    <span class="n">x0</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+    <span class="n">solver</span><span class="o">=</span><span class="n">StochasticGradient</span><span class="p">(</span><span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">),</span>
+    <span class="n">key</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
 <section id="choosing-a-solver">
 <h2>Choosing a solver<a class="headerlink" href="#choosing-a-solver" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="table">
@@ -459,30 +500,114 @@
 <td><p>transparent baseline and debugging</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ConjugateGradient</span></code></p></td>
-<td><p>default smooth first-order solver</p></td>
+<td><p>economical default smooth first-order method</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">LBFGS</span></code></p></td>
-<td><p>larger smooth problems with useful curvature history</p></td>
+<td><p>smooth problems where a short curvature history helps</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">BarzilaiBorwein</span></code></p></td>
-<td><p>inexpensive spectral step sizes</p></td>
+<td><p>low-memory spectral step estimates</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TrustRegions</span></code></p></td>
-<td><p>problems with a trustworthy Riemannian Hessian</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">NewtonCG</span></code></p></td>
+<td><p>matrix-free Newton steps with reliable Hessian products</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">TrustRegions</span></code></p></td>
+<td><p>robust second-order steps and indefinite Hessians</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">AdaptiveRegularizationCubics</span></code></p></td>
+<td><p>second-order models globalized by a cubic term</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">GaussNewton</span></code></p></td>
+<td><p>well-conditioned nonlinear least squares</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">LevenbergMarquardt</span></code></p></td>
+<td><p>nonlinear least squares needing adaptive damping</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">StochasticGradient</span></code></p></td>
+<td><p>large finite sums and mini-batch training</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">AlternatingGradient</span></code></p></td>
+<td><p>block updates on a <code class="docutils literal notranslate"><span class="pre">Product</span></code> geometry</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ParticleSwarm</span></code></p></td>
 <td><p>derivative-free exploratory search</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">NelderMead</span></code></p></td>
-<td><p>small derivative-free problems; currently heuristic on curved spaces</p></td>
+<td><p>small derivative-free problems</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>Costs should be scalar JAX functions. You may provide a Riemannian <code class="docutils literal notranslate"><span class="pre">grad</span></code>, an
-ambient <code class="docutils literal notranslate"><span class="pre">egrad</span></code>, or let JAX differentiate the cost. For second-order work,
-provide <code class="docutils literal notranslate"><span class="pre">rhess_vec</span></code> unless the geometry documents an exact conversion.</p>
-<p>See the complete <a class="reference internal" href="../api/optimization.html"><span class="std std-doc">optimization API</span></a>.</p>
+<p>Gauss–Newton and Levenberg–Marquardt require <code class="docutils literal notranslate"><span class="pre">LeastSquares</span></code>.
+<code class="docutils literal notranslate"><span class="pre">StochasticGradient</span></code> requires <code class="docutils literal notranslate"><span class="pre">FiniteSum</span></code>, and <code class="docutils literal notranslate"><span class="pre">AlternatingGradient</span></code> requires a
+<code class="docutils literal notranslate"><span class="pre">Product</span></code> geometry. The remaining gradient solvers consume <code class="docutils literal notranslate"><span class="pre">Minimize</span></code>.</p>
+</section>
+<section id="line-searches">
+<h2>Line searches<a class="headerlink" href="#line-searches" title="Link to this heading">#</a></h2>
+<p>The gradient solvers accept a reusable strategy through <code class="docutils literal notranslate"><span class="pre">line_search</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">geojax.optimization</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConjugateGradient</span><span class="p">,</span> <span class="n">StrongWolfe</span>
+
+<span class="n">solver</span> <span class="o">=</span> <span class="n">ConjugateGradient</span><span class="p">(</span><span class="n">line_search</span><span class="o">=</span><span class="n">StrongWolfe</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Strategy</p></th>
+<th class="head"><p>Behavior</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ConstantStep</span></code></p></td>
+<td><p>fixed multiplier, useful when a stable scale is known</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">BacktrackingArmijo</span></code></p></td>
+<td><p>monotone sufficient decrease</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">AdaptiveArmijo</span></code></p></td>
+<td><p>Armijo search initialized from the previous decrease</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">StrongWolfe</span></code></p></td>
+<td><p>sufficient decrease plus a curvature condition</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">AdaptiveArmijo</span></code> is the default for first-order methods. Newton-CG and
+Gauss–Newton use its unnormalized full-step form, so a unit Newton step is
+tested first. Every strategy returns common cost/gradient evaluation counts and
+its accepted multiplier in <code class="docutils literal notranslate"><span class="pre">InfoEntry.linesearch</span></code>.</p>
+</section>
+<section id="second-order-models">
+<h2>Second-order models<a class="headerlink" href="#second-order-models" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">NewtonCG</span></code> and <code class="docutils literal notranslate"><span class="pre">TrustRegions</span></code> use <code class="docutils literal notranslate"><span class="pre">problem.rhess_vec(x,</span> <span class="pre">u)</span></code> rather than forming
+a Hessian matrix. <code class="docutils literal notranslate"><span class="pre">AdaptiveRegularizationCubics</span></code> approximately minimizes</p>
+<div class="math notranslate nohighlight">
+\[
+m_x(\eta)
+=f(x)+g_x(\operatorname{grad}f(x),\eta)
++\frac12g_x(\eta,\operatorname{Hess}f(x)[\eta])
++\frac{\sigma}{3}\lVert\eta\rVert_x^3.
+\]</div>
+<p>The regularization parameter <span class="math notranslate nohighlight">\(\sigma\)</span> is adapted from the agreement between
+predicted and actual decrease. The iteration history records acceptance,
+gain ratio, regularization, inner iterations, and curvature events in
+<code class="docutils literal notranslate"><span class="pre">InfoEntry.extra</span></code>.</p>
+<p>For second-order scientific work, supply <code class="docutils literal notranslate"><span class="pre">rhess_vec</span></code> when the geometry does
+not document an exact Hessian conversion. JAX-based fallback products are
+convenient for prototypes, but tangent projection alone does not encode every
+connection term on every manifold.</p>
+</section>
+<section id="product-blocks-and-pytrees">
+<h2>Product blocks and pytrees<a class="headerlink" href="#product-blocks-and-pytrees" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">AlternatingGradient</span></code> follows JAX’s deterministic leaf order for the geometry
+pytree. One outer iteration visits every Product factor, recomputing the full
+Riemannian gradient before each block update. The point retains its original
+dict/list/tuple nesting throughout.</p>
+<p>All other tangent-arithmetic solvers are pytree-safe as well: directions,
+gradients, transports, and Hessian-vector products have the same structure as
+the point.</p>
+<p>See the complete <a class="reference internal" href="../api/optimization.html"><span class="std std-doc">optimization API</span></a> and the executable
+<a class="reference internal" href="../tutorials/solver_comparison.html"><span class="std std-doc">solver comparison</span></a>.</p>
 </section>
 </section>
 
@@ -533,7 +658,11 @@ provide <code class="docutils literal notranslate"><span class="pre">rhess_vec</
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-forms">Problem forms</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choosing-a-solver">Choosing a solver</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#line-searches">Line searches</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#second-order-models">Second-order models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#product-blocks-and-pytrees">Product blocks and pytrees</a></li>
 </ul>
   </nav></div>
 

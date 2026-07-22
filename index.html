@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=84122c46" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=24d0db4c" />
   
   <!-- So that users can add custom icons -->
   <script defer src="_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
@@ -244,10 +244,6 @@
   
 
   
-    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
-      <span class="fa-solid fa-outdent"></span>
-    </button>
-  
 </div>
 
     </header>
@@ -261,7 +257,7 @@
         
       
       <dialog id="pst-primary-sidebar-modal"></dialog>
-      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
         
 
   
@@ -354,25 +350,6 @@
     
   </div>
   
-    <div class="sidebar-primary-items__start sidebar-primary__section">
-        <div class="sidebar-primary-item">
-<form class="bd-search d-flex align-items-center"
-      action="search.html"
-      method="get">
-  <i class="fa-solid fa-magnifying-glass"></i>
-  <input type="search"
-         class="form-control"
-         name="q"
-         placeholder="Search the docs ..."
-         aria-label="Search the docs ..."
-         autocomplete="off"
-         autocorrect="off"
-         autocapitalize="off"
-         spellcheck="false"/>
-  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-    </div>
-  
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
       <div class="sidebar-primary-item">
@@ -424,23 +401,44 @@ consume the common manifold protocol.</p>
 <span class="n">eigenvector</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
 </pre></div>
 </div>
-<section id="read-by-task">
-<h2>Read by task<a class="headerlink" href="#read-by-task" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p><strong>New to manifold optimization?</strong> Start with <a class="reference internal" href="getting_started/index.html"><span class="std std-doc">Getting started</span></a>.</p></li>
-<li><p><strong>Want a complete computation?</strong> Open the <a class="reference internal" href="tutorials/index.html"><span class="std std-doc">tutorials</span></a>; every result and figure is executed during the documentation build.</p></li>
-<li><p><strong>Need concepts and conventions?</strong> Use the <a class="reference internal" href="guide/index.html"><span class="std std-doc">user guide</span></a>.</p></li>
-<li><p><strong>Looking up a symbol?</strong> Go directly to the <a class="reference internal" href="api/index.html"><span class="std std-doc">API reference</span></a>.</p></li>
-</ul>
+<div class="landing-grid">
+  <a class="landing-card" href="getting_started/index.html">
+    <div class="landing-card-icon" aria-hidden="true">
+      <i class="fa-solid fa-rocket"></i>
+    </div>
+    <h2>Getting started</h2>
+    <p>Install GeoJAX and solve a first optimization problem on a manifold.</p>
+  </a>
+  <a class="landing-card" href="tutorials/index.html">
+    <div class="landing-card-icon" aria-hidden="true">
+      <i class="fa-solid fa-flask"></i>
+    </div>
+    <h2>Tutorials</h2>
+    <p>Work through executable mathematical examples with computed figures.</p>
+  </a>
+  <a class="landing-card" href="guide/index.html">
+    <div class="landing-card-icon" aria-hidden="true">
+      <i class="fa-solid fa-book-open"></i>
+    </div>
+    <h2>User guide</h2>
+    <p>Understand geometry conventions, representations, and solver choices.</p>
+  </a>
+  <a class="landing-card" href="api/index.html">
+    <div class="landing-card-icon" aria-hidden="true">
+      <i class="fa-solid fa-code"></i>
+    </div>
+    <h2>API reference</h2>
+    <p>Look up public geometries, optimization problems, and solver classes.</p>
+  </a>
+</div>
 <div class="note admonition">
 <p class="admonition-title">Scope</p>
-<p>GeoJAX is alpha software. Geometry and first-order optimization are the most
-mature layers; second-order methods and derivative-free solvers should be used
-with the numerical limitations documented in this site.</p>
+<p>GeoJAX is alpha software. The API favors explicit geometry and derivative
+contracts while its expanding solver set is validated on small scientific
+problems and executable tutorials.</p>
 </div>
 <div class="toctree-wrapper compound">
 </div>
-</section>
 </section>
 
 
@@ -468,24 +466,6 @@ with the numerical limitations documented in this site.</p>
             </div>
             
             
-              
-                <dialog id="pst-secondary-sidebar-modal"></dialog>
-                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-
-  <div class="sidebar-secondary-item">
-<div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> On this page
-  </div>
-  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#read-by-task">Read by task</a></li>
-</ul>
-  </nav></div>
-
-</div></div>
               
             
           </div>

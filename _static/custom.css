@@ -178,6 +178,66 @@ table.autosummary {
   margin: 0.6rem 0 0;
 }
 
+.landing-grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 2rem 0;
+}
+
+.landing-card {
+  align-items: center;
+  background: var(--geojax-panel);
+  border: 1px solid var(--geojax-rule);
+  border-radius: 6px;
+  color: var(--pst-color-text-base) !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 220px;
+  padding: 1.5rem;
+  text-align: center;
+  text-decoration: none !important;
+  transition: border-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+
+.landing-card:hover {
+  border-color: var(--pst-color-primary);
+  box-shadow: 0 7px 20px rgb(15 23 42 / 10%);
+  transform: translateY(-2px);
+}
+
+.landing-card:focus-visible {
+  outline: 3px solid var(--pst-color-primary);
+  outline-offset: 3px;
+}
+
+.landing-card-icon {
+  align-items: center;
+  color: var(--pst-color-primary);
+  display: flex;
+  font-size: 2rem;
+  height: 3.5rem;
+  justify-content: center;
+  margin-bottom: 0.7rem;
+  width: 3.5rem;
+}
+
+.bd-article .landing-card h2 {
+  border: 0;
+  font-size: 1.15rem;
+  margin: 0;
+  padding: 0;
+}
+
+.landing-card p {
+  color: var(--pst-color-text-muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  margin: 0.65rem 0 0;
+  max-width: 28rem;
+}
+
 @media (max-width: 768px) {
   .bd-sidebar-secondary,
   .secondary-toggle {
@@ -203,5 +263,13 @@ table.autosummary {
 
   .tutorial-gallery {
     grid-template-columns: 1fr;
+  }
+
+  .landing-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-card {
+    min-height: 190px;
   }
 }

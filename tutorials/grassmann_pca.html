@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=84122c46" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=24d0db4c" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
@@ -384,6 +384,7 @@
 <li class="toctree-l1"><a class="reference internal" href="spd_frechet_mean.html">Comparing Fréchet Means of SPD Matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="kendall_hand_shapes.html">Hand Poses in Kendall Shape Space</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rigid_registration.html">Rigid landmark registration in SE(2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solver_comparison.html">Comparing solvers in a curved valley</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hyperbolic_geodesics.html">Geodesics on the Hyperboloid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="torus_geodesics.html">Wrapped geodesics on the flat torus</a></li>
 </ul>
@@ -470,6 +471,19 @@ can be plotted through a three-dimensional cloud.</p>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">geojax.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grassmann</span><span class="p">,</span> <span class="n">GrassmannProjection</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">geojax.optimization</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConjugateGradient</span><span class="p">,</span> <span class="n">Minimize</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+    <span class="s2">&quot;figure.dpi&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="s2">&quot;savefig.dpi&quot;</span><span class="p">:</span> <span class="mi">240</span><span class="p">,</span>
+    <span class="s2">&quot;font.size&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+    <span class="s2">&quot;axes.titlesize&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+    <span class="s2">&quot;axes.labelsize&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+    <span class="s2">&quot;xtick.labelsize&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s2">&quot;ytick.labelsize&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s2">&quot;legend.fontsize&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+    <span class="s2">&quot;axes.spines.top&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;axes.spines.right&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">})</span>
 
 <span class="n">key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
 <span class="n">angle</span> <span class="o">=</span> <span class="mf">0.65</span>
@@ -577,7 +591,7 @@ eigenvector leaves every matrix entry unchanged.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/77ba0b07316ff5f9b0826c0164d8eeee08ae68aacd51da95959704de514bec3a.png" src="../_images/77ba0b07316ff5f9b0826c0164d8eeee08ae68aacd51da95959704de514bec3a.png" />
+<img alt="../_images/bdbb8b30e652744d3817c6463f1d3df8b192ffa1ab8e63c700ae83178afcbea7.png" src="../_images/bdbb8b30e652744d3817c6463f1d3df8b192ffa1ab8e63c700ae83178afcbea7.png" />
 </div>
 </div>
 </section>
@@ -599,7 +613,7 @@ an orientation. The direct eigensolver and GeoJAX estimate visually overlap.</p>
         <span class="n">label</span><span class="o">=</span><span class="s2">&quot;GeoJAX&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Leading one-dimensional subspace&quot;</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;$x_1$&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;$x_2$&quot;</span><span class="p">,</span> <span class="n">zlabel</span><span class="o">=</span><span class="s2">&quot;$x_3$&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_box_aspect</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">))</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
 
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="n">costs</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">row</span><span class="o">.</span><span class="n">cost</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">history</span><span class="p">])</span>
@@ -617,7 +631,7 @@ an orientation. The direct eigensolver and GeoJAX estimate visually overlap.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/aa6322e31deeaa481fe5289de84a9cecf533202e57f033a8400716f8a14e204c.png" src="../_images/aa6322e31deeaa481fe5289de84a9cecf533202e57f033a8400716f8a14e204c.png" />
+<img alt="../_images/f63fe3f8b7a94190c6d5a7583b9f201401d92a35491e5f2d24c9944fda78e8f6.png" src="../_images/f63fe3f8b7a94190c6d5a7583b9f201401d92a35491e5f2d24c9944fda78e8f6.png" />
 </div>
 </div>
 <p>The same formulation extends directly to <code class="docutils literal notranslate"><span class="pre">Grassmann(size=(n,</span> <span class="pre">k))</span></code> for a
