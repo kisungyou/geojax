@@ -11,7 +11,7 @@
 - Expanded the GitHub-facing README and strengthened source-distribution
   metadata for documentation assets.
 - Connected package, citation, README, and documentation metadata to the
-  `kisungyou/GeoJAX` repository.
+  `kisungyou/geojax` repository.
 - Expanded the SPD Fréchet-mean tutorial into a visual comparison of the
   log-Euclidean, affine-invariant, and Bures-Wasserstein geometries.
 - Added an executable Kendall-shape tutorial using the public SHREC'17 hand

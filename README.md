@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/kisungyou/GeoJAX/main/docs/_static/brand/geojax-gj-lockup-dark.png">
-    <img src="https://raw.githubusercontent.com/kisungyou/GeoJAX/main/docs/_static/brand/geojax-gj-lockup.png" alt="GeoJAX" width="280">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/kisungyou/geojax/main/docs/_static/brand/geojax-gj-lockup-dark.png">
+    <img src="https://raw.githubusercontent.com/kisungyou/geojax/main/docs/_static/brand/geojax-gj-lockup.png" alt="GeoJAX" width="280">
   </picture>
 </p>
 
@@ -90,13 +90,16 @@ The public solver set is:
 - `NelderMead`
 
 See the
-[geometry guide](https://github.com/kisungyou/GeoJAX/blob/main/docs/guide/geometry.md),
-[optimization guide](https://github.com/kisungyou/GeoJAX/blob/main/docs/guide/optimization.md),
+[geometry guide](https://www.kisungyou.com/geojax/guide/geometry.html),
+[optimization guide](https://www.kisungyou.com/geojax/guide/optimization.html),
 and
-[executable tutorials](https://github.com/kisungyou/GeoJAX/tree/main/docs/tutorials)
+[executable tutorials](https://www.kisungyou.com/geojax/tutorials/)
 for the mathematical and computational conventions.
 
 ## Documentation
+
+The documentation website is published at
+[kisungyou.com/geojax](https://www.kisungyou.com/geojax/).
 
 Install the documentation dependencies and build the complete site locally:
 
@@ -121,22 +124,22 @@ python -m twine check dist/*
 ```
 
 The
-[geometry protocol](https://github.com/kisungyou/GeoJAX/blob/main/docs/development/geometry_protocol.md)
+[geometry protocol](https://www.kisungyou.com/geojax/development/geometry_protocol.html)
 and
-[optimization protocol](https://github.com/kisungyou/GeoJAX/blob/main/docs/development/optimization_protocol.md)
+[optimization protocol](https://www.kisungyou.com/geojax/development/optimization_protocol.html)
 describe the contracts expected from new implementations. Maintainers can
 follow the
-[release checklist](https://github.com/kisungyou/GeoJAX/blob/main/RELEASING.md)
+[release checklist](https://github.com/kisungyou/geojax/blob/main/RELEASING.md)
 for manual TestPyPI and PyPI publication.
 
 ## Citation
 
 Academic users can cite the project using
-[`CITATION.cff`](https://github.com/kisungyou/GeoJAX/blob/main/CITATION.cff).
+[`CITATION.cff`](https://github.com/kisungyou/geojax/blob/main/CITATION.cff).
 Release history is recorded in
-[`CHANGELOG.md`](https://github.com/kisungyou/GeoJAX/blob/main/CHANGELOG.md).
+[`CHANGELOG.md`](https://github.com/kisungyou/geojax/blob/main/CHANGELOG.md).
 
 ## License
 
 GeoJAX is released under the
-[MIT License](https://github.com/kisungyou/GeoJAX/blob/main/LICENSE).
+[MIT License](https://github.com/kisungyou/geojax/blob/main/LICENSE).
