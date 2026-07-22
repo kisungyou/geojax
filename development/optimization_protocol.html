@@ -1,0 +1,712 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Optimization protocol &#8212; GeoJAX</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=84122c46" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../_static/documentation_options.js?v=95e61db4"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=fd10adb8"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'development/optimization_protocol';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../_static/geojax-gj-favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Documentation conventions" href="documentation.html" />
+    <link rel="prev" title="Geometry protocol" href="geometry_protocol.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/geojax-gj-mark.png" class="logo__image only-light" alt="GeoJAX home"/>
+    <img src="../_static/geojax-gj-mark-dark.png" class="logo__image only-dark pst-js-only" alt="GeoJAX home"/>
+  
+  
+    <p class="title logo__title">Geo</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Development
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/kisungyou/GeoJAX" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Development
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/kisungyou/GeoJAX" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="geometry_protocol.html">Geometry protocol</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Optimization protocol</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation.html">Documentation conventions</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Development</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Optimization protocol</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="optimization-protocol">
+<h1>Optimization protocol<a class="headerlink" href="#optimization-protocol" title="Link to this heading">#</a></h1>
+<p>GeoJAX optimization separates a problem description from the algorithm that
+solves it. The public entry point is</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">Minimize</span><span class="p">(</span><span class="n">M</span><span class="o">=</span><span class="n">M</span><span class="p">,</span> <span class="n">cost</span><span class="o">=</span><span class="n">cost</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="n">solver</span><span class="p">)</span>
+<span class="n">solution</span><span class="p">,</span> <span class="n">final_cost</span><span class="p">,</span> <span class="n">history</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Minimize</span></code> owns the manifold, objective, initial point, derivative hooks, and
+random key. A solver owns algorithmic options and implements <code class="docutils literal notranslate"><span class="pre">solve(problem)</span></code>.
+This boundary lets one solver work with every geometry that supplies the
+operations it needs.</p>
+<section id="problem-contract">
+<h2>Problem contract<a class="headerlink" href="#problem-contract" title="Link to this heading">#</a></h2>
+<p>Every problem provides:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">M</span></code></p></td>
+<td><p>Geometry satisfying the manifold protocol</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cost(x)</span></code></p></td>
+<td><p>Scalar JAX objective to minimize</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">x0</span></code></p></td>
+<td><p>Initial manifold point; projected before solving</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">solver</span></code></p></td>
+<td><p>Class-style solver with <code class="docutils literal notranslate"><span class="pre">solve(problem)</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The optional fields are <code class="docutils literal notranslate"><span class="pre">grad</span></code>, <code class="docutils literal notranslate"><span class="pre">egrad</span></code>, <code class="docutils literal notranslate"><span class="pre">precon</span></code>, <code class="docutils literal notranslate"><span class="pre">ehess_vec</span></code>,
+<code class="docutils literal notranslate"><span class="pre">rhess_vec</span></code>, and <code class="docutils literal notranslate"><span class="pre">key</span></code>. If <code class="docutils literal notranslate"><span class="pre">x0</span></code> is omitted, <code class="docutils literal notranslate"><span class="pre">Minimize</span></code> draws one with
+<code class="docutils literal notranslate"><span class="pre">M.random_point</span></code>.</p>
+<p>For a metric <span class="math notranslate nohighlight">\(g_x\)</span>, the Riemannian gradient is defined by</p>
+<div class="math notranslate nohighlight">
+\[
+g_x(\operatorname{grad} f(x), u) = \mathrm{D}f(x)[u]
+\qquad\text{for every }u\in T_x\mathcal{M}.
+\]</div>
+<p>GeoJAX obtains this vector in the following order:</p>
+<ol class="arabic simple">
+<li><p>Use the supplied Riemannian <code class="docutils literal notranslate"><span class="pre">grad(x)</span></code>.</p></li>
+<li><p>Convert a supplied ambient <code class="docutils literal notranslate"><span class="pre">egrad(x)</span></code> with <code class="docutils literal notranslate"><span class="pre">M.egrad_to_rgrad</span></code>.</p></li>
+<li><p>Differentiate <code class="docutils literal notranslate"><span class="pre">cost</span></code> with JAX and convert the ambient result.</p></li>
+</ol>
+<p>Supplying <code class="docutils literal notranslate"><span class="pre">grad</span></code> therefore takes precedence over both <code class="docutils literal notranslate"><span class="pre">egrad</span></code> and automatic
+differentiation.</p>
+</section>
+<section id="solver-contract">
+<h2>Solver contract<a class="headerlink" href="#solver-contract" title="Link to this heading">#</a></h2>
+<p>A public class-style solver follows this structural interface:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">SolverProtocol</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+    <span class="n">requires_gradient</span><span class="p">:</span> <span class="nb">bool</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">problem</span><span class="p">:</span> <span class="n">Minimize</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">InfoEntry</span><span class="p">]]:</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>The returned point must belong to <code class="docutils literal notranslate"><span class="pre">problem.M</span></code>. The scalar is the final objective
+value as a Python <code class="docutils literal notranslate"><span class="pre">float</span></code>. The history contains one <code class="docutils literal notranslate"><span class="pre">InfoEntry</span></code> for the initial
+state and one for every completed outer iteration.</p>
+<p>All solvers expose compatible stopping fields where applicable:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>tolgradnorm, maxiter, maxtime, minstepsize,
+verbosity, statsfun, stopfun
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">statsfun(problem,</span> <span class="pre">x,</span> <span class="pre">entry)</span></code> may return additional values for
+<code class="docutils literal notranslate"><span class="pre">entry.extra</span></code>. <code class="docutils literal notranslate"><span class="pre">stopfun(problem,</span> <span class="pre">x,</span> <span class="pre">entry)</span></code> returns <code class="docutils literal notranslate"><span class="pre">(stop,</span> <span class="pre">reason)</span></code> and is
+evaluated after the standard stopping rules.</p>
+</section>
+<section id="geometry-operations-by-solver-family">
+<h2>Geometry operations by solver family<a class="headerlink" href="#geometry-operations-by-solver-family" title="Link to this heading">#</a></h2>
+<p>The exact set of required operations depends on the algorithm.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Solver family</p></th>
+<th class="head"><p>Geometry operations consumed</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>First-order line search</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">egrad_to_rgrad</span></code>, <code class="docutils literal notranslate"><span class="pre">inner</span></code>, <code class="docutils literal notranslate"><span class="pre">norm</span></code>, <code class="docutils literal notranslate"><span class="pre">retr</span></code> or <code class="docutils literal notranslate"><span class="pre">exp</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Conjugate gradient, BB, L-BFGS</p></td>
+<td><p>First-order operations plus <code class="docutils literal notranslate"><span class="pre">transport</span></code> and tangent linear combinations</p></td>
+</tr>
+<tr class="row-even"><td><p>Trust regions</p></td>
+<td><p>First-order operations plus <code class="docutils literal notranslate"><span class="pre">rhess_vec</span></code>, preconditioning, and tangent zero/linear combinations</p></td>
+</tr>
+<tr class="row-odd"><td><p>Particle swarm</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">random_point</span></code>, <code class="docutils literal notranslate"><span class="pre">random_tangent</span></code>, <code class="docutils literal notranslate"><span class="pre">log</span></code>, <code class="docutils literal notranslate"><span class="pre">retr</span></code> or <code class="docutils literal notranslate"><span class="pre">exp</span></code>, <code class="docutils literal notranslate"><span class="pre">transport</span></code>, <code class="docutils literal notranslate"><span class="pre">norm</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Nelder-Mead</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">exp</span></code>, <code class="docutils literal notranslate"><span class="pre">log</span></code>, <code class="docutils literal notranslate"><span class="pre">dist</span></code>, and midpoint-like averaging</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>New solvers should call the shared helpers in <code class="docutils literal notranslate"><span class="pre">geojax.optimization.minimize</span></code>
+for retraction, transport, tangent arithmetic, derivative evaluation, stopping,
+and history construction. This keeps fallback behavior and PyTree handling
+consistent across algorithms.</p>
+</section>
+<section id="second-order-derivatives">
+<h2>Second-order derivatives<a class="headerlink" href="#second-order-derivatives" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Minimize.rhess_vec(x,</span> <span class="pre">u)</span></code> first uses a user-supplied Riemannian
+Hessian-vector product. Otherwise it differentiates the available gradient and,
+when the geometry provides <code class="docutils literal notranslate"><span class="pre">ehess_to_rhess</span></code>, performs the geometry-specific
+conversion. The final fallback tangent-projects the ambient Hessian-vector
+product.</p>
+<p>For the quadratic trust-region model,</p>
+<div class="math notranslate nohighlight">
+\[
+m_x(\eta)
+= f(x)
++ g_x(\operatorname{grad}f(x),\eta)
++ \frac{1}{2}g_x(\eta,\operatorname{Hess}f(x)[\eta]),
+\]</div>
+<p>the preferred extension point is a supplied <code class="docutils literal notranslate"><span class="pre">rhess_vec</span></code>. The tangent-projected
+fallback is useful for prototyping but is not an exact Riemannian Hessian on
+every embedded or quotient geometry.</p>
+</section>
+<section id="pytree-states">
+<h2>PyTree states<a class="headerlink" href="#pytree-states" title="Link to this heading">#</a></h2>
+<p>Points, gradients, search directions, and Hessian-vector products may be JAX
+PyTrees. Solver implementations must use the shared tree helpers rather than
+raw array expressions:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tree_neg</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+<span class="n">tree_lincomb</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span>
+<span class="n">tree_zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Every returned tangent must have the same tree structure as its base point.
+Product geometries additionally require each point tree to match the geometry
+tree leaf for leaf.</p>
+</section>
+<section id="iteration-records">
+<h2>Iteration records<a class="headerlink" href="#iteration-records" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">InfoEntry</span></code> has the common fields</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>iter, cost, gradnorm, stepsize, time,
+linesearch, beta, reason, extra
+</pre></div>
+</div>
+<p>Gradient-based solvers store the Riemannian gradient norm in <code class="docutils literal notranslate"><span class="pre">gradnorm</span></code>.
+Derivative-free methods may use <code class="docutils literal notranslate"><span class="pre">NaN</span></code> or an algorithm-specific convergence
+quantity, so downstream reporting should also inspect the solver type and
+<code class="docutils literal notranslate"><span class="pre">entry.extra</span></code>. Algorithm-specific diagnostics such as trust-region acceptance,
+boundary hits, and negative curvature belong in <code class="docutils literal notranslate"><span class="pre">extra</span></code>.</p>
+</section>
+<section id="extension-checklist">
+<h2>Extension checklist<a class="headerlink" href="#extension-checklist" title="Link to this heading">#</a></h2>
+<p>A new solver should:</p>
+<ol class="arabic simple">
+<li><p>Be a public class with <code class="docutils literal notranslate"><span class="pre">solve(problem)</span></code> and <code class="docutils literal notranslate"><span class="pre">requires_gradient</span></code>.</p></li>
+<li><p>Accept the shared stopping and callback options where meaningful.</p></li>
+<li><p>Use manifold retractions, transports, inner products, and norms rather than
+ambient substitutes.</p></li>
+<li><p>Use PyTree-safe tangent arithmetic.</p></li>
+<li><p>Create every history row with <code class="docutils literal notranslate"><span class="pre">make_info</span></code> and store solver-specific values in
+<code class="docutils literal notranslate"><span class="pre">InfoEntry.extra</span></code>.</p></li>
+<li><p>Return <code class="docutils literal notranslate"><span class="pre">(solution,</span> <span class="pre">final_cost,</span> <span class="pre">history)</span></code> with a nonempty stopping reason.</p></li>
+<li><p>Include a small manifold optimization test and a Product-PyTree test when the
+algorithm performs tangent arithmetic.</p></li>
+</ol>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="geometry_protocol.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Geometry protocol</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="documentation.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Documentation conventions</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-contract">Problem contract</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solver-contract">Solver contract</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#geometry-operations-by-solver-family">Geometry operations by solver family</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#second-order-derivatives">Second-order derivatives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pytree-states">PyTree states</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#iteration-records">Iteration records</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extension-checklist">Extension checklist</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

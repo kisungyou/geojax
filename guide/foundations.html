@@ -1,0 +1,874 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Mathematical foundations &#8212; GeoJAX</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=84122c46" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../_static/documentation_options.js?v=95e61db4"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=fd10adb8"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'guide/foundations';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../_static/geojax-gj-favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Geometry" href="geometry.html" />
+    <link rel="prev" title="User guide" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/geojax-gj-mark.png" class="logo__image only-light" alt="GeoJAX home"/>
+    <img src="../_static/geojax-gj-mark-dark.png" class="logo__image only-dark pst-js-only" alt="GeoJAX home"/>
+  
+  
+    <p class="title logo__title">Geo</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../development/index.html">
+    Development
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/kisungyou/GeoJAX" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../development/index.html">
+    Development
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/kisungyou/GeoJAX" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Mathematical foundations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="geometry.html">Geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">User guide</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Mathematical foundations</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="mathematical-foundations">
+<h1>Mathematical foundations<a class="headerlink" href="#mathematical-foundations" title="Link to this heading">#</a></h1>
+<p>GeoJAX represents a Riemannian geometry by an object that describes points,
+tangent vectors, a metric, and the maps needed to move between them. The public
+classes follow a two-level contract. <code class="docutils literal notranslate"><span class="pre">ManifoldProtocol</span></code> contains the
+retraction-based operations required by optimizers. <code class="docutils literal notranslate"><span class="pre">GeometryProtocol</span></code> extends
+it with genuine geodesic exponential, logarithm, and distance operations.
+<code class="docutils literal notranslate"><span class="pre">GeometryMixin</span></code> supplies batching and common helpers.</p>
+<p>Let <span class="math notranslate nohighlight">\(\mathcal M\)</span> be a smooth manifold. At <span class="math notranslate nohighlight">\(x\in\mathcal M\)</span>, its tangent space is
+<span class="math notranslate nohighlight">\(T_x\mathcal M\)</span> and its Riemannian metric is</p>
+<div class="math notranslate nohighlight">
+\[
+g_x(u,v)=\langle u,v\rangle_x,
+\qquad u,v\in T_x\mathcal M.
+\]</div>
+<p>The same manifold can carry more than one metric. For example, GeoJAX provides
+log-Euclidean and affine-invariant metrics on positive-definite matrices. A
+geometry object therefore specifies both the set of valid points and the
+metric-dependent operations on that set.</p>
+<section id="representation-and-dimension">
+<h2>Representation and dimension<a class="headerlink" href="#representation-and-dimension" title="Link to this heading">#</a></h2>
+<p>Three attributes describe the numerical representation.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Member</p></th>
+<th class="head"><p>Mathematical meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">size</span></code></p></td>
+<td><p>Constructor-level description of one point, such as <code class="docutils literal notranslate"><span class="pre">3</span></code> or <code class="docutils literal notranslate"><span class="pre">(5,</span> <span class="pre">2)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">shape</span></code></p></td>
+<td><p>Array shape of one unbatched point; for <code class="docutils literal notranslate"><span class="pre">Product</span></code>, a matching pytree of shapes</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dim</span></code></p></td>
+<td><p>Intrinsic dimension <span class="math notranslate nohighlight">\(\dim(\mathcal M)=\dim(T_x\mathcal M)\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The representation may use more numbers than the intrinsic dimension. A point
+on <span class="math notranslate nohighlight">\(S^{n-1}\)</span>, for example, is stored as <span class="math notranslate nohighlight">\(n\)</span> coordinates constrained by
+<span class="math notranslate nohighlight">\(x^\top x=1\)</span>, so <code class="docutils literal notranslate"><span class="pre">shape</span> <span class="pre">==</span> <span class="pre">(n,)</span></code> while <code class="docutils literal notranslate"><span class="pre">dim</span> <span class="pre">==</span> <span class="pre">n</span> <span class="pre">-</span> <span class="pre">1</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Product</span></code> is the exception to the single-array representation: its factors,
+points, and tangent vectors can be matching tuples, lists, dictionaries, or
+nested JAX pytrees.</p>
+</section>
+<section id="points-and-tangent-vectors">
+<h2>Points and tangent vectors<a class="headerlink" href="#points-and-tangent-vectors" title="Link to this heading">#</a></h2>
+<p>The validation and projection members separate ambient arrays from geometric
+objects.</p>
+<section id="belongs-x-and-project-z">
+<h3><code class="docutils literal notranslate"><span class="pre">belongs(x)</span></code> and <code class="docutils literal notranslate"><span class="pre">project(z)</span></code><a class="headerlink" href="#belongs-x-and-project-z" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">belongs(x)</span></code> tests the defining constraints of the manifold. Conceptually,</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{belongs}(x) = [x\in\mathcal M].
+\]</div>
+<p><code class="docutils literal notranslate"><span class="pre">project(z)</span></code> maps ambient data to a valid point,</p>
+<div class="math notranslate nohighlight">
+\[
+\Pi_{\mathcal M}:\mathcal E\longrightarrow\mathcal M,
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathcal E\)</span> is the numerical embedding space. It is intended for
+initialization and numerical repair. Unless the geometry explicitly says so,
+<code class="docutils literal notranslate"><span class="pre">project</span></code> should not be interpreted as the nearest-point projection for a
+particular metric.</p>
+</section>
+<section id="is-tangent-x-u-and-tangent-project-x-a">
+<h3><code class="docutils literal notranslate"><span class="pre">is_tangent(x,</span> <span class="pre">u)</span></code> and <code class="docutils literal notranslate"><span class="pre">tangent_project(x,</span> <span class="pre">a)</span></code><a class="headerlink" href="#is-tangent-x-u-and-tangent-project-x-a" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">is_tangent(x,</span> <span class="pre">u)</span></code> checks whether <span class="math notranslate nohighlight">\(u\in T_x\mathcal M\)</span>.
+<code class="docutils literal notranslate"><span class="pre">tangent_project(x,</span> <span class="pre">a)</span></code> maps an ambient vector to a tangent vector,</p>
+<div class="math notranslate nohighlight">
+\[
+\Pi_x:\mathcal E\longrightarrow T_x\mathcal M.
+\]</div>
+<p>For an embedded manifold defined as a level set
+<span class="math notranslate nohighlight">\(\mathcal M=\{x:F(x)=0\}\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+T_x\mathcal M=\ker DF_x.
+\]</div>
+<p>For quotient geometries, the returned tangent representation may instead be a
+horizontal vector in a chosen representative space. This is how <code class="docutils literal notranslate"><span class="pre">Grassmann</span></code>
+uses <span class="math notranslate nohighlight">\(n\times k\)</span> matrices while representing subspaces rather than frames.</p>
+</section>
+</section>
+<section id="metric-operations">
+<h2>Metric operations<a class="headerlink" href="#metric-operations" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">inner(x,</span> <span class="pre">u,</span> <span class="pre">v)</span></code> evaluates <span class="math notranslate nohighlight">\(g_x(u,v)\)</span>. <code class="docutils literal notranslate"><span class="pre">norm(x,</span> <span class="pre">u)</span></code> is induced by that metric:</p>
+<div class="math notranslate nohighlight">
+\[
+\lVert u\rVert_x=\sqrt{g_x(u,u)}.
+\]</div>
+<p><code class="docutils literal notranslate"><span class="pre">lincomb(x,</span> <span class="pre">a,</span> <span class="pre">u,</span> <span class="pre">b,</span> <span class="pre">v,</span> <span class="pre">...)</span></code> forms a tangent-space linear combination,</p>
+<div class="math notranslate nohighlight">
+\[
+a u+b v+\cdots\in T_x\mathcal M.
+\]</div>
+<p>The generic implementation projects the result back to <span class="math notranslate nohighlight">\(T_x\mathcal M\)</span> to
+remove numerical drift. Product geometries perform the same operation leaf by
+leaf.</p>
+</section>
+<section id="exponential-logarithm-and-distance">
+<h2>Exponential, logarithm, and distance<a class="headerlink" href="#exponential-logarithm-and-distance" title="Link to this heading">#</a></h2>
+<p>For <span class="math notranslate nohighlight">\(u\in T_x\mathcal M\)</span>, let <span class="math notranslate nohighlight">\(\gamma_u\)</span> be the geodesic satisfying</p>
+<div class="math notranslate nohighlight">
+\[
+\gamma_u(0)=x,
+\qquad
+\dot\gamma_u(0)=u.
+\]</div>
+<p>The exponential map follows that geodesic for one unit of time:</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{Exp}_x(u)=\gamma_u(1).
+\]</div>
+<p><code class="docutils literal notranslate"><span class="pre">exp(x,</span> <span class="pre">u)</span></code> evaluates this map. The logarithm is a local inverse:</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{Exp}_x(\operatorname{Log}_x(y))=y.
+\]</div>
+<p><code class="docutils literal notranslate"><span class="pre">log(x,</span> <span class="pre">y)</span></code> returns one selected shortest initial velocity when that choice is
+well defined. The corresponding geodesic distance is</p>
+<div class="math notranslate nohighlight">
+\[
+d(x,y)=\lVert\operatorname{Log}_x(y)\rVert_x.
+\]</div>
+<p>Globally, a logarithm can be nonunique or undefined at a cut locus. Antipodal
+sphere points and Grassmann subspaces with a principal angle <span class="math notranslate nohighlight">\(\pi/2\)</span> are
+important examples. A closed formula is also not available for every metric:
+the two Stiefel classes expose convergence information for their iterative
+endpoint-shooting logarithms. Class-specific behavior is documented in the
+<a class="reference internal" href="geometry.html"><span class="std std-doc">Geometry guide</span></a>.</p>
+<section id="exact-operations-and-proxies">
+<h3>Exact operations and proxies<a class="headerlink" href="#exact-operations-and-proxies" title="Link to this heading">#</a></h3>
+<p>Many useful matrix manifolds have efficient retractions but no practical
+closed geodesic formulas. GeoJAX follows the Manopt convention: optimization
+depends on <code class="docutils literal notranslate"><span class="pre">retr</span></code>, <code class="docutils literal notranslate"><span class="pre">invretr</span></code>, and <code class="docutils literal notranslate"><span class="pre">transport</span></code>, while geodesic operations are
+optional mathematically. For a coherent compositional API, retraction-only
+classes still expose <code class="docutils literal notranslate"><span class="pre">exp</span></code>, <code class="docutils literal notranslate"><span class="pre">log</span></code>, and <code class="docutils literal notranslate"><span class="pre">dist</span></code> as compatibility aliases, with
+machine-readable capability metadata:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Query</p></th>
+<th class="head"><p>Result</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">operation_kind(&quot;exp&quot;)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;exact&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;proxy&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">operation_kind(&quot;log&quot;)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;exact&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;proxy&quot;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">operation_kind(&quot;dist&quot;)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;exact&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;proxy&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">operation_kind(&quot;transport&quot;)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;parallel&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;isometric&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;vector&quot;</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>For a retraction-only class,</p>
+<div class="math notranslate nohighlight">
+\[
+\texttt{exp}(x,u)=R_x(u),
+\qquad
+\texttt{log}(x,y)=R_x^{-1}(y),
+\qquad
+\texttt{dist}(x,y)=\lVert R_x^{-1}(y)\rVert_x.
+\]</div>
+<p>The last expression is local and need not be symmetric, so it must not be
+reported as a geodesic distance. This distinction lets generic optimizers and
+product manifolds compose uniformly without overstating the available
+geometry.</p>
+</section>
+</section>
+<section id="retractions-and-means">
+<h2>Retractions and means<a class="headerlink" href="#retractions-and-means" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">retr(x,</span> <span class="pre">u,</span> <span class="pre">t)</span></code> maps a tangent step back to the manifold. A retraction
+<span class="math notranslate nohighlight">\(R_x:T_x\mathcal M\to\mathcal M\)</span> satisfies</p>
+<div class="math notranslate nohighlight">
+\[
+R_x(0)=x,
+\qquad
+DR_x(0)=\operatorname{id}_{T_x\mathcal M}.
+\]</div>
+<p>It agrees with the exponential to first order and may be cheaper to evaluate.
+The default GeoJAX implementation uses
+<span class="math notranslate nohighlight">\(R_x(tu)=\operatorname{Exp}_x(tu)\)</span>; individual geometries can override it.</p>
+<p><code class="docutils literal notranslate"><span class="pre">invretr(x,</span> <span class="pre">y)</span></code> is a selected local inverse of the retraction. It satisfies
+<span class="math notranslate nohighlight">\(R_x(R_x^{-1}(y))\approx y\)</span> near <span class="math notranslate nohighlight">\(x\)</span> and provides the displacement needed by
+some derivative-free or quasi-Newton constructions. It is not automatically a
+Riemannian logarithm.</p>
+<p><code class="docutils literal notranslate"><span class="pre">pair_mean(x,</span> <span class="pre">y)</span></code> returns the midpoint of the selected geodesic:</p>
+<div class="math notranslate nohighlight">
+\[
+m(x,y)=\operatorname{Exp}_x\!\left(\tfrac12
+\operatorname{Log}_x(y)\right).
+\]</div>
+<p>This is a two-point construction. A sample Fréchet mean instead minimizes
+<span class="math notranslate nohighlight">\(\sum_i w_i d(x,x_i)^2\)</span> and is generally an optimization problem.</p>
+</section>
+<section id="transport">
+<h2>Transport<a class="headerlink" href="#transport" title="Link to this heading">#</a></h2>
+<p>Tangent vectors at different points belong to different vector spaces.
+<code class="docutils literal notranslate"><span class="pre">transport(x,</span> <span class="pre">y,</span> <span class="pre">u)</span></code> maps</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal T_{x\to y}:T_x\mathcal M\longrightarrow T_y\mathcal M.
+\]</div>
+<p>For exact parallel transport along a geodesic, the Levi-Civita connection
+preserves the metric:</p>
+<div class="math notranslate nohighlight">
+\[
+g_y(\mathcal T_{x\to y}u,\mathcal T_{x\to y}v)=g_x(u,v).
+\]</div>
+<p>Transport is used by conjugate-gradient and quasi-Newton methods to compare
+directions constructed at successive iterates.</p>
+<p>The protocol intentionally says <em>transport</em>, not <em>parallel transport</em>. Exact
+Levi-Civita transport is available when a stable closed formula is known. An
+isometric vector transport may be used otherwise, provided the class documents
+that distinction. <code class="docutils literal notranslate"><span class="pre">SPDBuresWasserstein</span></code> follows the latter convention because
+general Bures-Wasserstein parallel transport is obtained from a differential
+equation rather than a closed endpoint formula.</p>
+</section>
+<section id="matrix-lie-groups">
+<h2>Matrix Lie groups<a class="headerlink" href="#matrix-lie-groups" title="Link to this heading">#</a></h2>
+<p>A matrix Lie group has algebraic maps in addition to its Riemannian geometry.
+For a Lie-algebra element <span class="math notranslate nohighlight">\(A\)</span>, the group exponential is the matrix exponential</p>
+<div class="math notranslate nohighlight">
+\[
+\exp_{\mathrm{grp}}(A)=e^A.
+\]</div>
+<p>This need not equal the Riemannian exponential. They coincide on
+<code class="docutils literal notranslate"><span class="pre">SpecialOrthogonal</span></code> because its metric is bi-invariant. On
+<code class="docutils literal notranslate"><span class="pre">SpecialEuclidean</span></code>, GeoJAX uses the canonical product metric on rotations and
+translations; its Riemannian geodesic has a straight translation component,
+whereas the group exponential couples angular and translational velocity.
+Accordingly, the class exposes both <code class="docutils literal notranslate"><span class="pre">exp</span></code>/<code class="docutils literal notranslate"><span class="pre">log</span></code> and
+<code class="docutils literal notranslate"><span class="pre">group_exp</span></code>/<code class="docutils literal notranslate"><span class="pre">group_log</span></code>.</p>
+</section>
+<section id="autodiff-and-riemannian-derivatives">
+<h2>Autodiff and Riemannian derivatives<a class="headerlink" href="#autodiff-and-riemannian-derivatives" title="Link to this heading">#</a></h2>
+<p>Suppose a cost <span class="math notranslate nohighlight">\(f:\mathcal M\to\mathbb R\)</span> is differentiated through its
+ambient array representation. Its Riemannian gradient is defined by</p>
+<div class="math notranslate nohighlight">
+\[
+Df(x)[u]=g_x(\operatorname{grad}f(x),u)
+\quad\text{for every }u\in T_x\mathcal M.
+\]</div>
+<p><code class="docutils literal notranslate"><span class="pre">egrad_to_rgrad(x,</span> <span class="pre">egrad)</span></code> converts the ambient Euclidean gradient into this
+metric-dual tangent vector. On an isometrically embedded manifold this is often
+an orthogonal tangent projection; for a non-Euclidean metric, additional
+metric factors are required.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ehess_to_rhess(x,</span> <span class="pre">egrad,</span> <span class="pre">ehess_vec,</span> <span class="pre">u)</span></code> converts an ambient Hessian-vector
+product into the Riemannian Hessian action</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{Hess}f(x)[u]
+=\nabla_u\operatorname{grad}f,
+\]</div>
+<p>including connection or embedding-curvature terms when a geometry supplies
+them. The mixin fallback only tangent-projects the ambient Hessian-vector
+product, so second-order solvers on curved spaces should use a geometry-specific
+conversion or a user-supplied <code class="docutils literal notranslate"><span class="pre">rhess_vec</span></code>.</p>
+</section>
+<section id="random-and-batched-operations">
+<h2>Random and batched operations<a class="headerlink" href="#random-and-batched-operations" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">random_point(key,</span> <span class="pre">sample_shape=())</span></code> returns points with shape
+<code class="docutils literal notranslate"><span class="pre">sample_shape</span> <span class="pre">+</span> <span class="pre">M.shape</span></code>. <code class="docutils literal notranslate"><span class="pre">random_tangent(key,</span> <span class="pre">x,</span> <span class="pre">scale=...)</span></code> samples an ambient
+random vector and maps it to <span class="math notranslate nohighlight">\(T_x\mathcal M\)</span> according to the geometry. These
+routines are reproducible because randomness is controlled by explicit JAX
+keys.</p>
+<p><code class="docutils literal notranslate"><span class="pre">GeometryMixin</span></code> also supplies leading-axis vectorization at a fixed base point:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\texttt{exp_batch}(x,[u_i]) &amp;= [\operatorname{Exp}_x(u_i)],\\
+\texttt{log_batch}(x,[y_i]) &amp;= [\operatorname{Log}_x(y_i)],\\
+\texttt{dist_batch}(x,[y_i]) &amp;= [d(x,y_i)].
+\end{aligned}
+\end{split}\]</div>
+<p>They are implemented with <code class="docutils literal notranslate"><span class="pre">jax.vmap</span></code>; geometry methods are therefore written
+without Python loops over sample axes.</p>
+</section>
+<section id="equivariant-embeddings">
+<h2>Equivariant embeddings<a class="headerlink" href="#equivariant-embeddings" title="Link to this heading">#</a></h2>
+<p>An embedding <span class="math notranslate nohighlight">\(j:\mathcal M\to\mathbb R^N\)</span> is equivariant when a group action on
+<span class="math notranslate nohighlight">\(\mathcal M\)</span> is carried to a compatible action in the embedding space. Its
+differential maps tangent vectors by</p>
+<div class="math notranslate nohighlight">
+\[
+dj_x:T_x\mathcal M\longrightarrow T_{j(x)}j(\mathcal M).
+\]</div>
+<p>The ambient Euclidean metric can be pulled back as</p>
+<div class="math notranslate nohighlight">
+\[
+g_x(u,v)=\langle dj_x(u),dj_x(v)\rangle_F.
+\]</div>
+<p>An embedding also supplies extrinsic operations such as chordal distance and
+projection of an ambient mean back to the manifold. <code class="docutils literal notranslate"><span class="pre">SphereExtrinsic</span></code> uses the
+identity embedding, while <code class="docutils literal notranslate"><span class="pre">GrassmannProjection</span></code> uses <span class="math notranslate nohighlight">\(j([X])=XX^\top\)</span>.</p>
+</section>
+<section id="product-manifolds">
+<h2>Product manifolds<a class="headerlink" href="#product-manifolds" title="Link to this heading">#</a></h2>
+<p>For <span class="math notranslate nohighlight">\(\mathcal M=\mathcal M_1\times\cdots\times\mathcal M_r\)</span>, tangent vectors
+split as <span class="math notranslate nohighlight">\(u=(u_1,\ldots,u_r)\)</span> and GeoJAX uses the direct-sum metric</p>
+<div class="math notranslate nohighlight">
+\[
+g_x(u,v)=\sum_{i=1}^r g_{x_i}^{(i)}(u_i,v_i).
+\]</div>
+<p>When every factor distance is exact, consequently,</p>
+<div class="math notranslate nohighlight">
+\[
+d(x,y)^2=\sum_{i=1}^r d_i(x_i,y_i)^2,
+\]</div>
+<p>and projection, exponential, logarithm, transport, gradient conversion, and
+sampling act independently on the leaves of the matching pytree. Product
+capability metadata is exact only when every factor advertises exactness.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">User guide</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="geometry.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Geometry</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#representation-and-dimension">Representation and dimension</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#points-and-tangent-vectors">Points and tangent vectors</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#belongs-x-and-project-z"><code class="docutils literal notranslate"><span class="pre">belongs(x)</span></code> and <code class="docutils literal notranslate"><span class="pre">project(z)</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#is-tangent-x-u-and-tangent-project-x-a"><code class="docutils literal notranslate"><span class="pre">is_tangent(x,</span> <span class="pre">u)</span></code> and <code class="docutils literal notranslate"><span class="pre">tangent_project(x,</span> <span class="pre">a)</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#metric-operations">Metric operations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exponential-logarithm-and-distance">Exponential, logarithm, and distance</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exact-operations-and-proxies">Exact operations and proxies</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#retractions-and-means">Retractions and means</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transport">Transport</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#matrix-lie-groups">Matrix Lie groups</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#autodiff-and-riemannian-derivatives">Autodiff and Riemannian derivatives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#random-and-batched-operations">Random and batched operations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#equivariant-embeddings">Equivariant embeddings</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#product-manifolds">Product manifolds</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

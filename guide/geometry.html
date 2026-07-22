@@ -1,0 +1,1642 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Geometry &#8212; GeoJAX</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=84122c46" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../_static/documentation_options.js?v=95e61db4"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=fd10adb8"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'guide/geometry';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../_static/geojax-gj-favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Optimization" href="optimization.html" />
+    <link rel="prev" title="Mathematical foundations" href="foundations.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/geojax-gj-mark.png" class="logo__image only-light" alt="GeoJAX home"/>
+    <img src="../_static/geojax-gj-mark-dark.png" class="logo__image only-dark pst-js-only" alt="GeoJAX home"/>
+  
+  
+    <p class="title logo__title">Geo</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../development/index.html">
+    Development
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/kisungyou/GeoJAX" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../development/index.html">
+    Development
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/kisungyou/GeoJAX" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="foundations.html">Mathematical foundations</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">User guide</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Geometry</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="geometry">
+<h1>Geometry<a class="headerlink" href="#geometry" title="Link to this heading">#</a></h1>
+<p>Geometry objects own every manifold-dependent operation. A point has shape
+<code class="docutils literal notranslate"><span class="pre">M.shape</span></code>, a tangent vector normally uses the same ambient representation, and
+leading axes may be used for batches. The formulas below state the conventions
+used by the implementation.</p>
+<section id="available-spaces">
+<h2>Available spaces<a class="headerlink" href="#available-spaces" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Geometry</p></th>
+<th class="head"><p>Point representation</p></th>
+<th class="head"><p>Metric</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Euclidean(size)</span></code></p></td>
+<td><p>vector, matrix, or tensor</p></td>
+<td><p>Frobenius</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Oblique(size=(n,m))</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(n\times m\)</span> matrix with unit columns</p></td>
+<td><p>product round metric</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ProbabilitySimplex(size=d)</span></code></p></td>
+<td><p>positive probability vector</p></td>
+<td><p>Fisher–Rao</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sphere(size=n)</span></code></p></td>
+<td><p>unit vector in <span class="math notranslate nohighlight">\(\mathbb R^n\)</span></p></td>
+<td><p>round metric</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SphereExtrinsic(size=n)</span></code></p></td>
+<td><p>unit vector in <span class="math notranslate nohighlight">\(\mathbb R^n\)</span></p></td>
+<td><p>round metric plus identity-embedding operations</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PoincareBall(size=d)</span></code></p></td>
+<td><p>vector in the open unit ball</p></td>
+<td><p>hyperbolic metric</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Grassmann(size=(n,k))</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(n\times k\)</span> orthonormal frame</p></td>
+<td><p>canonical quotient metric</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">GrassmannProjection(size=(n,k))</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(n\times k\)</span> orthonormal frame</p></td>
+<td><p>normalized projector-embedding metric</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Stiefel(size=(n,k))</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(n\times k\)</span> orthonormal frame</p></td>
+<td><p>canonical quotient metric</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">StiefelEuclidean(size=(n,k))</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(n\times k\)</span> orthonormal frame</p></td>
+<td><p>embedded Frobenius metric</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">GeneralizedStiefel(size=(n,k),</span> <span class="pre">metric=B)</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(B\)</span>-orthonormal frame</p></td>
+<td><p><span class="math notranslate nohighlight">\(B\)</span>-weighted embedded metric</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">GeneralizedGrassmann(size=(n,k),</span> <span class="pre">metric=B)</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(B\)</span>-orthonormal subspace frame</p></td>
+<td><p><span class="math notranslate nohighlight">\(B\)</span>-weighted quotient metric</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SpecialOrthogonal(size=n)</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(n\times n\)</span> rotation matrix</p></td>
+<td><p>Frobenius bi-invariant</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SpecialEuclidean(size=n)</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\((n+1)\times(n+1)\)</span> homogeneous rigid motion</p></td>
+<td><p>canonical product metric</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SPDLogEuclidean(size=(n,n))</span></code></p></td>
+<td><p>SPD matrix</p></td>
+<td><p>log-Euclidean</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SPDAffineInvariant(size=(n,n))</span></code></p></td>
+<td><p>SPD matrix</p></td>
+<td><p>affine-invariant</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SPDBuresWasserstein(size=(n,n))</span></code></p></td>
+<td><p>SPD matrix</p></td>
+<td><p>Bures-Wasserstein</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">FixedRank(size=(m,n),</span> <span class="pre">rank=k)</span></code></p></td>
+<td><p>rank-<span class="math notranslate nohighlight">\(k\)</span> matrix</p></td>
+<td><p>embedded Frobenius</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">RankKPSD(size=(n,n),</span> <span class="pre">rank=k)</span></code></p></td>
+<td><p>rank-<span class="math notranslate nohighlight">\(k\)</span> PSD matrix</p></td>
+<td><p>embedded Frobenius</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">RankKPSDBuresWasserstein(size=(n,n),</span> <span class="pre">rank=k)</span></code></p></td>
+<td><p>rank-<span class="math notranslate nohighlight">\(k\)</span> PSD matrix</p></td>
+<td><p>Bures–Wasserstein quotient</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Elliptope(size=(n,n),</span> <span class="pre">rank=k)</span></code></p></td>
+<td><p>rank-<span class="math notranslate nohighlight">\(k\)</span> correlation matrix</p></td>
+<td><p>embedded Frobenius</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Spectrahedron(size=(n,n),</span> <span class="pre">rank=k)</span></code></p></td>
+<td><p>rank-<span class="math notranslate nohighlight">\(k\)</span> unit-trace PSD matrix</p></td>
+<td><p>embedded Frobenius</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CorrelationECM(size=(n,n))</span></code></p></td>
+<td><p>correlation matrix</p></td>
+<td><p>Euclidean-Cholesky pullback</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CorrelationLEC(size=(n,n))</span></code></p></td>
+<td><p>correlation matrix</p></td>
+<td><p>log-Euclidean-Cholesky pullback</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CorrelationAffineQuotient(size=(n,n))</span></code></p></td>
+<td><p>correlation matrix</p></td>
+<td><p>affine-invariant quotient</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Hyperboloid(size=n)</span></code></p></td>
+<td><p>upper-sheet Lorentz vector</p></td>
+<td><p>hyperbolic metric</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Torus(size=d)</span></code></p></td>
+<td><p>angles in <span class="math notranslate nohighlight">\([-\pi,\pi)\)</span></p></td>
+<td><p>flat product metric</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">KendallShape(size=(m,d))</span></code></p></td>
+<td><p>centered, normalized <span class="math notranslate nohighlight">\(m\times d\)</span> landmarks</p></td>
+<td><p>spherical shape quotient</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Product(factors)</span></code></p></td>
+<td><p>matching pytree</p></td>
+<td><p>direct-sum metric</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="core-interface">
+<h2>Core interface<a class="headerlink" href="#core-interface" title="Link to this heading">#</a></h2>
+<p>Every public geometry follows the same protocol. This lets optimizers consume a
+geometry without knowing its representation.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Member</p></th>
+<th class="head"><p>Operation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">belongs(x)</span></code></p></td>
+<td><p>Test <span class="math notranslate nohighlight">\(x\in\mathcal M\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">project(z)</span></code></p></td>
+<td><p>Repair ambient data as a point of <span class="math notranslate nohighlight">\(\mathcal M\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">is_tangent(x,</span> <span class="pre">u)</span></code></p></td>
+<td><p>Test <span class="math notranslate nohighlight">\(u\in T_x\mathcal M\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tangent_project(x,</span> <span class="pre">a)</span></code></p></td>
+<td><p>Map an ambient vector to <span class="math notranslate nohighlight">\(T_x\mathcal M\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inner(x,</span> <span class="pre">u,</span> <span class="pre">v)</span></code></p></td>
+<td><p>Evaluate <span class="math notranslate nohighlight">\(g_x(u,v)\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">norm(x,</span> <span class="pre">u)</span></code></p></td>
+<td><p>Evaluate <span class="math notranslate nohighlight">\(\sqrt{g_x(u,u)}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exp(x,</span> <span class="pre">u)</span></code></p></td>
+<td><p>Evaluate <span class="math notranslate nohighlight">\(\operatorname{Exp}_x(u)\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">log(x,</span> <span class="pre">y)</span></code></p></td>
+<td><p>Evaluate a selected <span class="math notranslate nohighlight">\(\operatorname{Log}_x(y)\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dist(x,</span> <span class="pre">y)</span></code></p></td>
+<td><p>Evaluate geodesic distance <span class="math notranslate nohighlight">\(d(x,y)\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">retr(x,</span> <span class="pre">u,</span> <span class="pre">t)</span></code></p></td>
+<td><p>Retract the step <span class="math notranslate nohighlight">\(tu\)</span> from <span class="math notranslate nohighlight">\(T_x\mathcal M\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">invretr(x,</span> <span class="pre">y)</span></code></p></td>
+<td><p>Return a local inverse-retraction displacement</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">transport(x,</span> <span class="pre">y,</span> <span class="pre">u)</span></code></p></td>
+<td><p>Move <span class="math notranslate nohighlight">\(u\in T_x\mathcal M\)</span> into <span class="math notranslate nohighlight">\(T_y\mathcal M\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">egrad_to_rgrad(x,</span> <span class="pre">g)</span></code></p></td>
+<td><p>Convert an ambient gradient to <span class="math notranslate nohighlight">\(\operatorname{grad}f(x)\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">random_point(key,</span> <span class="pre">sample_shape)</span></code></p></td>
+<td><p>Generate reproducible manifold points</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">random_tangent(key,</span> <span class="pre">x)</span></code></p></td>
+<td><p>Generate reproducible tangent vectors</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The shared <code class="docutils literal notranslate"><span class="pre">exp_batch</span></code>, <code class="docutils literal notranslate"><span class="pre">log_batch</span></code>, and <code class="docutils literal notranslate"><span class="pre">dist_batch</span></code> methods apply the scalar
+operations over a leading sample axis with <code class="docutils literal notranslate"><span class="pre">jax.vmap</span></code>. See
+<a class="reference internal" href="foundations.html"><span class="std std-doc">Mathematical foundations</span></a> for the abstract definitions and the
+<a class="reference internal" href="../api/geometry.html"><span class="std std-doc">geometry API</span></a> for signatures.</p>
+<p><code class="docutils literal notranslate"><span class="pre">operation_kind(&quot;exp&quot;)</span></code>, <code class="docutils literal notranslate"><span class="pre">operation_kind(&quot;log&quot;)</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">operation_kind(&quot;dist&quot;)</span></code> report <code class="docutils literal notranslate"><span class="pre">&quot;exact&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;proxy&quot;</span></code>. A proxy class keeps
+the uniform names for composability, but evaluates <code class="docutils literal notranslate"><span class="pre">retr</span></code>, <code class="docutils literal notranslate"><span class="pre">invretr</span></code>, or the
+inverse-retraction norm. <code class="docutils literal notranslate"><span class="pre">operation_kind(&quot;transport&quot;)</span></code> similarly distinguishes
+parallel, isometric, and general vector transports.</p>
+</section>
+<section id="euclidean">
+<h2>Euclidean<a class="headerlink" href="#euclidean" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Euclidean(size)</span></code> represents a real vector space with the array shape supplied
+by <code class="docutils literal notranslate"><span class="pre">size</span></code>. For vectors, matrices, or tensors,</p>
+<div class="math notranslate nohighlight">
+\[
+T_x\mathbb R^N=\mathbb R^N,
+\qquad
+g_x(U,V)=\langle U,V\rangle_F=\sum_i U_iV_i.
+\]</div>
+<p>There are no constraints, so point and tangent projections are the identity.
+The flat operations are</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{Exp}_X(U)=X+U,
+\qquad
+\operatorname{Log}_X(Y)=Y-X,
+\qquad
+d(X,Y)=\lVert Y-X\rVert_F,
+\]</div>
+<p>and transport leaves the tangent vector unchanged.</p>
+</section>
+<section id="products-of-spheres">
+<h2>Products of spheres<a class="headerlink" href="#products-of-spheres" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Oblique(size=(n,</span> <span class="pre">m))</span></code> is the oblique manifold</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{OB}(n,m)
+=\{X\in\mathbb R^{n\times m}:\operatorname{diag}(X^\top X)=\mathbf1\}.
+\]</div>
+<p>It is represented efficiently as a product of <span class="math notranslate nohighlight">\(m\)</span> copies of <span class="math notranslate nohighlight">\(S^{n-1}\)</span>.
+Point projection normalizes each column and tangent projection is</p>
+<div class="math notranslate nohighlight">
+\[
+\Pi_X(A)=A-X\operatorname{Diag}(X^\top A).
+\]</div>
+<p>The metric is Frobenius, while <code class="docutils literal notranslate"><span class="pre">exp</span></code>, <code class="docutils literal notranslate"><span class="pre">log</span></code>, distance, and parallel transport
+apply the corresponding round-sphere formulas independently to every column.
+Its dimension is <span class="math notranslate nohighlight">\(m(n-1)\)</span>.</p>
+</section>
+<section id="probability-simplex">
+<h2>Probability simplex<a class="headerlink" href="#probability-simplex" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">ProbabilitySimplex(size=d)</span></code> is the open simplex</p>
+<div class="math notranslate nohighlight">
+\[
+\Delta^{d-1}_{+}=\{p\in\mathbb R^d:p_i&gt;0,\ \mathbf1^\top p=1\},
+\qquad
+T_p\Delta^{d-1}_{+}=\{u:\mathbf1^\top u=0\},
+\]</div>
+<p>with Fisher–Rao metric</p>
+<div class="math notranslate nohighlight">
+\[
+g_p(u,v)=\sum_{i=1}^d\frac{u_iv_i}{p_i}.
+\]</div>
+<p>The square-root map <span class="math notranslate nohighlight">\(p\mapsto2\sqrt p\)</span> identifies the simplex with the
+positive orthant of a sphere of radius two. GeoJAX uses this isometry for exact
+geodesic operations; in particular,</p>
+<div class="math notranslate nohighlight">
+\[
+d(p,q)=2\arccos\left(\sum_i\sqrt{p_iq_i}\right).
+\]</div>
+<p><code class="docutils literal notranslate"><span class="pre">retr</span></code> uses positive normalized addition for stable optimizer steps. The exact
+exponential is local to the positive orthant and reports nonfinite output if a
+step crosses that chart boundary.</p>
+</section>
+<section id="sphere">
+<h2>Sphere<a class="headerlink" href="#sphere" title="Link to this heading">#</a></h2>
+<section id="intrinsic-round-geometry">
+<h3>Intrinsic round geometry<a class="headerlink" href="#intrinsic-round-geometry" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Sphere(size=n)</span></code> is the unit sphere <span class="math notranslate nohighlight">\(S^{n-1}\)</span> embedded in <span class="math notranslate nohighlight">\(\mathbb R^n\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+S^{n-1}=\{x\in\mathbb R^n:x^\top x=1\},
+\qquad
+T_xS^{n-1}=\{u:x^\top u=0\}.
+\]</div>
+<p>The point and tangent projections are</p>
+<div class="math notranslate nohighlight">
+\[
+\Pi_{S}(z)=\frac{z}{\lVert z\rVert},
+\qquad
+\Pi_x(a)=a-(x^\top a)x,
+\]</div>
+<p>with a fixed basis vector used when <span class="math notranslate nohighlight">\(z=0\)</span>. The metric is the ambient dot
+product <span class="math notranslate nohighlight">\(g_x(u,v)=u^\top v\)</span>.</p>
+<p>For <span class="math notranslate nohighlight">\(r=\lVert u\rVert\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{Exp}_x(u)
+=\cos(r)x+\frac{\sin(r)}{r}u.
+\]</div>
+<p>For <span class="math notranslate nohighlight">\(\theta=\arccos(x^\top y)\)</span> and <span class="math notranslate nohighlight">\(y\ne -x\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{Log}_x(y)
+=\frac{\theta}{\sin\theta}\bigl(y-\cos(\theta)x\bigr),
+\qquad
+d(x,y)=\theta.
+\]</div>
+<p>Parallel transport along the unique shortest geodesic is</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal T_{x\to y}(u)
+=u-\frac{u^\top y}{1+x^\top y}(x+y).
+\]</div>
+<p>At <span class="math notranslate nohighlight">\(y=-x\)</span>, the shortest geodesic and logarithm are not unique; <code class="docutils literal notranslate"><span class="pre">log</span></code> and
+<code class="docutils literal notranslate"><span class="pre">transport</span></code> return nonfinite values rather than silently choosing a branch.</p>
+</section>
+<section id="identity-embedding">
+<h3>Identity embedding<a class="headerlink" href="#identity-embedding" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">SphereExtrinsic</span></code> uses the same points, metric, geodesics, and transport as
+<code class="docutils literal notranslate"><span class="pre">Sphere</span></code>. It additionally exposes the equivariant embedding</p>
+<div class="math notranslate nohighlight">
+\[
+j(x)=x,
+\qquad
+d_{\mathrm{chord}}(x,y)=\lVert x-y\rVert_2.
+\]</div>
+<p>Its extrinsic mean projects the ambient mean back to the sphere:</p>
+<div class="math notranslate nohighlight">
+\[
+\bar x_{\mathrm{ext}}
+=\frac{\sum_i w_i x_i}{\left\lVert\sum_i w_i x_i\right\rVert_2},
+\]</div>
+<p>provided the numerator is nonzero.</p>
+</section>
+</section>
+<section id="grassmann">
+<h2>Grassmann<a class="headerlink" href="#grassmann" title="Link to this heading">#</a></h2>
+<section id="canonical-quotient-geometry">
+<h3>Canonical quotient geometry<a class="headerlink" href="#canonical-quotient-geometry" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Grassmann(size=(n,</span> <span class="pre">k))</span></code> represents the set of <span class="math notranslate nohighlight">\(k\)</span>-dimensional subspaces of
+<span class="math notranslate nohighlight">\(\mathbb R^n\)</span>. A public point is an orthonormal frame</p>
+<div class="math notranslate nohighlight">
+\[
+X\in\mathbb R^{n\times k},
+\qquad
+X^\top X=I_k,
+\]</div>
+<p>but <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(XR\)</span> represent the same point for every <span class="math notranslate nohighlight">\(R\in O(k)\)</span>. Tangent
+vectors use the horizontal representation</p>
+<div class="math notranslate nohighlight">
+\[
+T_{[X]}\operatorname{Gr}(k,n)
+\cong\{U\in\mathbb R^{n\times k}:X^\top U=0\}.
+\]</div>
+<p>QR factorization projects an ambient matrix to an orthonormal frame, and</p>
+<div class="math notranslate nohighlight">
+\[
+\Pi_X(A)=(I-XX^\top)A,
+\qquad
+g_X(U,V)=\operatorname{tr}(U^\top V).
+\]</div>
+<p>If the compact SVD of a tangent is <span class="math notranslate nohighlight">\(U=A\Sigma B^\top\)</span>, the exponential is
+represented by</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{Exp}_X(U)
+=XB\cos(\Sigma)B^\top
++A\sin(\Sigma)B^\top
++X(I-BB^\top).
+\]</div>
+<p>To compute the logarithm, form</p>
+<div class="math notranslate nohighlight">
+\[
+M=(I-XX^\top)Y(X^\top Y)^{-1}.
+\]</div>
+<p>If <span class="math notranslate nohighlight">\(M=A\tan(\Theta)B^\top\)</span>, then</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{Log}_X(Y)=A\Theta B^\top.
+\]</div>
+<p>The singular values of <span class="math notranslate nohighlight">\(X^\top Y\)</span> are <span class="math notranslate nohighlight">\(\cos\theta_i\)</span>, where <span class="math notranslate nohighlight">\(\theta_i\)</span> are the
+principal angles, and</p>
+<div class="math notranslate nohighlight">
+\[
+d([X],[Y])=\left(\sum_{i=1}^k\theta_i^2\right)^{1/2}.
+\]</div>
+<p><code class="docutils literal notranslate"><span class="pre">transport</span></code> applies the corresponding principal-plane rotation obtained from
+the SVD of <span class="math notranslate nohighlight">\(\operatorname{Log}_X(Y)\)</span>. The logarithm requires <span class="math notranslate nohighlight">\(X^\top Y\)</span> to be
+nonsingular, so it is not defined by this chart when a principal angle equals
+<span class="math notranslate nohighlight">\(\pi/2\)</span>.</p>
+</section>
+<section id="projection-embedding">
+<h3>Projection embedding<a class="headerlink" href="#projection-embedding" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">GrassmannProjection(size=(n,</span> <span class="pre">k))</span></code> deliberately keeps the same public
+<span class="math notranslate nohighlight">\(n\times k\)</span> frame representation. Internally it uses the equivariant embedding</p>
+<div class="math notranslate nohighlight">
+\[
+j([X])=P=XX^\top,
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(P=P^\top=P^2\)</span> and <span class="math notranslate nohighlight">\(\operatorname{tr}(P)=k\)</span>. A horizontal frame tangent
+<span class="math notranslate nohighlight">\(U\)</span> is embedded as</p>
+<div class="math notranslate nohighlight">
+\[
+dj_X(U)=H=UX^\top+XU^\top.
+\]</div>
+<p>Embedded tangents are symmetric off-diagonal blocks with respect to
+<span class="math notranslate nohighlight">\(\operatorname{range}(P)\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+H=PH(I-P)+(I-P)HP.
+\]</div>
+<p>The normalized Frobenius metric satisfies</p>
+<div class="math notranslate nohighlight">
+\[
+g_P(H,K)=\tfrac12\operatorname{tr}(HK)
+=\operatorname{tr}(U^\top V),
+\]</div>
+<p>so the embedding is isometric to the canonical Grassmann geometry. For
+<span class="math notranslate nohighlight">\(\Omega=HP-PH\)</span>, the projector geodesic is</p>
+<div class="math notranslate nohighlight">
+\[
+P(t)=e^{t\Omega}Pe^{-t\Omega}.
+\]</div>
+<p>GeoJAX evaluates exponential and transport with this projector formula, then
+recovers an <span class="math notranslate nohighlight">\(n\times k\)</span> frame from the top <span class="math notranslate nohighlight">\(k\)</span> eigenvectors. Orthogonal
+Procrustes alignment chooses the representative closest to a reference frame.
+The intrinsic <code class="docutils literal notranslate"><span class="pre">dist</span></code> is still the principal-angle distance. The separate
+extrinsic distance is</p>
+<div class="math notranslate nohighlight">
+\[
+d_{\mathrm{chord}}([X],[Y])
+=\frac{\lVert XX^\top-YY^\top\rVert_F}{\sqrt2}.
+\]</div>
+</section>
+</section>
+<section id="orthonormal-frames">
+<h2>Orthonormal frames<a class="headerlink" href="#orthonormal-frames" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Stiefel(size=(n,</span> <span class="pre">k))</span></code> and <code class="docutils literal notranslate"><span class="pre">StiefelEuclidean(size=(n,</span> <span class="pre">k))</span></code> share the real
+Stiefel manifold</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{St}(n,k)
+=\{X\in\mathbb R^{n\times k}:X^\top X=I_k\},
+\]</div>
+<p>but equip it with different metrics. Unlike <code class="docutils literal notranslate"><span class="pre">Grassmann</span></code>, a Stiefel point is the
+frame itself: <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(XR\)</span> are generally different points. The tangent space is</p>
+<div class="math notranslate nohighlight">
+\[
+T_X\operatorname{St}(n,k)
+=\{U\in\mathbb R^{n\times k}:X^\top U+U^\top X=0\}.
+\]</div>
+<p>Both classes use the polar factor to project an ambient matrix <span class="math notranslate nohighlight">\(Z\)</span> to a point,
+and use the Frobenius-orthogonal tangent projection</p>
+<div class="math notranslate nohighlight">
+\[
+\Pi_X(Z)=Z-X\operatorname{sym}(X^\top Z).
+\]</div>
+<section id="canonical-quotient-metric">
+<h3>Canonical quotient metric<a class="headerlink" href="#canonical-quotient-metric" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Stiefel</span></code> is the first-class intrinsic geometry. It views
+<span class="math notranslate nohighlight">\(\operatorname{St}(n,k)\)</span> as the quotient <span class="math notranslate nohighlight">\(O(n)/O(n-k)\)</span> and uses</p>
+<div class="math notranslate nohighlight">
+\[
+g_X^{\mathrm{can}}(U,V)
+=\operatorname{tr}\!\left(U^\top
+\left(I-\tfrac12XX^\top\right)V\right).
+\]</div>
+<p>Write</p>
+<div class="math notranslate nohighlight">
+\[
+A=X^\top U,
+\qquad
+H=(I-XX^\top)U,
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(A\)</span> is skew-symmetric. The horizontal lift generator</p>
+<div class="math notranslate nohighlight">
+\[
+\Omega=HX^\top-XH^\top+XAX^\top
+\]</div>
+<p>is skew-symmetric and satisfies <span class="math notranslate nohighlight">\(\Omega X=U\)</span>. The exact canonical exponential
+implemented by GeoJAX is</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{Exp}^{\mathrm{can}}_X(U)=e^\Omega X.
+\]</div>
+<p>For an ambient Euclidean gradient <span class="math notranslate nohighlight">\(G\)</span>, the canonical Riemannian gradient is</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{grad}f(X)=G-XG^\top X.
+\]</div>
+</section>
+<section id="embedded-euclidean-metric">
+<h3>Embedded Euclidean metric<a class="headerlink" href="#embedded-euclidean-metric" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">StiefelEuclidean</span></code> uses the metric induced by the identity embedding into
+<span class="math notranslate nohighlight">\(\mathbb R^{n\times k}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+g_X^{\mathrm E}(U,V)=\operatorname{tr}(U^\top V).
+\]</div>
+<p>Its Riemannian gradient is <span class="math notranslate nohighlight">\(\Pi_X(G)\)</span>. Its geodesics are not the canonical
+geodesics. With <span class="math notranslate nohighlight">\(A=X^\top U\)</span> and <span class="math notranslate nohighlight">\(S=U^\top U\)</span>, the exact exponential is</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\operatorname{Exp}^{\mathrm E}_X(U)
+=
+\begin{bmatrix}X&amp;U\end{bmatrix}
+\exp\!\left(
+\begin{bmatrix}
+A&amp;-S\\
+I&amp;A
+\end{bmatrix}
+\right)
+\begin{bmatrix}I\\0\end{bmatrix}
+e^{-A}.
+\end{split}\]</div>
+<p>This curve satisfies the embedded geodesic equation</p>
+<div class="math notranslate nohighlight">
+\[
+\ddot X(t)+X(t)\bigl(\dot X(t)^\top\dot X(t)\bigr)=0.
+\]</div>
+<p>The two metrics agree on horizontal tangents satisfying <span class="math notranslate nohighlight">\(X^\top U=0\)</span>. On a
+vertical tangent <span class="math notranslate nohighlight">\(U=XA\)</span>, the canonical squared norm is half the Euclidean
+squared norm. For <span class="math notranslate nohighlight">\(k=1\)</span>, the vertical component is absent and both classes
+reduce to the round sphere geometry.</p>
+</section>
+<section id="logarithms-and-transport">
+<h3>Logarithms and transport<a class="headerlink" href="#logarithms-and-transport" title="Link to this heading">#</a></h3>
+<p>Neither metric has a general closed-form logarithm. <code class="docutils literal notranslate"><span class="pre">log_with_info(X,</span> <span class="pre">Y)</span></code> uses
+damped Gauss–Newton endpoint shooting to solve
+<span class="math notranslate nohighlight">\(\operatorname{Exp}_X(U)=Y\)</span> in a metric-orthonormal tangent basis. It returns
+the best tangent together with <code class="docutils literal notranslate"><span class="pre">converged</span></code>, <code class="docutils literal notranslate"><span class="pre">iterations</span></code>, <code class="docutils literal notranslate"><span class="pre">residual_norm</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">step_norm</span></code>. <code class="docutils literal notranslate"><span class="pre">log(X,</span> <span class="pre">Y)</span></code> returns nonfinite values when shooting does not meet
+its tolerance, so a failed local inverse is never silently presented as a
+geometric logarithm. <code class="docutils literal notranslate"><span class="pre">dist</span></code> is the norm of the selected converged logarithm.</p>
+<p>General Levi-Civita parallel transport for these metrics is described by a
+matrix differential equation rather than a simple endpoint formula. GeoJAX
+therefore uses an isometric group-action vector transport. Complete <span class="math notranslate nohighlight">\(X\)</span> and
+<span class="math notranslate nohighlight">\(Y\)</span> to orthogonal matrices <span class="math notranslate nohighlight">\(Q_X=[X,X_\perp]\)</span> and <span class="math notranslate nohighlight">\(Q_Y=[Y,Y_\perp]\)</span>; then</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal T_{X\to Y}(U)=Q_YQ_X^\top U.
+\]</div>
+<p>This map is tangent and preserves either metric exactly, but it is not labeled
+as Levi-Civita parallel transport. The formulas follow Edelman, Arias, and
+Smith’s <a class="reference external" href="https://math.mit.edu/~edelman/publications/geometry_of_algorithms.pdf">geometry of algorithms with orthogonality
+constraints</a>.
+Zimmermann’s work gives a dedicated iterative treatment of the <a class="reference external" href="https://arxiv.org/abs/1604.05054">canonical
+Stiefel logarithm</a>.</p>
+</section>
+<section id="generalized-orthogonality">
+<h3>Generalized orthogonality<a class="headerlink" href="#generalized-orthogonality" title="Link to this heading">#</a></h3>
+<p>Let <span class="math notranslate nohighlight">\(B\in\operatorname{SPD}(n)\)</span>. <code class="docutils literal notranslate"><span class="pre">GeneralizedStiefel</span></code> represents</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{St}_B(n,k)=\{X:X^\top B X=I_k\},
+\]</div>
+<p>with tangent constraint</p>
+<div class="math notranslate nohighlight">
+\[
+X^\top B U+U^\top B X=0
+\]</div>
+<p>and metric <span class="math notranslate nohighlight">\(g_X(U,V)=\operatorname{tr}(U^\top B V)\)</span>. The map
+<span class="math notranslate nohighlight">\(X\mapsto B^{1/2}X\)</span> is an isometry to <code class="docutils literal notranslate"><span class="pre">StiefelEuclidean</span></code>; point projection,
+exact exponential and numerical exact logarithm are pulled back through this
+map.</p>
+<p><code class="docutils literal notranslate"><span class="pre">GeneralizedGrassmann</span></code> quotients these frames by the right action of <span class="math notranslate nohighlight">\(O(k)\)</span>.
+Its horizontal tangents satisfy <span class="math notranslate nohighlight">\(X^\top B U=0\)</span>, and the same square-root
+isometry pulls its exact geodesic operations back from <code class="docutils literal notranslate"><span class="pre">Grassmann</span></code>. These
+classes are useful in generalized eigenvalue and constrained subspace
+problems, where orthogonality is defined by a mass or covariance matrix rather
+than the Euclidean inner product.</p>
+</section>
+</section>
+<section id="rotation-matrices">
+<h2>Rotation matrices<a class="headerlink" href="#rotation-matrices" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">SpecialOrthogonal(size=n)</span></code> represents</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{SO}(n)
+=\{R\in\mathbb R^{n\times n}:R^\top R=I,\ \det R=1\}.
+\]</div>
+<p>Its tangent vectors are ambient matrices <span class="math notranslate nohighlight">\(U=R\Omega\)</span> with
+<span class="math notranslate nohighlight">\(\Omega^\top=-\Omega\)</span>. Point projection uses the orientation-preserving polar
+factor, while tangent projection and the metric are</p>
+<div class="math notranslate nohighlight">
+\[
+\Pi_R(A)=R\operatorname{skew}(R^\top A),
+\qquad
+g_R(U,V)=\operatorname{tr}(U^\top V).
+\]</div>
+<p>The Frobenius metric is bi-invariant, so its Riemannian and group exponentials
+coincide:</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{Exp}_R(U)=R\exp(R^\top U),
+\qquad
+\operatorname{Log}_R(Q)=R\log(R^\top Q).
+\]</div>
+<p>If <span class="math notranslate nohighlight">\(\Omega=\log(R^\top Q)\)</span>, exact parallel transport is</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal T_{R\to Q}(U)
+=R e^{\Omega/2}(R^\top U)e^{\Omega/2}.
+\]</div>
+<p>The principal logarithm is not unique when <span class="math notranslate nohighlight">\(R^\top Q\)</span> has eigenvalue <span class="math notranslate nohighlight">\(-1\)</span>,
+which includes a relative rotation by <span class="math notranslate nohighlight">\(\pi\)</span>. <code class="docutils literal notranslate"><span class="pre">log</span></code>, <code class="docutils literal notranslate"><span class="pre">dist</span></code>, and <code class="docutils literal notranslate"><span class="pre">transport</span></code>
+return nonfinite values there instead of selecting an arbitrary rotation
+plane. Away from that cut locus, GeoJAX supplies a custom JAX derivative for
+the matrix logarithm.</p>
+</section>
+<section id="rigid-transformations">
+<h2>Rigid transformations<a class="headerlink" href="#rigid-transformations" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">SpecialEuclidean(size=n)</span></code> uses homogeneous matrices</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+G=
+\begin{bmatrix}R&amp;t\\0&amp;1\end{bmatrix}
+\in\operatorname{SE}(n),
+\qquad R\in\operatorname{SO}(n),\quad t\in\mathbb R^n.
+\end{split}\]</div>
+<p>A tangent at <span class="math notranslate nohighlight">\(G\)</span> is represented as</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+U=
+\begin{bmatrix}R\Omega&amp;u\\0&amp;0\end{bmatrix},
+\qquad \Omega^\top=-\Omega,
+\end{split}\]</div>
+<p>and GeoJAX equips the manifold with the direct-product metric</p>
+<div class="math notranslate nohighlight">
+\[
+g_G(U,V)=\operatorname{tr}((R\Omega_U)^\top R\Omega_V)+u^\top v.
+\]</div>
+<p>Therefore the Riemannian maps separate rotation and translation:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\operatorname{Exp}_{(R,t)}(R\Omega,u)&amp;=(R e^\Omega,t+u),\\
+\operatorname{Log}_{(R,t)}(Q,s)&amp;=(R\log(R^\top Q),s-t),\\
+d((R,t),(Q,s))^2&amp;=\lVert\log(R^\top Q)\rVert_F^2+\lVert s-t\rVert_2^2.
+\end{aligned}
+\end{split}\]</div>
+<p>This Riemannian exponential is generally different from the matrix-group
+exponential. If a Lie-algebra element is <span class="math notranslate nohighlight">\((\Omega,v)\)</span>, then</p>
+<div class="math notranslate nohighlight">
+\[
+\exp_{\mathrm{grp}}(\Omega,v)
+=\left(e^\Omega,J(\Omega)v\right),
+\qquad
+J(\Omega)=\int_0^1 e^{s\Omega}\,ds.
+\]</div>
+<p>Use <code class="docutils literal notranslate"><span class="pre">exp</span></code> and <code class="docutils literal notranslate"><span class="pre">log</span></code> for manifold optimization and distances. Use
+<code class="docutils literal notranslate"><span class="pre">group_exp</span></code>, <code class="docutils literal notranslate"><span class="pre">group_log</span></code>, <code class="docutils literal notranslate"><span class="pre">compose</span></code>, <code class="docutils literal notranslate"><span class="pre">inverse</span></code>, and <code class="docutils literal notranslate"><span class="pre">apply</span></code> for group actions
+and rigid-body kinematics.</p>
+</section>
+<section id="symmetric-positive-definite-matrices">
+<h2>Symmetric positive-definite matrices<a class="headerlink" href="#symmetric-positive-definite-matrices" title="Link to this heading">#</a></h2>
+<p>Both SPD geometries use</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{SPD}(n)
+=\{P\in\mathbb R^{n\times n}:P=P^\top,\ P\succ0\},
+\qquad
+T_P\operatorname{SPD}(n)=\operatorname{Sym}(n).
+\]</div>
+<p><code class="docutils literal notranslate"><span class="pre">project</span></code> symmetrizes an input, eigendecomposes it, and clips eigenvalues below
+the configured positive threshold. Tangent projection is symmetrization.</p>
+<section id="log-euclidean-metric">
+<h3>Log-Euclidean metric<a class="headerlink" href="#log-euclidean-metric" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">SPDLogEuclidean</span></code> treats <span class="math notranslate nohighlight">\(\phi(P)=\log P\)</span> as an isometry from SPD matrices to
+symmetric matrices. With <span class="math notranslate nohighlight">\(D\log_P[U]\)</span> denoting the Fréchet derivative,</p>
+<div class="math notranslate nohighlight">
+\[
+g_P(U,V)
+=\left\langle D\log_P[U],D\log_P[V]\right\rangle_F.
+\]</div>
+<p>The geometry is Euclidean in log coordinates:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\operatorname{Exp}_P(U)
+&amp;=\exp\!\left(\log P+D\log_P[U]\right),\\
+\operatorname{Log}_P(Q)
+&amp;=D\exp_{\log P}[\log Q-\log P],\\
+d(P,Q)&amp;=\lVert\log Q-\log P\rVert_F,\\
+\mathcal T_{P\to Q}(U)
+&amp;=D\exp_{\log Q}\!\left[D\log_P[U]\right].
+\end{aligned}
+\end{split}\]</div>
+<p>The spectral Fréchet derivatives used here remain valid when <span class="math notranslate nohighlight">\(P\)</span> and <span class="math notranslate nohighlight">\(U\)</span> do
+not commute.</p>
+</section>
+<section id="affine-invariant-metric">
+<h3>Affine-invariant metric<a class="headerlink" href="#affine-invariant-metric" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">SPDAffineInvariant</span></code> uses</p>
+<div class="math notranslate nohighlight">
+\[
+g_P(U,V)=\operatorname{tr}(P^{-1}UP^{-1}V).
+\]</div>
+<p>Its principal operations are</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\operatorname{Exp}_P(U)
+&amp;=P^{1/2}\exp(P^{-1/2}UP^{-1/2})P^{1/2},\\
+\operatorname{Log}_P(Q)
+&amp;=P^{1/2}\log(P^{-1/2}QP^{-1/2})P^{1/2},\\
+d(P,Q)
+&amp;=\left\lVert\log(P^{-1/2}QP^{-1/2})\right\rVert_F.
+\end{aligned}
+\end{split}\]</div>
+<p>Writing</p>
+<div class="math notranslate nohighlight">
+\[
+E=P^{1/2}(P^{-1/2}QP^{-1/2})^{1/2}P^{-1/2},
+\]</div>
+<p>parallel transport is the congruence action</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal T_{P\to Q}(U)=EUE^\top.
+\]</div>
+<p>These operations become ill-conditioned near the positive-semidefinite
+boundary because inverse square roots and matrix logarithms amplify small
+eigenvalues.</p>
+</section>
+<section id="bures-wasserstein-metric">
+<h3>Bures-Wasserstein metric<a class="headerlink" href="#bures-wasserstein-metric" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">SPDBuresWasserstein</span></code> is the covariance part of the quadratic Wasserstein
+geometry of Gaussian distributions. Let <span class="math notranslate nohighlight">\(\mathcal L_P(A)=PA+AP\)</span> and denote its
+inverse Sylvester solution by <span class="math notranslate nohighlight">\(\mathcal L_P^{-1}\)</span>. The metric is</p>
+<div class="math notranslate nohighlight">
+\[
+g_P(U,V)=\frac12\operatorname{tr}
+\left(\mathcal L_P^{-1}(U)V\right).
+\]</div>
+<p>Equivalently, if <span class="math notranslate nohighlight">\(P=Z\operatorname{diag}(d_i)Z^\top\)</span> and
+<span class="math notranslate nohighlight">\(\widetilde U=Z^\top UZ\)</span>, then</p>
+<div class="math notranslate nohighlight">
+\[
+g_P(U,V)=\frac12\sum_{i,j}
+\frac{\widetilde U_{ij}\widetilde V_{ij}}{d_i+d_j}.
+\]</div>
+<p>The optimal map carrying a zero-mean Gaussian covariance <span class="math notranslate nohighlight">\(P\)</span> to <span class="math notranslate nohighlight">\(Q\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[
+T_{P\to Q}=P^{-1/2}
+\left(P^{1/2}QP^{1/2}\right)^{1/2}P^{-1/2}.
+\]</div>
+<p>It gives</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\operatorname{Log}_P(Q)
+&amp;=(T_{P\to Q}-I)P+P(T_{P\to Q}-I),\\
+d(P,Q)^2
+&amp;=\operatorname{tr}P+\operatorname{tr}Q
+-2\operatorname{tr}\left(P^{1/2}QP^{1/2}\right)^{1/2}.
+\end{aligned}
+\end{split}\]</div>
+<p>For <span class="math notranslate nohighlight">\(A=\mathcal L_P^{-1}(U)\)</span>, the local exponential is</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{Exp}_P(U)=P+U+APA=(I+A)P(I+A).
+\]</div>
+<p>It remains in the smooth SPD chart while <span class="math notranslate nohighlight">\(I+A\)</span> is nonsingular on the selected
+positive branch. General Levi-Civita parallel transport has no comparable
+closed endpoint expression. GeoJAX’s <code class="docutils literal notranslate"><span class="pre">transport</span></code> instead maps through fixed
+Euclidean metric coordinates; it is linear and exactly norm-preserving, making
+it a valid vector transport for optimization, but it is not labeled as
+parallel transport.</p>
+<p>The square-root and inverse-square-root routines use custom Fréchet
+derivatives. This avoids undefined eigenvector derivatives when an SPD matrix
+has repeated eigenvalues, such as an isotropic covariance.</p>
+<p>The formulas follow Bhatia, Jain, and Lim’s
+<a class="reference external" href="https://arxiv.org/abs/1712.01504">Bures-Wasserstein analysis</a> and Malagò,
+Montrucchio, and Pistone’s
+<a class="reference external" href="https://arxiv.org/abs/1801.09269">Gaussian Riemannian geometry</a>.</p>
+</section>
+</section>
+<section id="fixed-rank-matrices">
+<h2>Fixed-rank matrices<a class="headerlink" href="#fixed-rank-matrices" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">FixedRank(size=(m,</span> <span class="pre">n),</span> <span class="pre">rank=k)</span></code> represents the smooth stratum</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal M_k=\{X\in\mathbb R^{m\times n}:\operatorname{rank}(X)=k\}
+\]</div>
+<p>with the embedded Frobenius metric. If <span class="math notranslate nohighlight">\(X=U\Sigma V^\top\)</span> is a compact SVD,
+the tangent projector is</p>
+<div class="math notranslate nohighlight">
+\[
+\Pi_X(Z)=UU^\top Z+ZVV^\top-UU^\top ZVV^\top.
+\]</div>
+<p><code class="docutils literal notranslate"><span class="pre">retr</span></code> truncates the SVD of <span class="math notranslate nohighlight">\(X+\eta\)</span> to rank <span class="math notranslate nohighlight">\(k\)</span>, and <code class="docutils literal notranslate"><span class="pre">invretr</span></code> projects
+<span class="math notranslate nohighlight">\(Y-X\)</span> into <span class="math notranslate nohighlight">\(T_X\mathcal M_k\)</span>. Closed exact geodesic maps are not provided:
+<code class="docutils literal notranslate"><span class="pre">exp</span></code>, <code class="docutils literal notranslate"><span class="pre">log</span></code>, and <code class="docutils literal notranslate"><span class="pre">dist</span></code> are explicitly labeled retraction proxies.</p>
+</section>
+<section id="fixed-rank-positive-semidefinite-matrices">
+<h2>Fixed-rank positive semidefinite matrices<a class="headerlink" href="#fixed-rank-positive-semidefinite-matrices" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">RankKPSD(size=(n,</span> <span class="pre">n),</span> <span class="pre">rank=k)</span></code> represents</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal S^+_{n,k}=\{P=P^\top\succeq0:\operatorname{rank}(P)=k\}.
+\]</div>
+<p>For the support projector <span class="math notranslate nohighlight">\(S\)</span>, its embedded tangent projection is</p>
+<div class="math notranslate nohighlight">
+\[
+\Pi_P(Z)=SZ+ZS-SZS
+\]</div>
+<p>after symmetrizing <span class="math notranslate nohighlight">\(Z\)</span>. Eigenvalue truncation supplies the retraction, so its
+geodesic-named compatibility operations are proxies.</p>
+<p><code class="docutils literal notranslate"><span class="pre">RankKPSDBuresWasserstein</span></code> uses the quotient factorization <span class="math notranslate nohighlight">\(P=YY^\top\)</span>, with
+<span class="math notranslate nohighlight">\(Y\)</span> identified with <span class="math notranslate nohighlight">\(YO\)</span> for <span class="math notranslate nohighlight">\(O\in O(k)\)</span>. Procrustes alignment of factors
+gives the exact quotient distance</p>
+<div class="math notranslate nohighlight">
+\[
+d(P,Q)=\min_{O\in O(k)}\lVert Y_P-Y_QO\rVert_F.
+\]</div>
+<p>On the fixed-rank stratum the metric uses the pseudoinverse Sylvester solution
+<span class="math notranslate nohighlight">\(L\)</span> of <span class="math notranslate nohighlight">\(PL+LP=U\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+g_P(U,V)=\tfrac12\operatorname{tr}(LV).
+\]</div>
+<p>The class provides exact local Bures exponential, logarithm, and distance.
+Its endpoint projection transport is a general vector transport, not parallel
+transport.</p>
+<section id="elliptope-and-spectrahedron">
+<h3>Elliptope and spectrahedron<a class="headerlink" href="#elliptope-and-spectrahedron" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Elliptope(size=(n,</span> <span class="pre">n),</span> <span class="pre">rank=k)</span></code> is the rank-<span class="math notranslate nohighlight">\(k\)</span> correlation stratum</p>
+<div class="math notranslate nohighlight">
+\[
+\{P\in\mathcal S^+_{n,k}:\operatorname{diag}(P)=\mathbf1\}.
+\]</div>
+<p>It uses unit-row factors <span class="math notranslate nohighlight">\(P=YY^\top\)</span>; its tangent projection combines the
+rank-<span class="math notranslate nohighlight">\(k\)</span> tangent constraint with <span class="math notranslate nohighlight">\(\operatorname{diag}(U)=0\)</span>.
+<code class="docutils literal notranslate"><span class="pre">Spectrahedron(size=(n,</span> <span class="pre">n),</span> <span class="pre">rank=k)</span></code> instead imposes
+<span class="math notranslate nohighlight">\(\operatorname{tr}(P)=1\)</span> and <span class="math notranslate nohighlight">\(\operatorname{tr}(U)=0\)</span>. Both use the embedded
+Frobenius metric, spectral retractions, and labeled retraction proxies.</p>
+</section>
+</section>
+<section id="full-rank-correlation-matrices">
+<h2>Full-rank correlation matrices<a class="headerlink" href="#full-rank-correlation-matrices" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">CorrelationECM</span></code> and <code class="docutils literal notranslate"><span class="pre">CorrelationLEC</span></code> share the manifold</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{Cor}^+(n)
+=\{C\in\operatorname{SPD}(n):\operatorname{diag}(C)=\mathbf1\},
+\]</div>
+<p>with tangent space</p>
+<div class="math notranslate nohighlight">
+\[
+T_C\operatorname{Cor}^+(n)
+=\{U\in\operatorname{Sym}(n):\operatorname{diag}(U)=0\}.
+\]</div>
+<p>Point projection first repairs positive definiteness and then rescales by the
+diagonal. Tangent projection symmetrizes and zeros the diagonal.</p>
+<p>Let <span class="math notranslate nohighlight">\(A=\operatorname{chol}(C)\)</span> and define the unit lower-triangular Cholesky
+map</p>
+<div class="math notranslate nohighlight">
+\[
+\Theta(C)=\operatorname{diag}(A)^{-1}A.
+\]</div>
+<p>Its inverse normalizes <span class="math notranslate nohighlight">\(LL^\top\)</span> to unit diagonal:</p>
+<div class="math notranslate nohighlight">
+\[
+\Theta^{-1}(L)
+=D^{-1/2}LL^\top D^{-1/2},
+\qquad
+D=\operatorname{diag}(LL^\top).
+\]</div>
+<section id="euclidean-cholesky-metric">
+<h3>Euclidean-Cholesky metric<a class="headerlink" href="#euclidean-cholesky-metric" title="Link to this heading">#</a></h3>
+<p>For <code class="docutils literal notranslate"><span class="pre">CorrelationECM</span></code>, the flat chart is the strictly lower-triangular part</p>
+<div class="math notranslate nohighlight">
+\[
+\phi_{\mathrm E}(C)=\operatorname{sl}(\Theta(C)).
+\]</div>
+</section>
+<section id="log-euclidean-cholesky-metric">
+<h3>Log-Euclidean-Cholesky metric<a class="headerlink" href="#log-euclidean-cholesky-metric" title="Link to this heading">#</a></h3>
+<p>For <code class="docutils literal notranslate"><span class="pre">CorrelationLEC</span></code>, the flat chart is</p>
+<div class="math notranslate nohighlight">
+\[
+\phi_{\mathrm L}(C)=\log(\Theta(C)),
+\]</div>
+<p>which is strictly lower triangular because <span class="math notranslate nohighlight">\(\Theta(C)\)</span> is unit lower
+triangular.</p>
+<p>For either chart <span class="math notranslate nohighlight">\(\phi\)</span>, the implementation uses the Euclidean pullback:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+g_C(U,V)
+&amp;=\langle D\phi_C[U],D\phi_C[V]\rangle_F,\\
+\operatorname{Exp}_C(U)
+&amp;=\phi^{-1}(\phi(C)+D\phi_C[U]),\\
+\operatorname{Log}_C(B)
+&amp;=D(\phi^{-1})_{\phi(C)}[\phi(B)-\phi(C)],\\
+d(C,B)&amp;=\lVert\phi(B)-\phi(C)\rVert_F,\\
+\mathcal T_{C\to B}(U)
+&amp;=D(\phi^{-1})_{\phi(B)}[D\phi_C[U]].
+\end{aligned}
+\end{split}\]</div>
+<p>Thus ECM and LEC have the same point set and tangent representation but
+different geodesics and distances.</p>
+</section>
+<section id="affine-invariant-quotient-metric">
+<h3>Affine-invariant quotient metric<a class="headerlink" href="#affine-invariant-quotient-metric" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">CorrelationAffineQuotient</span></code> regards correlation matrices as the quotient of
+SPD matrices under positive diagonal congruence. For
+<span class="math notranslate nohighlight">\(U\in T_C\operatorname{Cor}^+(n)\)</span>, its horizontal SPD lift has the form</p>
+<div class="math notranslate nohighlight">
+\[
+U^\mathcal H=U+DC+CD,
+\]</div>
+<p>where diagonal <span class="math notranslate nohighlight">\(D\)</span> is chosen so that
+<span class="math notranslate nohighlight">\(\operatorname{diag}(C^{-1}U^\mathcal H)=0\)</span>. The quotient metric is</p>
+<div class="math notranslate nohighlight">
+\[
+g_C(U,V)
+=\operatorname{tr}\left(C^{-1}U^\mathcal H C^{-1}V^\mathcal H\right).
+\]</div>
+<p>GeoJAX evaluates this metric and its metric-dual gradient exactly. It uses a
+normalized-addition retraction and projected difference inverse retraction;
+accordingly <code class="docutils literal notranslate"><span class="pre">exp</span></code>, <code class="docutils literal notranslate"><span class="pre">log</span></code>, and <code class="docutils literal notranslate"><span class="pre">dist</span></code> are documented proxies rather than claims
+of closed affine-quotient geodesics.</p>
+</section>
+</section>
+<section id="poincare-ball">
+<h2>Poincare ball<a class="headerlink" href="#poincare-ball" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">PoincareBall(size=d)</span></code> is the open unit ball
+<span class="math notranslate nohighlight">\(\mathbb B^d=\{x:\lVert x\rVert&lt;1\}\)</span> with conformal metric</p>
+<div class="math notranslate nohighlight">
+\[
+g_x(u,v)=\lambda_x^2 u^\top v,
+\qquad
+\lambda_x=\frac{2}{1-\lVert x\rVert^2}.
+\]</div>
+<p>Using Mobius addition <span class="math notranslate nohighlight">\(\oplus\)</span>, its exact operations include</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\operatorname{Exp}_x(u)
+&amp;=x\oplus\left(
+\tanh\left(\frac{\lambda_x\lVert u\rVert}{2}\right)
+\frac{u}{\lVert u\rVert}\right),\\
+d(x,y)&amp;=2\operatorname{artanh}\lVert(-x)\oplus y\rVert.
+\end{aligned}
+\end{split}\]</div>
+<p>Parallel transport uses the associated gyration and conformal-factor ratio.
+<code class="docutils literal notranslate"><span class="pre">PoincareBall(size=d)</span></code> and <code class="docutils literal notranslate"><span class="pre">Hyperboloid(size=d+1)</span></code> describe the same
+constant-curvature <span class="math notranslate nohighlight">\(-1\)</span> geometry in different coordinates.</p>
+</section>
+<section id="hyperboloid">
+<h2>Hyperboloid<a class="headerlink" href="#hyperboloid" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Hyperboloid(size=n)</span></code> represents <span class="math notranslate nohighlight">\(\mathbb H^{n-1}\)</span> in ambient
+<span class="math notranslate nohighlight">\(\mathbb R^n\)</span>. For the Lorentz product</p>
+<div class="math notranslate nohighlight">
+\[
+\langle x,y\rangle_L=-x_0y_0+\sum_{i=1}^{n-1}x_i y_i,
+\]</div>
+<p>the upper sheet and its tangent space are</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbb H^{n-1}
+=\{x:\langle x,x\rangle_L=-1,\ x_0&gt;0\},
+\qquad
+T_x\mathbb H^{n-1}=\{u:\langle x,u\rangle_L=0\}.
+\]</div>
+<p>The point projection retains the spatial coordinates and sets
+<span class="math notranslate nohighlight">\(x_0=\sqrt{1+\lVert x_{1:}\rVert^2}\)</span>. Tangent projection and the metric are</p>
+<div class="math notranslate nohighlight">
+\[
+\Pi_x(a)=a+\langle x,a\rangle_Lx,
+\qquad
+g_x(u,v)=\langle u,v\rangle_L.
+\]</div>
+<p>For <span class="math notranslate nohighlight">\(r=\lVert u\rVert_x\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{Exp}_x(u)
+=\cosh(r)x+\frac{\sinh(r)}{r}u.
+\]</div>
+<p>Writing <span class="math notranslate nohighlight">\(\alpha=-\langle x,y\rangle_L\ge1\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{Log}_x(y)
+=\frac{\operatorname{arcosh}(\alpha)}{\sqrt{\alpha^2-1}}
+(y-\alpha x),
+\qquad
+d(x,y)=\operatorname{arcosh}(\alpha).
+\]</div>
+<p>Parallel transport along the unique geodesic is</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal T_{x\to y}(u)
+=u+\frac{\langle y,u\rangle_L}{1-\langle x,y\rangle_L}(x+y).
+\]</div>
+</section>
+<section id="torus">
+<h2>Torus<a class="headerlink" href="#torus" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Torus(size=d)</span></code> is the flat product of <span class="math notranslate nohighlight">\(d\)</span> circles,</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbb T^d=(\mathbb R/2\pi\mathbb Z)^d,
+\]</div>
+<p>represented by its unique angle vector in <span class="math notranslate nohighlight">\([-\pi,\pi)^d\)</span>. Define</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{wrap}(z)=(z+\pi)\bmod 2\pi-\pi
+\]</div>
+<p>componentwise. Then <span class="math notranslate nohighlight">\(T_x\mathbb T^d\cong\mathbb R^d\)</span>,
+<span class="math notranslate nohighlight">\(g_x(u,v)=u^\top v\)</span>, and</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\operatorname{Exp}_x(u)&amp;=\operatorname{wrap}(x+u),\\
+\operatorname{Log}_x(y)&amp;=\operatorname{wrap}(y-x),\\
+d(x,y)&amp;=\lVert\operatorname{wrap}(y-x)\rVert_2.
+\end{aligned}
+\end{split}\]</div>
+<p>Transport is the identity in angular coordinates. If a component differs by
+exactly <span class="math notranslate nohighlight">\(\pi\)</span>, two shortest directions exist and the half-open interval chooses
+one branch.</p>
+</section>
+<section id="kendall-shape-space">
+<h2>Kendall shape space<a class="headerlink" href="#kendall-shape-space" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">KendallShape(size=(m,</span> <span class="pre">d))</span></code> represents configurations of <span class="math notranslate nohighlight">\(m\)</span> labeled landmarks
+in <span class="math notranslate nohighlight">\(\mathbb R^d\)</span> after removing translation, scale, and orientation. Public
+points are regular pre-shapes</p>
+<div class="math notranslate nohighlight">
+\[
+X\in\mathbb R^{m\times d},
+\qquad
+\mathbf1^\top X=0,
+\qquad
+\lVert X\rVert_F=1,
+\]</div>
+<p>with <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(XR\)</span>, <span class="math notranslate nohighlight">\(R\in SO(d)\)</span>, representing the same shape. Horizontal
+tangents satisfy</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf1^\top U=0,
+\qquad
+\langle X,U\rangle_F=0,
+\qquad
+X^\top U=U^\top X.
+\]</div>
+<p>Orientation-preserving Procrustes alignment selects the closest representative
+of a second shape. Exact quotient exponential, logarithm, and distance then
+follow the great-circle formulas on the pre-shape sphere. The endpoint
+projection transport is a general vector transport. Singular pre-shapes are
+excluded because they are not part of the regular quotient stratum.</p>
+</section>
+<section id="product">
+<h2>Product<a class="headerlink" href="#product" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Product(factors)</span></code> accepts any pytree of geometries. Points and tangent vectors
+must have exactly the same tree structure. If leaves are indexed by <span class="math notranslate nohighlight">\(i\)</span>, then</p>
+<div class="math notranslate nohighlight">
+\[
+g_x(u,v)=\sum_i g_{x_i}^{(i)}(u_i,v_i),
+\qquad
+d(x,y)=\left(\sum_i d_i(x_i,y_i)^2\right)^{1/2}.
+\]</div>
+<p>Point projection, tangent projection, exponential, logarithm, retraction,
+transport, pair means, gradient conversion, and Hessian conversion act leaf by
+leaf. Random generation splits the supplied JAX key once per factor while
+preserving the pytree structure.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="foundations.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Mathematical foundations</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="optimization.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Optimization</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#available-spaces">Available spaces</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#core-interface">Core interface</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#euclidean">Euclidean</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#products-of-spheres">Products of spheres</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probability-simplex">Probability simplex</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sphere">Sphere</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intrinsic-round-geometry">Intrinsic round geometry</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#identity-embedding">Identity embedding</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grassmann">Grassmann</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#canonical-quotient-geometry">Canonical quotient geometry</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#projection-embedding">Projection embedding</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#orthonormal-frames">Orthonormal frames</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#canonical-quotient-metric">Canonical quotient metric</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#embedded-euclidean-metric">Embedded Euclidean metric</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#logarithms-and-transport">Logarithms and transport</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generalized-orthogonality">Generalized orthogonality</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rotation-matrices">Rotation matrices</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rigid-transformations">Rigid transformations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#symmetric-positive-definite-matrices">Symmetric positive-definite matrices</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#log-euclidean-metric">Log-Euclidean metric</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#affine-invariant-metric">Affine-invariant metric</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bures-wasserstein-metric">Bures-Wasserstein metric</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-rank-matrices">Fixed-rank matrices</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-rank-positive-semidefinite-matrices">Fixed-rank positive semidefinite matrices</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elliptope-and-spectrahedron">Elliptope and spectrahedron</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#full-rank-correlation-matrices">Full-rank correlation matrices</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#euclidean-cholesky-metric">Euclidean-Cholesky metric</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#log-euclidean-cholesky-metric">Log-Euclidean-Cholesky metric</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#affine-invariant-quotient-metric">Affine-invariant quotient metric</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#poincare-ball">Poincare ball</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hyperboloid">Hyperboloid</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#torus">Torus</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kendall-shape-space">Kendall shape space</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#product">Product</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
