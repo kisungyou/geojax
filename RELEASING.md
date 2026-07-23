@@ -24,17 +24,22 @@ accounts and tokens.
    numbers cannot be replaced.
 2. Update the version in `pyproject.toml`, `docs/conf.py`, `CITATION.cff`, the
    README release note, and `CHANGELOG.md`.
-3. Run the checks and build into a clean, version-specific directory:
+3. Install every supported Python interpreter and run the complete local
+   release gate:
 
    ```bash
-   ruff check geojax tests
-   pytest
-   MPLCONFIGDIR=/tmp/geojax-matplotlib make website
-   python -m build --outdir dist/0.1.0
-   python -m twine check dist/0.1.0/*
+   python -m pip install -e ".[dev,docs,examples]"
+   make release-check
    ```
 
-Replace `0.1.0` with the release being prepared.
+   This runs the Python/JAX/precision matrix, executes and audits every
+   tutorial, removes transient notebooks, builds clean wheel and source
+   archives, and applies Twine's strict metadata check. Missing Python
+   interpreters fail the matrix rather than being skipped.
+4. Keep the generated artifacts in `dist/0.1.1` for both TestPyPI and PyPI.
+   If building manually instead, remove `build`, `dist`, and `geojax.egg-info`
+   first so setuptools cannot retain modules deleted or renamed since an older
+   build.
 
 ## TestPyPI
 
@@ -43,7 +48,7 @@ Upload the exact artifacts intended for production:
 ```bash
 python -m twine upload \
   --repository-url https://test.pypi.org/legacy/ \
-  dist/0.1.0/*
+  dist/0.1.1/*
 ```
 
 At Twine's prompts, enter `__token__` and the TestPyPI token. Verify the wheel
@@ -54,7 +59,7 @@ TestPyPI does not mirror all runtime dependencies.
 python -m venv /tmp/geojax-test-release
 /tmp/geojax-test-release/bin/python -m pip install --upgrade pip
 /tmp/geojax-test-release/bin/python -m pip install \
-  --index-url https://test.pypi.org/simple/ --no-deps geojax==0.1.0
+  --index-url https://test.pypi.org/simple/ --no-deps geojax==0.1.1
 cd /tmp
 /tmp/geojax-test-release/bin/python -c \
   'from importlib.metadata import version; import geojax; print(version("geojax"))'
@@ -65,10 +70,10 @@ cd /tmp
 After the TestPyPI artifact has been checked, upload the unchanged files:
 
 ```bash
-python -m twine upload dist/0.1.0/*
+python -m twine upload dist/0.1.1/*
 ```
 
 Verify installation from PyPI, then commit the release metadata, create the
-signed or annotated tag `v0.1.0`, and push the commit and tag to GitHub. Create
+signed or annotated tag `v0.1.1`, and push the commit and tag to GitHub. Create
 a GitHub release from the changelog entry. After the first production upload,
 replace the account-scoped token with a token restricted to the GeoJAX project.

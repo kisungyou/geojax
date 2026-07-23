@@ -6,14 +6,18 @@ import jax.numpy as jnp
 from geojax.geometry import Oblique, PoincareBall, ProbabilitySimplex
 
 
-def test_oblique_is_a_product_of_column_spheres():
+def test_oblique_is_a_product_of_column_spheres(dtype_atol):
     M = Oblique(size=(4, 3))
     X = M.random_point(jax.random.key(0), sample_shape=(5,))
     U = M.random_tangent(jax.random.key(1), X)
 
     assert M.dim == 9
-    assert jnp.allclose(jnp.linalg.norm(X, axis=-2), 1.0, atol=1e-10)
-    assert jnp.allclose(jnp.sum(X * U, axis=-2), 0.0, atol=1e-10)
+    assert jnp.allclose(
+        jnp.linalg.norm(X, axis=-2), 1.0, atol=max(1e-10, dtype_atol)
+    )
+    assert jnp.allclose(
+        jnp.sum(X * U, axis=-2), 0.0, atol=max(1e-10, dtype_atol)
+    )
     assert jnp.all(M.belongs(X))
     assert jnp.all(M.is_tangent(X, U))
 

@@ -8,7 +8,7 @@ from geojax.geometry import GeneralizedGrassmann, GeneralizedStiefel
 
 
 @pytest.mark.parametrize("geometry", [GeneralizedStiefel, GeneralizedGrassmann])
-def test_generalized_orthogonality_and_pullback_metric(geometry):
+def test_generalized_orthogonality_and_pullback_metric(geometry, dtype_atol):
     B = jnp.array(
         [
             [2.0, 0.2, 0.0, 0.0],
@@ -24,13 +24,15 @@ def test_generalized_orthogonality_and_pullback_metric(geometry):
 
     assert bool(M.belongs(X))
     assert bool(M.is_tangent(X, U))
-    assert jnp.allclose(X.T @ B @ X, jnp.eye(2), atol=1e-10)
-    assert jnp.allclose(M.inner(X, U, U), jnp.sum(U * (B @ U)), atol=1e-12)
-    assert jnp.allclose(M.log(X, Y), U, atol=2e-8)
+    assert jnp.allclose(X.T @ B @ X, jnp.eye(2), atol=max(1e-10, dtype_atol))
+    assert jnp.allclose(
+        M.inner(X, U, U), jnp.sum(U * (B @ U)), atol=max(1e-12, dtype_atol)
+    )
+    assert jnp.allclose(M.log(X, Y), U, atol=max(2e-8, dtype_atol))
 
 
 @pytest.mark.parametrize("geometry", [GeneralizedStiefel, GeneralizedGrassmann])
-def test_generalized_gradient_conversion_is_metric_dual(geometry):
+def test_generalized_gradient_conversion_is_metric_dual(geometry, dtype_atol):
     B = jnp.diag(jnp.array([1.0, 1.5, 2.0, 2.5]))
     M = geometry(size=(4, 2), metric=B)
     X = M.random_point(jax.random.key(2))
@@ -39,4 +41,8 @@ def test_generalized_gradient_conversion_is_metric_dual(geometry):
     gradient = M.egrad_to_rgrad(X, ambient_gradient)
 
     assert bool(M.is_tangent(X, gradient))
-    assert jnp.allclose(M.inner(X, gradient, U), jnp.sum(ambient_gradient * U), atol=1e-10)
+    assert jnp.allclose(
+        M.inner(X, gradient, U),
+        jnp.sum(ambient_gradient * U),
+        atol=max(1e-10, dtype_atol),
+    )

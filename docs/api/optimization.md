@@ -48,18 +48,8 @@ strategies, and solver classes. All public solvers return
 .. autoclass:: geojax.optimization.SteepestDescent
    :members:
 
-.. autoclass:: geojax.optimization.SteepestDescentOptions
-   :members:
-
-.. autofunction:: geojax.optimization.steepestdescent
-
 .. autoclass:: geojax.optimization.ConjugateGradient
    :members:
-
-.. autoclass:: geojax.optimization.ConjugateGradientOptions
-   :members:
-
-.. autofunction:: geojax.optimization.conjugategradient
 
 .. autoclass:: geojax.optimization.BarzilaiBorwein
    :members:

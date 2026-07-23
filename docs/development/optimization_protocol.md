@@ -75,6 +75,31 @@ and adds `sample_batch(key, batch_size)` and
 `batch_cost_and_grad(x, indices)`. A stochastic solver should consume those
 methods instead of assuming that samples are stored in one array.
 
+## JAX transformation boundary
+
+Costs, residuals, geometry primitives, gradient conversion, Jacobian products,
+and Hessian-vector products are numerical JAX kernels. With static geometry
+dimensions and pytree structure, they may be differentiated, vectorized, or
+compiled independently:
+
+```python
+compiled_cost = jax.jit(cost)
+compiled_gradient = jax.jit(jax.grad(cost))
+compiled_hessian_product = jax.jit(problem.rhess_vec)
+```
+
+`solve()` is intentionally outside that boundary. Solver drivers use Python
+loops for line-search decisions, stopping callbacks, wall-clock limits,
+printing, and `InfoEntry` construction. They also convert accepted diagnostics
+to Python scalars. Consequently, do not wrap `problem.solve()` in `jax.jit`.
+Passing JIT-compiled costs or derivative callbacks to a problem remains
+supported.
+
+Transformation tests cover autodiff and JIT-compiled Hessian products for
+ordinary arrays, SPD matrices, and nested Product states. A solver should not
+claim whole-solver JIT compatibility unless it supplies a separate pure state
+transition expressed with JAX control-flow primitives.
+
 ## Solver contract
 
 A public class-style solver follows this structural interface:

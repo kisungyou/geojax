@@ -1,6 +1,19 @@
 # Changelog
 
-## Unreleased
+## 0.1.1 - 2026-07-23
+
+- Made the public optimization API class-only and removed the former
+  functional solver and options-class exports.
+- Defined and tested the JAX transformation contract for geometry primitives,
+  batch helpers, automatic differentiation, and Hessian-vector products.
+- Added explicit third-party notices for the tutorial data and documentation
+  font, and finalized package authorship metadata for Kisung You.
+- Added a local Python/JAX/precision test matrix with branch coverage and made
+  executed documentation notebooks disposable build products.
+- Stabilized Kendall shape distances near coincident shapes and made low-rank
+  tangent validation account for dimension- and dtype-scaled roundoff.
+- Added precision-aware invariant tests that retain strict float64 tolerances
+  while exercising the complete suite under float32.
 
 ## 0.1.0 - 2026-07-21
 

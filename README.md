@@ -21,8 +21,8 @@ JAX scalar cost functions, and class-style solvers combine the two.
   machine-readable retraction and transport proxies elsewhere.
 - Matrix manifolds, Lie groups, hyperbolic spaces, shape spaces, low-rank
   models, and arbitrary pytree products.
-- JAX autodifferentiation, `jit`-compatible core operations, batch helpers,
-  and pytree-safe optimization state.
+- JAX autodifferentiation, JIT-compatible geometry primitives, composable
+  batch helpers, and pytree-safe optimization state.
 - Executable tutorial pages that place mathematical discussion, code, output,
   and figures in one document.
 
@@ -80,6 +80,20 @@ x_hat, final_cost, history = problem.solve()
 ambient derivative with JAX, converts it through the geometry, and delegates
 the iteration to the selected solver.
 
+## JAX Transformations
+
+Geometry instances are static configuration objects. Their numerical protocol
+methods accept array or pytree arguments and compose with `jax.jit`; random
+generation takes explicit PRNG keys, and `exp_batch`, `log_batch`, and
+`dist_batch` compose `jax.vmap` with JIT compilation. GeoJAX also supports
+JAX-derived gradients and Hessian-vector products on array and Product states.
+
+Solver `solve()` methods are deliberately Python drivers rather than
+whole-solver JIT kernels. They perform stopping checks, callbacks, timing,
+line-search control flow, and conversion of diagnostics to Python scalars.
+Costs, derivative callbacks, and geometry operations used inside those drivers
+may still be independently JIT compiled.
+
 ## Scientific Scope
 
 The public geometry namespace includes Euclidean, sphere, oblique, simplex,
@@ -133,11 +147,18 @@ generated HTML for malformed mathematics and broken local references. Open
 
 ```bash
 python -m pip install -e ".[dev,docs,examples]"
-pytest
+make test
+make test-float32
 ruff check geojax tests
 python -m build
 python -m twine check dist/*
 ```
+
+Before a release, `make test-matrix` exercises the supported Python versions,
+the declared dependency floor, current dependencies, and both JAX precision
+modes. See the
+[testing guide](https://www.kisungyou.com/geojax/development/testing.html)
+for the exact matrix.
 
 The
 [geometry protocol](https://www.kisungyou.com/geojax/development/geometry_protocol.html)
@@ -159,3 +180,5 @@ Release history is recorded in
 
 GeoJAX is released under the
 [MIT License](https://github.com/kisungyou/geojax/blob/main/LICENSE).
+Licenses and attribution for documentation data and fonts are recorded in
+[`THIRD_PARTY_NOTICES.md`](https://github.com/kisungyou/geojax/blob/main/THIRD_PARTY_NOTICES.md).

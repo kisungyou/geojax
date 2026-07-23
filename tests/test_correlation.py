@@ -48,7 +48,7 @@ def test_correlation_requires_square_tuple_size():
         CorrelationLEC(size=(2, 3))
 
 
-def test_affine_quotient_horizontal_lift_and_gradient_duality():
+def test_affine_quotient_horizontal_lift_and_gradient_duality(dtype_atol):
     M = CorrelationAffineQuotient(size=(3, 3))
     C = M.random_point(jax.random.key(4))
     U = M.random_tangent(jax.random.key(5), C)
@@ -59,6 +59,10 @@ def test_affine_quotient_horizontal_lift_and_gradient_duality():
     gradient = M.egrad_to_rgrad(C, ambient_gradient)
 
     assert M.operation_kind("exp") == "proxy"
-    assert jnp.allclose(jnp.diag(inverse @ lift), 0.0, atol=1e-10)
+    assert jnp.allclose(jnp.diag(inverse @ lift), 0.0, atol=max(1e-10, dtype_atol))
     assert bool(M.is_tangent(C, gradient))
-    assert jnp.allclose(M.inner(C, gradient, V), jnp.sum(ambient_gradient * V), atol=1e-10)
+    assert jnp.allclose(
+        M.inner(C, gradient, V),
+        jnp.sum(ambient_gradient * V),
+        atol=max(1e-10, dtype_atol),
+    )

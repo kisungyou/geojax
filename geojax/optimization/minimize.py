@@ -1,9 +1,8 @@
 """Core minimization problem container and shared solver utilities.
 
 This module intentionally separates the optimization problem description from
-individual solvers.  A solver such as ``steepestdescent`` or
-``conjugategradient`` consumes a :class:`Minimize` object and returns the common
-GeoJAX optimization triple
+individual class-style solvers. A solver consumes a :class:`Minimize` object
+and returns the common GeoJAX optimization triple
 
     sol, final_cost, info
 
@@ -98,12 +97,9 @@ class Minimize:
 
         if self.solver is None:
             raise ValueError("Minimize.solve() requires a solver.")
-        if hasattr(self.solver, "solve"):
-            return self.solver.solve(self)
-        if callable(self.solver):
-            result = self.solver(self, self.x0)
-            return result[:3] if isinstance(result, tuple) and len(result) == 4 else result
-        raise TypeError("solver must provide solve(problem) or be callable.")
+        if not hasattr(self.solver, "solve"):
+            raise TypeError("solver must be a class-style solver with solve(problem).")
+        return self.solver.solve(self)
 
     def ehess_vec(self, x: Array, u: Array) -> Array:
         """Ambient Euclidean Hessian-vector product."""

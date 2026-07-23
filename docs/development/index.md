@@ -10,5 +10,6 @@ return a common iteration history.
 
 geometry_protocol
 optimization_protocol
+testing
 documentation
 ```

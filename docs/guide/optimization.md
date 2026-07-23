@@ -11,6 +11,28 @@ The cost is a scalar JAX function. Supply a Riemannian `grad`, an ambient
 `egrad`, or let JAX differentiate the cost and let the geometry convert the
 result.
 
+## JAX transformation boundary
+
+Geometry methods and numerical derivative products can be used inside
+`jax.jit`, `jax.vmap`, `jax.grad`, and `jax.jvp` with fixed dimensions and
+pytree structure. Random methods take explicit PRNG keys, while batch helper
+methods vectorize over a leading sample axis.
+
+The solver driver itself is not a single JIT kernel. `solve()` performs Python
+stopping logic, line-search control flow, callbacks, timing, and construction
+of the human-readable iteration history. Compile expensive model components
+instead:
+
+```python
+cost = jax.jit(cost)
+egrad = jax.jit(jax.grad(cost))
+
+problem = Minimize(M=M, cost=cost, egrad=egrad, x0=x0, solver=solver)
+```
+
+Do not call `jax.jit(problem.solve)`. This explicit boundary keeps diagnostics
+and extension hooks flexible while preserving compiled numerical kernels.
+
 ## Problem forms
 
 `Minimize` represents a general smooth objective

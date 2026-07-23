@@ -93,19 +93,25 @@ def test_chordal_distance_matches_sines_of_principal_angles():
     assert chordal <= embedded.dist(X, Y) + 1e-6
 
 
-def test_nearby_geodesic_distance_is_numerically_stable():
+def test_nearby_geodesic_distance_is_numerically_stable(dtype_atol):
     canonical = Grassmann(size=(5, 2))
     embedded = GrassmannProjection(size=(5, 2))
     X = canonical.random_point(jax.random.key(7))
-    U = canonical.random_tangent(jax.random.key(8), X, scale=1e-7)
+    scale = 1e-7 if jax.config.x64_enabled else 1e-3
+    U = canonical.random_tangent(jax.random.key(8), X, scale=scale)
     Y = canonical.exp(X, U)
 
     expected = canonical.norm(X, U)
     geodesic = embedded.dist(X, Y)
     chordal = embedded.chordal_dist(X, Y)
 
-    assert jnp.allclose(geodesic, expected, atol=1e-12, rtol=1e-7)
-    assert chordal <= geodesic + 1e-12
+    assert jnp.allclose(
+        geodesic,
+        expected,
+        atol=max(1e-12, dtype_atol),
+        rtol=max(1e-7, dtype_atol),
+    )
+    assert chordal <= geodesic + max(1e-12, dtype_atol)
 
 
 def test_projector_decomposition_aligns_to_reference_frame():

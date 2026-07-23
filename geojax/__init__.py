@@ -1,5 +1,7 @@
 """GeoJAX: JAX-native Riemannian geometry and optimization utilities."""
 
+__version__ = "0.1.1"
+
 from .geometry import (
     CorrelationAffineQuotient,
     CorrelationECM,
@@ -43,11 +45,7 @@ from .optimization import (
     ConstantStep,
     StrongWolfe,
     SteepestDescent,
-    steepestdescent,
-    SteepestDescentOptions,
     ConjugateGradient,
-    conjugategradient,
-    ConjugateGradientOptions,
     TrustRegions,
     BarzilaiBorwein,
     LBFGS,
@@ -63,6 +61,7 @@ from .optimization import (
 )
 
 __all__ = [
+    "__version__",
     "Euclidean",
     "Oblique",
     "ProbabilitySimplex",
@@ -101,11 +100,7 @@ __all__ = [
     "AdaptiveArmijo",
     "StrongWolfe",
     "SteepestDescent",
-    "steepestdescent",
-    "SteepestDescentOptions",
     "ConjugateGradient",
-    "conjugategradient",
-    "ConjugateGradientOptions",
     "TrustRegions",
     "BarzilaiBorwein",
     "LBFGS",

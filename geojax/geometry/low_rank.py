@@ -241,8 +241,16 @@ class _RankKPSDBase(RetractionGeometryMixin):
 
     def is_tangent(self, P: Array, U: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
-        residual = jnp.asarray(U) - self.tangent_project(P, U)
-        return jnp.linalg.norm(residual, axis=(-2, -1)) <= tol
+        U = jnp.asarray(U)
+        residual = U - self.tangent_project(P, U)
+        dtype = jnp.result_type(U, float)
+        roundoff = (
+            10.0
+            * self.n
+            * jnp.finfo(dtype).eps
+            * jnp.maximum(jnp.linalg.norm(U, axis=(-2, -1)), 1.0)
+        )
+        return jnp.linalg.norm(residual, axis=(-2, -1)) <= tol + roundoff
 
     def inner(self, P: Array, U: Array, V: Array) -> Array:
         del P

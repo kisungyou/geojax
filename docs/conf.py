@@ -10,8 +10,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 project = "GeoJAX"
-author = "GeoJAX contributors"
-release = "0.1.0"
+author = "Kisung You"
+copyright = "2026, Kisung You"
+release = "0.1.1"
 
 extensions = [
     "myst_nb",

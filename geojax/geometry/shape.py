@@ -161,9 +161,9 @@ class KendallShape(GeometryMixin):
         X = self.project(X)
         aligned, _ = self.align(self.project(Y), X)
         cosine = jnp.clip(_trace_inner(X, aligned), -1.0, 1.0)
-        angle = jnp.arccos(cosine)
         direction = aligned - cosine[..., None, None] * X
-        sine = jnp.sin(angle)
+        sine = jnp.linalg.norm(direction, axis=(-2, -1))
+        angle = jnp.arctan2(sine, cosine)
         tangent = jnp.where(
             sine[..., None, None] > self.eps,
             angle[..., None, None] * direction / jnp.maximum(sine[..., None, None], self.eps),
@@ -176,7 +176,11 @@ class KendallShape(GeometryMixin):
     def dist(self, X: Array, Y: Array) -> Array:
         X = self.project(X)
         aligned, _ = self.align(self.project(Y), X)
-        return jnp.arccos(jnp.clip(_trace_inner(X, aligned), -1.0, 1.0))
+        cosine = jnp.clip(_trace_inner(X, aligned), -1.0, 1.0)
+        tangent_norm = jnp.linalg.norm(
+            aligned - cosine[..., None, None] * X, axis=(-2, -1)
+        )
+        return jnp.arctan2(tangent_norm, cosine)
 
     def transport(self, X: Array, Y: Array, U: Array) -> Array:
         X = self.project(X)

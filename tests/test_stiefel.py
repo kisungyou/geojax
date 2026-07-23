@@ -22,7 +22,7 @@ def test_stiefel_constraints_projection_and_sampling(geometry):
 
 
 @pytest.mark.parametrize("geometry", [Stiefel, StiefelEuclidean])
-def test_stiefel_local_exp_log_and_batch_roundtrip(geometry):
+def test_stiefel_local_exp_log_and_batch_roundtrip(geometry, dtype_atol):
     M = geometry(size=(4, 2), log_maxiter=24)
     X = M.random_point(jax.random.key(0))
     U = M.random_tangent(jax.random.key(1), X, scale=0.08)
@@ -30,14 +30,16 @@ def test_stiefel_local_exp_log_and_batch_roundtrip(geometry):
     recovered, info = M.log_with_info(X, Y)
 
     assert bool(info.converged)
-    assert info.residual_norm < 1e-8
-    assert jnp.allclose(recovered, U, atol=2e-8)
-    assert jnp.allclose(M.log(X, Y), U, atol=2e-8)
+    assert info.residual_norm < max(1e-8, dtype_atol)
+    assert jnp.allclose(recovered, U, atol=max(2e-8, dtype_atol))
+    assert jnp.allclose(M.log(X, Y), U, atol=max(2e-8, dtype_atol))
 
     tangents = jnp.stack([0.25 * U, 0.5 * U, U])
     endpoints = M.exp_batch(X, tangents)
     assert jnp.all(M.belongs(endpoints))
-    assert jnp.allclose(M.log_batch(X, endpoints), tangents, atol=2e-8)
+    assert jnp.allclose(
+        M.log_batch(X, endpoints), tangents, atol=max(2e-8, dtype_atol)
+    )
 
 
 def test_canonical_and_euclidean_metrics_differ_on_vertical_tangents():

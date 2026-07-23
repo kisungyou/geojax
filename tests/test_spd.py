@@ -46,7 +46,7 @@ def test_bures_wasserstein_formulas_on_diagonal_matrices():
     assert jnp.allclose(M.optimal_transport_map(P, Q), jnp.diag(jnp.array([2.0, 1.5])))
 
 
-def test_bures_wasserstein_transport_is_isometric():
+def test_bures_wasserstein_transport_is_isometric(dtype_atol):
     M = SPDBuresWasserstein(size=(3, 3))
     P = M.random_point(jax.random.key(20))
     Q = M.random_point(jax.random.key(21))
@@ -54,7 +54,12 @@ def test_bures_wasserstein_transport_is_isometric():
     V = M.transport(P, Q, U)
 
     assert bool(M.is_tangent(Q, V))
-    assert jnp.allclose(M.norm(P, U), M.norm(Q, V), atol=1e-8, rtol=1e-8)
+    assert jnp.allclose(
+        M.norm(P, U),
+        M.norm(Q, V),
+        atol=max(1e-8, dtype_atol),
+        rtol=max(1e-8, dtype_atol),
+    )
 
 
 def test_bures_wasserstein_distance_gradient_is_finite_at_repeated_eigenvalues():

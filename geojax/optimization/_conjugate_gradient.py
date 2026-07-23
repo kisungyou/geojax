@@ -1,8 +1,4 @@
-"""Manopt-style nonlinear Riemannian conjugate-gradient solver.
-
-The public entry point is :func:`conjugategradient`::
-
-    sol, final_cost, info = conjugategradient(problem, x0, options)
+"""Internal implementation for nonlinear Riemannian conjugate gradient.
 
 This implements the main structure of Manopt's MATLAB
 ``conjugategradient.m`` in a compact JAX-oriented form: optional
@@ -14,7 +10,7 @@ statistics.
 from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
-from typing import Any, List, Mapping, Optional
+from typing import Any, List, Optional
 import math
 import time
 
@@ -23,11 +19,8 @@ import jax.numpy as jnp
 from .minimize import (
     Array,
     InfoEntry,
-    LineSearchStats,
-    Minimize,
     StatsFn,
     StopFn,
-    as_options,
     cost_and_grad,
     gradient_value,
     initial_point,
@@ -45,8 +38,8 @@ from .linesearch import AdaptiveArmijo, LineSearchProtocol, LineSearchState
 
 
 @dataclass(frozen=True)
-class ConjugateGradientOptions:
-    """Options for :func:`conjugategradient`.
+class ConjugateGradient:
+    """Nonlinear Riemannian conjugate-gradient solver.
 
     ``beta_type`` may be ``'S-D'``/``'steep'``, ``'F-R'``, ``'P-R'``,
     ``'H-S'``, ``'H-Z'``, ``'L-S'``, ``'P-R-SATO'`` or ``'H-S-SATO'``.
@@ -68,13 +61,9 @@ class ConjugateGradientOptions:
     stopfun: Optional[StopFn] = None
     key: Optional[Array] = None
 
-
-@dataclass(frozen=True)
-class ConjugateGradient(ConjugateGradientOptions):
-    """Class-style nonlinear Riemannian conjugate-gradient solver."""
-
     def solve(self, problem: Any) -> tuple[Array, float, List[InfoEntry]]:
-        return conjugategradient(problem, getattr(problem, "x0", None), self)
+        """Solve ``problem`` and return ``(solution, final_cost, history)``."""
+        return _solve_conjugate_gradient(problem, getattr(problem, "x0", None), self)
 
 
 def _finite_scalar(value: Any, default: float = 0.0) -> float:
@@ -94,7 +83,7 @@ def _safe_divide(num: Any, den: Any, default: float = 0.0) -> float:
 def _compute_beta_and_direction(
     *,
     M: Any,
-    options: ConjugateGradientOptions,
+    options: ConjugateGradient,
     x: Array,
     newx: Array,
     grad: Array,
@@ -191,19 +180,13 @@ def _compute_beta_and_direction(
     return float(beta), new_desc_dir
 
 
-def conjugategradient(
-    problem: Minimize | Mapping[str, Any] | Any,
+def _solve_conjugate_gradient(
+    problem: Any,
     x: Optional[Array] = None,
-    options: Optional[ConjugateGradientOptions | Mapping[str, Any]] = None,
+    options: ConjugateGradient | None = None,
 ) -> tuple[Array, float, List[InfoEntry]]:
-    """Minimize a smooth function on a manifold by nonlinear CG.
-
-    Returns
-    -------
-    sol, final_cost, info:
-        Standard geojax optimization return tuple.
-    """
-    options = as_options(ConjugateGradientOptions, options)
+    """Internal nonlinear Riemannian conjugate-gradient iteration engine."""
+    options = ConjugateGradient() if options is None else options
     M = require(problem, "M")
     require(problem, "cost")
 
@@ -326,10 +309,4 @@ def conjugategradient(
     return sol, final_cost, info
 
 
-__all__ = [
-    "ConjugateGradientOptions",
-    "ConjugateGradient",
-    "InfoEntry",
-    "LineSearchStats",
-    "conjugategradient",
-]
+__all__ = ["ConjugateGradient"]

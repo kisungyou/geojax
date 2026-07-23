@@ -1,9 +1,9 @@
-"""Riemannian steepest descent with pluggable line searches."""
+"""Internal implementation for class-style Riemannian steepest descent."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
-from typing import Any, List, Mapping, Optional
+from typing import Any, List, Optional
 import math
 import time
 
@@ -11,10 +11,8 @@ from .linesearch import AdaptiveArmijo, LineSearchProtocol, LineSearchState
 from .minimize import (
     Array,
     InfoEntry,
-    LineSearchStats,
     StatsFn,
     StopFn,
-    as_options,
     cost_and_grad,
     gradient_value,
     initial_point,
@@ -28,8 +26,8 @@ from .minimize import (
 
 
 @dataclass(frozen=True)
-class SteepestDescentOptions:
-    """Options shared by the functional and class-style interfaces."""
+class SteepestDescent:
+    """Minimize a smooth objective along its negative Riemannian gradient."""
 
     requires_gradient: bool = True
     tolgradnorm: float = 1e-6
@@ -42,29 +40,18 @@ class SteepestDescentOptions:
     stopfun: Optional[StopFn] = None
     key: Optional[Array] = None
 
-
-@dataclass(frozen=True)
-class SteepestDescent(SteepestDescentOptions):
-    """Minimize a smooth objective along its negative Riemannian gradient."""
-
     def solve(self, problem: Any) -> tuple[Array, float, List[InfoEntry]]:
-        x, cost, info, _ = steepestdescent(problem, getattr(problem, "x0", None), self)
-        return x, cost, info
+        """Solve ``problem`` and return ``(solution, final_cost, history)``."""
+        return _solve_steepest_descent(problem, getattr(problem, "x0", None), self)
 
 
-def steepestdescent(
-    problem: Mapping[str, Any] | Any,
+def _solve_steepest_descent(
+    problem: Any,
     x: Optional[Array] = None,
-    options: Optional[SteepestDescentOptions | Mapping[str, Any]] = None,
-) -> tuple[Array, float, List[InfoEntry], SteepestDescentOptions]:
-    """Minimize a smooth function by Riemannian steepest descent.
-
-    The functional interface returns ``(x, cost, info, options)``. The public
-    class interface used by :class:`~geojax.optimization.Minimize` returns the
-    common ``(x, cost, info)`` triple.
-    """
-
-    options = as_options(SteepestDescentOptions, options)
+    options: SteepestDescent | None = None,
+) -> tuple[Array, float, List[InfoEntry]]:
+    """Internal Riemannian steepest-descent iteration engine."""
+    options = SteepestDescent() if options is None else options
     M = require(problem, "M")
     require(problem, "cost")
     x = initial_point(problem, x, options.key)
@@ -130,13 +117,7 @@ def steepestdescent(
 
     if options.verbosity >= 1:
         print(f"Total time is {info[-1].time:.6f} [s]")
-    return x, info[-1].cost, info, options
+    return x, info[-1].cost, info
 
 
-__all__ = [
-    "SteepestDescent",
-    "SteepestDescentOptions",
-    "InfoEntry",
-    "LineSearchStats",
-    "steepestdescent",
-]
+__all__ = ["SteepestDescent"]

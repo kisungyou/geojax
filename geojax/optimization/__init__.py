@@ -11,8 +11,8 @@ from .linesearch import (
     StrongWolfe,
 )
 from .problems import FiniteSum, LeastSquares
-from .steepestdescent import SteepestDescent, steepestdescent, SteepestDescentOptions
-from .conjugategradient import ConjugateGradient, conjugategradient, ConjugateGradientOptions
+from ._steepest_descent import SteepestDescent
+from ._conjugate_gradient import ConjugateGradient
 from .trustregions import TrustRegions
 from .barzilaiborwein import BarzilaiBorwein
 from .lbfgs import LBFGS
@@ -45,11 +45,7 @@ __all__ = [
     "FiniteSum",
     "LeastSquares",
     "SteepestDescent",
-    "steepestdescent",
-    "SteepestDescentOptions",
     "ConjugateGradient",
-    "conjugategradient",
-    "ConjugateGradientOptions",
     "TrustRegions",
     "BarzilaiBorwein",
     "LBFGS",

@@ -56,7 +56,7 @@ def test_special_euclidean_group_and_riemannian_exponentials():
     assert jnp.allclose(M.compose(group_point, M.inverse(group_point)), M.identity, atol=1e-6)
 
 
-def test_special_euclidean_rigid_registration_smoke():
+def test_special_euclidean_rigid_registration_smoke(dtype_atol):
     M = SpecialEuclidean(size=2)
     source = jnp.array([[-1.0, -0.4], [-0.2, 0.8], [0.7, 0.5], [1.0, -0.7]])
     truth = M.from_components(rotation(0.55), jnp.array([0.8, -0.35]))
@@ -73,6 +73,6 @@ def test_special_euclidean_rigid_registration_smoke():
         solver=ConjugateGradient(maxiter=80, tolgradnorm=1e-8, verbosity=0),
     ).solve()
 
-    assert final_cost < 1e-10
-    assert history[-1].gradnorm < 1e-7
-    assert jnp.allclose(estimate, truth, atol=2e-5)
+    assert final_cost < max(1e-10, dtype_atol)
+    assert history[-1].gradnorm < max(1e-7, dtype_atol)
+    assert jnp.allclose(estimate, truth, atol=max(2e-5, dtype_atol))

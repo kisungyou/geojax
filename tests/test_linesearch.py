@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import jax.numpy as jnp
+import pytest
 
 from geojax.geometry import Euclidean
 from geojax.optimization import (
@@ -11,6 +12,7 @@ from geojax.optimization import (
     Minimize,
     StrongWolfe,
 )
+from geojax.optimization.linesearch import LineSearchState
 
 
 def quadratic_problem():
@@ -96,3 +98,134 @@ def test_strong_wolfe_conditions_hold_on_quadratic():
     assert result.stats.accepted
     assert result.cost <= cost + strategy.sufficient_decrease * result.alpha * derivative0
     assert jnp.abs(derivative) <= strategy.curvature * jnp.abs(derivative0)
+
+
+@pytest.mark.parametrize(
+    ("strategy", "direction", "derivative", "reason"),
+    [
+        (ConstantStep(), jnp.zeros(2), 0.0, "zero or non-finite direction"),
+        (
+            ConstantStep(stepsize=-1.0),
+            jnp.array([-1.0, 0.0]),
+            -1.0,
+            "non-positive trial multiplier",
+        ),
+        (BacktrackingArmijo(), jnp.zeros(2), 0.0, "zero or non-finite direction"),
+        (
+            BacktrackingArmijo(),
+            jnp.array([1.0, 0.0]),
+            1.0,
+            "direction is not descending",
+        ),
+        (StrongWolfe(), jnp.zeros(2), 0.0, "zero or non-finite direction"),
+        (
+            StrongWolfe(),
+            jnp.array([1.0, 0.0]),
+            1.0,
+            "direction is not descending",
+        ),
+    ],
+)
+def test_line_search_rejects_invalid_directions(strategy, direction, derivative, reason):
+    _, problem = quadratic_problem()
+    result = strategy.search(
+        problem,
+        problem.x0,
+        direction,
+        problem.cost(problem.x0),
+        derivative,
+    )
+    assert not result.stats.accepted
+    assert result.stats.reason == reason
+    assert result.stepsize == 0.0
+    assert result.point is problem.x0
+
+
+@pytest.mark.parametrize(
+    "strategy",
+    [
+        BacktrackingArmijo(contraction_factor=1.0),
+        BacktrackingArmijo(sufficient_decrease=1.0),
+        BacktrackingArmijo(max_steps=0),
+    ],
+)
+def test_armijo_validates_parameters(strategy):
+    manifold, problem = quadratic_problem()
+    direction = -problem.x0
+    with pytest.raises(ValueError):
+        strategy.search(
+            problem,
+            problem.x0,
+            direction,
+            problem.cost(problem.x0),
+            manifold.inner(problem.x0, problem.x0, direction),
+        )
+
+
+@pytest.mark.parametrize(
+    "strategy",
+    [
+        StrongWolfe(sufficient_decrease=0.9, curvature=0.1),
+        StrongWolfe(expansion=1.0),
+        StrongWolfe(max_steps=0),
+        StrongWolfe(max_zoom_steps=0),
+    ],
+)
+def test_strong_wolfe_validates_parameters(strategy):
+    manifold, problem = quadratic_problem()
+    direction = -problem.x0
+    with pytest.raises(ValueError):
+        strategy.search(
+            problem,
+            problem.x0,
+            direction,
+            problem.cost(problem.x0),
+            manifold.inner(problem.x0, problem.x0, direction),
+        )
+
+
+def test_armijo_failure_and_adaptive_state_fallbacks():
+    manifold, problem = quadratic_problem()
+    direction = -problem.x0
+    derivative = manifold.inner(problem.x0, problem.x0, direction)
+
+    failed = BacktrackingArmijo(
+        sufficient_decrease=0.9,
+        initial_stepsize=10.0,
+        contraction_factor=0.9,
+        max_steps=1,
+        normalize_step=False,
+    ).search(problem, problem.x0, direction, problem.cost(problem.x0), derivative)
+    assert not failed.stats.accepted
+    assert failed.stats.costevals == 1
+    assert failed.stats.reason == "Armijo condition was not satisfied"
+
+    adaptive = AdaptiveArmijo(initial_stepsize=0.25, normalize_step=False)
+    invalid_state = LineSearchState(previous_cost=0.0, previous_alpha=0.1)
+    result = adaptive.search(
+        problem,
+        problem.x0,
+        direction,
+        problem.cost(problem.x0),
+        derivative,
+        state=invalid_state,
+    )
+    assert result.stats.accepted
+    assert result.alpha == pytest.approx(0.25)
+
+
+def test_strong_wolfe_reports_unsatisfied_conditions():
+    manifold, problem = quadratic_problem()
+    direction = -problem.x0
+    derivative = manifold.inner(problem.x0, problem.x0, direction)
+    result = StrongWolfe(
+        initial_stepsize=1e-4,
+        max_stepsize=1e-4,
+        max_steps=1,
+        max_zoom_steps=1,
+        normalize_step=False,
+    ).search(problem, problem.x0, direction, problem.cost(problem.x0), derivative)
+    assert not result.stats.accepted
+    assert result.stats.costevals == 1
+    assert result.stats.gradevals == 1
+    assert result.stats.reason == "strong-Wolfe conditions were not satisfied"

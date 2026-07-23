@@ -1,0 +1,69 @@
+# Testing
+
+GeoJAX uses deterministic numerical tests, executable documentation, and clean
+package installation checks. A release should pass the complete matrix rather
+than only the maintainer's active Python environment.
+
+## Current environment
+
+Run both JAX precision modes before committing:
+
+```bash
+make test
+make test-float32
+```
+
+Both commands execute the full test suite with branch coverage. Coverage below
+85 percent fails the run. `GEOJAX_TEST_X64` is set by these targets so tests do
+not silently inherit a developer's JAX configuration.
+
+Invariant assertions keep their original strict float64 tolerances. In
+float32, tests add a small dtype-aware allowance for decomposition roundoff
+and avoid perturbations below machine resolution. This preserves the
+mathematical assertion instead of expecting float32 arithmetic to reproduce a
+float64 residual.
+
+## Supported matrix
+
+Install the development dependencies and run:
+
+```bash
+python -m pip install -e ".[dev]"
+make test-matrix
+```
+
+The tox matrix covers:
+
+| Python | Dependencies | JAX precision |
+|---|---|---|
+| 3.11 | JAX 0.6.0 and NumPy 1.26 | float32, float64 |
+| 3.11 | current compatible releases | float32, float64 |
+| 3.12 | current compatible releases | float32, float64 |
+| 3.13 | current compatible releases | float32, float64 |
+
+Missing Python interpreters are errors rather than silently skipped
+environments. The lower-bound environment guards the versions promised by
+`pyproject.toml`; the latest environments expose upstream compatibility
+regressions.
+
+## Documentation
+
+```bash
+make website
+```
+
+This executes every MyST Markdown tutorial from a clean Sphinx environment,
+treats warnings as errors, and audits rendered mathematics and local
+references. `jupyter_execute/` and `.jupyter_cache/` are transient: the build
+deletes both after the HTML audit succeeds. The `.md` tutorial is always the
+maintained source.
+
+## Release candidate
+
+```bash
+make release-check
+```
+
+The release target requires the complete tox matrix, rebuilds every tutorial,
+creates clean wheel and source archives, and applies Twine's strict metadata
+validation. It does not upload or publish anything.
