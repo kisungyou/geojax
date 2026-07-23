@@ -52,7 +52,7 @@
     <link rel="icon" href="../_static/geojax-gj-favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Dominant eigenvector on the circle" href="sphere_eigenvector.html" />
+    <link rel="next" title="Geodesics on the Hyperboloid" href="hyperbolic_geodesics.html" />
     <link rel="prev" title="Getting started" href="../getting_started/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -376,15 +376,15 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="sphere_eigenvector.html">Dominant eigenvector on the circle</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sphere_kmeans.html">Intrinsic k-means on the circle</a></li>
-<li class="toctree-l1"><a class="reference internal" href="grassmann_pca.html">Principal component as a Grassmann point</a></li>
-<li class="toctree-l1"><a class="reference internal" href="spd_frechet_mean.html">Comparing Fréchet Means of SPD Matrices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="kendall_hand_shapes.html">Hand Poses in Kendall Shape Space</a></li>
-<li class="toctree-l1"><a class="reference internal" href="rigid_registration.html">Rigid landmark registration in SE(2)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="solver_comparison.html">Comparing solvers in a curved valley</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hyperbolic_geodesics.html">Geodesics on the Hyperboloid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="torus_geodesics.html">Wrapped geodesics on the flat torus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grassmann_pca.html">Principal component as a Grassmann point</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sphere_kmeans.html">Intrinsic k-means on the circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spd_frechet_mean.html">Comparing Fréchet Means of SPD Matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kendall_hand_shapes.html">Hand Poses in Kendall Shape Space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sphere_eigenvector.html">Dominant eigenvector on the circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rigid_registration.html">Rigid landmark registration in SE(2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solver_comparison.html">Comparing solvers in a curved valley</a></li>
 </ul>
 </div>
 </nav></div>
@@ -446,17 +446,42 @@
 <h1>Tutorials<a class="headerlink" href="#tutorials" title="Link to this heading">#</a></h1>
 <p>Each tutorial develops a geometric problem from its mathematical formulation
 through an executable GeoJAX solution and a visual report of the result.</p>
-<section id="practical-methods">
-<h2>Practical methods<a class="headerlink" href="#practical-methods" title="Link to this heading">#</a></h2>
+<section id="geometric-computation">
+<h2>Geometric computation<a class="headerlink" href="#geometric-computation" title="Link to this heading">#</a></h2>
 <div class="tutorial-gallery">
-  <a class="tutorial-card" href="sphere_eigenvector.html">
+  <a class="tutorial-card" href="hyperbolic_geodesics.html">
     <div class="tutorial-card-media">
-      <img src="../_static/tutorials/sphere-eigenvector.png" alt="Unit circle, Rayleigh objective, and solver convergence">
+      <img src="../_static/tutorials/hyperbolic-geodesics.png" alt="Geodesics on a hyperboloid and in the Poincaré disk">
     </div>
     <div class="tutorial-card-body">
-      <p class="tutorial-card-meta">Sphere / Optimization</p>
-      <h2>Dominant eigenvector on the circle</h2>
-      <p>Find the leading eigenvector of a symmetric matrix by optimizing the Rayleigh quotient on S<sup>1</sup>.</p>
+      <p class="tutorial-card-meta">Hyperbolic / Geometry</p>
+      <h2>Geodesics on the hyperboloid</h2>
+      <p>Trace unit-speed geodesics and compare the hyperboloid and Poincaré-disk views.</p>
+    </div>
+  </a>
+  <a class="tutorial-card" href="torus_geodesics.html">
+    <div class="tutorial-card-media">
+      <img src="../_static/tutorials/torus-geodesics.png" alt="A wrapped geodesic viewed on a torus and in angular coordinates">
+    </div>
+    <div class="tutorial-card-body">
+      <p class="tutorial-card-meta">Torus / Geometry</p>
+      <h2>Wrapped geodesics on the torus</h2>
+      <p>See why a smooth shortest path can jump across the edge of an angular chart.</p>
+    </div>
+  </a>
+</div>
+</section>
+<section id="statistics-and-learning">
+<h2>Statistics and learning<a class="headerlink" href="#statistics-and-learning" title="Link to this heading">#</a></h2>
+<div class="tutorial-gallery">
+  <a class="tutorial-card" href="grassmann_pca.html">
+    <div class="tutorial-card-media">
+      <img src="../_static/tutorials/grassmann-pca.png" alt="Three-dimensional point cloud, principal subspace, and optimization history">
+    </div>
+    <div class="tutorial-card-body">
+      <p class="tutorial-card-meta">Grassmann / Data analysis</p>
+      <h2>Principal component as a subspace</h2>
+      <p>Recover a one-dimensional principal subspace from a synthetic point cloud on Gr(1, 3).</p>
     </div>
   </a>
   <a class="tutorial-card" href="sphere_kmeans.html">
@@ -467,16 +492,6 @@ through an executable GeoJAX solution and a visual report of the result.</p>
       <p class="tutorial-card-meta">Sphere / Clustering</p>
       <h2>Intrinsic k-means on the circle</h2>
       <p>Cluster circular data with geodesic assignments and Fréchet-mean center updates.</p>
-    </div>
-  </a>
-  <a class="tutorial-card" href="grassmann_pca.html">
-    <div class="tutorial-card-media">
-      <img src="../_static/tutorials/grassmann-pca.png" alt="Three-dimensional point cloud, principal subspace, and optimization history">
-    </div>
-    <div class="tutorial-card-body">
-      <p class="tutorial-card-meta">Grassmann / Data analysis</p>
-      <h2>Principal component as a subspace</h2>
-      <p>Recover a one-dimensional principal subspace from a synthetic point cloud on Gr(1, 3).</p>
     </div>
   </a>
   <a class="tutorial-card" href="spd_frechet_mean.html">
@@ -499,6 +514,21 @@ through an executable GeoJAX solution and a visual report of the result.</p>
       <p>Compute intrinsic means and classify SHREC'17 hand poses using rotation-, scale-, and translation-invariant distances.</p>
     </div>
   </a>
+</div>
+</section>
+<section id="optimization-and-inverse-problems">
+<h2>Optimization and inverse problems<a class="headerlink" href="#optimization-and-inverse-problems" title="Link to this heading">#</a></h2>
+<div class="tutorial-gallery">
+  <a class="tutorial-card" href="sphere_eigenvector.html">
+    <div class="tutorial-card-media">
+      <img src="../_static/tutorials/sphere-eigenvector.png" alt="Unit circle, Rayleigh objective, and solver convergence">
+    </div>
+    <div class="tutorial-card-body">
+      <p class="tutorial-card-meta">Sphere / Optimization</p>
+      <h2>Dominant eigenvector on the circle</h2>
+      <p>Find the leading eigenvector of a symmetric matrix by optimizing the Rayleigh quotient on S<sup>1</sup>.</p>
+    </div>
+  </a>
   <a class="tutorial-card" href="rigid_registration.html">
     <div class="tutorial-card-media">
       <img src="../_static/tutorials/rigid-registration.png" alt="Initial and registered planar landmarks with solver convergence">
@@ -517,31 +547,6 @@ through an executable GeoJAX solution and a visual report of the result.</p>
       <p class="tutorial-card-meta">Optimization / Solver choice</p>
       <h2>Comparing solvers in a curved valley</h2>
       <p>Contrast first-order, Hessian-based, and least-squares methods on one visual two-dimensional objective.</p>
-    </div>
-  </a>
-</div>
-</section>
-<section id="geometry-in-pictures">
-<h2>Geometry in pictures<a class="headerlink" href="#geometry-in-pictures" title="Link to this heading">#</a></h2>
-<div class="tutorial-gallery">
-  <a class="tutorial-card" href="hyperbolic_geodesics.html">
-    <div class="tutorial-card-media">
-      <img src="../_static/tutorials/hyperbolic-geodesics.png" alt="Geodesics on a hyperboloid and in the Poincaré disk">
-    </div>
-    <div class="tutorial-card-body">
-      <p class="tutorial-card-meta">Hyperbolic / Geometry</p>
-      <h2>Geodesics on the hyperboloid</h2>
-      <p>Trace unit-speed geodesics and compare the hyperboloid and Poincaré-disk views.</p>
-    </div>
-  </a>
-  <a class="tutorial-card" href="torus_geodesics.html">
-    <div class="tutorial-card-media">
-      <img src="../_static/tutorials/torus-geodesics.png" alt="A wrapped geodesic viewed on a torus and in angular coordinates">
-    </div>
-    <div class="tutorial-card-body">
-      <p class="tutorial-card-meta">Torus / Geometry</p>
-      <h2>Wrapped geodesics on the torus</h2>
-      <p>See why a smooth shortest path can jump across the edge of an angular chart.</p>
     </div>
   </a>
 </div>
@@ -570,11 +575,11 @@ through an executable GeoJAX solution and a visual report of the result.</p>
       </div>
     </a>
     <a class="right-next"
-       href="sphere_eigenvector.html"
+       href="hyperbolic_geodesics.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Dominant eigenvector on the circle</p>
+        <p class="prev-next-title">Geodesics on the Hyperboloid</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -597,8 +602,9 @@ through an executable GeoJAX solution and a visual report of the result.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-methods">Practical methods</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#geometry-in-pictures">Geometry in pictures</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#geometric-computation">Geometric computation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#statistics-and-learning">Statistics and learning</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimization-and-inverse-problems">Optimization and inverse problems</a></li>
 </ul>
   </nav></div>
 
