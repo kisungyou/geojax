@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=91f6191e"></script>
+    <script src="_static/documentation_options.js?v=95e61db4"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -688,6 +688,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/geometry.html#geojax.geometry.GrassmannProjection.from_frame">from_frame() (geojax.geometry.GrassmannProjection method)</a>
 </li>
+      <li><a href="api/geometry.html#geojax.geometry.Hyperboloid.from_poincare">from_poincare() (geojax.geometry.Hyperboloid method)</a>
+</li>
       <li><a href="api/geometry.html#geojax.geometry.GrassmannProjection.from_projector_tangent">from_projector_tangent() (geojax.geometry.GrassmannProjection method)</a>
 </li>
   </ul></td>
@@ -705,6 +707,8 @@
       <li><a href="api/geometry.html#geojax.geometry.GrassmannProjection.geodesic_dist">geodesic_dist() (geojax.geometry.GrassmannProjection method)</a>
 </li>
       <li><a href="api/geometry.html#geojax.geometry.Sphere.geodesic_flow">geodesic_flow() (geojax.geometry.Sphere method)</a>
+</li>
+      <li><a href="api/learning.html#geojax.learning.geodesic_interpolate">geodesic_interpolate() (in module geojax.learning)</a>
 </li>
       <li><a href="api/geometry.html#geojax.geometry.base.GeometryMixin">GeometryMixin (class in geojax.geometry.base)</a>
 </li>
@@ -1048,14 +1052,16 @@
         <li><a href="api/geometry.html#geojax.geometry.Torus.pair_mean">(geojax.geometry.Torus method)</a>
 </li>
       </ul></li>
+      <li><a href="api/learning.html#geojax.learning.pairwise_squared_dist">pairwise_squared_dist() (in module geojax.learning)</a>
+</li>
       <li><a href="api/optimization.html#geojax.optimization.ParticleSwarm">ParticleSwarm (class in geojax.optimization)</a>
 </li>
       <li><a href="api/geometry.html#geojax.geometry.PoincareBall">PoincareBall (class in geojax.geometry)</a>
 </li>
-      <li><a href="api/optimization.html#geojax.optimization.PolynomialDecay">PolynomialDecay (class in geojax.optimization)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/optimization.html#geojax.optimization.PolynomialDecay">PolynomialDecay (class in geojax.optimization)</a>
+</li>
       <li><a href="api/geometry.html#geojax.geometry.ProbabilitySimplex">ProbabilitySimplex (class in geojax.geometry)</a>
 </li>
       <li><a href="api/geometry.html#geojax.geometry.Product">Product (class in geojax.geometry)</a>
@@ -1206,8 +1212,6 @@
 </li>
       <li><a href="api/geometry.html#geojax.geometry.Sphere">Sphere (class in geojax.geometry)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/geometry.html#geojax.geometry.SphereExtrinsic">SphereExtrinsic (class in geojax.geometry)</a>
 </li>
       <li><a href="api/optimization.html#geojax.optimization.Minimize.split_key">split_key() (geojax.optimization.Minimize method)</a>
@@ -1218,6 +1222,60 @@
         <li><a href="api/geometry.html#geojax.geometry.SphereExtrinsic.squared_chordal_dist">(geojax.geometry.SphereExtrinsic method)</a>
 </li>
       </ul></li>
+      <li><a href="api/geometry.html#geojax.geometry.base.GeometryMixin.squared_dist">squared_dist() (geojax.geometry.base.GeometryMixin method)</a>
+
+      <ul>
+        <li><a href="api/geometry.html#geojax.geometry.CorrelationAffineQuotient.squared_dist">(geojax.geometry.CorrelationAffineQuotient method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.Elliptope.squared_dist">(geojax.geometry.Elliptope method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.FixedRank.squared_dist">(geojax.geometry.FixedRank method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.GeneralizedGrassmann.squared_dist">(geojax.geometry.GeneralizedGrassmann method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.GeneralizedStiefel.squared_dist">(geojax.geometry.GeneralizedStiefel method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.Grassmann.squared_dist">(geojax.geometry.Grassmann method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.GrassmannProjection.squared_dist">(geojax.geometry.GrassmannProjection method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.Hyperboloid.squared_dist">(geojax.geometry.Hyperboloid method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.KendallShape.squared_dist">(geojax.geometry.KendallShape method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.Oblique.squared_dist">(geojax.geometry.Oblique method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.PoincareBall.squared_dist">(geojax.geometry.PoincareBall method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.ProbabilitySimplex.squared_dist">(geojax.geometry.ProbabilitySimplex method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.Product.squared_dist">(geojax.geometry.Product method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.RankKPSD.squared_dist">(geojax.geometry.RankKPSD method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.RankKPSDBuresWasserstein.squared_dist">(geojax.geometry.RankKPSDBuresWasserstein method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.SPDAffineInvariant.squared_dist">(geojax.geometry.SPDAffineInvariant method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.SPDBuresWasserstein.squared_dist">(geojax.geometry.SPDBuresWasserstein method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.SPDLogEuclidean.squared_dist">(geojax.geometry.SPDLogEuclidean method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.SpecialEuclidean.squared_dist">(geojax.geometry.SpecialEuclidean method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.SpecialOrthogonal.squared_dist">(geojax.geometry.SpecialOrthogonal method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.Spectrahedron.squared_dist">(geojax.geometry.Spectrahedron method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.Sphere.squared_dist">(geojax.geometry.Sphere method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.Stiefel.squared_dist">(geojax.geometry.Stiefel method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.StiefelEuclidean.squared_dist">(geojax.geometry.StiefelEuclidean method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/optimization.html#geojax.optimization.SteepestDescent">SteepestDescent (class in geojax.optimization)</a>
 </li>
       <li><a href="api/geometry.html#geojax.geometry.StiefelLogInfo.step_norm">step_norm (geojax.geometry.StiefelLogInfo attribute)</a>
@@ -1242,6 +1300,8 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/learning.html#geojax.learning.tangent_map">tangent_map() (in module geojax.learning)</a>
+</li>
       <li><a href="api/geometry.html#geojax.geometry.GrassmannProjection.tangent_project">tangent_project() (geojax.geometry.GrassmannProjection method)</a>
 
       <ul>
@@ -1255,6 +1315,8 @@
       <li><a href="api/geometry.html#geojax.geometry.SphereExtrinsic.to_embedding">to_embedding() (geojax.geometry.SphereExtrinsic method)</a>
 </li>
       <li><a href="api/geometry.html#geojax.geometry.GrassmannProjection.to_frame">to_frame() (geojax.geometry.GrassmannProjection method)</a>
+</li>
+      <li><a href="api/geometry.html#geojax.geometry.Hyperboloid.to_poincare">to_poincare() (geojax.geometry.Hyperboloid method)</a>
 </li>
       <li><a href="api/geometry.html#geojax.geometry.GrassmannProjection.to_tangent">to_tangent() (geojax.geometry.GrassmannProjection method)</a>
 

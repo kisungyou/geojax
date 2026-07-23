@@ -1,0 +1,81 @@
+# Manifold-valued learning
+
+GeoJAX supplies geometry-aware operations for neural systems without choosing
+a neural-network framework. Parameters owned by Flax, Equinox, Haiku, or plain
+JAX functions remain external; geometry objects govern manifold-valued
+activations and comparisons.
+
+## Batch contract
+
+For a manifold with event shape `M.shape`, points use
+`batch_shape + M.shape`. Every geometry operation preserves leading batch
+axes, and scalar operations such as `squared_dist` return `batch_shape`.
+Consequently geometry calls may appear directly inside `jax.jit`,
+`jax.grad`, and `jax.vmap`.
+
+Use `squared_dist` in smooth losses:
+
+$$
+\mathcal L(z,c)=d_{\mathcal M}(z,c)^2.
+$$
+
+Unlike `dist`, it does not differentiate a square root at coincident points.
+The implementation also fills removable inverse-trigonometric and spectral
+singularities. Genuine cut loci remain explicit; for example, a spherical
+logarithm is not defined at an antipode.
+
+## Pairwise distances
+
+For collections with shapes `batch_x + (n,) + M.shape` and
+`batch_y + (m,) + M.shape`,
+{func}`geojax.learning.pairwise_squared_dist` returns
+`broadcast(batch_x, batch_y) + (n, m)`. It also accepts `Product` points with
+the same pytree as their factors.
+
+```python
+from geojax.geometry import Sphere
+from geojax.learning import pairwise_squared_dist
+
+M = Sphere(size=3)
+distances = pairwise_squared_dist(M, queries, prototypes)
+logits = -distances
+```
+
+## Geodesic interpolation
+
+{func}`geojax.learning.geodesic_interpolate` evaluates
+
+$$
+\gamma(t)=\operatorname{Exp}_x\!\left(t\operatorname{Log}_x(y)\right).
+$$
+
+An array of times adds a leading interpolation axis. The selected logarithm
+must be defined, so avoid endpoint pairs at a cut locus.
+
+## Tangent-space maps
+
+{func}`geojax.learning.tangent_map` composes
+
+$$
+x
+\longmapsto \operatorname{Log}_{b_s}(x)
+\longmapsto A_\theta\!\left(\operatorname{Log}_{b_s}(x)\right)
+\longmapsto \operatorname{Exp}_{b_t}\!\left(
+  \Pi_{b_t}A_\theta(\operatorname{Log}_{b_s}(x))
+\right).
+$$
+
+The callable $A_\theta$ is supplied by the user and can close over any
+framework's parameters. GeoJAX deliberately uses ambient tangent arrays
+instead of promising global tangent coordinates, which do not exist smoothly
+for every manifold.
+
+## Current scope
+
+Version 0.2 establishes differentiable geometry for manifold-valued features.
+It does not provide a neural-network framework, graph container, or nominal
+coordinate-wise "Riemannian Adam." Ordinary network parameters can use Optax;
+manifold-constrained parameters can currently use GeoJAX's optimization
+subsystem outside a minibatch training loop. A functional manifold optimizer
+with transported state is a later, separately tested addition.
+

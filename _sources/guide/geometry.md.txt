@@ -55,6 +55,7 @@ geometry without knowing its representation.
 | `exp(x, u)` | Evaluate $\operatorname{Exp}_x(u)$ |
 | `log(x, y)` | Evaluate a selected $\operatorname{Log}_x(y)$ |
 | `dist(x, y)` | Evaluate geodesic distance $d(x,y)$ |
+| `squared_dist(x, y)` | Evaluate $d(x,y)^2$ with a coincidence-safe derivative |
 | `retr(x, u, t)` | Retract the step $tu$ from $T_x\mathcal M$ |
 | `invretr(x, y)` | Return a local inverse-retraction displacement |
 | `transport(x, y, u)` | Move $u\in T_x\mathcal M$ into $T_y\mathcal M$ |
@@ -62,10 +63,17 @@ geometry without knowing its representation.
 | `random_point(key, sample_shape)` | Generate reproducible manifold points |
 | `random_tangent(key, x)` | Generate reproducible tangent vectors |
 
-The shared `exp_batch`, `log_batch`, and `dist_batch` methods apply the scalar
-operations over a leading sample axis with `jax.vmap`. See
+All operations accept arbitrary compatible leading batch axes. The shared
+`exp_batch`, `log_batch`, and `dist_batch` names are convenience wrappers over
+that native behavior. See
 [Mathematical foundations](foundations.md) for the abstract definitions and the
 [geometry API](../api/geometry.md) for signatures.
+
+For learning losses, prefer `squared_dist` to `dist(...) ** 2`. The former
+avoids differentiating a square root at coincident points and uses
+geometry-specific stable formulas where necessary. Removable zero-norm and
+repeated-spectrum singularities have analytic derivatives; genuine cut loci
+remain explicit.
 
 `operation_kind("exp")`, `operation_kind("log")`, and
 `operation_kind("dist")` report `"exact"` or `"proxy"`. A proxy class keeps

@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../_static/documentation_options.js?v=91f6191e"></script>
+    <script src="../_static/documentation_options.js?v=95e61db4"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -378,6 +378,7 @@
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Geometry API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="learning.html">Learning API</a></li>
 </ul>
 </div>
 </nav></div>
@@ -484,7 +485,7 @@ geodesic maps are deliberately not required.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.base.GeometryMixin.exp_batch">
 <span class="sig-name descname"><span class="pre">exp_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">us</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.GeometryMixin.exp_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">exp(x,</span> <span class="pre">u)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">us</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">exp</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -501,7 +502,7 @@ geodesic maps are deliberately not required.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.base.GeometryMixin.log_batch">
 <span class="sig-name descname"><span class="pre">log_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.GeometryMixin.log_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">log(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">log</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -518,12 +519,33 @@ geodesic maps are deliberately not required.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.base.GeometryMixin.dist_batch">
 <span class="sig-name descname"><span class="pre">dist_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.GeometryMixin.dist_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">dist(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> (<em>Any</em>)</p></li>
 <li><p><strong>ys</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.base.GeometryMixin.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.GeometryMixin.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared geodesic distance, evaluated without differentiating <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>.</p>
+<p>Geometries with a more direct or more stable formula should override
+this method.  The logarithm-based default is also meaningful for
+retraction geometries, where it inherits the documented proxy
+semantics of <code class="docutils literal notranslate"><span class="pre">log</span></code> and <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>y</strong> (<em>Any</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -821,6 +843,27 @@ product of <code class="docutils literal notranslate"><span class="pre">m</span>
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.Oblique.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Oblique.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared geodesic distance, evaluated without differentiating <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>.</p>
+<p>Geometries with a more direct or more stable formula should override
+this method.  The logarithm-based default is also meaningful for
+retraction geometries, where it inherits the documented proxy
+semantics of <code class="docutils literal notranslate"><span class="pre">log</span></code> and <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>Any</em>)</p></li>
+<li><p><strong>Y</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -847,6 +890,27 @@ product of <code class="docutils literal notranslate"><span class="pre">m</span>
 <li><p><strong>p</strong> (<em>Any</em>)</p></li>
 <li><p><strong>u</strong> (<em>Any</em>)</p></li>
 <li><p><strong>t</strong> (<em>float</em><em> | </em><em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.ProbabilitySimplex.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.ProbabilitySimplex.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared geodesic distance, evaluated without differentiating <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>.</p>
+<p>Geometries with a more direct or more stable formula should override
+this method.  The logarithm-based default is also meaningful for
+retraction geometries, where it inherits the documented proxy
+semantics of <code class="docutils literal notranslate"><span class="pre">log</span></code> and <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> (<em>Any</em>)</p></li>
+<li><p><strong>q</strong> (<em>Any</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1087,6 +1151,23 @@ methods use exact sphere formulas.</p>
 <p>where <code class="docutils literal notranslate"><span class="pre">theta</span> <span class="pre">=</span> <span class="pre">arccos(&lt;x,</span> <span class="pre">y&gt;)</span></code>.</p>
 <p>At the antipode the logarithm is not unique; this implementation
 returns NaN there.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>y</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.Sphere.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Sphere.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared geodesic distance with a finite coincident-point gradient.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1384,6 +1465,27 @@ returns NaNs in that case.</p>
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.PoincareBall.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.PoincareBall.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared geodesic distance, evaluated without differentiating <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>.</p>
+<p>Geometries with a more direct or more stable formula should override
+this method.  The logarithm-based default is also meaningful for
+retraction geometries, where it inherits the documented proxy
+semantics of <code class="docutils literal notranslate"><span class="pre">log</span></code> and <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>y</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -1421,11 +1523,11 @@ returns NaNs in that case.</p>
 <dt class="sig sig-object py" id="geojax.geometry.Grassmann.exp">
 <span class="sig-name descname"><span class="pre">exp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Grassmann.exp" title="Link to this definition">#</a></dt>
 <dd><p>Grassmann exponential map in ONB coordinates.</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">U</span> <span class="pre">=</span> <span class="pre">A</span> <span class="pre">diag(s)</span> <span class="pre">B^T</span></code> is the compact SVD of a horizontal tangent
-vector, then a representative of <code class="docutils literal notranslate"><span class="pre">Exp(X,</span> <span class="pre">U)</span></code> is</p>
-<blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">X</span> <span class="pre">B</span> <span class="pre">cos(s)</span> <span class="pre">B^T</span> <span class="pre">+</span> <span class="pre">A</span> <span class="pre">sin(s)</span> <span class="pre">B^T</span> <span class="pre">+</span> <span class="pre">X</span> <span class="pre">(I</span> <span class="pre">-</span> <span class="pre">B</span> <span class="pre">B^T)</span></code>.</p>
-</div></blockquote>
+<p>For a horizontal tangent <code class="docutils literal notranslate"><span class="pre">U</span></code>, the skew generator</p>
+<p><code class="docutils literal notranslate"><span class="pre">Omega</span> <span class="pre">=</span> <span class="pre">U</span> <span class="pre">&#64;</span> <span class="pre">X.T</span> <span class="pre">-</span> <span class="pre">X</span> <span class="pre">&#64;</span> <span class="pre">U.T</span></code></p>
+<p>produces the exact geodesic representative <code class="docutils literal notranslate"><span class="pre">expm(Omega)</span> <span class="pre">&#64;</span> <span class="pre">X</span></code>.  This
+formulation is equivalent to the principal-angle SVD formula but has a
+well-defined JVP when <code class="docutils literal notranslate"><span class="pre">U</span></code> is zero or has repeated singular values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1463,6 +1565,27 @@ vector, then a representative of <code class="docutils literal notranslate"><spa
 <dd><p>Grassmann logarithm map.</p>
 <p>This is well defined away from the cut locus; numerically this requires
 X^T Y to be nonsingular, i.e. no principal angle equal to pi/2.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>Any</em>)</p></li>
+<li><p><strong>Y</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.Grassmann.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Grassmann.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared geodesic distance, evaluated without differentiating <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>.</p>
+<p>Geometries with a more direct or more stable formula should override
+this method.  The logarithm-based default is also meaningful for
+retraction geometries, where it inherits the documented proxy
+semantics of <code class="docutils literal notranslate"><span class="pre">log</span></code> and <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1831,6 +1954,27 @@ it by the orthogonal Procrustes solution.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.GrassmannProjection.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.GrassmannProjection.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared geodesic distance, evaluated without differentiating <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>.</p>
+<p>Geometries with a more direct or more stable formula should override
+this method.  The logarithm-based default is also meaningful for
+retraction geometries, where it inherits the documented proxy
+semantics of <code class="docutils literal notranslate"><span class="pre">log</span></code> and <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>Any</em>)</p></li>
+<li><p><strong>Y</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.GrassmannProjection.dist">
 <span class="sig-name descname"><span class="pre">dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.GrassmannProjection.dist" title="Link to this definition">#</a></dt>
 <dd><p>Intrinsic principal-angle geodesic distance.</p>
@@ -2065,7 +2209,7 @@ damped endpoint shooting; use <a class="reference internal" href="#geojax.geomet
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.Stiefel.dist_batch">
 <span class="sig-name descname"><span class="pre">dist_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Stiefel.dist_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">dist(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -2101,7 +2245,7 @@ damped endpoint shooting; use <a class="reference internal" href="#geojax.geomet
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.Stiefel.exp_batch">
 <span class="sig-name descname"><span class="pre">exp_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">us</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Stiefel.exp_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">exp(x,</span> <span class="pre">u)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">us</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">exp</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -2175,7 +2319,7 @@ damped endpoint shooting; use <a class="reference internal" href="#geojax.geomet
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.Stiefel.log_batch">
 <span class="sig-name descname"><span class="pre">log_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Stiefel.log_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">log(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">log</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -2326,6 +2470,27 @@ converge. Check <code class="docutils literal notranslate"><span class="pre">inf
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.Stiefel.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Stiefel.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared geodesic distance, evaluated without differentiating <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>.</p>
+<p>Geometries with a more direct or more stable formula should override
+this method.  The logarithm-based default is also meaningful for
+retraction geometries, where it inherits the documented proxy
+semantics of <code class="docutils literal notranslate"><span class="pre">log</span></code> and <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>Any</em>)</p></li>
+<li><p><strong>Y</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.Stiefel.tangent_project">
 <span class="sig-name descname"><span class="pre">tangent_project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Stiefel.tangent_project" title="Link to this definition">#</a></dt>
 <dd><p>Orthogonally project an ambient matrix onto the frame tangent space.</p>
@@ -2460,7 +2625,7 @@ differ whenever the tangent has a component <code class="docutils literal notran
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.StiefelEuclidean.dist_batch">
 <span class="sig-name descname"><span class="pre">dist_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.StiefelEuclidean.dist_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">dist(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -2477,7 +2642,7 @@ differ whenever the tangent has a component <code class="docutils literal notran
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.StiefelEuclidean.exp_batch">
 <span class="sig-name descname"><span class="pre">exp_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">us</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.StiefelEuclidean.exp_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">exp(x,</span> <span class="pre">u)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">us</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">exp</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -2551,7 +2716,7 @@ differ whenever the tangent has a component <code class="docutils literal notran
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.StiefelEuclidean.log_batch">
 <span class="sig-name descname"><span class="pre">log_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.StiefelEuclidean.log_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">log(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">log</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -2702,6 +2867,27 @@ converge. Check <code class="docutils literal notranslate"><span class="pre">inf
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.StiefelEuclidean.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.StiefelEuclidean.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared geodesic distance, evaluated without differentiating <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>.</p>
+<p>Geometries with a more direct or more stable formula should override
+this method.  The logarithm-based default is also meaningful for
+retraction geometries, where it inherits the documented proxy
+semantics of <code class="docutils literal notranslate"><span class="pre">log</span></code> and <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>Any</em>)</p></li>
+<li><p><strong>Y</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.StiefelEuclidean.tangent_project">
 <span class="sig-name descname"><span class="pre">tangent_project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.StiefelEuclidean.tangent_project" title="Link to this definition">#</a></dt>
 <dd><p>Orthogonally project an ambient matrix onto the frame tangent space.</p>
@@ -2840,9 +3026,30 @@ Euclidean Stiefel metric under <code class="docutils literal notranslate"><span 
 </dd>
 </dl>
 <dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.GeneralizedStiefel.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.GeneralizedStiefel.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared geodesic distance, evaluated without differentiating <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>.</p>
+<p>Geometries with a more direct or more stable formula should override
+this method.  The logarithm-based default is also meaningful for
+retraction geometries, where it inherits the documented proxy
+semantics of <code class="docutils literal notranslate"><span class="pre">log</span></code> and <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>Any</em>)</p></li>
+<li><p><strong>Y</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.GeneralizedStiefel.dist_batch">
 <span class="sig-name descname"><span class="pre">dist_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.GeneralizedStiefel.dist_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">dist(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -2878,7 +3085,7 @@ Euclidean Stiefel metric under <code class="docutils literal notranslate"><span 
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.GeneralizedStiefel.exp_batch">
 <span class="sig-name descname"><span class="pre">exp_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">us</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.GeneralizedStiefel.exp_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">exp(x,</span> <span class="pre">u)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">us</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">exp</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -2929,7 +3136,7 @@ Euclidean Stiefel metric under <code class="docutils literal notranslate"><span 
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.GeneralizedStiefel.log_batch">
 <span class="sig-name descname"><span class="pre">log_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.GeneralizedStiefel.log_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">log(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">log</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -3010,9 +3217,30 @@ Euclidean Stiefel metric under <code class="docutils literal notranslate"><span 
 </dd>
 </dl>
 <dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.GeneralizedGrassmann.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.GeneralizedGrassmann.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared geodesic distance, evaluated without differentiating <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>.</p>
+<p>Geometries with a more direct or more stable formula should override
+this method.  The logarithm-based default is also meaningful for
+retraction geometries, where it inherits the documented proxy
+semantics of <code class="docutils literal notranslate"><span class="pre">log</span></code> and <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>Any</em>)</p></li>
+<li><p><strong>Y</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.GeneralizedGrassmann.dist_batch">
 <span class="sig-name descname"><span class="pre">dist_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.GeneralizedGrassmann.dist_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">dist(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -3048,7 +3276,7 @@ Euclidean Stiefel metric under <code class="docutils literal notranslate"><span 
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.GeneralizedGrassmann.exp_batch">
 <span class="sig-name descname"><span class="pre">exp_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">us</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.GeneralizedGrassmann.exp_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">exp(x,</span> <span class="pre">u)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">us</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">exp</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -3099,7 +3327,7 @@ Euclidean Stiefel metric under <code class="docutils literal notranslate"><span 
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.GeneralizedGrassmann.log_batch">
 <span class="sig-name descname"><span class="pre">log_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.GeneralizedGrassmann.log_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">log(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">log</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -3178,6 +3406,51 @@ Euclidean Stiefel metric under <code class="docutils literal notranslate"><span 
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.Hyperboloid.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Hyperboloid.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared hyperbolic distance with a finite derivative at coincidence.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>y</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.Hyperboloid.to_poincare">
+<span class="sig-name descname"><span class="pre">to_poincare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Hyperboloid.to_poincare" title="Link to this definition">#</a></dt>
+<dd><p>Convert hyperboloid points to the Poincare ball model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>Any</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.Hyperboloid.from_poincare">
+<span class="sig-name descname"><span class="pre">from_poincare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Hyperboloid.from_poincare" title="Link to this definition">#</a></dt>
+<dd><p>Convert points in the open Poincare ball to the hyperboloid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>point</strong> (<em>Any</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -3318,6 +3591,27 @@ The class bool is a subclass of the class int, and cannot be subclassed.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.Product.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Product.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared geodesic distance, evaluated without differentiating <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>.</p>
+<p>Geometries with a more direct or more stable formula should override
+this method.  The logarithm-based default is also meaningful for
+retraction geometries, where it inherits the documented proxy
+semantics of <code class="docutils literal notranslate"><span class="pre">log</span></code> and <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>y</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.Product.pair_mean">
 <span class="sig-name descname"><span class="pre">pair_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Product.pair_mean" title="Link to this definition">#</a></dt>
 <dd><p>Midpoint along the shortest available geodesic.</p>
@@ -3385,6 +3679,27 @@ as <code class="docutils literal notranslate"><span class="pre">R</span> <span c
 <li><p><strong>R</strong> (<em>Any</em>)</p></li>
 <li><p><strong>U</strong> (<em>Any</em>)</p></li>
 <li><p><strong>t</strong> (<em>float</em><em> | </em><em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.SpecialOrthogonal.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.SpecialOrthogonal.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared geodesic distance, evaluated without differentiating <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>.</p>
+<p>Geometries with a more direct or more stable formula should override
+this method.  The logarithm-based default is also meaningful for
+retraction geometries, where it inherits the documented proxy
+semantics of <code class="docutils literal notranslate"><span class="pre">log</span></code> and <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>R</strong> (<em>Any</em>)</p></li>
+<li><p><strong>Q</strong> (<em>Any</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -3515,6 +3830,27 @@ from the Lie-group exponential except for special tangent directions.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.SpecialEuclidean.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">H</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.SpecialEuclidean.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared geodesic distance, evaluated without differentiating <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>.</p>
+<p>Geometries with a more direct or more stable formula should override
+this method.  The logarithm-based default is also meaningful for
+retraction geometries, where it inherits the documented proxy
+semantics of <code class="docutils literal notranslate"><span class="pre">log</span></code> and <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>G</strong> (<em>Any</em>)</p></li>
+<li><p><strong>H</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.SpecialEuclidean.ehess_to_rhess">
 <span class="sig-name descname"><span class="pre">ehess_to_rhess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">egrad</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ehess_vec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.SpecialEuclidean.ehess_to_rhess" title="Link to this definition">#</a></dt>
 <dd><p>Default Hessian conversion: tangent-project the ambient Hessian-vector product.</p>
@@ -3603,6 +3939,23 @@ Tangent vectors are symmetric matrices of the same shape.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.SPDLogEuclidean.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.SPDLogEuclidean.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared Euclidean distance between matrix-log coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>P</strong> (<em>Any</em>)</p></li>
+<li><p><strong>Q</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.SPDLogEuclidean.lincomb">
 <span class="sig-name descname"><span class="pre">lincomb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">terms</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.SPDLogEuclidean.lincomb" title="Link to this definition">#</a></dt>
 <dd><p>Linear combination of tangent vectors, projected back to <code class="docutils literal notranslate"><span class="pre">T_x</span> <span class="pre">M</span></code>.</p>
@@ -3650,6 +4003,23 @@ Tangent vectors are symmetric matrices of the same shape.</p>
 <li><p><strong>P</strong> (<em>Any</em>)</p></li>
 <li><p><strong>U</strong> (<em>Any</em>)</p></li>
 <li><p><strong>t</strong> (<em>float</em><em> | </em><em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.SPDAffineInvariant.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.SPDAffineInvariant.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared affine-invariant distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>P</strong> (<em>Any</em>)</p></li>
+<li><p><strong>Q</strong> (<em>Any</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -3738,6 +4108,27 @@ evaluation requires integrating a differential equation.</p>
 <dt class="sig sig-object py" id="geojax.geometry.SPDBuresWasserstein.optimal_transport_map">
 <span class="sig-name descname"><span class="pre">optimal_transport_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.SPDBuresWasserstein.optimal_transport_map" title="Link to this definition">#</a></dt>
 <dd><p>Return the optimal Gaussian transport map from covariance P to Q.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>P</strong> (<em>Any</em>)</p></li>
+<li><p><strong>Q</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.SPDBuresWasserstein.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.SPDBuresWasserstein.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared geodesic distance, evaluated without differentiating <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>.</p>
+<p>Geometries with a more direct or more stable formula should override
+this method.  The logarithm-based default is also meaningful for
+retraction geometries, where it inherits the documented proxy
+semantics of <code class="docutils literal notranslate"><span class="pre">log</span></code> and <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -3886,7 +4277,7 @@ proxies by <a class="reference internal" href="#geojax.geometry.FixedRank.operat
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.FixedRank.dist_batch">
 <span class="sig-name descname"><span class="pre">dist_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.FixedRank.dist_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">dist(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -3939,7 +4330,7 @@ proxies by <a class="reference internal" href="#geojax.geometry.FixedRank.operat
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.FixedRank.exp_batch">
 <span class="sig-name descname"><span class="pre">exp_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">us</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.FixedRank.exp_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">exp(x,</span> <span class="pre">u)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">us</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">exp</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -3990,7 +4381,7 @@ proxies by <a class="reference internal" href="#geojax.geometry.FixedRank.operat
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.FixedRank.log_batch">
 <span class="sig-name descname"><span class="pre">log_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.FixedRank.log_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">log(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">log</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -4022,6 +4413,27 @@ proxies by <a class="reference internal" href="#geojax.geometry.FixedRank.operat
 <dt class="sig sig-object py" id="geojax.geometry.FixedRank.pair_mean">
 <span class="sig-name descname"><span class="pre">pair_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.FixedRank.pair_mean" title="Link to this definition">#</a></dt>
 <dd><p>Midpoint along the shortest available geodesic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>y</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.FixedRank.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.FixedRank.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared geodesic distance, evaluated without differentiating <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>.</p>
+<p>Geometries with a more direct or more stable formula should override
+this method.  The logarithm-based default is also meaningful for
+retraction geometries, where it inherits the documented proxy
+semantics of <code class="docutils literal notranslate"><span class="pre">log</span></code> and <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -4108,7 +4520,7 @@ proxies by <a class="reference internal" href="#geojax.geometry.FixedRank.operat
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.RankKPSD.dist_batch">
 <span class="sig-name descname"><span class="pre">dist_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.RankKPSD.dist_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">dist(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -4161,7 +4573,7 @@ proxies by <a class="reference internal" href="#geojax.geometry.FixedRank.operat
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.RankKPSD.exp_batch">
 <span class="sig-name descname"><span class="pre">exp_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">us</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.RankKPSD.exp_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">exp(x,</span> <span class="pre">u)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">us</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">exp</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -4229,7 +4641,7 @@ proxies by <a class="reference internal" href="#geojax.geometry.FixedRank.operat
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.RankKPSD.log_batch">
 <span class="sig-name descname"><span class="pre">log_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.RankKPSD.log_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">log(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">log</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -4284,6 +4696,27 @@ proxies by <a class="reference internal" href="#geojax.geometry.FixedRank.operat
 <li><p><strong>P</strong> (<em>Any</em>)</p></li>
 <li><p><strong>U</strong> (<em>Any</em>)</p></li>
 <li><p><strong>t</strong> (<em>float</em><em> | </em><em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.RankKPSD.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.RankKPSD.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared geodesic distance, evaluated without differentiating <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>.</p>
+<p>Geometries with a more direct or more stable formula should override
+this method.  The logarithm-based default is also meaningful for
+retraction geometries, where it inherits the documented proxy
+semantics of <code class="docutils literal notranslate"><span class="pre">log</span></code> and <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>y</strong> (<em>Any</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -4470,7 +4903,7 @@ proxies by <a class="reference internal" href="#geojax.geometry.FixedRank.operat
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.RankKPSDBuresWasserstein.dist_batch">
 <span class="sig-name descname"><span class="pre">dist_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.RankKPSDBuresWasserstein.dist_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">dist(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -4506,7 +4939,7 @@ proxies by <a class="reference internal" href="#geojax.geometry.FixedRank.operat
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.RankKPSDBuresWasserstein.exp_batch">
 <span class="sig-name descname"><span class="pre">exp_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">us</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.RankKPSDBuresWasserstein.exp_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">exp(x,</span> <span class="pre">u)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">us</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">exp</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -4540,7 +4973,7 @@ proxies by <a class="reference internal" href="#geojax.geometry.FixedRank.operat
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.RankKPSDBuresWasserstein.log_batch">
 <span class="sig-name descname"><span class="pre">log_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.RankKPSDBuresWasserstein.log_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">log(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">log</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -4572,6 +5005,27 @@ proxies by <a class="reference internal" href="#geojax.geometry.FixedRank.operat
 <dt class="sig sig-object py" id="geojax.geometry.RankKPSDBuresWasserstein.pair_mean">
 <span class="sig-name descname"><span class="pre">pair_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.RankKPSDBuresWasserstein.pair_mean" title="Link to this definition">#</a></dt>
 <dd><p>Midpoint along the shortest available geodesic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>y</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.RankKPSDBuresWasserstein.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.RankKPSDBuresWasserstein.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared geodesic distance, evaluated without differentiating <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>.</p>
+<p>Geometries with a more direct or more stable formula should override
+this method.  The logarithm-based default is also meaningful for
+retraction geometries, where it inherits the documented proxy
+semantics of <code class="docutils literal notranslate"><span class="pre">log</span></code> and <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -4622,7 +5076,7 @@ proxies by <a class="reference internal" href="#geojax.geometry.FixedRank.operat
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.Elliptope.dist_batch">
 <span class="sig-name descname"><span class="pre">dist_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Elliptope.dist_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">dist(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -4675,7 +5129,7 @@ proxies by <a class="reference internal" href="#geojax.geometry.FixedRank.operat
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.Elliptope.exp_batch">
 <span class="sig-name descname"><span class="pre">exp_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">us</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Elliptope.exp_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">exp(x,</span> <span class="pre">u)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">us</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">exp</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -4743,7 +5197,7 @@ proxies by <a class="reference internal" href="#geojax.geometry.FixedRank.operat
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.Elliptope.log_batch">
 <span class="sig-name descname"><span class="pre">log_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Elliptope.log_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">log(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">log</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -4798,6 +5252,27 @@ proxies by <a class="reference internal" href="#geojax.geometry.FixedRank.operat
 <li><p><strong>P</strong> (<em>Any</em>)</p></li>
 <li><p><strong>U</strong> (<em>Any</em>)</p></li>
 <li><p><strong>t</strong> (<em>float</em><em> | </em><em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.Elliptope.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Elliptope.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared geodesic distance, evaluated without differentiating <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>.</p>
+<p>Geometries with a more direct or more stable formula should override
+this method.  The logarithm-based default is also meaningful for
+retraction geometries, where it inherits the documented proxy
+semantics of <code class="docutils literal notranslate"><span class="pre">log</span></code> and <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>y</strong> (<em>Any</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -4879,7 +5354,7 @@ proxies by <a class="reference internal" href="#geojax.geometry.FixedRank.operat
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.Spectrahedron.dist_batch">
 <span class="sig-name descname"><span class="pre">dist_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Spectrahedron.dist_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">dist(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -4932,7 +5407,7 @@ proxies by <a class="reference internal" href="#geojax.geometry.FixedRank.operat
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.Spectrahedron.exp_batch">
 <span class="sig-name descname"><span class="pre">exp_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">us</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Spectrahedron.exp_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">exp(x,</span> <span class="pre">u)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">us</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">exp</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -5000,7 +5475,7 @@ proxies by <a class="reference internal" href="#geojax.geometry.FixedRank.operat
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.Spectrahedron.log_batch">
 <span class="sig-name descname"><span class="pre">log_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Spectrahedron.log_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">log(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">log</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -5055,6 +5530,27 @@ proxies by <a class="reference internal" href="#geojax.geometry.FixedRank.operat
 <li><p><strong>P</strong> (<em>Any</em>)</p></li>
 <li><p><strong>U</strong> (<em>Any</em>)</p></li>
 <li><p><strong>t</strong> (<em>float</em><em> | </em><em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.Spectrahedron.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Spectrahedron.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared geodesic distance, evaluated without differentiating <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>.</p>
+<p>Geometries with a more direct or more stable formula should override
+this method.  The logarithm-based default is also meaningful for
+retraction geometries, where it inherits the documented proxy
+semantics of <code class="docutils literal notranslate"><span class="pre">log</span></code> and <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>y</strong> (<em>Any</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -5239,7 +5735,7 @@ Point updates use normalized-addition retractions; consequently <code class="doc
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.CorrelationAffineQuotient.dist_batch">
 <span class="sig-name descname"><span class="pre">dist_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.CorrelationAffineQuotient.dist_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">dist(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -5292,7 +5788,7 @@ Point updates use normalized-addition retractions; consequently <code class="doc
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.CorrelationAffineQuotient.exp_batch">
 <span class="sig-name descname"><span class="pre">exp_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">us</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.CorrelationAffineQuotient.exp_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">exp(x,</span> <span class="pre">u)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">us</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">exp</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -5343,7 +5839,7 @@ Point updates use normalized-addition retractions; consequently <code class="doc
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.CorrelationAffineQuotient.log_batch">
 <span class="sig-name descname"><span class="pre">log_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.CorrelationAffineQuotient.log_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">log(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">log</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -5375,6 +5871,27 @@ Point updates use normalized-addition retractions; consequently <code class="doc
 <dt class="sig sig-object py" id="geojax.geometry.CorrelationAffineQuotient.pair_mean">
 <span class="sig-name descname"><span class="pre">pair_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.CorrelationAffineQuotient.pair_mean" title="Link to this definition">#</a></dt>
 <dd><p>Midpoint along the shortest available geodesic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>y</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.CorrelationAffineQuotient.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.CorrelationAffineQuotient.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared geodesic distance, evaluated without differentiating <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>.</p>
+<p>Geometries with a more direct or more stable formula should override
+this method.  The logarithm-based default is also meaningful for
+retraction geometries, where it inherits the documented proxy
+semantics of <code class="docutils literal notranslate"><span class="pre">log</span></code> and <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -5485,7 +6002,7 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.KendallShape.dist_batch">
 <span class="sig-name descname"><span class="pre">dist_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.KendallShape.dist_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">dist(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -5521,7 +6038,7 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.KendallShape.exp_batch">
 <span class="sig-name descname"><span class="pre">exp_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">us</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.KendallShape.exp_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">exp(x,</span> <span class="pre">u)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">us</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">exp</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -5572,7 +6089,7 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="geojax.geometry.KendallShape.log_batch">
 <span class="sig-name descname"><span class="pre">log_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.KendallShape.log_batch" title="Link to this definition">#</a></dt>
-<dd><p>Vectorize <code class="docutils literal notranslate"><span class="pre">log(x,</span> <span class="pre">y)</span></code> over the leading axis of <code class="docutils literal notranslate"><span class="pre">ys</span></code>.</p>
+<dd><p>Compatibility wrapper for natively batched <code class="docutils literal notranslate"><span class="pre">log</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -5604,6 +6121,27 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 <dt class="sig sig-object py" id="geojax.geometry.KendallShape.pair_mean">
 <span class="sig-name descname"><span class="pre">pair_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.KendallShape.pair_mean" title="Link to this definition">#</a></dt>
 <dd><p>Midpoint along the shortest available geodesic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>y</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.KendallShape.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.KendallShape.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Squared geodesic distance, evaluated without differentiating <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>.</p>
+<p>Geometries with a more direct or more stable formula should override
+this method.  The logarithm-based default is also meaningful for
+retraction geometries, where it inherits the documented proxy
+semantics of <code class="docutils literal notranslate"><span class="pre">log</span></code> and <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -5694,6 +6232,7 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.GeometryMixin.exp_batch"><code class="docutils literal notranslate"><span class="pre">GeometryMixin.exp_batch()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.GeometryMixin.log_batch"><code class="docutils literal notranslate"><span class="pre">GeometryMixin.log_batch()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.GeometryMixin.dist_batch"><code class="docutils literal notranslate"><span class="pre">GeometryMixin.dist_batch()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.GeometryMixin.squared_dist"><code class="docutils literal notranslate"><span class="pre">GeometryMixin.squared_dist()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.GeometryMixin.retr"><code class="docutils literal notranslate"><span class="pre">GeometryMixin.retr()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.GeometryMixin.invretr"><code class="docutils literal notranslate"><span class="pre">GeometryMixin.invretr()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.GeometryMixin.lincomb"><code class="docutils literal notranslate"><span class="pre">GeometryMixin.lincomb()</span></code></a></li>
@@ -5716,9 +6255,13 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Euclidean.ehess_to_rhess"><code class="docutils literal notranslate"><span class="pre">Euclidean.ehess_to_rhess()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Oblique"><code class="docutils literal notranslate"><span class="pre">Oblique</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Oblique"><code class="docutils literal notranslate"><span class="pre">Oblique</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Oblique.squared_dist"><code class="docutils literal notranslate"><span class="pre">Oblique.squared_dist()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.ProbabilitySimplex"><code class="docutils literal notranslate"><span class="pre">ProbabilitySimplex</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.ProbabilitySimplex.retr"><code class="docutils literal notranslate"><span class="pre">ProbabilitySimplex.retr()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.ProbabilitySimplex.squared_dist"><code class="docutils literal notranslate"><span class="pre">ProbabilitySimplex.squared_dist()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Sphere"><code class="docutils literal notranslate"><span class="pre">Sphere</span></code></a><ul class="nav section-nav flex-column">
@@ -5736,6 +6279,7 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Sphere.norm"><code class="docutils literal notranslate"><span class="pre">Sphere.norm()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Sphere.exp"><code class="docutils literal notranslate"><span class="pre">Sphere.exp()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Sphere.log"><code class="docutils literal notranslate"><span class="pre">Sphere.log()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Sphere.squared_dist"><code class="docutils literal notranslate"><span class="pre">Sphere.squared_dist()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Sphere.dist"><code class="docutils literal notranslate"><span class="pre">Sphere.dist()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Sphere.transport"><code class="docutils literal notranslate"><span class="pre">Sphere.transport()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Sphere.geodesic_flow"><code class="docutils literal notranslate"><span class="pre">Sphere.geodesic_flow()</span></code></a></li>
@@ -5755,12 +6299,16 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SphereExtrinsic.extrinsic_mean"><code class="docutils literal notranslate"><span class="pre">SphereExtrinsic.extrinsic_mean()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.PoincareBall"><code class="docutils literal notranslate"><span class="pre">PoincareBall</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.PoincareBall"><code class="docutils literal notranslate"><span class="pre">PoincareBall</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.PoincareBall.squared_dist"><code class="docutils literal notranslate"><span class="pre">PoincareBall.squared_dist()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Grassmann"><code class="docutils literal notranslate"><span class="pre">Grassmann</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Grassmann.lincomb"><code class="docutils literal notranslate"><span class="pre">Grassmann.lincomb()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Grassmann.exp"><code class="docutils literal notranslate"><span class="pre">Grassmann.exp()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Grassmann.retr"><code class="docutils literal notranslate"><span class="pre">Grassmann.retr()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Grassmann.log"><code class="docutils literal notranslate"><span class="pre">Grassmann.log()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Grassmann.squared_dist"><code class="docutils literal notranslate"><span class="pre">Grassmann.squared_dist()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Grassmann.transport"><code class="docutils literal notranslate"><span class="pre">Grassmann.transport()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Grassmann.transp"><code class="docutils literal notranslate"><span class="pre">Grassmann.transp()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Grassmann.projector"><code class="docutils literal notranslate"><span class="pre">Grassmann.projector()</span></code></a></li>
@@ -5783,6 +6331,7 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.GrassmannProjection.exp"><code class="docutils literal notranslate"><span class="pre">GrassmannProjection.exp()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.GrassmannProjection.retr"><code class="docutils literal notranslate"><span class="pre">GrassmannProjection.retr()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.GrassmannProjection.log"><code class="docutils literal notranslate"><span class="pre">GrassmannProjection.log()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.GrassmannProjection.squared_dist"><code class="docutils literal notranslate"><span class="pre">GrassmannProjection.squared_dist()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.GrassmannProjection.dist"><code class="docutils literal notranslate"><span class="pre">GrassmannProjection.dist()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.GrassmannProjection.geodesic_dist"><code class="docutils literal notranslate"><span class="pre">GrassmannProjection.geodesic_dist()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.GrassmannProjection.squared_chordal_dist"><code class="docutils literal notranslate"><span class="pre">GrassmannProjection.squared_chordal_dist()</span></code></a></li>
@@ -5815,6 +6364,7 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Stiefel.project"><code class="docutils literal notranslate"><span class="pre">Stiefel.project()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Stiefel.projection"><code class="docutils literal notranslate"><span class="pre">Stiefel.projection()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Stiefel.retr"><code class="docutils literal notranslate"><span class="pre">Stiefel.retr()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Stiefel.squared_dist"><code class="docutils literal notranslate"><span class="pre">Stiefel.squared_dist()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Stiefel.tangent_project"><code class="docutils literal notranslate"><span class="pre">Stiefel.tangent_project()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Stiefel.to_tangent"><code class="docutils literal notranslate"><span class="pre">Stiefel.to_tangent()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Stiefel.transp"><code class="docutils literal notranslate"><span class="pre">Stiefel.transp()</span></code></a></li>
@@ -5840,6 +6390,7 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.StiefelEuclidean.project"><code class="docutils literal notranslate"><span class="pre">StiefelEuclidean.project()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.StiefelEuclidean.projection"><code class="docutils literal notranslate"><span class="pre">StiefelEuclidean.projection()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.StiefelEuclidean.retr"><code class="docutils literal notranslate"><span class="pre">StiefelEuclidean.retr()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.StiefelEuclidean.squared_dist"><code class="docutils literal notranslate"><span class="pre">StiefelEuclidean.squared_dist()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.StiefelEuclidean.tangent_project"><code class="docutils literal notranslate"><span class="pre">StiefelEuclidean.tangent_project()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.StiefelEuclidean.to_tangent"><code class="docutils literal notranslate"><span class="pre">StiefelEuclidean.to_tangent()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.StiefelEuclidean.transp"><code class="docutils literal notranslate"><span class="pre">StiefelEuclidean.transp()</span></code></a></li>
@@ -5854,6 +6405,7 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.GeneralizedStiefel"><code class="docutils literal notranslate"><span class="pre">GeneralizedStiefel</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.GeneralizedStiefel.squared_dist"><code class="docutils literal notranslate"><span class="pre">GeneralizedStiefel.squared_dist()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.GeneralizedStiefel.dist_batch"><code class="docutils literal notranslate"><span class="pre">GeneralizedStiefel.dist_batch()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.GeneralizedStiefel.ehess_to_rhess"><code class="docutils literal notranslate"><span class="pre">GeneralizedStiefel.ehess_to_rhess()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.GeneralizedStiefel.exp_batch"><code class="docutils literal notranslate"><span class="pre">GeneralizedStiefel.exp_batch()</span></code></a></li>
@@ -5866,6 +6418,7 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.GeneralizedGrassmann"><code class="docutils literal notranslate"><span class="pre">GeneralizedGrassmann</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.GeneralizedGrassmann.squared_dist"><code class="docutils literal notranslate"><span class="pre">GeneralizedGrassmann.squared_dist()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.GeneralizedGrassmann.dist_batch"><code class="docutils literal notranslate"><span class="pre">GeneralizedGrassmann.dist_batch()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.GeneralizedGrassmann.ehess_to_rhess"><code class="docutils literal notranslate"><span class="pre">GeneralizedGrassmann.ehess_to_rhess()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.GeneralizedGrassmann.exp_batch"><code class="docutils literal notranslate"><span class="pre">GeneralizedGrassmann.exp_batch()</span></code></a></li>
@@ -5877,7 +6430,12 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.GeneralizedGrassmann.retr"><code class="docutils literal notranslate"><span class="pre">GeneralizedGrassmann.retr()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Hyperboloid"><code class="docutils literal notranslate"><span class="pre">Hyperboloid</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Hyperboloid"><code class="docutils literal notranslate"><span class="pre">Hyperboloid</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Hyperboloid.squared_dist"><code class="docutils literal notranslate"><span class="pre">Hyperboloid.squared_dist()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Hyperboloid.to_poincare"><code class="docutils literal notranslate"><span class="pre">Hyperboloid.to_poincare()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Hyperboloid.from_poincare"><code class="docutils literal notranslate"><span class="pre">Hyperboloid.from_poincare()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Torus"><code class="docutils literal notranslate"><span class="pre">Torus</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Torus.retr"><code class="docutils literal notranslate"><span class="pre">Torus.retr()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Torus.pair_mean"><code class="docutils literal notranslate"><span class="pre">Torus.pair_mean()</span></code></a></li>
@@ -5891,6 +6449,7 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Product.transport_is_parallel"><code class="docutils literal notranslate"><span class="pre">Product.transport_is_parallel</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Product.lincomb"><code class="docutils literal notranslate"><span class="pre">Product.lincomb()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Product.retr"><code class="docutils literal notranslate"><span class="pre">Product.retr()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Product.squared_dist"><code class="docutils literal notranslate"><span class="pre">Product.squared_dist()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Product.pair_mean"><code class="docutils literal notranslate"><span class="pre">Product.pair_mean()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Product.ehess_to_rhess"><code class="docutils literal notranslate"><span class="pre">Product.ehess_to_rhess()</span></code></a></li>
 </ul>
@@ -5900,6 +6459,7 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#matrix-lie-groups">Matrix Lie groups</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SpecialOrthogonal"><code class="docutils literal notranslate"><span class="pre">SpecialOrthogonal</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SpecialOrthogonal.retr"><code class="docutils literal notranslate"><span class="pre">SpecialOrthogonal.retr()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SpecialOrthogonal.squared_dist"><code class="docutils literal notranslate"><span class="pre">SpecialOrthogonal.squared_dist()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SpecialOrthogonal.transport"><code class="docutils literal notranslate"><span class="pre">SpecialOrthogonal.transport()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SpecialOrthogonal.transp"><code class="docutils literal notranslate"><span class="pre">SpecialOrthogonal.transp()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SpecialOrthogonal.ehess_to_rhess"><code class="docutils literal notranslate"><span class="pre">SpecialOrthogonal.ehess_to_rhess()</span></code></a></li>
@@ -5909,6 +6469,7 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SpecialEuclidean"><code class="docutils literal notranslate"><span class="pre">SpecialEuclidean</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SpecialEuclidean.retr"><code class="docutils literal notranslate"><span class="pre">SpecialEuclidean.retr()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SpecialEuclidean.squared_dist"><code class="docutils literal notranslate"><span class="pre">SpecialEuclidean.squared_dist()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SpecialEuclidean.ehess_to_rhess"><code class="docutils literal notranslate"><span class="pre">SpecialEuclidean.ehess_to_rhess()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SpecialEuclidean.group_exp"><code class="docutils literal notranslate"><span class="pre">SpecialEuclidean.group_exp()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SpecialEuclidean.group_log"><code class="docutils literal notranslate"><span class="pre">SpecialEuclidean.group_log()</span></code></a></li>
@@ -5919,11 +6480,13 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#positive-definite-matrices">Positive-definite matrices</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SPDLogEuclidean"><code class="docutils literal notranslate"><span class="pre">SPDLogEuclidean</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SPDLogEuclidean.retr"><code class="docutils literal notranslate"><span class="pre">SPDLogEuclidean.retr()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SPDLogEuclidean.squared_dist"><code class="docutils literal notranslate"><span class="pre">SPDLogEuclidean.squared_dist()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SPDLogEuclidean.lincomb"><code class="docutils literal notranslate"><span class="pre">SPDLogEuclidean.lincomb()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SPDAffineInvariant"><code class="docutils literal notranslate"><span class="pre">SPDAffineInvariant</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SPDAffineInvariant.retr"><code class="docutils literal notranslate"><span class="pre">SPDAffineInvariant.retr()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SPDAffineInvariant.squared_dist"><code class="docutils literal notranslate"><span class="pre">SPDAffineInvariant.squared_dist()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SPDAffineInvariant.lincomb"><code class="docutils literal notranslate"><span class="pre">SPDAffineInvariant.lincomb()</span></code></a></li>
 </ul>
 </li>
@@ -5931,6 +6494,7 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SPDBuresWasserstein.sylvester"><code class="docutils literal notranslate"><span class="pre">SPDBuresWasserstein.sylvester()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SPDBuresWasserstein.retr"><code class="docutils literal notranslate"><span class="pre">SPDBuresWasserstein.retr()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SPDBuresWasserstein.optimal_transport_map"><code class="docutils literal notranslate"><span class="pre">SPDBuresWasserstein.optimal_transport_map()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SPDBuresWasserstein.squared_dist"><code class="docutils literal notranslate"><span class="pre">SPDBuresWasserstein.squared_dist()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SPDBuresWasserstein.transport"><code class="docutils literal notranslate"><span class="pre">SPDBuresWasserstein.transport()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SPDBuresWasserstein.transp"><code class="docutils literal notranslate"><span class="pre">SPDBuresWasserstein.transp()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.SPDBuresWasserstein.lincomb"><code class="docutils literal notranslate"><span class="pre">SPDBuresWasserstein.lincomb()</span></code></a></li>
@@ -5952,6 +6516,7 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.FixedRank.log_batch"><code class="docutils literal notranslate"><span class="pre">FixedRank.log_batch()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.FixedRank.operation_kind"><code class="docutils literal notranslate"><span class="pre">FixedRank.operation_kind()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.FixedRank.pair_mean"><code class="docutils literal notranslate"><span class="pre">FixedRank.pair_mean()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.FixedRank.squared_dist"><code class="docutils literal notranslate"><span class="pre">FixedRank.squared_dist()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.FixedRank.transp"><code class="docutils literal notranslate"><span class="pre">FixedRank.transp()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.FixedRank.transport"><code class="docutils literal notranslate"><span class="pre">FixedRank.transport()</span></code></a></li>
 </ul>
@@ -5969,6 +6534,7 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.RankKPSD.operation_kind"><code class="docutils literal notranslate"><span class="pre">RankKPSD.operation_kind()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.RankKPSD.pair_mean"><code class="docutils literal notranslate"><span class="pre">RankKPSD.pair_mean()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.RankKPSD.retr"><code class="docutils literal notranslate"><span class="pre">RankKPSD.retr()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.RankKPSD.squared_dist"><code class="docutils literal notranslate"><span class="pre">RankKPSD.squared_dist()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.RankKPSD.transp"><code class="docutils literal notranslate"><span class="pre">RankKPSD.transp()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.RankKPSD.transport"><code class="docutils literal notranslate"><span class="pre">RankKPSD.transport()</span></code></a></li>
 </ul>
@@ -5988,6 +6554,7 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.RankKPSDBuresWasserstein.log_batch"><code class="docutils literal notranslate"><span class="pre">RankKPSDBuresWasserstein.log_batch()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.RankKPSDBuresWasserstein.operation_kind"><code class="docutils literal notranslate"><span class="pre">RankKPSDBuresWasserstein.operation_kind()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.RankKPSDBuresWasserstein.pair_mean"><code class="docutils literal notranslate"><span class="pre">RankKPSDBuresWasserstein.pair_mean()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.RankKPSDBuresWasserstein.squared_dist"><code class="docutils literal notranslate"><span class="pre">RankKPSDBuresWasserstein.squared_dist()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Elliptope"><code class="docutils literal notranslate"><span class="pre">Elliptope</span></code></a><ul class="nav section-nav flex-column">
@@ -6003,6 +6570,7 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Elliptope.operation_kind"><code class="docutils literal notranslate"><span class="pre">Elliptope.operation_kind()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Elliptope.pair_mean"><code class="docutils literal notranslate"><span class="pre">Elliptope.pair_mean()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Elliptope.retr"><code class="docutils literal notranslate"><span class="pre">Elliptope.retr()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Elliptope.squared_dist"><code class="docutils literal notranslate"><span class="pre">Elliptope.squared_dist()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Elliptope.transp"><code class="docutils literal notranslate"><span class="pre">Elliptope.transp()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Elliptope.transport"><code class="docutils literal notranslate"><span class="pre">Elliptope.transport()</span></code></a></li>
 </ul>
@@ -6020,6 +6588,7 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Spectrahedron.operation_kind"><code class="docutils literal notranslate"><span class="pre">Spectrahedron.operation_kind()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Spectrahedron.pair_mean"><code class="docutils literal notranslate"><span class="pre">Spectrahedron.pair_mean()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Spectrahedron.retr"><code class="docutils literal notranslate"><span class="pre">Spectrahedron.retr()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Spectrahedron.squared_dist"><code class="docutils literal notranslate"><span class="pre">Spectrahedron.squared_dist()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Spectrahedron.transp"><code class="docutils literal notranslate"><span class="pre">Spectrahedron.transp()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.Spectrahedron.transport"><code class="docutils literal notranslate"><span class="pre">Spectrahedron.transport()</span></code></a></li>
 </ul>
@@ -6050,6 +6619,7 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.CorrelationAffineQuotient.log_batch"><code class="docutils literal notranslate"><span class="pre">CorrelationAffineQuotient.log_batch()</span></code></a></li>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.CorrelationAffineQuotient.operation_kind"><code class="docutils literal notranslate"><span class="pre">CorrelationAffineQuotient.operation_kind()</span></code></a></li>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.CorrelationAffineQuotient.pair_mean"><code class="docutils literal notranslate"><span class="pre">CorrelationAffineQuotient.pair_mean()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.CorrelationAffineQuotient.squared_dist"><code class="docutils literal notranslate"><span class="pre">CorrelationAffineQuotient.squared_dist()</span></code></a></li>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.CorrelationAffineQuotient.transp"><code class="docutils literal notranslate"><span class="pre">CorrelationAffineQuotient.transp()</span></code></a></li>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.CorrelationAffineQuotient.transport"><code class="docutils literal notranslate"><span class="pre">CorrelationAffineQuotient.transport()</span></code></a></li>
 </ul>
@@ -6070,6 +6640,7 @@ shape. Tangents are represented by horizontal pre-shape vectors.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.KendallShape.log_batch"><code class="docutils literal notranslate"><span class="pre">KendallShape.log_batch()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.KendallShape.operation_kind"><code class="docutils literal notranslate"><span class="pre">KendallShape.operation_kind()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.KendallShape.pair_mean"><code class="docutils literal notranslate"><span class="pre">KendallShape.pair_mean()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.KendallShape.squared_dist"><code class="docutils literal notranslate"><span class="pre">KendallShape.squared_dist()</span></code></a></li>
 </ul>
 </li>
 </ul>

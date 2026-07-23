@@ -20,6 +20,7 @@ retr(x, 0) == x
 invretr(x, retr(x, small_u)) ~= small_u
 exp(x, 0) == x                       # when exp is exact
 log(x, exp(x, small_u)) ~= small_u   # when log is exact
+grad_y squared_dist(x, y) at y=x is finite and zero
 dist(x, y) == dist(y, x)             # when dist is exact
 norm(y, transport(x, y, u)) ~= norm(x, u)  # when transport is isometric
 ```
@@ -36,15 +37,18 @@ dimensions and pytree structure, the following methods must compile under
 
 ```text
 belongs, project, is_tangent, tangent_project,
-inner, norm, exp, log, dist, transport,
+inner, norm, exp, log, squared_dist, dist, transport,
 random_point, random_tangent
 ```
 
 `sample_shape` and other shape-defining arguments are static Python values.
-`exp_batch`, `log_batch`, and `dist_batch` must compose `jax.vmap` with
-`jax.jit`, including for Product pytrees. Scalar costs built from geometry
-operations must remain differentiable with `jax.value_and_grad`; ambient and
-Riemannian Hessian-vector products must compose with `jax.jvp`.
+Every operation must natively accept `batch_shape + M.shape`, including nested
+batches and broadcasting an unbatched base point over batched tangents or
+endpoints. `exp_batch`, `log_batch`, and `dist_batch` delegate to that behavior
+and must compose with `jax.jit`, including for Product pytrees. Scalar costs
+built from geometry operations must remain differentiable with
+`jax.value_and_grad`; ambient and Riemannian Hessian-vector products must
+compose with `jax.jvp`.
 
 The shared transformation test suite compiles the complete numerical protocol
 for every public geometry. It additionally tests JIT-plus-vmap composition
@@ -55,6 +59,8 @@ is added to the public namespace.
 Every class must set the exactness and transport metadata correctly. If
 `transport` is not Levi-Civita parallel transport, its class and guide must name
 the construction precisely and state which properties it preserves.
-Differentiable spectral routines must also be tested at repeated eigenvalues;
+Differentiable routines must be tested at zero tangent vectors and coincident
+points. Spectral routines additionally require repeated-eigenvalue tests;
 valid matrix functions can otherwise acquire nonfinite autodiff results from
-an eigenvector-based implementation.
+an intermediate eigenbasis. Fill removable analytic limits, but preserve
+explicit nonfinite results at genuine geometric cut loci.

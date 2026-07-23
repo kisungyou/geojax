@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=91f6191e"></script>
+    <script src="_static/documentation_options.js?v=95e61db4"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -383,7 +383,8 @@
 <p>GeoJAX is a JAX-native toolkit for computations on Riemannian manifolds. It
 keeps the model simple: geometries provide exact primitives where available
 and clearly labeled retraction proxies otherwise, while optimization algorithms
-consume the common manifold protocol.</p>
+consume the common manifold protocol and learning utilities compose those
+primitives inside compiled models.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">geojax.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sphere</span>
@@ -428,7 +429,7 @@ consume the common manifold protocol.</p>
       <i class="fa-solid fa-code"></i>
     </div>
     <h2>API reference</h2>
-    <p>Look up public geometries, optimization problems, and solver classes.</p>
+    <p>Look up public geometries, learning primitives, optimization problems, and solvers.</p>
   </a>
 </div>
 <div class="note admonition">

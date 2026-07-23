@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../_static/documentation_options.js?v=91f6191e"></script>
+    <script src="../_static/documentation_options.js?v=95e61db4"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -381,6 +381,7 @@
 <li class="toctree-l1"><a class="reference internal" href="foundations.html">Mathematical foundations</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Geometry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="learning.html">Manifold-valued learning</a></li>
 </ul>
 </div>
 </nav></div>
@@ -615,31 +616,40 @@ geometry without knowing its representation.</p>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dist(x,</span> <span class="pre">y)</span></code></p></td>
 <td><p>Evaluate geodesic distance <span class="math notranslate nohighlight">\(d(x,y)\)</span></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">retr(x,</span> <span class="pre">u,</span> <span class="pre">t)</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">squared_dist(x,</span> <span class="pre">y)</span></code></p></td>
+<td><p>Evaluate <span class="math notranslate nohighlight">\(d(x,y)^2\)</span> with a coincidence-safe derivative</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">retr(x,</span> <span class="pre">u,</span> <span class="pre">t)</span></code></p></td>
 <td><p>Retract the step <span class="math notranslate nohighlight">\(tu\)</span> from <span class="math notranslate nohighlight">\(T_x\mathcal M\)</span></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">invretr(x,</span> <span class="pre">y)</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">invretr(x,</span> <span class="pre">y)</span></code></p></td>
 <td><p>Return a local inverse-retraction displacement</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">transport(x,</span> <span class="pre">y,</span> <span class="pre">u)</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">transport(x,</span> <span class="pre">y,</span> <span class="pre">u)</span></code></p></td>
 <td><p>Move <span class="math notranslate nohighlight">\(u\in T_x\mathcal M\)</span> into <span class="math notranslate nohighlight">\(T_y\mathcal M\)</span></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">egrad_to_rgrad(x,</span> <span class="pre">g)</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">egrad_to_rgrad(x,</span> <span class="pre">g)</span></code></p></td>
 <td><p>Convert an ambient gradient to <span class="math notranslate nohighlight">\(\operatorname{grad}f(x)\)</span></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">random_point(key,</span> <span class="pre">sample_shape)</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">random_point(key,</span> <span class="pre">sample_shape)</span></code></p></td>
 <td><p>Generate reproducible manifold points</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">random_tangent(key,</span> <span class="pre">x)</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">random_tangent(key,</span> <span class="pre">x)</span></code></p></td>
 <td><p>Generate reproducible tangent vectors</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>The shared <code class="docutils literal notranslate"><span class="pre">exp_batch</span></code>, <code class="docutils literal notranslate"><span class="pre">log_batch</span></code>, and <code class="docutils literal notranslate"><span class="pre">dist_batch</span></code> methods apply the scalar
-operations over a leading sample axis with <code class="docutils literal notranslate"><span class="pre">jax.vmap</span></code>. See
+<p>All operations accept arbitrary compatible leading batch axes. The shared
+<code class="docutils literal notranslate"><span class="pre">exp_batch</span></code>, <code class="docutils literal notranslate"><span class="pre">log_batch</span></code>, and <code class="docutils literal notranslate"><span class="pre">dist_batch</span></code> names are convenience wrappers over
+that native behavior. See
 <a class="reference internal" href="foundations.html"><span class="std std-doc">Mathematical foundations</span></a> for the abstract definitions and the
 <a class="reference internal" href="../api/geometry.html"><span class="std std-doc">geometry API</span></a> for signatures.</p>
+<p>For learning losses, prefer <code class="docutils literal notranslate"><span class="pre">squared_dist</span></code> to <code class="docutils literal notranslate"><span class="pre">dist(...)</span> <span class="pre">**</span> <span class="pre">2</span></code>. The former
+avoids differentiating a square root at coincident points and uses
+geometry-specific stable formulas where necessary. Removable zero-norm and
+repeated-spectrum singularities have analytic derivatives; genuine cut loci
+remain explicit.</p>
 <p><code class="docutils literal notranslate"><span class="pre">operation_kind(&quot;exp&quot;)</span></code>, <code class="docutils literal notranslate"><span class="pre">operation_kind(&quot;log&quot;)</span></code>, and
 <code class="docutils literal notranslate"><span class="pre">operation_kind(&quot;dist&quot;)</span></code> report <code class="docutils literal notranslate"><span class="pre">&quot;exact&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;proxy&quot;</span></code>. A proxy class keeps
 the uniform names for composability, but evaluates <code class="docutils literal notranslate"><span class="pre">retr</span></code>, <code class="docutils literal notranslate"><span class="pre">invretr</span></code>, or the

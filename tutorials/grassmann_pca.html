@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../_static/documentation_options.js?v=91f6191e"></script>
+    <script src="../_static/documentation_options.js?v=95e61db4"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -55,7 +55,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Intrinsic k-means on the circle" href="sphere_kmeans.html" />
-    <link rel="prev" title="Wrapped geodesics on the flat torus" href="torus_geodesics.html" />
+    <link rel="prev" title="Deterministic autoencoders with curved latent spaces" href="manifold_autoencoder.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -380,6 +380,7 @@
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="hyperbolic_geodesics.html">Geodesics on the Hyperboloid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="torus_geodesics.html">Wrapped geodesics on the flat torus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manifold_autoencoder.html">Deterministic autoencoders with curved latent spaces</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Principal component as a Grassmann point</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sphere_kmeans.html">Intrinsic k-means on the circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spd_frechet_mean.html">Comparing Fréchet Means of SPD Matrices</a></li>
@@ -530,9 +531,9 @@ can be plotted through a three-dimensional cloud.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>principal angle error : 2.940e-08 radians
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>principal angle error : 4.120e-09 radians
 variance explained    : 89.226%
-iterations            : 41
+iterations            : 38
 </pre></div>
 </div>
 </div>
@@ -566,8 +567,8 @@ measures the straight Frobenius chord between these two matrices.</p>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>public point shape: (3, 1)
 embedded shape    : (3, 3)
-geodesic distance : 2.940e-08
-chordal distance  : 2.940e-08
+geodesic distance : 4.120e-09
+chordal distance  : 4.120e-09
 </pre></div>
 </div>
 </div>
@@ -591,7 +592,7 @@ eigenvector leaves every matrix entry unchanged.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/bdbb8b30e652744d3817c6463f1d3df8b192ffa1ab8e63c700ae83178afcbea7.png" src="../_images/bdbb8b30e652744d3817c6463f1d3df8b192ffa1ab8e63c700ae83178afcbea7.png" />
+<img alt="../_images/d5bfdf2602e6136a29639e4ab2b905fc2494a33e0b804ec9651e42e518d6e226.png" src="../_images/d5bfdf2602e6136a29639e4ab2b905fc2494a33e0b804ec9651e42e518d6e226.png" />
 </div>
 </div>
 </section>
@@ -631,7 +632,7 @@ an orientation. The direct eigensolver and GeoJAX estimate visually overlap.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/f63fe3f8b7a94190c6d5a7583b9f201401d92a35491e5f2d24c9944fda78e8f6.png" src="../_images/f63fe3f8b7a94190c6d5a7583b9f201401d92a35491e5f2d24c9944fda78e8f6.png" />
+<img alt="../_images/7b314343cbd2a9aa6b63ffb666bb911ea37f9f7552644b51a2be428efa675bc1.png" src="../_images/7b314343cbd2a9aa6b63ffb666bb911ea37f9f7552644b51a2be428efa675bc1.png" />
 </div>
 </div>
 <p>The same formulation extends directly to <code class="docutils literal notranslate"><span class="pre">Grassmann(size=(n,</span> <span class="pre">k))</span></code> for a
@@ -651,12 +652,12 @@ representation changes.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="torus_geodesics.html"
+       href="manifold_autoencoder.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Wrapped geodesics on the flat torus</p>
+        <p class="prev-next-title">Deterministic autoencoders with curved latent spaces</p>
       </div>
     </a>
     <a class="right-next"

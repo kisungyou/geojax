@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../_static/documentation_options.js?v=91f6191e"></script>
+    <script src="../_static/documentation_options.js?v=95e61db4"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -380,6 +380,7 @@
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="hyperbolic_geodesics.html">Geodesics on the Hyperboloid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="torus_geodesics.html">Wrapped geodesics on the flat torus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manifold_autoencoder.html">Deterministic autoencoders with curved latent spaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="grassmann_pca.html">Principal component as a Grassmann point</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sphere_kmeans.html">Intrinsic k-means on the circle</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Comparing Fréchet Means of SPD Matrices</a></li>
@@ -636,7 +637,7 @@ and convergence histories are directly informative.</p>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>geometry              iter         cost    grad norm    det(mean)
 --------------------------------------------------------------------
-Log-Euclidean            2     1.366771    1.354e-15     1.242951
+Log-Euclidean            2     1.366771    7.550e-16     1.242951
 Affine-invariant         7     1.367706    8.525e-10     1.242951
 Bures-Wasserstein        7     0.446111    3.566e-10     2.376709
 </pre></div>
@@ -664,7 +665,7 @@ optimization.</p>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Closed-form log-Euclidean mean:
  [[1.06239834 0.07742265]
  [0.07742265 1.17559048]]
-Optimization error: 1.857e-15
+Optimization error: 3.925e-16
 </pre></div>
 </div>
 </div>
@@ -752,7 +753,7 @@ log-Euclidean and affine-invariant metrics penalize multiplicative dispersion.</
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/82789dc47e0570e111ea902b0346ba4995bbf0433af179fd175971fa8a062218.png" src="../_images/82789dc47e0570e111ea902b0346ba4995bbf0433af179fd175971fa8a062218.png" />
+<img alt="../_images/950c00babcf64d0c74413404c623385fd94ef406ebc9cddbbc8127408103a57e.png" src="../_images/950c00babcf64d0c74413404c623385fd94ef406ebc9cddbbc8127408103a57e.png" />
 </div>
 </div>
 </section>

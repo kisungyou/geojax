@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../_static/documentation_options.js?v=91f6191e"></script>
+    <script src="../_static/documentation_options.js?v=95e61db4"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -381,6 +381,7 @@
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Mathematical foundations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="geometry.html">Geometry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimization.html">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="learning.html">Manifold-valued learning</a></li>
 </ul>
 </div>
 </nav></div>
@@ -570,6 +571,16 @@ well defined. The corresponding geodesic distance is</p>
 \[
 d(x,y)=\lVert\operatorname{Log}_x(y)\rVert_x.
 \]</div>
+<p><code class="docutils literal notranslate"><span class="pre">squared_dist(x,</span> <span class="pre">y)</span></code> evaluates <span class="math notranslate nohighlight">\(d(x,y)^2\)</span> without differentiating the final
+square root. It is the preferred primitive for smooth losses and Fréchet
+objectives because</p>
+<div class="math notranslate nohighlight">
+\[
+\nabla_y d(x,y)^2\big|_{y=x}=0
+\]</div>
+<p>is well defined even though the derivative of <span class="math notranslate nohighlight">\(d(x,y)\)</span> itself is not defined
+at coincidence. Individual geometries use direct coordinate, angle, or
+spectral formulas where those are more stable than squaring <code class="docutils literal notranslate"><span class="pre">dist</span></code>.</p>
 <p>Globally, a logarithm can be nonunique or undefined at a cut locus. Antipodal
 sphere points and Grassmann subspaces with a principal angle <span class="math notranslate nohighlight">\(\pi/2\)</span> are
 important examples. A closed formula is also not available for every metric:
@@ -718,7 +729,11 @@ conversion or a user-supplied <code class="docutils literal notranslate"><span c
 random vector and maps it to <span class="math notranslate nohighlight">\(T_x\mathcal M\)</span> according to the geometry. These
 routines are reproducible because randomness is controlled by explicit JAX
 keys.</p>
-<p><code class="docutils literal notranslate"><span class="pre">GeometryMixin</span></code> also supplies leading-axis vectorization at a fixed base point:</p>
+<p>Every numerical operation accepts points shaped <code class="docutils literal notranslate"><span class="pre">batch_shape</span> <span class="pre">+</span> <span class="pre">M.shape</span></code>.
+Scalar-valued operations return <code class="docutils literal notranslate"><span class="pre">batch_shape</span></code>, while point and tangent
+operations preserve the event dimensions. NumPy-style broadcasting applies to
+compatible leading shapes. <code class="docutils literal notranslate"><span class="pre">Product</span></code> applies the same contract leafwise.</p>
+<p><code class="docutils literal notranslate"><span class="pre">GeometryMixin</span></code> retains convenience names for fixed-base collections:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
@@ -727,8 +742,20 @@ keys.</p>
 \mathtt{dist\_batch}(x,[y_i]) &amp;= [d(x,y_i)].
 \end{aligned}
 \end{split}\]</div>
-<p>They are implemented with <code class="docutils literal notranslate"><span class="pre">jax.vmap</span></code>; geometry methods are therefore written
-without Python loops over sample axes.</p>
+<p>These methods delegate to the natively batched operations. Users may also
+compose the methods with <code class="docutils literal notranslate"><span class="pre">jax.vmap</span></code> when a transformation makes the mapped axis
+explicit.</p>
+<section id="differentiability-at-numerical-singularities">
+<h3>Differentiability at numerical singularities<a class="headerlink" href="#differentiability-at-numerical-singularities" title="Link to this heading">#</a></h3>
+<p>Closed geometric formulas often contain removable expressions such as
+<span class="math notranslate nohighlight">\(\sin(r)/r\)</span>, <span class="math notranslate nohighlight">\(\sinh(r)/r\)</span>, or spectral divided differences with repeated
+eigenvalues. GeoJAX evaluates their analytic limits and supplies custom JAX
+derivatives where naïve autodiff would otherwise differentiate an undefined
+intermediate eigenbasis. Tests cover zero tangents, coincident points, and
+repeated SPD spectra under both float32 and float64.</p>
+<p>This policy does not conceal genuine singularities. A logarithm at a cut locus
+remains nonfinite rather than selecting an arbitrary direction.</p>
+</section>
 </section>
 <section id="equivariant-embeddings">
 <h2>Equivariant embeddings<a class="headerlink" href="#equivariant-embeddings" title="Link to this heading">#</a></h2>
@@ -829,7 +856,10 @@ capability metadata is exact only when every factor advertises exactness.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transport">Transport</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#matrix-lie-groups">Matrix Lie groups</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#autodiff-and-riemannian-derivatives">Autodiff and Riemannian derivatives</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#random-and-batched-operations">Random and batched operations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#random-and-batched-operations">Random and batched operations</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#differentiability-at-numerical-singularities">Differentiability at numerical singularities</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#equivariant-embeddings">Equivariant embeddings</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#product-manifolds">Product manifolds</a></li>
 </ul>

@@ -7,7 +7,8 @@ html_theme.sidebar_secondary.remove: true
 GeoJAX is a JAX-native toolkit for computations on Riemannian manifolds. It
 keeps the model simple: geometries provide exact primitives where available
 and clearly labeled retraction proxies otherwise, while optimization algorithms
-consume the common manifold protocol.
+consume the common manifold protocol and learning utilities compose those
+primitives inside compiled models.
 
 ```python
 import jax.numpy as jnp
@@ -57,7 +58,7 @@ eigenvector, value, info = problem.solve()
       <i class="fa-solid fa-code"></i>
     </div>
     <h2>API reference</h2>
-    <p>Look up public geometries, optimization problems, and solver classes.</p>
+    <p>Look up public geometries, learning primitives, optimization problems, and solvers.</p>
   </a>
 </div>
 
