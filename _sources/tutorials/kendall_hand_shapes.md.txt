@@ -25,7 +25,10 @@ Smedt et al., [SHREC'17 Track: 3D Hand Gesture Recognition Using a Depth and
 Skeletal Dataset](https://doi.org/10.2312/3dor.20171049).
 
 GeoJAX vendors the two small source text files with this page, so the
-documentation remains executable without downloading data at build time.
+documentation remains executable without downloading data at build time. See
+the accompanying [license and provenance
+notice](../_static/data/hands/NOTICE.txt) for the upstream source and
+redistribution terms.
 
 ## Shape-space model
 

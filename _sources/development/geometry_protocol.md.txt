@@ -27,6 +27,31 @@ norm(y, transport(x, y, u)) ~= norm(x, u)  # when transport is isometric
 Random tangent generation must document its normalization and scaling
 conventions under the Riemannian metric.
 
+## JAX transformation contract
+
+A public geometry treats its instance as static configuration and its point,
+tangent, and PRNG-key arguments as dynamic JAX values. With fixed geometry
+dimensions and pytree structure, the following methods must compile under
+`jax.jit`:
+
+```text
+belongs, project, is_tangent, tangent_project,
+inner, norm, exp, log, dist, transport,
+random_point, random_tangent
+```
+
+`sample_shape` and other shape-defining arguments are static Python values.
+`exp_batch`, `log_batch`, and `dist_batch` must compose `jax.vmap` with
+`jax.jit`, including for Product pytrees. Scalar costs built from geometry
+operations must remain differentiable with `jax.value_and_grad`; ambient and
+Riemannian Hessian-vector products must compose with `jax.jvp`.
+
+The shared transformation test suite compiles the complete numerical protocol
+for every public geometry. It additionally tests JIT-plus-vmap composition
+across vector, quotient, matrix, Lie-group, numerical-logarithm, retraction,
+shape, and Product families. A new geometry belongs in those tests before it
+is added to the public namespace.
+
 Every class must set the exactness and transport metadata correctly. If
 `transport` is not Levi-Civita parallel transport, its class and guide must name
 the construction precisely and state which properties it preserves.

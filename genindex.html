@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=38b66d78"></script>
+    <script src="_static/documentation_options.js?v=91f6191e"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -466,16 +466,12 @@
       </ul></li>
       <li><a href="api/optimization.html#geojax.optimization.ConjugateGradient">ConjugateGradient (class in geojax.optimization)</a>
 </li>
-      <li><a href="api/optimization.html#geojax.optimization.conjugategradient">conjugategradient() (in module geojax.optimization)</a>
-</li>
-      <li><a href="api/optimization.html#geojax.optimization.ConjugateGradientOptions">ConjugateGradientOptions (class in geojax.optimization)</a>
-</li>
       <li><a href="api/optimization.html#geojax.optimization.ConstantSchedule">ConstantSchedule (class in geojax.optimization)</a>
+</li>
+      <li><a href="api/optimization.html#geojax.optimization.ConstantStep">ConstantStep (class in geojax.optimization)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/optimization.html#geojax.optimization.ConstantStep">ConstantStep (class in geojax.optimization)</a>
-</li>
       <li><a href="api/geometry.html#geojax.geometry.StiefelLogInfo.converged">converged (geojax.geometry.StiefelLogInfo attribute)</a>
 </li>
       <li><a href="api/geometry.html#geojax.geometry.CorrelationAffineQuotient">CorrelationAffineQuotient (class in geojax.geometry)</a>
@@ -1188,8 +1184,14 @@
 </li>
       <li><a href="api/geometry.html#geojax.geometry.Sphere.shape">shape (geojax.geometry.Sphere property)</a>
 </li>
-      <li><a href="api/optimization.html#geojax.optimization.Minimize.solve">solve() (geojax.optimization.Minimize method)</a>
+      <li><a href="api/optimization.html#geojax.optimization.ConjugateGradient.solve">solve() (geojax.optimization.ConjugateGradient method)</a>
+
+      <ul>
+        <li><a href="api/optimization.html#geojax.optimization.Minimize.solve">(geojax.optimization.Minimize method)</a>
 </li>
+        <li><a href="api/optimization.html#geojax.optimization.SteepestDescent.solve">(geojax.optimization.SteepestDescent method)</a>
+</li>
+      </ul></li>
       <li><a href="api/geometry.html#geojax.geometry.SPDAffineInvariant">SPDAffineInvariant (class in geojax.geometry)</a>
 </li>
       <li><a href="api/geometry.html#geojax.geometry.SPDBuresWasserstein">SPDBuresWasserstein (class in geojax.geometry)</a>
@@ -1204,12 +1206,12 @@
 </li>
       <li><a href="api/geometry.html#geojax.geometry.Sphere">Sphere (class in geojax.geometry)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/geometry.html#geojax.geometry.SphereExtrinsic">SphereExtrinsic (class in geojax.geometry)</a>
 </li>
       <li><a href="api/optimization.html#geojax.optimization.Minimize.split_key">split_key() (geojax.optimization.Minimize method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/geometry.html#geojax.geometry.GrassmannProjection.squared_chordal_dist">squared_chordal_dist() (geojax.geometry.GrassmannProjection method)</a>
 
       <ul>
@@ -1217,10 +1219,6 @@
 </li>
       </ul></li>
       <li><a href="api/optimization.html#geojax.optimization.SteepestDescent">SteepestDescent (class in geojax.optimization)</a>
-</li>
-      <li><a href="api/optimization.html#geojax.optimization.steepestdescent">steepestdescent() (in module geojax.optimization)</a>
-</li>
-      <li><a href="api/optimization.html#geojax.optimization.SteepestDescentOptions">SteepestDescentOptions (class in geojax.optimization)</a>
 </li>
       <li><a href="api/geometry.html#geojax.geometry.StiefelLogInfo.step_norm">step_norm (geojax.geometry.StiefelLogInfo attribute)</a>
 </li>
@@ -1381,6 +1379,20 @@
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Kisung You.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
   
   
   

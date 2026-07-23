@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../_static/documentation_options.js?v=38b66d78"></script>
+    <script src="../_static/documentation_options.js?v=91f6191e"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -245,6 +245,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -374,6 +378,7 @@
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Geometry protocol</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimization_protocol.html">Optimization protocol</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="documentation.html">Documentation conventions</a></li>
 </ul>
 </div>
@@ -459,12 +464,34 @@ norm(y, transport(x, y, u)) ~= norm(x, u)  # when transport is isometric
 </div>
 <p>Random tangent generation must document its normalization and scaling
 conventions under the Riemannian metric.</p>
+<section id="jax-transformation-contract">
+<h2>JAX transformation contract<a class="headerlink" href="#jax-transformation-contract" title="Link to this heading">#</a></h2>
+<p>A public geometry treats its instance as static configuration and its point,
+tangent, and PRNG-key arguments as dynamic JAX values. With fixed geometry
+dimensions and pytree structure, the following methods must compile under
+<code class="docutils literal notranslate"><span class="pre">jax.jit</span></code>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>belongs, project, is_tangent, tangent_project,
+inner, norm, exp, log, dist, transport,
+random_point, random_tangent
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">sample_shape</span></code> and other shape-defining arguments are static Python values.
+<code class="docutils literal notranslate"><span class="pre">exp_batch</span></code>, <code class="docutils literal notranslate"><span class="pre">log_batch</span></code>, and <code class="docutils literal notranslate"><span class="pre">dist_batch</span></code> must compose <code class="docutils literal notranslate"><span class="pre">jax.vmap</span></code> with
+<code class="docutils literal notranslate"><span class="pre">jax.jit</span></code>, including for Product pytrees. Scalar costs built from geometry
+operations must remain differentiable with <code class="docutils literal notranslate"><span class="pre">jax.value_and_grad</span></code>; ambient and
+Riemannian Hessian-vector products must compose with <code class="docutils literal notranslate"><span class="pre">jax.jvp</span></code>.</p>
+<p>The shared transformation test suite compiles the complete numerical protocol
+for every public geometry. It additionally tests JIT-plus-vmap composition
+across vector, quotient, matrix, Lie-group, numerical-logarithm, retraction,
+shape, and Product families. A new geometry belongs in those tests before it
+is added to the public namespace.</p>
 <p>Every class must set the exactness and transport metadata correctly. If
 <code class="docutils literal notranslate"><span class="pre">transport</span></code> is not Levi-Civita parallel transport, its class and guide must name
 the construction precisely and state which properties it preserves.
 Differentiable spectral routines must also be tested at repeated eigenvalues;
 valid matrix functions can otherwise acquire nonfinite autodiff results from
 an eigenvector-based implementation.</p>
+</section>
 </section>
 
 
@@ -502,6 +529,24 @@ an eigenvector-based implementation.</p>
             
             
               
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#jax-transformation-contract">JAX transformation contract</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
             
           </div>
           <footer class="bd-footer-content">
@@ -518,6 +563,20 @@ an eigenvector-based implementation.</p>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Kisung You.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
   
   
   

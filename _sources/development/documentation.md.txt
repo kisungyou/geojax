@@ -17,4 +17,8 @@ make website
 
 The build executes every tutorial with `myst-nb`, treats Sphinx warnings as
 errors, and then audits the rendered HTML for malformed math nodes, leaked TeX,
-and broken local links, fragments, scripts, styles, and images.
+and broken local links, fragments, scripts, styles, and images. The MyST
+Markdown files in `docs/tutorials/` are the source documents. Executed
+notebooks, their temporary figures, and the MyST execution cache are removed
+after a successful audit; only the finished HTML site and intentional tutorial
+thumbnails remain.

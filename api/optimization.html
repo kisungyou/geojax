@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../_static/documentation_options.js?v=38b66d78"></script>
+    <script src="../_static/documentation_options.js?v=91f6191e"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -830,7 +830,7 @@ transport proxy for a general retraction.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="geojax.optimization.SteepestDescent">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.optimization.</span></span><span class="sig-name descname"><span class="pre">SteepestDescent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">requires_gradient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolgradnorm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxtime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minstepsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">statsfun</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stopfun</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.optimization.SteepestDescent" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#geojax.optimization.SteepestDescentOptions" title="geojax.optimization.steepestdescent.SteepestDescentOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">SteepestDescentOptions</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Minimize a smooth objective along its negative Riemannian gradient.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -848,81 +848,27 @@ transport proxy for a general retraction.</p>
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="geojax.optimization.SteepestDescentOptions">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.optimization.</span></span><span class="sig-name descname"><span class="pre">SteepestDescentOptions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">requires_gradient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolgradnorm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxtime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minstepsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">statsfun</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stopfun</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.optimization.SteepestDescentOptions" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Options shared by the functional and class-style interfaces.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.optimization.SteepestDescent.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problem</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.optimization.SteepestDescent.solve" title="Link to this definition">#</a></dt>
+<dd><p>Solve <code class="docutils literal notranslate"><span class="pre">problem</span></code> and return <code class="docutils literal notranslate"><span class="pre">(solution,</span> <span class="pre">final_cost,</span> <span class="pre">history)</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>requires_gradient</strong> (<em>bool</em>)</p></li>
-<li><p><strong>tolgradnorm</strong> (<em>float</em>)</p></li>
-<li><p><strong>maxiter</strong> (<em>int</em>)</p></li>
-<li><p><strong>maxtime</strong> (<em>float</em>)</p></li>
-<li><p><strong>minstepsize</strong> (<em>float</em>)</p></li>
-<li><p><strong>verbosity</strong> (<em>int</em>)</p></li>
-<li><p><strong>line_search</strong> (<a class="reference internal" href="#geojax.optimization.LineSearchProtocol" title="geojax.optimization.linesearch.LineSearchProtocol"><em>LineSearchProtocol</em></a>)</p></li>
-<li><p><strong>statsfun</strong> (<em>Callable</em><em>[</em><em>[</em><em>Any</em><em>, </em><em>Any</em><em>, </em><a class="reference internal" href="#geojax.optimization.InfoEntry" title="geojax.optimization.minimize.InfoEntry"><em>InfoEntry</em></a><em>]</em><em>, </em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
-<li><p><strong>stopfun</strong> (<em>Callable</em><em>[</em><em>[</em><em>Any</em><em>, </em><em>Any</em><em>, </em><a class="reference internal" href="#geojax.optimization.InfoEntry" title="geojax.optimization.minimize.InfoEntry"><em>InfoEntry</em></a><em>]</em><em>, </em><em>Tuple</em><em>[</em><em>bool</em><em>, </em><em>str</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
-<li><p><strong>key</strong> (<em>Any</em><em> | </em><em>None</em>)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geojax.optimization.steepestdescent">
-<span class="sig-prename descclassname"><span class="pre">geojax.optimization.</span></span><span class="sig-name descname"><span class="pre">steepestdescent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.optimization.steepestdescent" title="Link to this definition">#</a></dt>
-<dd><p>Minimize a smooth function by Riemannian steepest descent.</p>
-<p>The functional interface returns <code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">cost,</span> <span class="pre">info,</span> <span class="pre">options)</span></code>. The public
-class interface used by <a class="reference internal" href="#geojax.optimization.Minimize" title="geojax.optimization.Minimize"><code class="xref py py-class docutils literal notranslate"><span class="pre">Minimize</span></code></a> returns the
-common <code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">cost,</span> <span class="pre">info)</span></code> triple.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>problem</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>Any</em>)</p></li>
-<li><p><strong>x</strong> (<em>Any</em><em> | </em><em>None</em>)</p></li>
-<li><p><strong>options</strong> (<a class="reference internal" href="#geojax.optimization.SteepestDescentOptions" title="geojax.optimization.steepestdescent.SteepestDescentOptions"><em>SteepestDescentOptions</em></a><em> | </em><em>Mapping</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>)</p></li>
-</ul>
+<dd class="field-odd"><p><strong>problem</strong> (<em>Any</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tuple[<em>Any</em>, float, <em>List</em>[<a class="reference internal" href="#geojax.optimization.InfoEntry" title="geojax.optimization.minimize.InfoEntry"><em>InfoEntry</em></a>], <a class="reference internal" href="#geojax.optimization.SteepestDescentOptions" title="geojax.optimization.steepestdescent.SteepestDescentOptions"><em>SteepestDescentOptions</em></a>]</p>
+<dd class="field-even"><p>tuple[<em>Any</em>, float, <em>List</em>[<a class="reference internal" href="#geojax.optimization.InfoEntry" title="geojax.optimization.minimize.InfoEntry"><em>InfoEntry</em></a>]]</p>
 </dd>
 </dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="geojax.optimization.ConjugateGradient">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.optimization.</span></span><span class="sig-name descname"><span class="pre">ConjugateGradient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tolgradnorm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxtime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minstepsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'H-S'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orth_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">statsfun</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stopfun</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.optimization.ConjugateGradient" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#geojax.optimization.ConjugateGradientOptions" title="geojax.optimization.conjugategradient.ConjugateGradientOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConjugateGradientOptions</span></code></a></p>
-<p>Class-style nonlinear Riemannian conjugate-gradient solver.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>tolgradnorm</strong> (<em>float</em>)</p></li>
-<li><p><strong>maxiter</strong> (<em>int</em>)</p></li>
-<li><p><strong>maxtime</strong> (<em>float</em>)</p></li>
-<li><p><strong>minstepsize</strong> (<em>float</em>)</p></li>
-<li><p><strong>verbosity</strong> (<em>int</em>)</p></li>
-<li><p><strong>beta_type</strong> (<em>str</em>)</p></li>
-<li><p><strong>orth_value</strong> (<em>float</em>)</p></li>
-<li><p><strong>line_search</strong> (<a class="reference internal" href="#geojax.optimization.LineSearchProtocol" title="geojax.optimization.linesearch.LineSearchProtocol"><em>LineSearchProtocol</em></a>)</p></li>
-<li><p><strong>statsfun</strong> (<em>Callable</em><em>[</em><em>[</em><em>Any</em><em>, </em><em>Any</em><em>, </em><a class="reference internal" href="#geojax.optimization.InfoEntry" title="geojax.optimization.minimize.InfoEntry"><em>InfoEntry</em></a><em>]</em><em>, </em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
-<li><p><strong>stopfun</strong> (<em>Callable</em><em>[</em><em>[</em><em>Any</em><em>, </em><em>Any</em><em>, </em><a class="reference internal" href="#geojax.optimization.InfoEntry" title="geojax.optimization.minimize.InfoEntry"><em>InfoEntry</em></a><em>]</em><em>, </em><em>Tuple</em><em>[</em><em>bool</em><em>, </em><em>str</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
-<li><p><strong>key</strong> (<em>Any</em><em> | </em><em>None</em>)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="geojax.optimization.ConjugateGradientOptions">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.optimization.</span></span><span class="sig-name descname"><span class="pre">ConjugateGradientOptions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tolgradnorm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxtime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minstepsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'H-S'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orth_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">statsfun</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stopfun</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.optimization.ConjugateGradientOptions" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Options for <a class="reference internal" href="#geojax.optimization.conjugategradient" title="geojax.optimization.conjugategradient"><code class="xref py py-func docutils literal notranslate"><span class="pre">conjugategradient()</span></code></a>.</p>
+<p>Nonlinear Riemannian conjugate-gradient solver.</p>
 <p><code class="docutils literal notranslate"><span class="pre">beta_type</span></code> may be <code class="docutils literal notranslate"><span class="pre">'S-D'</span></code>/<code class="docutils literal notranslate"><span class="pre">'steep'</span></code>, <code class="docutils literal notranslate"><span class="pre">'F-R'</span></code>, <code class="docutils literal notranslate"><span class="pre">'P-R'</span></code>,
 <code class="docutils literal notranslate"><span class="pre">'H-S'</span></code>, <code class="docutils literal notranslate"><span class="pre">'H-Z'</span></code>, <code class="docutils literal notranslate"><span class="pre">'L-S'</span></code>, <code class="docutils literal notranslate"><span class="pre">'P-R-SATO'</span></code> or <code class="docutils literal notranslate"><span class="pre">'H-S-SATO'</span></code>.
 The default is <code class="docutils literal notranslate"><span class="pre">'H-S'</span></code>, following Manopt.</p>
@@ -943,27 +889,20 @@ The default is <code class="docutils literal notranslate"><span class="pre">'H-S
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geojax.optimization.conjugategradient">
-<span class="sig-prename descclassname"><span class="pre">geojax.optimization.</span></span><span class="sig-name descname"><span class="pre">conjugategradient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.optimization.conjugategradient" title="Link to this definition">#</a></dt>
-<dd><p>Minimize a smooth function on a manifold by nonlinear CG.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.optimization.ConjugateGradient.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problem</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.optimization.ConjugateGradient.solve" title="Link to this definition">#</a></dt>
+<dd><p>Solve <code class="docutils literal notranslate"><span class="pre">problem</span></code> and return <code class="docutils literal notranslate"><span class="pre">(solution,</span> <span class="pre">final_cost,</span> <span class="pre">history)</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Standard geojax optimization return tuple.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>problem</strong> (<em>Any</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>sol, final_cost, info</p>
-</dd>
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>problem</strong> (<a class="reference internal" href="#geojax.optimization.Minimize" title="geojax.optimization.minimize.Minimize"><em>Minimize</em></a><em> | </em><em>Mapping</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>Any</em>)</p></li>
-<li><p><strong>x</strong> (<em>Any</em><em> | </em><em>None</em>)</p></li>
-<li><p><strong>options</strong> (<a class="reference internal" href="#geojax.optimization.ConjugateGradientOptions" title="geojax.optimization.conjugategradient.ConjugateGradientOptions"><em>ConjugateGradientOptions</em></a><em> | </em><em>Mapping</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>)</p></li>
-</ul>
+<dd class="field-even"><p>tuple[<em>Any</em>, float, <em>List</em>[<a class="reference internal" href="#geojax.optimization.InfoEntry" title="geojax.optimization.minimize.InfoEntry"><em>InfoEntry</em></a>]]</p>
 </dd>
 </dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -1462,12 +1401,14 @@ dataclass. <code class="docutils literal notranslate"><span class="pre">beta</sp
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#smooth-solvers">Smooth solvers</a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.optimization.SteepestDescent"><code class="docutils literal notranslate"><span class="pre">SteepestDescent</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.optimization.SteepestDescentOptions"><code class="docutils literal notranslate"><span class="pre">SteepestDescentOptions</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.optimization.steepestdescent"><code class="docutils literal notranslate"><span class="pre">steepestdescent()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.optimization.ConjugateGradient"><code class="docutils literal notranslate"><span class="pre">ConjugateGradient</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.optimization.ConjugateGradientOptions"><code class="docutils literal notranslate"><span class="pre">ConjugateGradientOptions</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.optimization.conjugategradient"><code class="docutils literal notranslate"><span class="pre">conjugategradient()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.optimization.SteepestDescent"><code class="docutils literal notranslate"><span class="pre">SteepestDescent</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.optimization.SteepestDescent.solve"><code class="docutils literal notranslate"><span class="pre">SteepestDescent.solve()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.optimization.ConjugateGradient"><code class="docutils literal notranslate"><span class="pre">ConjugateGradient</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.optimization.ConjugateGradient.solve"><code class="docutils literal notranslate"><span class="pre">ConjugateGradient.solve()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.optimization.BarzilaiBorwein"><code class="docutils literal notranslate"><span class="pre">BarzilaiBorwein</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.optimization.LBFGS"><code class="docutils literal notranslate"><span class="pre">LBFGS</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.optimization.NewtonCG"><code class="docutils literal notranslate"><span class="pre">NewtonCG</span></code></a></li>
@@ -1517,6 +1458,20 @@ dataclass. <code class="docutils literal notranslate"><span class="pre">beta</sp
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Kisung You.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
   
   
   

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Development &#8212; GeoJAX</title>
+    <title>Testing &#8212; GeoJAX</title>
   
   
   
@@ -46,14 +46,14 @@
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=fd10adb8"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'development/index';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'development/testing';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="canonical" href="https://www.kisungyou.com/geojax/development/index.html" />
+    <link rel="canonical" href="https://www.kisungyou.com/geojax/development/testing.html" />
     <link rel="icon" href="../_static/geojax-gj-favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Geometry protocol" href="geometry_protocol.html" />
-    <link rel="prev" title="Optimization API" href="../api/optimization.html" />
+    <link rel="next" title="Documentation conventions" href="documentation.html" />
+    <link rel="prev" title="Optimization protocol" href="optimization_protocol.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -175,7 +175,7 @@
 
 
 <li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#">
+  <a class="nav-link nav-internal" href="index.html">
     Development
   </a>
 </li>
@@ -245,6 +245,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -300,7 +304,7 @@
 
 
 <li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#">
+  <a class="nav-link nav-internal" href="index.html">
     Development
   </a>
 </li>
@@ -371,10 +375,10 @@
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="geometry_protocol.html">Geometry protocol</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimization_protocol.html">Optimization protocol</a></li>
-<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="documentation.html">Documentation conventions</a></li>
 </ul>
 </div>
@@ -416,7 +420,10 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Development</span></li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Development</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Testing</span></li>
   </ul>
 </nav>
 </div>
@@ -433,20 +440,87 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="development">
-<h1>Development<a class="headerlink" href="#development" title="Link to this heading">#</a></h1>
-<p>GeoJAX separates geometry, problem definition, and solver implementation through
-small structural protocols. Geometry objects provide manifold primitives;
-<code class="docutils literal notranslate"><span class="pre">Minimize</span></code> supplies an objective and its derivatives; solvers consume both and
-return a common iteration history.</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="geometry_protocol.html">Geometry protocol</a></li>
-<li class="toctree-l1"><a class="reference internal" href="optimization_protocol.html">Optimization protocol</a></li>
-<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="documentation.html">Documentation conventions</a></li>
-</ul>
+  <section class="tex2jax_ignore mathjax_ignore" id="testing">
+<h1>Testing<a class="headerlink" href="#testing" title="Link to this heading">#</a></h1>
+<p>GeoJAX uses deterministic numerical tests, executable documentation, and clean
+package installation checks. A release should pass the complete matrix rather
+than only the maintainer’s active Python environment.</p>
+<section id="current-environment">
+<h2>Current environment<a class="headerlink" href="#current-environment" title="Link to this heading">#</a></h2>
+<p>Run both JAX precision modes before committing:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span><span class="nb">test</span>
+make<span class="w"> </span>test-float32
+</pre></div>
 </div>
+<p>Both commands execute the full test suite with branch coverage. Coverage below
+85 percent fails the run. <code class="docutils literal notranslate"><span class="pre">GEOJAX_TEST_X64</span></code> is set by these targets so tests do
+not silently inherit a developer’s JAX configuration.</p>
+<p>Invariant assertions keep their original strict float64 tolerances. In
+float32, tests add a small dtype-aware allowance for decomposition roundoff
+and avoid perturbations below machine resolution. This preserves the
+mathematical assertion instead of expecting float32 arithmetic to reproduce a
+float64 residual.</p>
+</section>
+<section id="supported-matrix">
+<h2>Supported matrix<a class="headerlink" href="#supported-matrix" title="Link to this heading">#</a></h2>
+<p>Install the development dependencies and run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[dev]&quot;</span>
+make<span class="w"> </span>test-matrix
+</pre></div>
+</div>
+<p>The tox matrix covers:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Python</p></th>
+<th class="head"><p>Dependencies</p></th>
+<th class="head"><p>JAX precision</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>3.11</p></td>
+<td><p>JAX 0.6.0 and NumPy 1.26</p></td>
+<td><p>float32, float64</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.11</p></td>
+<td><p>current compatible releases</p></td>
+<td><p>float32, float64</p></td>
+</tr>
+<tr class="row-even"><td><p>3.12</p></td>
+<td><p>current compatible releases</p></td>
+<td><p>float32, float64</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.13</p></td>
+<td><p>current compatible releases</p></td>
+<td><p>float32, float64</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Missing Python interpreters are errors rather than silently skipped
+environments. The lower-bound environment guards the versions promised by
+<code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>; the latest environments expose upstream compatibility
+regressions.</p>
+</section>
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>website
+</pre></div>
+</div>
+<p>This executes every MyST Markdown tutorial from a clean Sphinx environment,
+treats warnings as errors, and audits rendered mathematics and local
+references. <code class="docutils literal notranslate"><span class="pre">jupyter_execute/</span></code> and <code class="docutils literal notranslate"><span class="pre">.jupyter_cache/</span></code> are transient: the build
+deletes both after the HTML audit succeeds. The <code class="docutils literal notranslate"><span class="pre">.md</span></code> tutorial is always the
+maintained source.</p>
+</section>
+<section id="release-candidate">
+<h2>Release candidate<a class="headerlink" href="#release-candidate" title="Link to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>release-check
+</pre></div>
+</div>
+<p>The release target requires the complete tox matrix, rebuilds every tutorial,
+creates clean wheel and source archives, and applies Twine’s strict metadata
+validation. It does not upload or publish anything.</p>
+</section>
 </section>
 
 
@@ -460,20 +534,20 @@ return a common iteration history.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../api/optimization.html"
+       href="optimization_protocol.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Optimization API</p>
+        <p class="prev-next-title">Optimization protocol</p>
       </div>
     </a>
     <a class="right-next"
-       href="geometry_protocol.html"
+       href="documentation.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Geometry protocol</p>
+        <p class="prev-next-title">Documentation conventions</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -483,6 +557,27 @@ return a common iteration history.</p>
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#current-environment">Current environment</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supported-matrix">Supported matrix</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#documentation">Documentation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-candidate">Release candidate</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

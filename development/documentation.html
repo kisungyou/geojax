@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../_static/documentation_options.js?v=38b66d78"></script>
+    <script src="../_static/documentation_options.js?v=91f6191e"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -52,7 +52,7 @@
     <link rel="icon" href="../_static/geojax-gj-favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="Optimization protocol" href="optimization_protocol.html" />
+    <link rel="prev" title="Testing" href="testing.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -373,6 +373,7 @@
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="geometry_protocol.html">Geometry protocol</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimization_protocol.html">Optimization protocol</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Documentation conventions</a></li>
 </ul>
 </div>
@@ -449,7 +450,11 @@ failures:</p>
 </div>
 <p>The build executes every tutorial with <code class="docutils literal notranslate"><span class="pre">myst-nb</span></code>, treats Sphinx warnings as
 errors, and then audits the rendered HTML for malformed math nodes, leaked TeX,
-and broken local links, fragments, scripts, styles, and images.</p>
+and broken local links, fragments, scripts, styles, and images. The MyST
+Markdown files in <code class="docutils literal notranslate"><span class="pre">docs/tutorials/</span></code> are the source documents. Executed
+notebooks, their temporary figures, and the MyST execution cache are removed
+after a successful audit; only the finished HTML site and intentional tutorial
+thumbnails remain.</p>
 </section>
 
 
@@ -463,12 +468,12 @@ and broken local links, fragments, scripts, styles, and images.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="optimization_protocol.html"
+       href="testing.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Optimization protocol</p>
+        <p class="prev-next-title">Testing</p>
       </div>
     </a>
 </div>
@@ -494,6 +499,20 @@ and broken local links, fragments, scripts, styles, and images.</p>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Kisung You.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
   
   
   
