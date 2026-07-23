@@ -17,6 +17,12 @@ TEX_LEAK = re.compile(
 PROSE_IN_MATH = re.compile(
     r"[.`]\s+(?:A|An|For|It|Its|The|This|When|where|which|is|requires|to)\b"
 )
+TEXT_LIKE_COMMAND = re.compile(
+    r"\\(?:text(?:normal|rm|sf|tt|bf|it)?|mbox|operatorname|"
+    r"mathrm|mathbf|mathit|mathtt)\s*\{"
+)
+ENVIRONMENT_COMMAND = re.compile(r"\\(begin|end)\{([^{}]+)\}")
+TEXT_ARGUMENT_SPECIALS = frozenset("_^&#%$")
 
 
 class RenderedPageParser(HTMLParser):
@@ -94,6 +100,95 @@ def parse_page(path: Path) -> RenderedPageParser:
     return parser
 
 
+def _is_escaped(text: str, index: int) -> bool:
+    """Return whether the character at ``index`` follows an odd number of slashes."""
+    slash_count = 0
+    index -= 1
+    while index >= 0 and text[index] == "\\":
+        slash_count += 1
+        index -= 1
+    return slash_count % 2 == 1
+
+
+def _braced_argument(text: str, opening_brace: int) -> tuple[str | None, int]:
+    """Extract a possibly nested TeX argument beginning at ``opening_brace``."""
+    depth = 1
+    index = opening_brace + 1
+    while index < len(text):
+        character = text[index]
+        if character == "\\":
+            index += 2
+            continue
+        if character == "{":
+            depth += 1
+        elif character == "}":
+            depth -= 1
+            if depth == 0:
+                return text[opening_brace + 1 : index], index
+        index += 1
+    return None, len(text)
+
+
+def tex_syntax_errors(tex: str) -> list[str]:
+    """Return structural TeX errors that can be detected without running MathJax."""
+    errors: list[str] = []
+
+    brace_depth = 0
+    for index, character in enumerate(tex):
+        if _is_escaped(tex, index):
+            continue
+        if character == "{":
+            brace_depth += 1
+        elif character == "}":
+            brace_depth -= 1
+            if brace_depth < 0:
+                errors.append("unmatched closing brace")
+                brace_depth = 0
+    if brace_depth:
+        errors.append(f"{brace_depth} unmatched opening brace(s)")
+
+    environments: list[str] = []
+    for match in ENVIRONMENT_COMMAND.finditer(tex):
+        action, environment = match.groups()
+        if action == "begin":
+            environments.append(environment)
+        elif not environments:
+            errors.append(f"unexpected end of {environment!r} environment")
+        elif environments[-1] != environment:
+            errors.append(
+                f"environment {environments[-1]!r} closed by {environment!r}"
+            )
+            environments.pop()
+        else:
+            environments.pop()
+    for environment in reversed(environments):
+        errors.append(f"unclosed {environment!r} environment")
+
+    for match in TEXT_LIKE_COMMAND.finditer(tex):
+        argument, _ = _braced_argument(tex, match.end() - 1)
+        if argument is None:
+            errors.append(f"unclosed argument for {match.group(0)[:-1]!r}")
+            continue
+        unsafe = sorted(
+            {
+                character
+                for index, character in enumerate(argument)
+                if character in TEXT_ARGUMENT_SPECIALS and not _is_escaped(argument, index)
+            }
+        )
+        if unsafe:
+            rendered = ", ".join(repr(character) for character in unsafe)
+            errors.append(
+                f"{match.group(0)[:-1]} argument contains unescaped TeX special(s): "
+                f"{rendered}"
+            )
+
+    if re.search(r"(?<!\\)\$", tex):
+        errors.append("unescaped dollar sign inside a math node")
+
+    return errors
+
+
 def resolve_local_reference(site: Path, page: Path, reference: str) -> tuple[Path, str] | None:
     parsed = urlsplit(reference)
     if parsed.scheme or parsed.netloc or reference.startswith("//"):
@@ -137,10 +232,15 @@ def audit_site(site: Path) -> list[str]:
             expected_end = r"\)" if is_inline else r"\]"
             if not math.endswith(expected_end):
                 errors.append(f"{relative_page}: unterminated rendered math node {math[:100]!r}")
+                continue
             if is_inline and len(math) > 180:
                 errors.append(f"{relative_page}: suspiciously long inline math node {math[:100]!r}")
             if "`" in math or PROSE_IN_MATH.search(math):
                 errors.append(f"{relative_page}: prose appears inside math node {math[:100]!r}")
+            for issue in tex_syntax_errors(math[2:-2]):
+                errors.append(
+                    f"{relative_page}: {issue} in rendered math node {math[:100]!r}"
+                )
 
         for kind, reference in parser.references:
             resolved = resolve_local_reference(site, page, reference)

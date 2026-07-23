@@ -5,6 +5,8 @@ import re
 
 import numpy as np
 
+from docs.audit_html import tex_syntax_errors
+
 
 DOCS = Path(__file__).resolve().parents[1] / "docs"
 LEGACY_MATH_DELIMITERS = (r"\(", r"\)", r"\[", r"\]")
@@ -30,6 +32,34 @@ def markdown_prose_blocks(path: Path):
 
     if block:
         yield block
+
+
+def markdown_math_fragments(path: Path):
+    """Yield TeX bodies from MyST math delimiters outside code blocks."""
+    for block in markdown_prose_blocks(path):
+        paragraph = "\n".join(line for _, line in block)
+        index = 0
+        while index < len(paragraph):
+            if paragraph[index] != "$" or (
+                index > 0 and paragraph[index - 1] == "\\"
+            ):
+                index += 1
+                continue
+
+            delimiter = "$$" if paragraph.startswith("$$", index) else "$"
+            start = index + len(delimiter)
+            end = start
+            while end < len(paragraph):
+                if paragraph.startswith(delimiter, end) and (
+                    end == 0 or paragraph[end - 1] != "\\"
+                ):
+                    line_number = block[0][0] + paragraph[:index].count("\n")
+                    yield line_number, paragraph[start:end]
+                    index = end + len(delimiter)
+                    break
+                end += 1
+            else:
+                index = len(paragraph)
 
 
 def test_markdown_uses_myst_math_delimiters():
@@ -60,6 +90,26 @@ def test_markdown_math_delimiters_are_balanced_per_paragraph():
                 )
 
     assert not offenders, "Unbalanced MyST math delimiters:\n" + "\n".join(offenders)
+
+
+def test_markdown_math_has_safe_tex_structure():
+    offenders: list[str] = []
+    for path in sorted(DOCS.rglob("*.md")):
+        for line_number, tex in markdown_math_fragments(path):
+            for error in tex_syntax_errors(tex):
+                offenders.append(f"{path.relative_to(DOCS)}:{line_number}: {error}")
+
+    assert not offenders, "Unsafe TeX in Markdown math:\n" + "\n".join(offenders)
+
+
+def test_tex_syntax_audit_detects_text_mode_specials():
+    assert tex_syntax_errors(r"\texttt{exp_batch}(x)")
+    assert tex_syntax_errors(r"\text{R&D}")
+    assert tex_syntax_errors(r"\frac{x}{y")
+    assert tex_syntax_errors(r"\begin{aligned}x\end{split}")
+    assert tex_syntax_errors(r"x $ y")
+    assert not tex_syntax_errors(r"\mathtt{exp\_batch}(x)")
+    assert not tex_syntax_errors(r"\begin{aligned}x&=y\end{aligned}")
 
 
 def test_kendall_hand_tutorial_data_is_complete():
