@@ -155,11 +155,11 @@ machine-readable capability metadata:
 For a retraction-only class,
 
 $$
-\texttt{exp}(x,u)=R_x(u),
+\mathtt{exp}(x,u)=R_x(u),
 \qquad
-\texttt{log}(x,y)=R_x^{-1}(y),
+\mathtt{log}(x,y)=R_x^{-1}(y),
 \qquad
-\texttt{dist}(x,y)=\lVert R_x^{-1}(y)\rVert_x.
+\mathtt{dist}(x,y)=\lVert R_x^{-1}(y)\rVert_x.
 $$
 
 The last expression is local and need not be symmetric, so it must not be
@@ -280,9 +280,9 @@ keys.
 
 $$
 \begin{aligned}
-\texttt{exp_batch}(x,[u_i]) &= [\operatorname{Exp}_x(u_i)],\\
-\texttt{log_batch}(x,[y_i]) &= [\operatorname{Log}_x(y_i)],\\
-\texttt{dist_batch}(x,[y_i]) &= [d(x,y_i)].
+\mathtt{exp\_batch}(x,[u_i]) &= [\operatorname{Exp}_x(u_i)],\\
+\mathtt{log\_batch}(x,[y_i]) &= [\operatorname{Log}_x(y_i)],\\
+\mathtt{dist\_batch}(x,[y_i]) &= [d(x,y_i)].
 \end{aligned}
 $$
 

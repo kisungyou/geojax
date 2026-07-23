@@ -609,11 +609,11 @@ machine-readable capability metadata:</p>
 <p>For a retraction-only class,</p>
 <div class="math notranslate nohighlight">
 \[
-\texttt{exp}(x,u)=R_x(u),
+\mathtt{exp}(x,u)=R_x(u),
 \qquad
-\texttt{log}(x,y)=R_x^{-1}(y),
+\mathtt{log}(x,y)=R_x^{-1}(y),
 \qquad
-\texttt{dist}(x,y)=\lVert R_x^{-1}(y)\rVert_x.
+\mathtt{dist}(x,y)=\lVert R_x^{-1}(y)\rVert_x.
 \]</div>
 <p>The last expression is local and need not be symmetric, so it must not be
 reported as a geodesic distance. This distinction lets generic optimizers and
@@ -722,9 +722,9 @@ keys.</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
-\texttt{exp_batch}(x,[u_i]) &amp;= [\operatorname{Exp}_x(u_i)],\\
-\texttt{log_batch}(x,[y_i]) &amp;= [\operatorname{Log}_x(y_i)],\\
-\texttt{dist_batch}(x,[y_i]) &amp;= [d(x,y_i)].
+\mathtt{exp\_batch}(x,[u_i]) &amp;= [\operatorname{Exp}_x(u_i)],\\
+\mathtt{log\_batch}(x,[y_i]) &amp;= [\operatorname{Log}_x(y_i)],\\
+\mathtt{dist\_batch}(x,[y_i]) &amp;= [d(x,y_i)].
 \end{aligned}
 \end{split}\]</div>
 <p>They are implemented with <code class="docutils literal notranslate"><span class="pre">jax.vmap</span></code>; geometry methods are therefore written
