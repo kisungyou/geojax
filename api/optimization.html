@@ -462,11 +462,14 @@ over <code class="docutils literal notranslate"><span class="pre">egrad</span></
 Riemannian gradient using <code class="docutils literal notranslate"><span class="pre">M.egrad_to_rgrad</span></code>.</p></li>
 <li><p><strong>precon</strong> (<em>Optional</em><em>[</em><em>PreconFn</em><em>]</em>) – Optional preconditioner <code class="docutils literal notranslate"><span class="pre">precon(x,</span> <span class="pre">grad)</span></code>. If omitted, the identity
 preconditioner is used.</p></li>
+<li><p><strong>ehess_vec</strong> (<em>Optional</em><em>[</em><em>HessVecFn</em><em>]</em>) – Optional ambient Euclidean Hessian-vector product. Automatic conversion
+requires the geometry to advertise exact <code class="docutils literal notranslate"><span class="pre">ehess_to_rhess</span></code> support.</p></li>
+<li><p><strong>rhess_vec</strong> (<em>Optional</em><em>[</em><em>HessVecFn</em><em>]</em>) – Optional Riemannian Hessian-vector product. Supply this for second-order
+methods whenever the geometry does not advertise an exact automatic
+conversion.</p></li>
 <li><p><strong>x0</strong> (<em>Optional</em><em>[</em><em>Array</em><em>]</em>)</p></li>
 <li><p><strong>solver</strong> (<em>Optional</em><em>[</em><em>Any</em><em>]</em>)</p></li>
 <li><p><strong>key</strong> (<em>Optional</em><em>[</em><em>Array</em><em> | </em><em>int</em><em>]</em>)</p></li>
-<li><p><strong>ehess_vec</strong> (<em>Optional</em><em>[</em><em>HessVecFn</em><em>]</em>)</p></li>
-<li><p><strong>rhess_vec</strong> (<em>Optional</em><em>[</em><em>HessVecFn</em><em>]</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -496,6 +499,9 @@ preconditioner is used.</p></li>
 <dt class="sig sig-object py" id="geojax.optimization.Minimize.ehess_vec">
 <span class="sig-name descname"><span class="pre">ehess_vec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.optimization.Minimize.ehess_vec" title="Link to this definition">#</a></dt>
 <dd><p>Ambient Euclidean Hessian-vector product.</p>
+<p>When only a Riemannian <code class="docutils literal notranslate"><span class="pre">grad</span></code> callback is available, this method
+returns its directional derivative instead. <code class="docutils literal notranslate"><span class="pre">rhess_vec</span></code> handles that
+path separately through the geometry’s advertised connection support.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -990,9 +996,8 @@ non-descent Newton direction falls back to preconditioned steepest descent.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Approximate Riemannian trust-regions method.</p>
 <p>Uses truncated conjugate gradient to approximately minimize the quadratic
-model.  If a geometry does not implement exact Riemannian Hessian conversion,
-<code class="docutils literal notranslate"><span class="pre">Minimize.rhess_vec</span></code> falls back to tangent-projected Euclidean Hessian-vector
-products.</p>
+model. A geometry must advertise an exact automatic Hessian conversion or
+the problem must supply <code class="docutils literal notranslate"><span class="pre">rhess_vec</span></code> explicitly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

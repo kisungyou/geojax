@@ -9,7 +9,10 @@ kernelspec:
 
 Principal component analysis estimates a subspace rather than a particular
 basis. The Grassmann manifold captures exactly this invariance: a matrix $X$
-and $XR$, with $R$ orthogonal, represent the same subspace.
+and $XR$, with $R$ orthogonal, represent the same subspace. The quotient
+geometry and its use for eigenvalue and subspace problems are developed by
+{cite:t}`edelman1998geometry` and in
+{cite:t}`absil2008optimization`.
 
 For a covariance matrix $C$, the leading $k$-dimensional principal subspace
 solves
@@ -165,3 +168,9 @@ plt.show()
 The same formulation extends directly to `Grassmann(size=(n, k))` for a
 $k$-dimensional principal subspace; only the number of columns in the point
 representation changes.
+
+## References
+
+```{bibliography}
+:filter: docname in docnames
+```

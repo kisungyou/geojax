@@ -445,7 +445,10 @@
 <h1>Learning protocol<a class="headerlink" href="#learning-protocol" title="Link to this heading">#</a></h1>
 <p>The <code class="docutils literal notranslate"><span class="pre">geojax.learning</span></code> namespace contains small geometry-aware functions, not a
 neural-network framework. New functions must remain pure JAX and may not make
-Flax, Equinox, Haiku, Optax, or scikit-learn runtime dependencies.</p>
+Flax, Equinox, Haiku, Optax, or scikit-learn runtime dependencies. This narrow
+boundary keeps the package focused on reusable geometric ingredients rather
+than prescribing one geometric-deep-learning architecture
+<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id12" title="Michael M. Bronstein, Joan Bruna, Taco Cohen, and Petar Veličković. Geometric deep learning: grids, groups, graphs, geodesics, and gauges. arXiv preprint arXiv:2104.13478, 2021. doi:10.48550/arXiv.2104.13478.">Bronstein <em>et al.</em>, 2021</a>]</span>.</p>
 <section id="functional-boundary">
 <h2>Functional boundary<a class="headerlink" href="#functional-boundary" title="Link to this heading">#</a></h2>
 <p>A learning primitive receives geometry objects as static configuration and
@@ -474,11 +477,16 @@ Every new operation must:</p>
 <li><p>support <code class="docutils literal notranslate"><span class="pre">Product</span></code> pytrees when the operation is geometrically meaningful;</p></li>
 <li><p>compile under <code class="docutils literal notranslate"><span class="pre">jax.jit</span></code>;</p></li>
 <li><p>have finite first derivatives at zero tangents and coincident points;</p></li>
-<li><p>preserve explicit failure at a genuine cut locus; and</p></li>
+<li><p>require exact capabilities when its public name promises a distance or
+geodesic, and reject proxy or numerical-local operations;</p></li>
+<li><p>preserve or explicitly document each geometry’s cut-locus branch policy; and</p></li>
 <li><p>avoid Python data-dependent control flow over traced values.</p></li>
 </ul>
 <p>Pairwise operations interpret the axis immediately before the manifold event
-as the collection axis. Leading batch axes use NumPy broadcasting.</p>
+as the collection axis. Leading batch axes use NumPy broadcasting.
+Interpolation parameters add axes before all endpoint batch and event axes, so
+tests must include both batched endpoints and vector-valued interpolation
+times.</p>
 </section>
 <section id="release-contract">
 <h2>Release contract<a class="headerlink" href="#release-contract" title="Link to this heading">#</a></h2>
@@ -489,6 +497,17 @@ encoder gradients, and checks manifold membership of every resulting latent.</p>
 <p>Tutorial-only dependencies belong in the <code class="docutils literal notranslate"><span class="pre">docs</span></code> or <code class="docutils literal notranslate"><span class="pre">examples</span></code> optional extras.
 Executable tutorials must be self-contained Markdown documents and may not
 import hidden training scripts or retain generated notebooks in the repository.</p>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<div class="docutils container" id="id2">
+<div role="list" class="citation-list">
+<div class="citation" id="id12" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">BBCVelivckovic21</a><span class="fn-bracket">]</span></span>
+<p>Michael M. Bronstein, Joan Bruna, Taco Cohen, and Petar Veličković. Geometric deep learning: grids, groups, graphs, geodesics, and gauges. <em>arXiv preprint arXiv:2104.13478</em>, 2021. <a class="reference external" href="https://doi.org/10.48550/arXiv.2104.13478">doi:10.48550/arXiv.2104.13478</a>.</p>
+</div>
+</div>
+</div>
 </section>
 </section>
 
@@ -542,6 +561,7 @@ import hidden training scripts or retain generated notebooks in the repository.<
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functional-boundary">Functional boundary</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#numerical-contract">Numerical contract</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-contract">Release contract</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
 </ul>
   </nav></div>
 

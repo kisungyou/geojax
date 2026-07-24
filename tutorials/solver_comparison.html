@@ -381,6 +381,7 @@
 <li class="toctree-l1"><a class="reference internal" href="hyperbolic_geodesics.html">Geodesics on the Hyperboloid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="torus_geodesics.html">Wrapped geodesics on the flat torus</a></li>
 <li class="toctree-l1"><a class="reference internal" href="manifold_autoencoder.html">Deterministic autoencoders with curved latent spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph_curvature.html">Curvature-aware graph learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="grassmann_pca.html">Principal component as a Grassmann point</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sphere_kmeans.html">Intrinsic k-means on the circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spd_frechet_mean.html">Comparing Fréchet Means of SPD Matrices</a></li>
@@ -454,7 +455,9 @@
 slower local convergence, Hessian methods spend more work on each step, and
 least-squares methods exploit residual structure that a generic scalar
 objective hides. This tutorial places those choices on the same two-dimensional
-problem so that both the iterates and convergence histories are visible.</p>
+problem so that both the iterates and convergence histories are visible. The
+problem is a mildly scaled Rosenbrock-type least-squares valley
+<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id49" title="H. H. Rosenbrock. An automatic method for finding the greatest or least value of a function. The Computer Journal, 3(3):175–184, 1960. doi:10.1093/comjnl/3.3.175.">Rosenbrock, 1960</a>]</span>.</p>
 <p>Consider the residual</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -712,7 +715,48 @@ or L-BFGS for a generic smooth model. Move to Newton-CG, trust regions, or cubic
 regularization when accurate Hessian products justify their cost. When the
 model is genuinely a sum of squared residuals, preserve that structure with
 <code class="docutils literal notranslate"><span class="pre">LeastSquares</span></code>; Gauss–Newton and Levenberg–Marquardt can then operate on
-<span class="math notranslate nohighlight">\(J_x^*J_x\)</span> without forming either the Jacobian or the full Hessian.</p>
+<span class="math notranslate nohighlight">\(J_x^*J_x\)</span> without forming either the Jacobian or the full Hessian. Standard
+Euclidean derivations appear in <span class="bibtex-citation" id="id2">Nocedal and Wright [<a class="reference internal" href="#id46" title="Jorge Nocedal and Stephen J. Wright. Numerical Optimization. Springer, 2 edition, 2006. doi:10.1007/978-0-387-40065-5.">2006</a>]</span>; the
+Riemannian counterparts are developed in
+<span class="bibtex-citation" id="id3">Absil <em>et al.</em> [<a class="reference internal" href="#id9" title="P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. Optimization Algorithms on Matrix Manifolds. Princeton University Press, 2008. doi:10.1515/9781400830244.">2008</a>]</span> and <span class="bibtex-citation" id="id4">Boumal [<a class="reference internal" href="#id16" title="Nicolas Boumal. An Introduction to Optimization on Smooth Manifolds. Cambridge University Press, 2023. doi:10.1017/9781009166164.">2023</a>]</span>.
+The damping and cubic models trace to
+<span class="bibtex-citation" id="id5">Levenberg [<a class="reference internal" href="#id34" title="Kenneth Levenberg. A method for the solution of certain non-linear problems in least squares. Quarterly of Applied Mathematics, 2(2):164–168, 1944. doi:10.1090/qam/10666.">1944</a>]</span>, <span class="bibtex-citation" id="id6">Marquardt [<a class="reference internal" href="#id40" title="Donald W. Marquardt. An algorithm for least-squares estimation of nonlinear parameters. Journal of the Society for Industrial and Applied Mathematics, 11(2):431–441, 1963. doi:10.1137/0111030.">1963</a>]</span>, and
+<span class="bibtex-citation" id="id7">Cartis <em>et al.</em> [<a class="reference internal" href="#id19" title="Coralia Cartis, Nicholas I. M. Gould, and Philippe L. Toint. Adaptive cubic regularisation methods for unconstrained optimization. part i: motivation, convergence and numerical results. Mathematical Programming, 127:245–295, 2011. doi:10.1007/s10107-009-0286-5.">2011</a>]</span>.</p>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<div class="docutils container" id="id8">
+<div role="list" class="citation-list">
+<div class="citation" id="id9" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">AMS08</a><span class="fn-bracket">]</span></span>
+<p>P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. <em>Optimization Algorithms on Matrix Manifolds</em>. Princeton University Press, 2008. <a class="reference external" href="https://doi.org/10.1515/9781400830244">doi:10.1515/9781400830244</a>.</p>
+</div>
+<div class="citation" id="id16" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">Bou23</a><span class="fn-bracket">]</span></span>
+<p>Nicolas Boumal. <em>An Introduction to Optimization on Smooth Manifolds</em>. Cambridge University Press, 2023. <a class="reference external" href="https://doi.org/10.1017/9781009166164">doi:10.1017/9781009166164</a>.</p>
+</div>
+<div class="citation" id="id19" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id7">CGT11</a><span class="fn-bracket">]</span></span>
+<p>Coralia Cartis, Nicholas I. M. Gould, and Philippe L. Toint. Adaptive cubic regularisation methods for unconstrained optimization. part i: motivation, convergence and numerical results. <em>Mathematical Programming</em>, 127:245–295, 2011. <a class="reference external" href="https://doi.org/10.1007/s10107-009-0286-5">doi:10.1007/s10107-009-0286-5</a>.</p>
+</div>
+<div class="citation" id="id34" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">Lev44</a><span class="fn-bracket">]</span></span>
+<p>Kenneth Levenberg. A method for the solution of certain non-linear problems in least squares. <em>Quarterly of Applied Mathematics</em>, 2(2):164–168, 1944. <a class="reference external" href="https://doi.org/10.1090/qam/10666">doi:10.1090/qam/10666</a>.</p>
+</div>
+<div class="citation" id="id40" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">Mar63</a><span class="fn-bracket">]</span></span>
+<p>Donald W. Marquardt. An algorithm for least-squares estimation of nonlinear parameters. <em>Journal of the Society for Industrial and Applied Mathematics</em>, 11(2):431–441, 1963. <a class="reference external" href="https://doi.org/10.1137/0111030">doi:10.1137/0111030</a>.</p>
+</div>
+<div class="citation" id="id46" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">NW06</a><span class="fn-bracket">]</span></span>
+<p>Jorge Nocedal and Stephen J. Wright. <em>Numerical Optimization</em>. Springer, 2 edition, 2006. <a class="reference external" href="https://doi.org/10.1007/978-0-387-40065-5">doi:10.1007/978-0-387-40065-5</a>.</p>
+</div>
+<div class="citation" id="id49" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Ros60</a><span class="fn-bracket">]</span></span>
+<p>H. H. Rosenbrock. An automatic method for finding the greatest or least value of a function. <em>The Computer Journal</em>, 3(3):175–184, 1960. <a class="reference external" href="https://doi.org/10.1093/comjnl/3.3.175">doi:10.1093/comjnl/3.3.175</a>.</p>
+</div>
+</div>
+</div>
 </section>
 </section>
 
@@ -765,6 +809,7 @@ model is genuinely a sum of squared residuals, preserve that structure with
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#one-objective-three-information-levels">One objective, three information levels</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visual-report">Visual report</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
 </ul>
   </nav></div>
 

@@ -381,6 +381,7 @@
 <li class="toctree-l1"><a class="reference internal" href="hyperbolic_geodesics.html">Geodesics on the Hyperboloid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="torus_geodesics.html">Wrapped geodesics on the flat torus</a></li>
 <li class="toctree-l1"><a class="reference internal" href="manifold_autoencoder.html">Deterministic autoencoders with curved latent spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph_curvature.html">Curvature-aware graph learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="grassmann_pca.html">Principal component as a Grassmann point</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sphere_kmeans.html">Intrinsic k-means on the circle</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Comparing Fréchet Means of SPD Matrices</a></li>
@@ -453,7 +454,8 @@
 <p>Symmetric positive-definite (SPD) matrices appear as covariance matrices,
 diffusion tensors, and kernel matrices. There is no single distinguished
 Riemannian metric on the SPD cone, so a Fréchet mean depends on the geometry
-chosen for the application.</p>
+chosen for the application. The objective extends Fréchet’s metric-space
+notion of a mean <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id22" title="Maurice Fréchet. Les éléments aléatoires de nature quelconque dans un espace distancié. Annales de l'Institut Henri Poincaré, 10(4):215–310, 1948. URL: https://www.numdam.org/item/AIHP_1948__10_4_215_0/.">Fréchet, 1948</a>, <a class="reference internal" href="#id28" title="Hermann Karcher. Riemannian center of mass and mollifier smoothing. Communications on Pure and Applied Mathematics, 30(5):509–541, 1977. doi:10.1002/cpa.3160300502.">Karcher, 1977</a>]</span>.</p>
 <p>For observations <span class="math notranslate nohighlight">\(P_1,\ldots,P_N\)</span> and a distance <span class="math notranslate nohighlight">\(d_g\)</span> induced by geometry
 <span class="math notranslate nohighlight">\(g\)</span>, the Fréchet objective is</p>
 <div class="math notranslate nohighlight">
@@ -490,7 +492,11 @@ the closed form</p>
 <p>The other two means generally require iteration. The affine-invariant metric
 is invariant under arbitrary invertible congruences, while the
 Bures-Wasserstein metric is the covariance component of quadratic optimal
-transport between centered Gaussian distributions.</p>
+transport between centered Gaussian distributions. These constructions are
+developed, respectively, by
+<span class="bibtex-citation" id="id2">Arsigny <em>et al.</em> [<a class="reference internal" href="#id10" title="Vincent Arsigny, Pierre Fillard, Xavier Pennec, and Nicholas Ayache. Geometric means in a novel vector space structure on symmetric positive-definite matrices. SIAM Journal on Matrix Analysis and Applications, 29(1):328–347, 2007. doi:10.1137/050637996.">2007</a>]</span>, <span class="bibtex-citation" id="id3">Moakher [<a class="reference internal" href="#id41" title="Maher Moakher. A differential geometric approach to the geometric mean of symmetric positive-definite matrices. SIAM Journal on Matrix Analysis and Applications, 26(3):735–747, 2005. doi:10.1137/S0895479803436937.">2005</a>]</span>, and
+<span class="bibtex-citation" id="id4">Bhatia <em>et al.</em> [<a class="reference internal" href="#id12" title="Rajendra Bhatia, Tanvi Jain, and Yongdo Lim. On the Bures–Wasserstein distance between positive definite matrices. Expositiones Mathematicae, 37(2):165–191, 2019. doi:10.1016/j.exmath.2018.01.002.">2019</a>]</span>; the Gaussian optimal-transport interpretation is
+given by <span class="bibtex-citation" id="id5">Malagò <em>et al.</em> [<a class="reference internal" href="#id37" title="Luigi Malagò, Luigi Montrucchio, and Giovanni Pistone. Wasserstein Riemannian geometry of gaussian densities. Information Geometry, 1:137–179, 2018. doi:10.1007/s41884-018-0014-z.">2018</a>]</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
@@ -773,6 +779,37 @@ and optimal transport is the intended comparison.</p></li>
 <p>Changing <code class="docutils literal notranslate"><span class="pre">samples</span></code> is enough to repeat the comparison in higher dimensions;
 only the ellipse visualization is specific to <span class="math notranslate nohighlight">\(\operatorname{SPD}(2)\)</span>.</p>
 </section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<div class="docutils container" id="id6">
+<div role="list" class="citation-list">
+<div class="citation" id="id10" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">AFPA07</a><span class="fn-bracket">]</span></span>
+<p>Vincent Arsigny, Pierre Fillard, Xavier Pennec, and Nicholas Ayache. Geometric means in a novel vector space structure on symmetric positive-definite matrices. <em>SIAM Journal on Matrix Analysis and Applications</em>, 29(1):328–347, 2007. <a class="reference external" href="https://doi.org/10.1137/050637996">doi:10.1137/050637996</a>.</p>
+</div>
+<div class="citation" id="id12" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">BJL19</a><span class="fn-bracket">]</span></span>
+<p>Rajendra Bhatia, Tanvi Jain, and Yongdo Lim. On the Bures–Wasserstein distance between positive definite matrices. <em>Expositiones Mathematicae</em>, 37(2):165–191, 2019. <a class="reference external" href="https://doi.org/10.1016/j.exmath.2018.01.002">doi:10.1016/j.exmath.2018.01.002</a>.</p>
+</div>
+<div class="citation" id="id22" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Frechet48</a><span class="fn-bracket">]</span></span>
+<p>Maurice Fréchet. Les éléments aléatoires de nature quelconque dans un espace distancié. <em>Annales de l'Institut Henri Poincaré</em>, 10(4):215–310, 1948. URL: <a class="reference external" href="https://www.numdam.org/item/AIHP_1948__10_4_215_0/">https://www.numdam.org/item/AIHP_1948__10_4_215_0/</a>.</p>
+</div>
+<div class="citation" id="id28" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Kar77</a><span class="fn-bracket">]</span></span>
+<p>Hermann Karcher. Riemannian center of mass and mollifier smoothing. <em>Communications on Pure and Applied Mathematics</em>, 30(5):509–541, 1977. <a class="reference external" href="https://doi.org/10.1002/cpa.3160300502">doi:10.1002/cpa.3160300502</a>.</p>
+</div>
+<div class="citation" id="id37" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">MalagoMP18</a><span class="fn-bracket">]</span></span>
+<p>Luigi Malagò, Luigi Montrucchio, and Giovanni Pistone. Wasserstein Riemannian geometry of gaussian densities. <em>Information Geometry</em>, 1:137–179, 2018. <a class="reference external" href="https://doi.org/10.1007/s41884-018-0014-z">doi:10.1007/s41884-018-0014-z</a>.</p>
+</div>
+<div class="citation" id="id41" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">Moa05</a><span class="fn-bracket">]</span></span>
+<p>Maher Moakher. A differential geometric approach to the geometric mean of symmetric positive-definite matrices. <em>SIAM Journal on Matrix Analysis and Applications</em>, 26(3):735–747, 2005. <a class="reference external" href="https://doi.org/10.1137/S0895479803436937">doi:10.1137/S0895479803436937</a>.</p>
+</div>
+</div>
+</div>
+</section>
 </section>
 
 
@@ -827,6 +864,7 @@ only the ellipse visualization is specific to <span class="math notranslate nohi
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#validate-the-log-euclidean-result">Validate the log-Euclidean result</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visual-comparison">Visual comparison</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interpretation">Interpretation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
 </ul>
   </nav></div>
 

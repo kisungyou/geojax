@@ -446,19 +446,22 @@
 <p>A new geometry should first implement <code class="docutils literal notranslate"><span class="pre">ManifoldProtocol</span></code>: membership and point
 projection, tangent operations, the metric, a retraction and inverse
 retraction, transport, and random generation. It should also expose <code class="docutils literal notranslate"><span class="pre">size</span></code>,
-<code class="docutils literal notranslate"><span class="pre">shape</span></code>, and intrinsic <code class="docutils literal notranslate"><span class="pre">dim</span></code>.</p>
-<p>Use <code class="docutils literal notranslate"><span class="pre">GeometryMixin</span></code> when genuine exponential, logarithm, and distance
-operations are available. Use <code class="docutils literal notranslate"><span class="pre">RetractionGeometryMixin</span></code> otherwise. The latter
-provides uniform compatibility names while advertising them as proxies through
-<code class="docutils literal notranslate"><span class="pre">operation_kind</span></code>; do not mark an approximate or first-order construction as
-exact.</p>
+<code class="docutils literal notranslate"><span class="pre">shape</span></code>, and intrinsic <code class="docutils literal notranslate"><span class="pre">dim</span></code>. The contract follows the computational
+abstractions used in standard manifold-optimization references
+<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id3" title="P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. Optimization Algorithms on Matrix Manifolds. Princeton University Press, 2008. doi:10.1515/9781400830244.">Absil <em>et al.</em>, 2008</a>, <a class="reference internal" href="#id10" title="Nicolas Boumal. An Introduction to Optimization on Smooth Manifolds. Cambridge University Press, 2023. doi:10.1017/9781009166164.">Boumal, 2023</a>]</span>.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">GeometryMixin</span></code> when exact or numerical-local geodesic operations are
+available. Use <code class="docutils literal notranslate"><span class="pre">RetractionGeometryMixin</span></code> otherwise. The latter provides uniform
+compatibility names while advertising them as proxies through <code class="docutils literal notranslate"><span class="pre">operation_kind</span></code>;
+do not mark an approximate, endpoint-only, or first-order construction as
+globally exact. <code class="docutils literal notranslate"><span class="pre">GeometryProtocol</span></code> is structural and does not replace these
+runtime capability checks.</p>
 <p>At minimum, test:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>belongs(project(x))
 is_tangent(x, tangent_project(x, u))
 retr(x, 0) == x
 invretr(x, retr(x, small_u)) ~= small_u
 exp(x, 0) == x                       # when exp is exact
-log(x, exp(x, small_u)) ~= small_u   # when log is exact
+log(x, exp(x, small_u)) ~= small_u   # exact or converged numerical-local log
 grad_y squared_dist(x, y) at y=x is finite and zero
 dist(x, y) == dist(y, x)             # when dist is exact
 norm(y, transport(x, y, u)) ~= norm(x, u)  # when transport is isometric
@@ -483,21 +486,38 @@ batches and broadcasting an unbatched base point over batched tangents or
 endpoints. <code class="docutils literal notranslate"><span class="pre">exp_batch</span></code>, <code class="docutils literal notranslate"><span class="pre">log_batch</span></code>, and <code class="docutils literal notranslate"><span class="pre">dist_batch</span></code> delegate to that behavior
 and must compose with <code class="docutils literal notranslate"><span class="pre">jax.jit</span></code>, including for Product pytrees. Scalar costs
 built from geometry operations must remain differentiable with
-<code class="docutils literal notranslate"><span class="pre">jax.value_and_grad</span></code>; ambient and Riemannian Hessian-vector products must
-compose with <code class="docutils literal notranslate"><span class="pre">jax.jvp</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">jax.value_and_grad</span></code>. A geometry advertising an exact Hessian conversion must
+test its ambient and Riemannian Hessian-vector products under <code class="docutils literal notranslate"><span class="pre">jax.jvp</span></code>.</p>
 <p>The shared transformation test suite compiles the complete numerical protocol
 for every public geometry. It additionally tests JIT-plus-vmap composition
 across vector, quotient, matrix, Lie-group, numerical-logarithm, retraction,
 shape, and Product families. A new geometry belongs in those tests before it
 is added to the public namespace.</p>
-<p>Every class must set the exactness and transport metadata correctly. If
+<p>Every class must set exactness, Hessian-conversion, and transport metadata
+correctly. If
 <code class="docutils literal notranslate"><span class="pre">transport</span></code> is not Levi-Civita parallel transport, its class and guide must name
 the construction precisely and state which properties it preserves.
 Differentiable routines must be tested at zero tangent vectors and coincident
 points. Spectral routines additionally require repeated-eigenvalue tests;
 valid matrix functions can otherwise acquire nonfinite autodiff results from
-an intermediate eigenbasis. Fill removable analytic limits, but preserve
-explicit nonfinite results at genuine geometric cut loci.</p>
+an intermediate eigenbasis. Fill removable analytic limits, but document each
+cut-locus branch policy explicitly; nonfinite failure and deterministic branch
+selection are both valid only when stated and tested.</p>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<div class="docutils container" id="id2">
+<div role="list" class="citation-list">
+<div class="citation" id="id3" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">AMS08</a><span class="fn-bracket">]</span></span>
+<p>P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. <em>Optimization Algorithms on Matrix Manifolds</em>. Princeton University Press, 2008. <a class="reference external" href="https://doi.org/10.1515/9781400830244">doi:10.1515/9781400830244</a>.</p>
+</div>
+<div class="citation" id="id10" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Bou23</a><span class="fn-bracket">]</span></span>
+<p>Nicolas Boumal. <em>An Introduction to Optimization on Smooth Manifolds</em>. Cambridge University Press, 2023. <a class="reference external" href="https://doi.org/10.1017/9781009166164">doi:10.1017/9781009166164</a>.</p>
+</div>
+</div>
+</div>
 </section>
 </section>
 
@@ -549,6 +569,7 @@ explicit nonfinite results at genuine geometric cut loci.</p>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#jax-transformation-contract">JAX transformation contract</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
 </ul>
   </nav></div>
 

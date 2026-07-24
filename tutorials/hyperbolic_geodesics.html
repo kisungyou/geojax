@@ -381,6 +381,7 @@
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Geodesics on the Hyperboloid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="torus_geodesics.html">Wrapped geodesics on the flat torus</a></li>
 <li class="toctree-l1"><a class="reference internal" href="manifold_autoencoder.html">Deterministic autoencoders with curved latent spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph_curvature.html">Curvature-aware graph learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="grassmann_pca.html">Principal component as a Grassmann point</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sphere_kmeans.html">Intrinsic k-means on the circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spd_frechet_mean.html">Comparing Fréchet Means of SPD Matrices</a></li>
@@ -470,7 +471,9 @@ closed form</p>
 \gamma(t)=\cosh(t)x+\sinh(t)u.
 \]</div>
 <p>We generate several directions at one point and view the resulting geodesics
-both on the hyperboloid and after projection into the Poincaré disk.</p>
+both on the hyperboloid and after projection into the Poincaré disk. These
+models and the coordinate map between them are standard constructions in
+hyperbolic geometry <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id42" title="John G. Ratcliffe. Foundations of Hyperbolic Manifolds. Springer, 2 edition, 2006. doi:10.1007/978-0-387-47322-2.">Ratcliffe, 2006</a>]</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
@@ -641,8 +644,24 @@ compact picture that is often easier to interpret.</p>
 <li><p>Verify <code class="docutils literal notranslate"><span class="pre">H.log(x,</span> <span class="pre">H.exp(x,</span> <span class="pre">u))</span></code> for a small tangent vector <code class="docutils literal notranslate"><span class="pre">u</span></code>.</p></li>
 <li><p>Optimize a loss over hyperbolic embeddings using the same <code class="docutils literal notranslate"><span class="pre">Minimize</span></code> API.</p></li>
 </ul>
-<p>The paired-model visualization is inspired by the geometric examples in the
-<a class="reference external" href="https://geomstats.github.io/getting_started/examples.html">Geomstats documentation</a>.</p>
+<p>The disk model is also widely used for low-dimensional hierarchical
+representations because its boundary provides exponentially increasing
+hyperbolic volume <span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id39" title="Maximilian Nickel and Douwe Kiela. Poincaré embeddings for learning hierarchical representations. In Advances in Neural Information Processing Systems, volume 30. 2017. URL: https://proceedings.neurips.cc/paper/2017/hash/59dfa2df42d9e3d41f5b02bfc32229dd-Abstract.html.">Nickel and Kiela, 2017</a>]</span>.</p>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<div class="docutils container" id="id3">
+<div role="list" class="citation-list">
+<div class="citation" id="id39" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">NK17</a><span class="fn-bracket">]</span></span>
+<p>Maximilian Nickel and Douwe Kiela. Poincaré embeddings for learning hierarchical representations. In <em>Advances in Neural Information Processing Systems</em>, volume 30. 2017. URL: <a class="reference external" href="https://proceedings.neurips.cc/paper/2017/hash/59dfa2df42d9e3d41f5b02bfc32229dd-Abstract.html">https://proceedings.neurips.cc/paper/2017/hash/59dfa2df42d9e3d41f5b02bfc32229dd-Abstract.html</a>.</p>
+</div>
+<div class="citation" id="id42" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Rat06</a><span class="fn-bracket">]</span></span>
+<p>John G. Ratcliffe. <em>Foundations of Hyperbolic Manifolds</em>. Springer, 2 edition, 2006. <a class="reference external" href="https://doi.org/10.1007/978-0-387-47322-2">doi:10.1007/978-0-387-47322-2</a>.</p>
+</div>
+</div>
+</div>
 </section>
 </section>
 
@@ -697,6 +716,7 @@ compact picture that is often easier to interpret.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trace-the-geodesics">Trace the geodesics</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compare-two-models-of-the-same-geometry">Compare two models of the same geometry</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-to-try-next">What to try next</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
 </ul>
   </nav></div>
 

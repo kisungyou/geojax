@@ -11,7 +11,9 @@ No optimizer is uniformly best. First-order methods trade cheap iterations for
 slower local convergence, Hessian methods spend more work on each step, and
 least-squares methods exploit residual structure that a generic scalar
 objective hides. This tutorial places those choices on the same two-dimensional
-problem so that both the iterates and convergence histories are visible.
+problem so that both the iterates and convergence histories are visible. The
+problem is a mildly scaled Rosenbrock-type least-squares valley
+{cite:p}`rosenbrock1960automatic`.
 
 Consider the residual
 
@@ -249,4 +251,16 @@ or L-BFGS for a generic smooth model. Move to Newton-CG, trust regions, or cubic
 regularization when accurate Hessian products justify their cost. When the
 model is genuinely a sum of squared residuals, preserve that structure with
 `LeastSquares`; Gauss--Newton and Levenberg--Marquardt can then operate on
-$J_x^*J_x$ without forming either the Jacobian or the full Hessian.
+$J_x^*J_x$ without forming either the Jacobian or the full Hessian. Standard
+Euclidean derivations appear in {cite:t}`nocedal2006numerical`; the
+Riemannian counterparts are developed in
+{cite:t}`absil2008optimization` and {cite:t}`boumal2023introduction`.
+The damping and cubic models trace to
+{cite:t}`levenberg1944method`, {cite:t}`marquardt1963algorithm`, and
+{cite:t}`cartis2011adaptive`.
+
+## References
+
+```{bibliography}
+:filter: docname in docnames
+```

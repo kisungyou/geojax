@@ -8,8 +8,9 @@ kernelspec:
 # Intrinsic k-means on the circle
 
 Euclidean k-means alternates between assigning each observation to its nearest
-center and replacing every center by an arithmetic mean. On a manifold, the
-same idea uses geodesic distance and a Fréchet mean. For clusters
+center and replacing every center by an arithmetic mean
+{cite:p}`lloyd1982least`. On a manifold, the same idea uses geodesic distance
+and a Fréchet mean {cite:p}`frechet1948elements,karcher1977center`. For clusters
 $G_1,\ldots,G_K$ on a geometry $M$, the objective is
 
 $$
@@ -19,8 +20,7 @@ $$
 where $\mu_k$ is the Fréchet mean of cluster $G_k$.
 
 We use $S^1\subset\mathbb R^2$ so the assignments, centers, and optimization
-history can all be seen directly. This follows the Riemannian k-means pattern
-in the Geomstats tutorials, but keeps the complete algorithm visible.
+history can all be seen directly while keeping the complete algorithm visible.
 
 ```{code-cell} ipython3
 import jax
@@ -163,3 +163,9 @@ ordinary arithmetic mean of angles would not have that invariance.
 - Increase the cluster spread until points approach the cut locus.
 - Replace `Sphere(size=2)` with `Sphere(size=3)` and draw clusters on $S^2$.
 - Use several random initializations and retain the smallest final objective.
+
+## References
+
+```{bibliography}
+:filter: docname in docnames
+```

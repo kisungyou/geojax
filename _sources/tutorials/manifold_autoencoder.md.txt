@@ -14,7 +14,7 @@ kernelspec:
 
 A deterministic autoencoder learns an encoder $f_\theta$ and decoder
 $g_\phi$ by minimizing reconstruction error. Ordinarily its latent variable
-belongs to a Euclidean vector space. Here we keep the neural networks
+belongs to a Euclidean vector space {cite:p}`hinton2006reducing`. Here we keep the neural networks
 deliberately small and compare three two-dimensional latent geometries:
 
 $$
@@ -30,6 +30,12 @@ $\mathcal E\subset\mathbb R^3$ gives every decoder the same three-coordinate
 input without changing the Euclidean distances between the two free
 coordinates. This is an illustrative comparison, not evidence that one
 curvature is universally preferable.
+
+Spherical and hyperbolic latent-variable models have been developed most
+extensively in variational settings
+{cite:p}`davidson2018hyperspherical,mathieu2019continuous`. The deterministic
+experiment below strips away the stochastic objective so that the role of
+GeoJAX's manifold-valued activations can be inspected directly.
 
 ## From encoder coordinates to a manifold
 
@@ -550,3 +556,9 @@ A larger scientific study would tune architectures separately, report
 multiple random seeds, and choose curvature from domain assumptions or
 held-out evidence. Here the controlled comparison makes the geometry-specific
 part of the computation visible and testable.
+
+## References
+
+```{bibliography}
+:filter: docname in docnames
+```

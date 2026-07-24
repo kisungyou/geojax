@@ -381,6 +381,7 @@
 <li class="toctree-l1"><a class="reference internal" href="hyperbolic_geodesics.html">Geodesics on the Hyperboloid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="torus_geodesics.html">Wrapped geodesics on the flat torus</a></li>
 <li class="toctree-l1"><a class="reference internal" href="manifold_autoencoder.html">Deterministic autoencoders with curved latent spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph_curvature.html">Curvature-aware graph learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="grassmann_pca.html">Principal component as a Grassmann point</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Intrinsic k-means on the circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spd_frechet_mean.html">Comparing Fréchet Means of SPD Matrices</a></li>
@@ -451,8 +452,9 @@
   <section class="tex2jax_ignore mathjax_ignore" id="intrinsic-k-means-on-the-circle">
 <h1>Intrinsic k-means on the circle<a class="headerlink" href="#intrinsic-k-means-on-the-circle" title="Link to this heading">#</a></h1>
 <p>Euclidean k-means alternates between assigning each observation to its nearest
-center and replacing every center by an arithmetic mean. On a manifold, the
-same idea uses geodesic distance and a Fréchet mean. For clusters
+center and replacing every center by an arithmetic mean
+<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id33" title="Stuart P. Lloyd. Least squares quantization in PCM. IEEE Transactions on Information Theory, 28(2):129–137, 1982. doi:10.1109/TIT.1982.1056489.">Lloyd, 1982</a>]</span>. On a manifold, the same idea uses geodesic distance
+and a Fréchet mean <span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id19" title="Maurice Fréchet. Les éléments aléatoires de nature quelconque dans un espace distancié. Annales de l'Institut Henri Poincaré, 10(4):215–310, 1948. URL: https://www.numdam.org/item/AIHP_1948__10_4_215_0/.">Fréchet, 1948</a>, <a class="reference internal" href="#id25" title="Hermann Karcher. Riemannian center of mass and mollifier smoothing. Communications on Pure and Applied Mathematics, 30(5):509–541, 1977. doi:10.1002/cpa.3160300502.">Karcher, 1977</a>]</span>. For clusters
 <span class="math notranslate nohighlight">\(G_1,\ldots,G_K\)</span> on a geometry <span class="math notranslate nohighlight">\(M\)</span>, the objective is</p>
 <div class="math notranslate nohighlight">
 \[
@@ -460,8 +462,7 @@ same idea uses geodesic distance and a Fréchet mean. For clusters
 \]</div>
 <p>where <span class="math notranslate nohighlight">\(\mu_k\)</span> is the Fréchet mean of cluster <span class="math notranslate nohighlight">\(G_k\)</span>.</p>
 <p>We use <span class="math notranslate nohighlight">\(S^1\subset\mathbb R^2\)</span> so the assignments, centers, and optimization
-history can all be seen directly. This follows the Riemannian k-means pattern
-in the Geomstats tutorials, but keeps the complete algorithm visible.</p>
+history can all be seen directly while keeping the complete algorithm visible.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
@@ -630,6 +631,25 @@ ordinary arithmetic mean of angles would not have that invariance.</p>
 <li><p>Use several random initializations and retain the smallest final objective.</p></li>
 </ul>
 </section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<div class="docutils container" id="id3">
+<div role="list" class="citation-list">
+<div class="citation" id="id19" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">Frechet48</a><span class="fn-bracket">]</span></span>
+<p>Maurice Fréchet. Les éléments aléatoires de nature quelconque dans un espace distancié. <em>Annales de l'Institut Henri Poincaré</em>, 10(4):215–310, 1948. URL: <a class="reference external" href="https://www.numdam.org/item/AIHP_1948__10_4_215_0/">https://www.numdam.org/item/AIHP_1948__10_4_215_0/</a>.</p>
+</div>
+<div class="citation" id="id25" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">Kar77</a><span class="fn-bracket">]</span></span>
+<p>Hermann Karcher. Riemannian center of mass and mollifier smoothing. <em>Communications on Pure and Applied Mathematics</em>, 30(5):509–541, 1977. <a class="reference external" href="https://doi.org/10.1002/cpa.3160300502">doi:10.1002/cpa.3160300502</a>.</p>
+</div>
+<div class="citation" id="id33" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Llo82</a><span class="fn-bracket">]</span></span>
+<p>Stuart P. Lloyd. Least squares quantization in PCM. <em>IEEE Transactions on Information Theory</em>, 28(2):129–137, 1982. <a class="reference external" href="https://doi.org/10.1109/TIT.1982.1056489">doi:10.1109/TIT.1982.1056489</a>.</p>
+</div>
+</div>
+</div>
+</section>
 </section>
 
 
@@ -682,6 +702,7 @@ ordinary arithmetic mean of angles would not have that invariance.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lloyd-updates-with-manifold-primitives">Lloyd updates with manifold primitives</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visual-report">Visual report</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-to-try-next">What to try next</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
 </ul>
   </nav></div>
 

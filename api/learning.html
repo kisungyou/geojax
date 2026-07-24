@@ -451,7 +451,9 @@
 standard NumPy broadcasting and the result has shape
 <code class="docutils literal notranslate"><span class="pre">broadcast(batch_x,</span> <span class="pre">batch_y)</span> <span class="pre">+</span> <span class="pre">(n,</span> <span class="pre">m)</span></code>.</p>
 <p>Product-manifold collections use the same pytree as <code class="docutils literal notranslate"><span class="pre">manifold.factors</span></code>;
-every leaf has its own factor event shape and shares the collection axes.</p>
+every leaf has its own factor event shape and shares the collection axes.
+The helper rejects geometries whose distance is a retraction proxy or only
+a numerical-local candidate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -470,10 +472,11 @@ every leaf has its own factor event shape and shares the collection axes.</p>
 <dt class="sig sig-object py" id="geojax.learning.geodesic_interpolate">
 <span class="sig-prename descclassname"><span class="pre">geojax.learning.</span></span><span class="sig-name descname"><span class="pre">geodesic_interpolate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manifold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.learning.geodesic_interpolate" title="Link to this definition">#</a></dt>
 <dd><p>Interpolate along the selected shortest geodesic from <code class="docutils literal notranslate"><span class="pre">x</span></code> to <code class="docutils literal notranslate"><span class="pre">y</span></code>.</p>
-<p>Scalar <code class="docutils literal notranslate"><span class="pre">t</span></code> returns one point. An array of interpolation parameters adds
-its shape before the manifold event dimensions. Values in <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code> trace
-the segment, while values outside that interval extrapolate where the
-exponential map is defined.</p>
+<p>Scalar <code class="docutils literal notranslate"><span class="pre">t</span></code> preserves the broadcast endpoint batch shape. An array of
+interpolation parameters adds its shape before all endpoint batch and
+manifold event dimensions. Values in <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code> trace the segment, while
+values outside that interval extrapolate where the exponential map is
+defined. Proxy and numerical-local logarithms are rejected.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -496,7 +499,9 @@ exponential map is defined.</p>
 <p>The operation is</p>
 <p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">-&gt;</span> <span class="pre">Log_source_base(x)</span> <span class="pre">-&gt;</span> <span class="pre">transform</span> <span class="pre">-&gt;</span> <span class="pre">tangent</span> <span class="pre">projection</span> <span class="pre">-&gt;</span> <span class="pre">Exp_target_base</span></code>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">transform</span></code> owns any trainable parameters through its closure, keeping
-this primitive independent of Flax, Equinox, and other neural frameworks.</p>
+this primitive independent of Flax, Equinox, and other neural frameworks.
+Both manifolds must advertise the corresponding geodesic operation as
+exact.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

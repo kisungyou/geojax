@@ -7,6 +7,10 @@ GeoJAX separates four roles:
 3. an optional line search globalizes a search direction, and
 4. a solver owns iteration state and stopping rules.
 
+This separation is consistent with established Riemannian optimization
+interfaces and algorithmic treatments
+{cite:p}`absil2008optimization,boumal2014manopt,boumal2023introduction`.
+
 The public entry point is
 
 ```python
@@ -187,9 +191,11 @@ derivative evaluation, stopping, and history construction.
 ## Second-order products
 
 `Minimize.rhess_vec(x, u)` first uses a user callback. Otherwise it
-differentiates the available gradient and invokes `M.ehess_to_rhess` when the
-geometry supplies that conversion. The final fallback tangent-projects an
-ambient Hessian-vector product.
+differentiates the available ambient or Riemannian gradient only when the
+geometry advertises the corresponding conversion as exact through
+`operation_kind("ehess_to_rhess")` or `operation_kind("rgrad_jvp")`.
+Unsupported automatic paths raise an error and require an explicit
+`rhess_vec`; tangent projection is not a mathematically valid generic fallback.
 
 Newton-CG approximately solves
 
@@ -256,3 +262,9 @@ A new solver should:
 6. construct history rows with `make_info`,
 7. return `(solution, final_cost, history)`, and
 8. include focused Euclidean, curved-manifold, and Product tests as applicable.
+
+## References
+
+```{bibliography}
+:filter: docname in docnames
+```

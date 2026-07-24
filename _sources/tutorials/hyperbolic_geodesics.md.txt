@@ -35,7 +35,9 @@ $$
 $$
 
 We generate several directions at one point and view the resulting geodesics
-both on the hyperboloid and after projection into the Poincaré disk.
+both on the hyperboloid and after projection into the Poincaré disk. These
+models and the coordinate map between them are standard constructions in
+hyperbolic geometry {cite:p}`ratcliffe2006foundations`.
 
 ```{code-cell} python
 import jax
@@ -180,5 +182,12 @@ compact picture that is often easier to interpret.
 - Verify `H.log(x, H.exp(x, u))` for a small tangent vector `u`.
 - Optimize a loss over hyperbolic embeddings using the same `Minimize` API.
 
-The paired-model visualization is inspired by the geometric examples in the
-[Geomstats documentation](https://geomstats.github.io/getting_started/examples.html).
+The disk model is also widely used for low-dimensional hierarchical
+representations because its boundary provides exponentially increasing
+hyperbolic volume {cite:p}`nickel2017poincare`.
+
+## References
+
+```{bibliography}
+:filter: docname in docnames
+```

@@ -2,7 +2,10 @@
 
 The `geojax.learning` namespace contains small geometry-aware functions, not a
 neural-network framework. New functions must remain pure JAX and may not make
-Flax, Equinox, Haiku, Optax, or scikit-learn runtime dependencies.
+Flax, Equinox, Haiku, Optax, or scikit-learn runtime dependencies. This narrow
+boundary keeps the package focused on reusable geometric ingredients rather
+than prescribing one geometric-deep-learning architecture
+{cite:p}`bronstein2021geometric`.
 
 ## Functional boundary
 
@@ -34,11 +37,16 @@ Every new operation must:
 - support `Product` pytrees when the operation is geometrically meaningful;
 - compile under `jax.jit`;
 - have finite first derivatives at zero tangents and coincident points;
-- preserve explicit failure at a genuine cut locus; and
+- require exact capabilities when its public name promises a distance or
+  geodesic, and reject proxy or numerical-local operations;
+- preserve or explicitly document each geometry's cut-locus branch policy; and
 - avoid Python data-dependent control flow over traced values.
 
 Pairwise operations interpret the axis immediately before the manifold event
 as the collection axis. Leading batch axes use NumPy broadcasting.
+Interpolation parameters add axes before all endpoint batch and event axes, so
+tests must include both batched endpoints and vector-valued interpolation
+times.
 
 ## Release contract
 
@@ -51,3 +59,8 @@ Tutorial-only dependencies belong in the `docs` or `examples` optional extras.
 Executable tutorials must be self-contained Markdown documents and may not
 import hidden training scripts or retain generated notebooks in the repository.
 
+## References
+
+```{bibliography}
+:filter: docname in docnames
+```

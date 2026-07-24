@@ -3,7 +3,8 @@
 Every geometry is a directly importable class. Matrix geometries include the
 metric in the class name so constructors follow the same convention as
 `GrassmannProjection`. Capability metadata distinguishes exact geodesic
-operations from retraction proxies.
+operations from numerical-local candidates and retraction proxies, and marks
+whether automatic Hessian conversion is mathematically exact.
 
 ## Shared interface and vector geometries
 
