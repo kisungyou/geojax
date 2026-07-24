@@ -29,9 +29,22 @@ def default_solvers(maxiter: int = 50, tolgradnorm: float = 1e-6) -> dict[str, A
 
 
 def run_solver(
-    M: Any, cost: Callable[[Any], Any], x0: Any, name: str, solver: Any
+    M: Any,
+    cost: Callable[[Any], Any],
+    x0: Any,
+    name: str,
+    solver: Any,
+    *,
+    rhess_vec: Callable[[Any, Any], Any] | None = None,
 ) -> dict[str, Any]:
-    problem = Minimize(M=M, cost=cost, x0=x0, solver=solver, key=0)
+    problem = Minimize(
+        M=M,
+        cost=cost,
+        x0=x0,
+        solver=solver,
+        key=0,
+        rhess_vec=rhess_vec,
+    )
     tic = time.perf_counter()
     sol, final_cost, info = problem.solve()
     jax.tree_util.tree_map(
@@ -51,12 +64,43 @@ def run_solver(
 
 
 def run_suite(
-    M: Any, cost: Callable[[Any], Any], x0: Any, *, maxiter: int = 50
+    M: Any,
+    cost: Callable[[Any], Any],
+    x0: Any,
+    *,
+    maxiter: int = 50,
+    rhess_vec: Callable[[Any, Any], Any] | None = None,
 ) -> list[dict[str, Any]]:
-    return [
-        run_solver(M, cost, x0, name, solver)
-        for name, solver in default_solvers(maxiter=maxiter).items()
-    ]
+    rows = []
+    for name, solver in default_solvers(maxiter=maxiter).items():
+        if (
+            isinstance(solver, TrustRegions)
+            and rhess_vec is None
+            and M.operation_kind("ehess_to_rhess") != "exact"
+        ):
+            rows.append(
+                {
+                    "solver": name,
+                    "final_cost": float("nan"),
+                    "gradnorm": float("nan"),
+                    "iterations": 0,
+                    "time_sec": 0.0,
+                    "success": False,
+                    "reason": "unsupported without an explicit rhess_vec",
+                }
+            )
+            continue
+        rows.append(
+            run_solver(
+                M,
+                cost,
+                x0,
+                name,
+                solver,
+                rhess_vec=rhess_vec,
+            )
+        )
+    return rows
 
 
 def print_rows(rows: list[dict[str, Any]]) -> None:

@@ -47,6 +47,13 @@ class Minimize:
     precon:
         Optional preconditioner ``precon(x, grad)``. If omitted, the identity
         preconditioner is used.
+    ehess_vec:
+        Optional ambient Euclidean Hessian-vector product. Automatic conversion
+        requires the geometry to advertise exact ``ehess_to_rhess`` support.
+    rhess_vec:
+        Optional Riemannian Hessian-vector product. Supply this for second-order
+        methods whenever the geometry does not advertise an exact automatic
+        conversion.
     """
 
     def __init__(
@@ -102,7 +109,12 @@ class Minimize:
         return self.solver.solve(self)
 
     def ehess_vec(self, x: Array, u: Array) -> Array:
-        """Ambient Euclidean Hessian-vector product."""
+        """Ambient Euclidean Hessian-vector product.
+
+        When only a Riemannian ``grad`` callback is available, this method
+        returns its directional derivative instead. ``rhess_vec`` handles that
+        path separately through the geometry's advertised connection support.
+        """
         if self._ehess_vec is not None:
             return self._ehess_vec(x, u)
         if self.egrad is not None:
@@ -116,21 +128,46 @@ class Minimize:
         if self._rhess_vec is not None:
             return self._rhess_vec(x, u)
 
+        def require_exact(operation: str, description: str) -> None:
+            if hasattr(self.M, "operation_kind"):
+                try:
+                    kind = self.M.operation_kind(operation)
+                except ValueError:
+                    kind = "unknown"
+            else:
+                attribute = (
+                    "hessian_conversion_is_exact"
+                    if operation == "ehess_to_rhess"
+                    else "riemannian_gradient_jvp_is_exact"
+                )
+                kind = "exact" if bool(getattr(self.M, attribute, False)) else "unknown"
+            if kind != "exact":
+                geometry_name = type(self.M).__name__
+                raise ValueError(
+                    f"{geometry_name} does not advertise an exact {description}. "
+                    "Supply rhess_vec explicitly for second-order optimization."
+                )
+
+        if self._ehess_vec is not None:
+            require_exact("ehess_to_rhess", "ambient-to-Riemannian Hessian conversion")
+            egrad = self.egrad(x) if self.egrad is not None else jax.grad(self.cost)(x)
+            return self.M.ehess_to_rhess(x, egrad, self._ehess_vec(x, u), u)
+
         if self.egrad is not None:
+            require_exact("ehess_to_rhess", "ambient-to-Riemannian Hessian conversion")
             egrad = self.egrad(x)
             ehess_u = self.ehess_vec(x, u)
-            if hasattr(self.M, "ehess_to_rhess"):
-                return self.M.ehess_to_rhess(x, egrad, ehess_u, u)
-            return self.M.tangent_project(x, ehess_u)
+            return self.M.ehess_to_rhess(x, egrad, ehess_u, u)
 
         if self.grad is not None:
-            return self.M.tangent_project(x, self.ehess_vec(x, u))
+            require_exact("rgrad_jvp", "Riemannian-gradient JVP conversion")
+            grad_jvp = jax.jvp(self.grad, (x,), (u,))[1]
+            return self.M.tangent_project(x, grad_jvp)
 
+        require_exact("ehess_to_rhess", "ambient-to-Riemannian Hessian conversion")
         egrad = jax.grad(self.cost)(x)
         ehess_u = self.ehess_vec(x, u)
-        if hasattr(self.M, "ehess_to_rhess"):
-            return self.M.ehess_to_rhess(x, egrad, ehess_u, u)
-        return self.M.tangent_project(x, ehess_u)
+        return self.M.ehess_to_rhess(x, egrad, ehess_u, u)
 
     def hessian_operator(self, x: Array) -> Callable[[Array], Array]:
         """Return ``u -> rhess_vec(x, u)``."""

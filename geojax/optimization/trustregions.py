@@ -34,9 +34,8 @@ class TrustRegions:
     """Approximate Riemannian trust-regions method.
 
     Uses truncated conjugate gradient to approximately minimize the quadratic
-    model.  If a geometry does not implement exact Riemannian Hessian conversion,
-    ``Minimize.rhess_vec`` falls back to tangent-projected Euclidean Hessian-vector
-    products.
+    model. A geometry must advertise an exact automatic Hessian conversion or
+    the problem must supply ``rhess_vec`` explicitly.
     """
 
     requires_gradient: bool = True

@@ -7,9 +7,9 @@ from typing import Any, Sequence, Tuple, Union
 
 import jax
 import jax.numpy as jnp
-import jax.scipy.linalg as jsp_linalg
 
 from .base import GeometryMixin, as_sample_shape
+from ._numerics import matrix_expm
 
 Array = Any
 Shape = Union[int, Sequence[int], Tuple[int, ...]]
@@ -25,16 +25,6 @@ def _skew(A: Array) -> Array:
 
 def _sym(A: Array) -> Array:
     return 0.5 * (A + _transpose(A))
-
-
-def _matrix_expm(A: Array) -> Array:
-    """Apply JAX's matrix exponential over optional leading batch axes."""
-    A = jnp.asarray(A)
-    if A.ndim == 2:
-        return jsp_linalg.expm(A)
-    shape = A.shape
-    flat = A.reshape((-1, shape[-2], shape[-1]))
-    return jax.vmap(jsp_linalg.expm)(flat).reshape(shape)
 
 
 def _complex_dtype(dtype: jnp.dtype) -> jnp.dtype:
@@ -73,9 +63,11 @@ def _principal_orthogonal_log_jvp(primals, tangents):
     log_j = log_eigvals[..., None, :]
     denominator = eig_i - eig_j
     eps = jnp.finfo(M.dtype).eps
+    separated = jnp.abs(denominator) > 32.0 * eps
+    safe_denominator = jnp.where(separated, denominator, jnp.ones_like(denominator))
     divided_difference = jnp.where(
-        jnp.abs(denominator) > 32.0 * eps,
-        (log_i - log_j) / denominator,
+        separated,
+        (log_i - log_j) / safe_denominator,
         1.0 / eig_i,
     )
 
@@ -94,6 +86,9 @@ class SpecialOrthogonal(GeometryMixin):
     ``det(R) = 1``.  A tangent vector at ``R`` is represented in ambient form
     as ``R @ Omega`` for a skew-symmetric matrix ``Omega``.
     """
+
+    hessian_conversion_is_exact = True
+    riemannian_gradient_jvp_is_exact = True
 
     size: int
     atol: float
@@ -172,7 +167,7 @@ class SpecialOrthogonal(GeometryMixin):
         R = jnp.asarray(R)
         U = self.tangent_project(R, U)
         omega = _skew(_transpose(R) @ U)
-        return R @ _matrix_expm(omega)
+        return R @ matrix_expm(omega)
 
     def retr(self, R: Array, U: Array, t: float | Array = 1.0) -> Array:
         return self.exp(R, t * U)
@@ -185,7 +180,11 @@ class SpecialOrthogonal(GeometryMixin):
         return R @ self._relative_log(_transpose(R) @ Q)
 
     def dist(self, R: Array, Q: Array) -> Array:
-        return self.norm(R, self.log(R, Q))
+        return jnp.sqrt(self.squared_dist(R, Q))
+
+    def squared_dist(self, R: Array, Q: Array) -> Array:
+        tangent = self.log(R, Q)
+        return jnp.maximum(self.inner(R, tangent, tangent), 0.0)
 
     def transport(self, R: Array, Q: Array, U: Array) -> Array:
         """Parallel transport along the selected shortest geodesic."""
@@ -193,7 +192,7 @@ class SpecialOrthogonal(GeometryMixin):
         Q = jnp.asarray(Q)
         U = self.tangent_project(R, U)
         omega = self._relative_log(_transpose(R) @ Q)
-        half = _matrix_expm(0.5 * omega)
+        half = matrix_expm(0.5 * omega)
         body = _skew(_transpose(R) @ U)
         transported = R @ half @ body @ half
         return self.tangent_project(Q, transported)
@@ -217,7 +216,7 @@ class SpecialOrthogonal(GeometryMixin):
 
     def group_exp(self, omega: Array) -> Array:
         """Lie-group exponential from a skew matrix at the identity."""
-        return _matrix_expm(_skew(jnp.asarray(omega)))
+        return matrix_expm(_skew(jnp.asarray(omega)))
 
     def group_log(self, R: Array) -> Array:
         """Principal Lie-group logarithm, undefined at rotations by pi."""
@@ -263,6 +262,9 @@ class SpecialEuclidean(GeometryMixin):
     Euclidean metric on translations.  Its Riemannian exponential is distinct
     from the Lie-group exponential except for special tangent directions.
     """
+
+    hessian_conversion_is_exact = True
+    riemannian_gradient_jvp_is_exact = True
 
     size: int
     atol: float
@@ -375,9 +377,12 @@ class SpecialEuclidean(GeometryMixin):
         )
 
     def dist(self, G: Array, H: Array) -> Array:
-        rotation_dist = self._rotations.dist(self.rotation(G), self.rotation(H))
+        return jnp.sqrt(self.squared_dist(G, H))
+
+    def squared_dist(self, G: Array, H: Array) -> Array:
+        rotation_dist_sq = self._rotations.squared_dist(self.rotation(G), self.rotation(H))
         translation_dist_sq = jnp.sum((self.translation(H) - self.translation(G)) ** 2, axis=-1)
-        return jnp.sqrt(jnp.maximum(rotation_dist**2 + translation_dist_sq, 0.0))
+        return jnp.maximum(rotation_dist_sq + translation_dist_sq, 0.0)
 
     def transport(self, G: Array, H: Array, U: Array) -> Array:
         G = self.project(G)
@@ -423,7 +428,7 @@ class SpecialEuclidean(GeometryMixin):
         top = jnp.concatenate([omega, identity], axis=-1)
         bottom = jnp.concatenate([zeros, zeros], axis=-1)
         augmented = jnp.concatenate([top, bottom], axis=-2)
-        return _matrix_expm(augmented)[..., : self.n, self.n :]
+        return matrix_expm(augmented)[..., : self.n, self.n :]
 
     def group_exp(self, tangent_at_identity: Array) -> Array:
         """Lie-group exponential of a homogeneous Lie-algebra matrix."""

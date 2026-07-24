@@ -23,6 +23,29 @@ and avoid perturbations below machine resolution. This preserves the
 mathematical assertion instead of expecting float32 arithmetic to reproduce a
 float64 residual.
 
+## Numerical stability
+
+Every public geometry is exercised with unbatched, nested-batch, and
+broadcast-base inputs. The stability suite differentiates exponential maps at
+zero tangents, logarithms and squared distances at coincident points, and SPD
+matrix functions at repeated eigenvalues. Directional finite differences
+independently check representative JVPs away from cut loci.
+
+Second-order tests verify known Riemannian Hessian identities, including the
+sphere shape-operator term, and require unsupported automatic conversions to
+fail with an explicit request for `rhess_vec`.
+
+Genuine singularities have separate regression tests. In particular, a
+spherical antipode retains a finite distance but an explicitly nonfinite
+logarithm and transport.
+
+The learning release contract compiles complete deterministic-autoencoder
+steps with spherical and hyperbolic latents. It requires decreasing
+reconstruction loss, finite encoder gradients, and valid manifold points after
+training. Learning-helper tests also combine vector-valued interpolation times
+with batched endpoints and reject proxy distances or logarithms where the
+public helper promises an exact geodesic operation.
+
 ## Supported matrix
 
 Install the development dependencies and run:

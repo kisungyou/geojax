@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Protocol, Sequence, Tuple, Union, runtime_checkable
 
-import jax
+import jax.numpy as jnp
 
 Array = Any
 Shape = Union[int, Sequence[int], Tuple[int, ...]]
@@ -27,6 +27,7 @@ class ManifoldProtocol(Protocol):
 
     size: Any
     shape: tuple[int, ...] | tuple[Any, ...]
+    dim: int
 
     def belongs(self, x: Array, atol: float | None = None) -> Array: ...
     def project(self, x: Array) -> Array: ...
@@ -34,19 +35,27 @@ class ManifoldProtocol(Protocol):
     def tangent_project(self, x: Array, u: Array) -> Array: ...
     def inner(self, x: Array, u: Array, v: Array) -> Array: ...
     def norm(self, x: Array, u: Array) -> Array: ...
+    def lincomb(self, x: Array, *terms: Any) -> Array: ...
     def retr(self, x: Array, u: Array, t: float | Array = 1.0) -> Array: ...
     def invretr(self, x: Array, y: Array) -> Array: ...
     def transport(self, x: Array, y: Array, u: Array) -> Array: ...
+    def egrad_to_rgrad(self, x: Array, egrad: Array) -> Array: ...
     def random_point(self, key: Array, sample_shape: Shape = ()) -> Array: ...
     def random_tangent(self, key: Array, x: Array, scale: float | Array = 1.0) -> Array: ...
 
 
 @runtime_checkable
 class GeometryProtocol(ManifoldProtocol, Protocol):
-    """Extended interface for geometries with genuine geodesic operations."""
+    """Uniform geometry interface with capability-qualified named operations.
+
+    Retraction-only geometries may satisfy this structural protocol through
+    documented compatibility aliases. Use ``operation_kind`` to distinguish
+    exact geodesic operations from numerical-local or retraction proxies.
+    """
 
     def exp(self, x: Array, u: Array) -> Array: ...
     def log(self, x: Array, y: Array) -> Array: ...
+    def squared_dist(self, x: Array, y: Array) -> Array: ...
     def dist(self, x: Array, y: Array) -> Array: ...
 
 
@@ -58,30 +67,50 @@ class GeometryMixin:
     dist_is_exact = True
     transport_is_isometric = True
     transport_is_parallel = True
+    hessian_conversion_is_exact = False
+    riemannian_gradient_jvp_is_exact = False
 
     def operation_kind(self, name: str) -> str:
-        """Describe whether a geometric operation is exact or a proxy."""
+        """Describe the mathematical status of a geometric operation."""
         if name == "transport":
             if self.transport_is_parallel:
                 return "parallel"
             if self.transport_is_isometric:
                 return "isometric"
             return "vector"
+        if name in {"hessian", "ehess_to_rhess"}:
+            return "exact" if self.hessian_conversion_is_exact else "projection"
+        if name == "rgrad_jvp":
+            return "exact" if self.riemannian_gradient_jvp_is_exact else "projection"
         if name not in {"exp", "log", "dist"}:
             raise ValueError(f"Unknown geometric operation: {name!r}.")
+        explicit_kind = getattr(self, f"{name}_kind", None)
+        if explicit_kind is not None:
+            return str(explicit_kind)
         return "exact" if bool(getattr(self, f"{name}_is_exact")) else "proxy"
 
     def exp_batch(self, x: Array, us: Array) -> Array:
-        """Vectorize ``exp(x, u)`` over the leading axis of ``us``."""
-        return jax.vmap(lambda u: self.exp(x, u))(us)
+        """Compatibility wrapper for natively batched ``exp``."""
+        return self.exp(x, us)
 
     def log_batch(self, x: Array, ys: Array) -> Array:
-        """Vectorize ``log(x, y)`` over the leading axis of ``ys``."""
-        return jax.vmap(lambda y: self.log(x, y))(ys)
+        """Compatibility wrapper for natively batched ``log``."""
+        return self.log(x, ys)
 
     def dist_batch(self, x: Array, ys: Array) -> Array:
-        """Vectorize ``dist(x, y)`` over the leading axis of ``ys``."""
-        return jax.vmap(lambda y: self.dist(x, y))(ys)
+        """Compatibility wrapper for natively batched ``dist``."""
+        return self.dist(x, ys)
+
+    def squared_dist(self, x: Array, y: Array) -> Array:
+        """Squared geodesic distance, evaluated without differentiating ``sqrt``.
+
+        Geometries with a more direct or more stable formula should override
+        this method.  The logarithm-based default is also meaningful for
+        retraction geometries, where it inherits the documented proxy
+        semantics of ``log`` and ``dist``.
+        """
+        tangent = self.log(x, y)
+        return jnp.maximum(self.inner(x, tangent, tangent), 0.0)
 
     def retr(self, x: Array, u: Array, t: float | Array = 1.0) -> Array:
         """Default retraction: use the exponential map."""
@@ -104,7 +133,11 @@ class GeometryMixin:
         return self.tangent_project(x, out)
 
     def pair_mean(self, x: Array, y: Array) -> Array:
-        """Midpoint along the shortest available geodesic."""
+        """Midpoint-like construction from the available ``exp`` and ``log``.
+
+        This is a geodesic midpoint only when both operations are exact and the
+        selected logarithm is the unique minimizing one.
+        """
         return self.exp(x, 0.5 * self.log(x, y))
 
     def ehess_to_rhess(self, x: Array, egrad: Array, ehess_vec: Array, u: Array) -> Array:

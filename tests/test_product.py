@@ -3,7 +3,7 @@ from __future__ import annotations
 import jax
 import jax.numpy as jnp
 
-from geojax.geometry import Product, Sphere, SPDLogEuclidean, Torus
+from geojax.geometry import FixedRank, Product, Sphere, SPDLogEuclidean, Stiefel, Torus
 
 
 def test_product_accepts_nested_pytrees():
@@ -42,3 +42,14 @@ def test_product_inner_is_sum_of_factor_inners():
         x["b"], u["b"], u["b"]
     )
     assert jnp.allclose(val, expected)
+
+
+def test_product_combines_operation_capabilities_conservatively():
+    local = Product({"direction": Sphere(size=3), "frame": Stiefel(size=(3, 2))})
+    proxy = Product({"direction": Sphere(size=3), "matrix": FixedRank(size=(3, 2), rank=1)})
+
+    assert local.operation_kind("exp") == "exact"
+    assert local.operation_kind("log") == "numerical-local"
+    assert local.operation_kind("dist") == "numerical-local"
+    assert proxy.operation_kind("log") == "proxy"
+    assert proxy.operation_kind("dist") == "proxy"

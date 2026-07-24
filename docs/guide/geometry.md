@@ -3,7 +3,10 @@
 Geometry objects own every manifold-dependent operation. A point has shape
 `M.shape`, a tangent vector normally uses the same ambient representation, and
 leading axes may be used for batches. The formulas below state the conventions
-used by the implementation.
+used by the implementation. General Riemannian notation follows
+{cite:t}`docarmo1992riemannian`; matrix-manifold conventions follow
+{cite:t}`edelman1998geometry`, {cite:t}`absil2008optimization`, and
+{cite:t}`boumal2023introduction`.
 
 ## Available spaces
 
@@ -52,26 +55,38 @@ geometry without knowing its representation.
 | `tangent_project(x, a)` | Map an ambient vector to $T_x\mathcal M$ |
 | `inner(x, u, v)` | Evaluate $g_x(u,v)$ |
 | `norm(x, u)` | Evaluate $\sqrt{g_x(u,u)}$ |
-| `exp(x, u)` | Evaluate $\operatorname{Exp}_x(u)$ |
-| `log(x, y)` | Evaluate a selected $\operatorname{Log}_x(y)$ |
-| `dist(x, y)` | Evaluate geodesic distance $d(x,y)$ |
+| `exp(x, u)` | Evaluate $\operatorname{Exp}_x(u)$ or a documented retraction proxy |
+| `log(x, y)` | Evaluate an exact, numerical-local, or inverse-retraction displacement |
+| `dist(x, y)` | Evaluate an exact, numerical-local, or proxy displacement norm |
+| `squared_dist(x, y)` | Evaluate the corresponding squared quantity without a final square root |
 | `retr(x, u, t)` | Retract the step $tu$ from $T_x\mathcal M$ |
 | `invretr(x, y)` | Return a local inverse-retraction displacement |
 | `transport(x, y, u)` | Move $u\in T_x\mathcal M$ into $T_y\mathcal M$ |
 | `egrad_to_rgrad(x, g)` | Convert an ambient gradient to $\operatorname{grad}f(x)$ |
+| `ehess_to_rhess(x, g, h, u)` | Convert an ambient Hessian product when exact support is advertised |
 | `random_point(key, sample_shape)` | Generate reproducible manifold points |
 | `random_tangent(key, x)` | Generate reproducible tangent vectors |
 
-The shared `exp_batch`, `log_batch`, and `dist_batch` methods apply the scalar
-operations over a leading sample axis with `jax.vmap`. See
+Core pointwise operations accept arbitrary compatible leading batch axes. The
+shared `exp_batch`, `log_batch`, and `dist_batch` names are convenience wrappers
+over that native behavior; reduction routines document their axes separately.
+See
 [Mathematical foundations](foundations.md) for the abstract definitions and the
 [geometry API](../api/geometry.md) for signatures.
 
+For learning losses, prefer `squared_dist` to `dist(...) ** 2`. The former
+avoids differentiating a square root at coincident points and uses
+geometry-specific stable formulas where necessary. Removable zero-norm and
+repeated-spectrum singularities have analytic derivatives; genuine cut loci
+remain explicit.
+
 `operation_kind("exp")`, `operation_kind("log")`, and
-`operation_kind("dist")` report `"exact"` or `"proxy"`. A proxy class keeps
-the uniform names for composability, but evaluates `retr`, `invretr`, or the
-inverse-retraction norm. `operation_kind("transport")` similarly distinguishes
-parallel, isometric, and general vector transports.
+`operation_kind("dist")` distinguish `"exact"`, `"numerical-local"`, and
+`"proxy"` behavior as applicable. A proxy class keeps the uniform names for
+composability, but evaluates `retr`, `invretr`, or the inverse-retraction norm.
+Numerical-local Stiefel operations solve an exact endpoint equation without
+certifying a globally shortest branch. `operation_kind("transport")` similarly
+distinguishes parallel, isometric, and general vector transports.
 
 ## Euclidean
 
@@ -143,7 +158,8 @@ $$
 
 `retr` uses positive normalized addition for stable optimizer steps. The exact
 exponential is local to the positive orthant and reports nonfinite output if a
-step crosses that chart boundary.
+step crosses that chart boundary. This metric is the classical Fisher--Rao
+information geometry {cite:p}`rao1945information,amari2000methods`.
 
 ## Sphere
 
@@ -275,7 +291,8 @@ $$
 `transport` applies the corresponding principal-plane rotation obtained from
 the SVD of $\operatorname{Log}_X(Y)$. The logarithm requires $X^\top Y$ to be
 nonsingular, so it is not defined by this chart when a principal angle equals
-$\pi/2$.
+$\pi/2$. The quotient and principal-angle formulas follow
+{cite:t}`edelman1998geometry`.
 
 ### Projection embedding
 
@@ -428,12 +445,15 @@ reduce to the round sphere geometry.
 ### Logarithms and transport
 
 Neither metric has a general closed-form logarithm. `log_with_info(X, Y)` uses
-damped Gauss--Newton endpoint shooting to solve
+damped Gauss--Newton endpoint shooting to seek a local solution of
 $\operatorname{Exp}_X(U)=Y$ in a metric-orthonormal tangent basis. It returns
 the best tangent together with `converged`, `iterations`, `residual_norm`, and
 `step_norm`. `log(X, Y)` returns nonfinite values when shooting does not meet
 its tolerance, so a failed local inverse is never silently presented as a
-geometric logarithm. `dist` is the norm of the selected converged logarithm.
+geometric logarithm. A converged endpoint residual does not prove that the
+solution is the globally shortest logarithm. Consequently `log` and `dist` have
+`"numerical-local"` capability status, and `dist` is the norm of that local
+candidate rather than a certified global distance.
 
 General Levi-Civita parallel transport for these metrics is described by a
 matrix differential equation rather than a simple endpoint formula. GeoJAX
@@ -445,11 +465,10 @@ $$
 $$
 
 This map is tangent and preserves either metric exactly, but it is not labeled
-as Levi-Civita parallel transport. The formulas follow Edelman, Arias, and
-Smith's [geometry of algorithms with orthogonality
-constraints](https://math.mit.edu/~edelman/publications/geometry_of_algorithms.pdf).
-Zimmermann's work gives a dedicated iterative treatment of the [canonical
-Stiefel logarithm](https://arxiv.org/abs/1604.05054).
+as Levi-Civita parallel transport. The canonical and embedded metric formulas
+follow {cite:t}`edelman1998geometry`; local endpoint algorithms and their
+convergence scope are studied by
+{cite:t}`zimmermann2017matrix` and {cite:t}`zimmermann2022computing`.
 
 ### Generalized orthogonality
 
@@ -466,9 +485,10 @@ X^\top B U+U^\top B X=0
 $$
 
 and metric $g_X(U,V)=\operatorname{tr}(U^\top B V)$. The map
-$X\mapsto B^{1/2}X$ is an isometry to `StiefelEuclidean`; point projection,
-exact exponential and numerical exact logarithm are pulled back through this
-map.
+$X\mapsto B^{1/2}X$ is an isometry to `StiefelEuclidean`; point projection and
+the exact exponential are pulled back through this map. `log_with_info` pulls
+back the same endpoint-shooting diagnostics, so its logarithm and distance are
+likewise numerical-local rather than globally certified.
 
 `GeneralizedGrassmann` quotients these frames by the right action of $O(k)$.
 Its horizontal tangents satisfy $X^\top B U=0$, and the same square-root
@@ -504,6 +524,12 @@ $$
 \qquad
 \operatorname{Log}_R(Q)=R\log(R^\top Q).
 $$
+
+GeoJAX uses the full Frobenius normalization in the displayed metric. In
+$\operatorname{SO}(3)$ this makes the norm of a rotation generator, and hence
+the geodesic distance, $\sqrt{2}$ times the usual scalar rotation angle. The
+same normalization is used for the rotational component of
+`SpecialEuclidean`.
 
 If $\Omega=\log(R^\top Q)$, exact parallel transport is
 
@@ -565,11 +591,11 @@ $$
 
 Use `exp` and `log` for manifold optimization and distances. Use
 `group_exp`, `group_log`, `compose`, `inverse`, and `apply` for group actions
-and rigid-body kinematics.
+and rigid-body kinematics {cite:p}`hall2015lie`.
 
 ## Symmetric positive-definite matrices
 
-Both SPD geometries use
+All three SPD geometries use
 
 $$
 \operatorname{SPD}(n)
@@ -580,6 +606,10 @@ $$
 
 `project` symmetrizes an input, eigendecomposes it, and clips eigenvalues below
 the configured positive threshold. Tangent projection is symmetrization.
+
+The log-Euclidean, affine-invariant, and Bures--Wasserstein constructions below
+follow {cite:t}`arsigny2007geometric`, {cite:t}`moakher2005differential`, and
+{cite:t}`bhatia2019bures`, respectively.
 
 ### Log-Euclidean metric
 
@@ -700,10 +730,8 @@ The square-root and inverse-square-root routines use custom Fréchet
 derivatives. This avoids undefined eigenvector derivatives when an SPD matrix
 has repeated eigenvalues, such as an isotropic covariance.
 
-The formulas follow Bhatia, Jain, and Lim's
-[Bures-Wasserstein analysis](https://arxiv.org/abs/1712.01504) and Malagò,
-Montrucchio, and Pistone's
-[Gaussian Riemannian geometry](https://arxiv.org/abs/1801.09269).
+The Gaussian covariance interpretation is developed by
+{cite:t}`malago2018wasserstein`.
 
 ## Fixed-rank matrices
 
@@ -722,7 +750,9 @@ $$
 
 `retr` truncates the SVD of $X+\eta$ to rank $k$, and `invretr` projects
 $Y-X$ into $T_X\mathcal M_k$. Closed exact geodesic maps are not provided:
-`exp`, `log`, and `dist` are explicitly labeled retraction proxies.
+`exp`, `log`, and `dist` are explicitly labeled retraction proxies. This
+embedded fixed-rank model is standard in Riemannian low-rank optimization
+{cite:p}`vandereycken2013lowrank`.
 
 ## Fixed-rank positive semidefinite matrices
 
@@ -758,7 +788,8 @@ $$
 
 The class provides exact local Bures exponential, logarithm, and distance.
 Its endpoint projection transport is a general vector transport, not parallel
-transport.
+transport. The fixed-rank quotient construction follows
+{cite:t}`massart2020quotient`.
 
 ### Elliptope and spectrahedron
 
@@ -772,7 +803,9 @@ It uses unit-row factors $P=YY^\top$; its tangent projection combines the
 rank-$k$ tangent constraint with $\operatorname{diag}(U)=0$.
 `Spectrahedron(size=(n, n), rank=k)` instead imposes
 $\operatorname{tr}(P)=1$ and $\operatorname{tr}(U)=0$. Both use the embedded
-Frobenius metric, spectral retractions, and labeled retraction proxies.
+Frobenius metric, spectral retractions, and labeled retraction proxies. Such
+factorized low-rank PSD models are discussed by
+{cite:t}`journee2010lowrank`.
 
 ## Full-rank correlation matrices
 
@@ -845,7 +878,10 @@ d(C,B)&=\lVert\phi(B)-\phi(C)\rVert_F,\\
 $$
 
 Thus ECM and LEC have the same point set and tangent representation but
-different geodesics and distances.
+different geodesics and distances. Cholesky pullback metrics for
+positive-definite matrices are developed by {cite:t}`lin2019riemannian`; the
+Euclidean- and log-Euclidean-Cholesky correlation geometries used here are
+derived specifically by {cite:t}`thanwerdas2022correlation`.
 
 ### Affine-invariant quotient metric
 
@@ -868,7 +904,9 @@ $$
 GeoJAX evaluates this metric and its metric-dual gradient exactly. It uses a
 normalized-addition retraction and projected difference inverse retraction;
 accordingly `exp`, `log`, and `dist` are documented proxies rather than claims
-of closed affine-quotient geodesics.
+of closed affine-quotient geodesics. The quotient-affine construction and
+related correlation geometries are analyzed by
+{cite:t}`thanwerdas2022correlation`.
 
 ## Poincare ball
 
@@ -895,7 +933,8 @@ $$
 
 Parallel transport uses the associated gyration and conformal-factor ratio.
 `PoincareBall(size=d)` and `Hyperboloid(size=d+1)` describe the same
-constant-curvature $-1$ geometry in different coordinates.
+constant-curvature $-1$ geometry in different coordinates
+{cite:p}`ratcliffe2006foundations`.
 
 ## Hyperboloid
 
@@ -1006,7 +1045,11 @@ Orientation-preserving Procrustes alignment selects the closest representative
 of a second shape. Exact quotient exponential, logarithm, and distance then
 follow the great-circle formulas on the pre-shape sphere. The endpoint
 projection transport is a general vector transport. Singular pre-shapes are
-excluded because they are not part of the regular quotient stratum.
+excluded because they are not part of the regular quotient stratum. When the
+optimal Procrustes alignment is nonunique, the SVD selects one representative;
+the resulting logarithm is a valid branch but need not be differentiable across
+that alignment locus. This is Kendall's shape-space construction
+{cite:p}`kendall1984shape`.
 
 ## Product
 
@@ -1019,7 +1062,16 @@ g_x(u,v)=\sum_i g_{x_i}^{(i)}(u_i,v_i),
 d(x,y)=\left(\sum_i d_i(x_i,y_i)^2\right)^{1/2}.
 $$
 
-Point projection, tangent projection, exponential, logarithm, retraction,
-transport, pair means, gradient conversion, and Hessian conversion act leaf by
-leaf. Random generation splits the supplied JAX key once per factor while
-preserving the pytree structure.
+This is a genuine product distance only when every factor advertises an exact
+distance. If any factor is numerical-local or a proxy, the combined capability
+status records that limitation. Point projection, tangent projection,
+exponential, logarithm, retraction, transport, pair means, gradient conversion,
+and Hessian conversion act leaf by leaf. A pair mean is geodesic only when the
+corresponding factor maps are exact. Random generation splits the supplied JAX
+key once per factor while preserving the pytree structure.
+
+## References
+
+```{bibliography}
+:filter: docname in docnames
+```

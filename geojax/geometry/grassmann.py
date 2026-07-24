@@ -23,9 +23,9 @@ from typing import Any, Sequence, Tuple, Union
 
 import jax
 import jax.numpy as jnp
-import jax.scipy.linalg as jsp_linalg
 
 from .base import GeometryMixin, as_sample_shape
+from ._numerics import matrix_expm
 
 Array = Any
 Shape = Union[int, Sequence[int], Tuple[int, ...]]
@@ -65,6 +65,32 @@ def _parse_grassmann_size(size: int | Sequence[int]) -> tuple[int, int]:
     if k > n:
         raise ValueError("Grassmann rank must satisfy rank <= ambient_dim.")
     return n, k
+
+
+def _matrix_arctan_polar_single(M: Array) -> Array:
+    """Evaluate ``U atan(S) V.T`` for ``M = U S V.T`` smoothly near zero."""
+    squared_norm = jnp.sum(M * M)
+    cutoff = 32.0 * jnp.sqrt(jnp.finfo(M.dtype).eps)
+
+    def series(_: None) -> Array:
+        gram = jnp.swapaxes(M, -1, -2) @ M
+        # atan(s) / s = 1 - s^2 / 3 + s^4 / 5 + O(s^6).
+        return M @ (jnp.eye(M.shape[-1], dtype=M.dtype) - gram / 3.0 + (gram @ gram) / 5.0)
+
+    def spectral(_: None) -> Array:
+        left, singular_values, right_t = jnp.linalg.svd(M, full_matrices=False)
+        return (left * jnp.arctan(singular_values)[None, :]) @ right_t
+
+    return jax.lax.cond(squared_norm <= cutoff * cutoff, series, spectral, operand=None)
+
+
+def _matrix_arctan_polar(M: Array) -> Array:
+    M = jnp.asarray(M)
+    if M.ndim == 2:
+        return _matrix_arctan_polar_single(M)
+    shape = M.shape
+    flat = M.reshape((-1, shape[-2], shape[-1]))
+    return jax.vmap(_matrix_arctan_polar_single)(flat).reshape(shape)
 
 
 @dataclass(frozen=True, init=False)
@@ -153,22 +179,18 @@ class Grassmann(GeometryMixin):
     def exp(self, X: Array, U: Array) -> Array:
         """Grassmann exponential map in ONB coordinates.
 
-        If ``U = A diag(s) B^T`` is the compact SVD of a horizontal tangent
-        vector, then a representative of ``Exp(X, U)`` is
+        For a horizontal tangent ``U``, the skew generator
 
-            ``X B cos(s) B^T + A sin(s) B^T + X (I - B B^T)``.
+        ``Omega = U @ X.T - X @ U.T``
+
+        produces the exact geodesic representative ``expm(Omega) @ X``.  This
+        formulation is equivalent to the principal-angle SVD formula but has a
+        well-defined JVP when ``U`` is zero or has repeated singular values.
         """
         X = self.project(X)
         U = self.tangent_project(X, U)
-        A, s, Vt = jnp.linalg.svd(U, full_matrices=False)
-        V = jnp.swapaxes(Vt, -1, -2)
-        XV = X @ V
-        term1 = (XV * jnp.cos(s)[..., None, :]) @ Vt
-        term2 = (A * jnp.sin(s)[..., None, :]) @ Vt
-        VVt = V @ Vt
-        identity = jnp.eye(self.rank, dtype=X.dtype)
-        term3 = X @ (identity - VVt)
-        return self.project(term1 + term2 + term3)
+        generator = U @ jnp.swapaxes(X, -1, -2) - X @ jnp.swapaxes(U, -1, -2)
+        return matrix_expm(generator) @ X
 
     def retr(self, X: Array, U: Array, t: float | Array = 1.0) -> Array:
         return self.exp(X, t * U)
@@ -182,25 +204,68 @@ class Grassmann(GeometryMixin):
         X = self.project(X)
         Y = self.project(Y)
         XtY = jnp.swapaxes(X, -1, -2) @ Y
+        singular_values = jnp.linalg.svd(jax.lax.stop_gradient(XtY), compute_uv=False)
+        cutoff = jnp.maximum(
+            jnp.asarray(self.atol, dtype=X.dtype),
+            32.0 * jnp.finfo(X.dtype).eps,
+        )
+        at_cut_locus = jnp.min(singular_values, axis=-1) <= cutoff
         Z = self.tangent_project(X, Y)
         # M = (I - X X^T) Y (X^T Y)^{-1} without forming an inverse.
         M = jnp.swapaxes(
             jnp.linalg.solve(jnp.swapaxes(XtY, -1, -2), jnp.swapaxes(Z, -1, -2)), -1, -2
         )
-        U, s, Vt = jnp.linalg.svd(M, full_matrices=False)
-        return self.tangent_project(X, (U * jnp.arctan(s)[..., None, :]) @ Vt)
+        tangent = self.tangent_project(X, _matrix_arctan_polar(M))
+        return jnp.where(at_cut_locus[..., None, None], jnp.nan, tangent)
 
-    def dist(self, X: Array, Y: Array) -> Array:
+    def _squared_dist_single(self, X: Array, Y: Array) -> Array:
         X = self.project(X)
         Y = self.project(Y)
-        XtY = jnp.swapaxes(X, -1, -2) @ Y
-        cos_theta = jnp.linalg.svd(XtY, compute_uv=False)
-        normal_component = Y - X @ XtY
-        # SVD sorts both spectra in descending order.  Principal angles are
-        # ascending with cos(theta), so reverse the sin(theta) spectrum.
-        sin_theta = jnp.flip(jnp.linalg.svd(normal_component, compute_uv=False), axis=-1)
-        theta = jnp.arctan2(jnp.clip(sin_theta, 0.0, 1.0), jnp.clip(cos_theta, 0.0, 1.0))
-        return jnp.sqrt(jnp.maximum(jnp.sum(theta * theta, axis=-1), 0.0))
+        projector_difference = X @ jnp.swapaxes(X, -1, -2) - Y @ jnp.swapaxes(Y, -1, -2)
+        threshold = 32.0 * jnp.sqrt(jnp.finfo(X.dtype).eps)
+
+        def local(_: None) -> Array:
+            tangent = self.log(X, Y)
+            return jnp.maximum(self.inner(X, tangent, tangent), 0.0)
+
+        def principal_angles(_: None) -> Array:
+            XtY = jnp.swapaxes(X, -1, -2) @ Y
+            cosine = jnp.linalg.svd(XtY, compute_uv=False)
+            normal_component = Y - X @ XtY
+            # Both spectra are descending. Principal angles are ascending with
+            # cosine, so reverse the sine spectrum before pairing.
+            sine = jnp.flip(
+                jnp.linalg.svd(normal_component, compute_uv=False),
+                axis=-1,
+            )
+            angles = jnp.arctan2(
+                jnp.clip(sine, 0.0, 1.0),
+                jnp.clip(cosine, 0.0, 1.0),
+            )
+            return jnp.maximum(jnp.sum(angles * angles), 0.0)
+
+        return jax.lax.cond(
+            jnp.linalg.norm(projector_difference) <= threshold,
+            local,
+            principal_angles,
+            operand=None,
+        )
+
+    def squared_dist(self, X: Array, Y: Array) -> Array:
+        X = jnp.asarray(X)
+        Y = jnp.asarray(Y)
+        batch_shape = jnp.broadcast_shapes(X.shape[:-2], Y.shape[:-2])
+        X = jnp.broadcast_to(X, batch_shape + self.shape)
+        Y = jnp.broadcast_to(Y, batch_shape + self.shape)
+        if not batch_shape:
+            return self._squared_dist_single(X, Y)
+        flat_X = X.reshape((-1,) + self.shape)
+        flat_Y = Y.reshape((-1,) + self.shape)
+        values = jax.vmap(self._squared_dist_single)(flat_X, flat_Y)
+        return values.reshape(batch_shape)
+
+    def dist(self, X: Array, Y: Array) -> Array:
+        return jnp.sqrt(self.squared_dist(X, Y))
 
     def transport(self, X: Array, Y: Array, Z: Array) -> Array:
         """Parallel transport along the shortest geodesic from X to Y.
@@ -291,6 +356,8 @@ class GrassmannProjection(GeometryMixin):
     size:
         Pair ``(ambient_dim, rank)``. Public points have the same shape.
     """
+
+    hessian_conversion_is_exact = True
 
     size: tuple[int, int]
     rank: int
@@ -408,12 +475,7 @@ class GrassmannProjection(GeometryMixin):
         return self._canonical().tangent_project(X, H @ X)
 
     def _matrix_exp(self, A: Array) -> Array:
-        if A.ndim == 2:
-            return jsp_linalg.expm(A)
-        batch_shape = A.shape[:-2]
-        flat = A.reshape((-1, self.ambient_dim, self.ambient_dim))
-        result = jax.vmap(jsp_linalg.expm)(flat)
-        return result.reshape(batch_shape + (self.ambient_dim, self.ambient_dim))
+        return matrix_expm(A)
 
     def _projector_exp(self, P: Array, H: Array) -> Array:
         P = _sym(jnp.asarray(P))
@@ -428,7 +490,9 @@ class GrassmannProjection(GeometryMixin):
         X = self.project(X)
         P = self.embed(X)
         H = self.embed_tangent(X, U)
-        return self.to_frame(self._projector_exp(P, H), reference=X)
+        generator = H @ P - P @ H
+        rotation = self._matrix_exp(generator)
+        return rotation @ X
 
     def retr(self, X: Array, U: Array, t: float | Array = 1.0) -> Array:
         return self.exp(X, t * U)
@@ -442,18 +506,15 @@ class GrassmannProjection(GeometryMixin):
     def log(self, X: Array, Y: Array) -> Array:
         """Riemannian logarithm, defined away from the Grassmann cut locus."""
         X = self.project(X)
-        P = self.embed(X)
-        Q = self.embed(Y)
-        return self.from_projector_tangent(X, self._projector_log(P, Q, X))
+        frame_tangent = self._canonical().log(X, self.project(Y))
+        return self.from_projector_tangent(X, self.embed_tangent(X, frame_tangent))
+
+    def squared_dist(self, X: Array, Y: Array) -> Array:
+        return self._canonical().squared_dist(X, Y)
 
     def dist(self, X: Array, Y: Array) -> Array:
         """Intrinsic principal-angle geodesic distance."""
-        P = self.embed(X)
-        Q = self.embed(Y)
-        return self._canonical().dist(
-            self.to_frame(P, reference=X),
-            self.to_frame(Q, reference=Y),
-        )
+        return jnp.sqrt(self.squared_dist(X, Y))
 
     geodesic_dist = dist
 
@@ -473,9 +534,8 @@ class GrassmannProjection(GeometryMixin):
         X = self.project(X)
         Y = self.project(Y)
         P = self.embed(X)
-        Q = self.embed(Y)
         H = self.embed_tangent(X, U)
-        eta = self._projector_log(P, Q, X)
+        eta = self.embed_tangent(X, self._canonical().log(X, Y))
         generator = eta @ P - P @ eta
         rotation = self._matrix_exp(generator)
         transported = rotation @ H @ jnp.swapaxes(rotation, -1, -2)

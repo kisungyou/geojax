@@ -25,10 +25,13 @@ def test_generalized_orthogonality_and_pullback_metric(geometry, dtype_atol):
     assert bool(M.belongs(X))
     assert bool(M.is_tangent(X, U))
     assert jnp.allclose(X.T @ B @ X, jnp.eye(2), atol=max(1e-10, dtype_atol))
-    assert jnp.allclose(
-        M.inner(X, U, U), jnp.sum(U * (B @ U)), atol=max(1e-12, dtype_atol)
-    )
+    assert jnp.allclose(M.inner(X, U, U), jnp.sum(U * (B @ U)), atol=max(1e-12, dtype_atol))
     assert jnp.allclose(M.log(X, Y), U, atol=max(2e-8, dtype_atol))
+    if geometry is GeneralizedStiefel:
+        recovered, info = M.log_with_info(X, Y)
+        assert bool(info.converged)
+        assert jnp.allclose(recovered, U, atol=max(2e-8, dtype_atol))
+        assert M.operation_kind("log") == "numerical-local"
 
 
 @pytest.mark.parametrize("geometry", [GeneralizedStiefel, GeneralizedGrassmann])

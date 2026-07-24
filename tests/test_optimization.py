@@ -6,7 +6,7 @@ import pytest
 
 import geojax
 import geojax.optimization as optimization
-from geojax.geometry import Euclidean, Product, Sphere, Torus
+from geojax.geometry import Euclidean, Grassmann, Product, Sphere, Torus
 from geojax.optimization._conjugate_gradient import (
     _compute_beta_and_direction,
     _finite_scalar,
@@ -22,18 +22,6 @@ from geojax.optimization import (
     SteepestDescent,
     TrustRegions,
 )
-
-
-class MinimalEuclidean:
-    """Flat test geometry without a specialized Hessian conversion."""
-
-    def tangent_project(self, x, u):
-        del x
-        return u
-
-    def egrad_to_rgrad(self, x, u):
-        del x
-        return u
 
 
 def test_only_class_style_solvers_are_public():
@@ -110,10 +98,31 @@ def test_minimize_hessian_vector_fallback_and_user_rhess():
     assert jnp.allclose(custom.rhess_vec(custom.x0, u), 3.0 * u)
 
 
+def test_sphere_hessian_conversion_includes_embedding_curvature():
+    M = Sphere(size=3)
+    x = M.project(jnp.array([1.0, 2.0, -1.0]))
+    u = M.tangent_project(x, jnp.array([0.3, -0.2, 0.4]))
+    coefficient = jnp.array([0.5, -1.0, 0.25])
+    problem = Minimize(M=M, cost=lambda point: jnp.dot(coefficient, point))
+
+    expected = -jnp.dot(coefficient, x) * u
+    assert jnp.allclose(problem.rhess_vec(x, u), expected, atol=2e-6, rtol=2e-6)
+
+
+def test_automatic_hessian_rejects_geometry_without_exact_conversion():
+    M = Grassmann(size=(4, 2))
+    x = M.random_point(jax.random.key(90))
+    u = M.random_tangent(jax.random.key(91), x, scale=0.1)
+    problem = Minimize(M=M, cost=lambda point: jnp.sum(point * point))
+
+    with pytest.raises(ValueError, match="Supply rhess_vec explicitly"):
+        problem.rhess_vec(x, u)
+
+
 def test_minimize_hessian_vector_construction_paths():
     x = jnp.array([1.0, -2.0])
     u = jnp.array([0.25, 0.5])
-    manifold = MinimalEuclidean()
+    manifold = Euclidean(size=2)
 
     explicit = Minimize(
         M=manifold,
@@ -196,9 +205,7 @@ def test_conjugate_gradient_beta_safeguards_and_unknown_rule():
     assert beta == 0.0
     assert jnp.allclose(direction, -newgrad)
 
-    beta, direction = compute(
-        ConjugateGradient(beta_type="F-R", orth_value=0.0, verbosity=0)
-    )
+    beta, direction = compute(ConjugateGradient(beta_type="F-R", orth_value=0.0, verbosity=0))
     assert beta == 0.0
     assert jnp.allclose(direction, -newgrad)
 

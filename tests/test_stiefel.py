@@ -19,6 +19,9 @@ def test_stiefel_constraints_projection_and_sampling(geometry):
     assert jnp.all(M.belongs(points))
     assert jnp.all(M.is_tangent(points, tangents))
     assert jnp.all(M.belongs(M.project(jax.random.normal(jax.random.key(2), (4, 5, 2)))))
+    assert M.operation_kind("exp") == "exact"
+    assert M.operation_kind("log") == "numerical-local"
+    assert M.operation_kind("dist") == "numerical-local"
 
 
 @pytest.mark.parametrize("geometry", [Stiefel, StiefelEuclidean])
@@ -37,9 +40,7 @@ def test_stiefel_local_exp_log_and_batch_roundtrip(geometry, dtype_atol):
     tangents = jnp.stack([0.25 * U, 0.5 * U, U])
     endpoints = M.exp_batch(X, tangents)
     assert jnp.all(M.belongs(endpoints))
-    assert jnp.allclose(
-        M.log_batch(X, endpoints), tangents, atol=max(2e-8, dtype_atol)
-    )
+    assert jnp.allclose(M.log_batch(X, endpoints), tangents, atol=max(2e-8, dtype_atol))
 
 
 def test_canonical_and_euclidean_metrics_differ_on_vertical_tangents():

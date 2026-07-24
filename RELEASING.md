@@ -36,7 +36,7 @@ accounts and tokens.
    tutorial, removes transient notebooks, builds clean wheel and source
    archives, and applies Twine's strict metadata check. Missing Python
    interpreters fail the matrix rather than being skipped.
-4. Keep the generated artifacts in `dist/0.1.1` for both TestPyPI and PyPI.
+4. Keep the generated artifacts in `dist/0.2.0` for both TestPyPI and PyPI.
    If building manually instead, remove `build`, `dist`, and `geojax.egg-info`
    first so setuptools cannot retain modules deleted or renamed since an older
    build.
@@ -48,7 +48,7 @@ Upload the exact artifacts intended for production:
 ```bash
 python -m twine upload \
   --repository-url https://test.pypi.org/legacy/ \
-  dist/0.1.1/*
+  dist/0.2.0/*
 ```
 
 At Twine's prompts, enter `__token__` and the TestPyPI token. Verify the wheel
@@ -59,7 +59,7 @@ TestPyPI does not mirror all runtime dependencies.
 python -m venv /tmp/geojax-test-release
 /tmp/geojax-test-release/bin/python -m pip install --upgrade pip
 /tmp/geojax-test-release/bin/python -m pip install \
-  --index-url https://test.pypi.org/simple/ --no-deps geojax==0.1.1
+  --index-url https://test.pypi.org/simple/ --no-deps geojax==0.2.0
 cd /tmp
 /tmp/geojax-test-release/bin/python -c \
   'from importlib.metadata import version; import geojax; print(version("geojax"))'
@@ -70,10 +70,10 @@ cd /tmp
 After the TestPyPI artifact has been checked, upload the unchanged files:
 
 ```bash
-python -m twine upload dist/0.1.1/*
+python -m twine upload dist/0.2.0/*
 ```
 
 Verify installation from PyPI, then commit the release metadata, create the
-signed or annotated tag `v0.1.1`, and push the commit and tag to GitHub. Create
+signed or annotated tag `v0.2.0`, and push the commit and tag to GitHub. Create
 a GitHub release from the changelog entry. After the first production upload,
 replace the account-scoped token with a token restricted to the GeoJAX project.

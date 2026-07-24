@@ -220,6 +220,11 @@ def audit_site(site: Path) -> list[str]:
 
     for page, parser in parsed_pages.items():
         relative_page = page.relative_to(site)
+        raw_html = page.read_text(encoding="utf-8")
+        if re.search(r'class="[^"]*\btraceback\b', raw_html):
+            errors.append(
+                f"{relative_page}: executed notebook traceback embedded in rendered page"
+            )
         prose = " ".join(parser.prose)
         if TEX_LEAK.search(prose):
             errors.append(f"{relative_page}: raw TeX command leaked into rendered prose")

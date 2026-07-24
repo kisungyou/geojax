@@ -167,9 +167,12 @@ def _spd_objective(target: Any) -> Callable[[Any], Any]:
 
 
 def _product_objective(target: Any) -> Callable[[Any], Any]:
-    return lambda x: 0.5 * (
-        jnp.sum((x["direction"] - target["direction"]) ** 2)
-        + jnp.sum((x["phase"] - target["phase"]) ** 2)
+    return lambda x: (
+        0.5
+        * (
+            jnp.sum((x["direction"] - target["direction"]) ** 2)
+            + jnp.sum((x["phase"] - target["phase"]) ** 2)
+        )
     )
 
 
@@ -177,13 +180,12 @@ def _product_objective(target: Any) -> Callable[[Any], Any]:
     ("M", "objective_factory"),
     [
         (Sphere(size=3), _sphere_objective),
-        (SPDAffineInvariant(size=(2, 2)), _spd_objective),
         (
             Product({"direction": Sphere(size=2), "phase": Torus(size=2)}),
             _product_objective,
         ),
     ],
-    ids=["Sphere", "SPDAffineInvariant", "Product"],
+    ids=["Sphere", "Product"],
 )
 def test_autodiff_gradient_and_hessian_vector_products_are_jittable(M, objective_factory):
     key_x, key_target, key_u = jax.random.split(jax.random.key(300), 3)
@@ -206,3 +208,14 @@ def test_autodiff_gradient_and_hessian_vector_products_are_jittable(M, objective
     _assert_tree_finite((value, egrad, rgrad, ehess, rhess))
     assert bool(jnp.all(M.is_tangent(x, rgrad)))
     assert bool(jnp.all(M.is_tangent(x, rhess)))
+
+
+def test_unsupported_automatic_spd_hessian_is_reported_explicitly():
+    M = SPDAffineInvariant(size=(2, 2))
+    x = M.random_point(jax.random.key(310))
+    u = M.random_tangent(jax.random.key(311), x, scale=1e-3)
+    problem = Minimize(M=M, cost=_spd_objective(x))
+
+    assert M.operation_kind("ehess_to_rhess") == "projection"
+    with pytest.raises(ValueError, match="Supply rhess_vec explicitly"):
+        problem.rhess_vec(x, u)

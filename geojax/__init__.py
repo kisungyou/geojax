@@ -1,7 +1,8 @@
 """GeoJAX: JAX-native Riemannian geometry and optimization utilities."""
 
-__version__ = "0.1.1"
+__version__ = "0.2.0"
 
+from . import learning
 from .geometry import (
     CorrelationAffineQuotient,
     CorrelationECM,
@@ -62,6 +63,7 @@ from .optimization import (
 
 __all__ = [
     "__version__",
+    "learning",
     "Euclidean",
     "Oblique",
     "ProbabilitySimplex",

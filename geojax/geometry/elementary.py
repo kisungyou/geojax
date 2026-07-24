@@ -9,6 +9,15 @@ import jax
 import jax.numpy as jnp
 
 from .base import GeometryMixin, Shape, as_sample_shape
+from ._numerics import (
+    acos_over_sin,
+    acos_squared,
+    atanhc_from_squared_norm,
+    cos_from_squared_norm,
+    sinc_from_squared_norm,
+    squared_norm,
+    tanhc_from_squared_norm,
+)
 
 Array = Any
 
@@ -96,33 +105,27 @@ class Oblique(GeometryMixin):
     def exp(self, X: Array, U: Array) -> Array:
         X = jnp.asarray(X)
         U = self.tangent_project(X, U)
-        lengths = jnp.linalg.norm(U, axis=-2, keepdims=True)
-        sinc = jnp.where(
-            lengths > self.eps,
-            jnp.sin(lengths) / jnp.maximum(lengths, self.eps),
-            1.0 - lengths**2 / 6.0,
+        lengths_squared = squared_norm(U, axis=-2, keepdims=True)
+        return X * cos_from_squared_norm(lengths_squared) + U * sinc_from_squared_norm(
+            lengths_squared
         )
-        return X * jnp.cos(lengths) + U * sinc
 
     def log(self, X: Array, Y: Array) -> Array:
         X = jnp.asarray(X)
         Y = jnp.asarray(Y)
         dots = jnp.clip(jnp.sum(X * Y, axis=-2, keepdims=True), -1.0, 1.0)
-        angles = jnp.arccos(dots)
         direction = Y - dots * X
-        lengths = jnp.linalg.norm(direction, axis=-2, keepdims=True)
-        result = jnp.where(
-            lengths > self.eps,
-            angles * direction / jnp.maximum(lengths, self.eps),
-            jnp.zeros_like(direction),
-        )
+        sine_squared = squared_norm(direction, axis=-2, keepdims=True)
+        result = acos_over_sin(dots, sine_squared) * direction
         at_cut = (1.0 + dots) <= self.atol
         return jnp.where(at_cut, jnp.full_like(result, jnp.nan), result)
 
-    def dist(self, X: Array, Y: Array) -> Array:
+    def squared_dist(self, X: Array, Y: Array) -> Array:
         dots = jnp.clip(jnp.sum(jnp.asarray(X) * jnp.asarray(Y), axis=-2), -1.0, 1.0)
-        angles = jnp.arccos(dots)
-        return jnp.linalg.norm(angles, axis=-1)
+        return jnp.sum(acos_squared(dots), axis=-1)
+
+    def dist(self, X: Array, Y: Array) -> Array:
+        return jnp.sqrt(self.squared_dist(X, Y))
 
     def transport(self, X: Array, Y: Array, U: Array) -> Array:
         X = jnp.asarray(X)
@@ -218,13 +221,15 @@ class ProbabilitySimplex(GeometryMixin):
     def exp(self, p: Array, u: Array) -> Array:
         p = self.project(p)
         u = self.tangent_project(p, u)
-        length = self.norm(p, u)[..., None]
+        length_squared = jnp.maximum(self.inner(p, u, u), 0.0)[..., None]
         root = jnp.sqrt(p)
-        direction = u / jnp.maximum(root * length, self.eps)
-        next_root = jnp.cos(0.5 * length) * root + jnp.sin(0.5 * length) * direction
+        half_length_squared = 0.25 * length_squared
+        next_root = cos_from_squared_norm(
+            half_length_squared
+        ) * root + 0.5 * sinc_from_squared_norm(half_length_squared) * (u / root)
         result = next_root**2
         result = result / jnp.sum(result, axis=-1, keepdims=True)
-        valid = jnp.all(next_root > 0.0, axis=-1, keepdims=True) | (length <= self.eps)
+        valid = jnp.all(next_root > 0.0, axis=-1, keepdims=True) | (length_squared <= self.eps**2)
         return jnp.where(valid, result, jnp.full_like(result, jnp.nan))
 
     def retr(self, p: Array, u: Array, t: float | Array = 1.0) -> Array:
@@ -237,17 +242,15 @@ class ProbabilitySimplex(GeometryMixin):
         root_p = jnp.sqrt(p)
         root_q = jnp.sqrt(q)
         cosine = jnp.clip(jnp.sum(root_p * root_q, axis=-1, keepdims=True), -1.0, 1.0)
-        angle = jnp.arccos(cosine)
-        scale = jnp.where(
-            angle > self.eps,
-            2.0 * angle / jnp.maximum(jnp.sin(angle), self.eps),
-            2.0,
-        )
+        scale = 2.0 * acos_over_sin(cosine)
         return self.tangent_project(p, scale * root_p * (root_q - cosine * root_p))
 
-    def dist(self, p: Array, q: Array) -> Array:
+    def squared_dist(self, p: Array, q: Array) -> Array:
         affinity = jnp.sum(jnp.sqrt(self.project(p) * self.project(q)), axis=-1)
-        return 2.0 * jnp.arccos(jnp.clip(affinity, -1.0, 1.0))
+        return 4.0 * acos_squared(jnp.clip(affinity, -1.0, 1.0))
+
+    def dist(self, p: Array, q: Array) -> Array:
+        return jnp.sqrt(self.squared_dist(p, q))
 
     def transport(self, p: Array, q: Array, u: Array) -> Array:
         p = self.project(p)
@@ -362,26 +365,30 @@ class PoincareBall(GeometryMixin):
     def exp(self, x: Array, u: Array) -> Array:
         x = self.project(x)
         u = jnp.asarray(u)
-        euclidean_norm = jnp.linalg.norm(u, axis=-1, keepdims=True)
         factor = self.conformal_factor(x)[..., None]
-        scale = jnp.tanh(0.5 * factor * euclidean_norm) / jnp.maximum(euclidean_norm, self.eps)
-        step = jnp.where(euclidean_norm > self.eps, scale * u, u)
+        squared_length = squared_norm(u, axis=-1, keepdims=True)
+        half_factor = 0.5 * factor
+        scaled_squared_length = half_factor**2 * squared_length
+        step = half_factor * tanhc_from_squared_norm(scaled_squared_length) * u
         return self.project(self.mobius_add(x, step))
 
     def log(self, x: Array, y: Array) -> Array:
         x = self.project(x)
         y = self.project(y)
         displacement = self.mobius_add(-x, y)
-        length = jnp.linalg.norm(displacement, axis=-1, keepdims=True)
+        squared_length = squared_norm(displacement, axis=-1, keepdims=True)
         factor = self.conformal_factor(x)[..., None]
-        scale = 2.0 * jnp.arctanh(jnp.minimum(length, 1.0 - self.eps))
-        scale = scale / jnp.maximum(factor * length, self.eps)
-        return jnp.where(length > self.eps, scale * displacement, jnp.zeros_like(displacement))
+        scale = 2.0 * atanhc_from_squared_norm(squared_length, self.eps) / factor
+        return scale * displacement
+
+    def squared_dist(self, x: Array, y: Array) -> Array:
+        displacement = self.mobius_add(-self.project(x), self.project(y))
+        squared_length = squared_norm(displacement, axis=-1)
+        ratio = atanhc_from_squared_norm(squared_length, self.eps)
+        return 4.0 * squared_length * ratio * ratio
 
     def dist(self, x: Array, y: Array) -> Array:
-        displacement = self.mobius_add(-self.project(x), self.project(y))
-        length = jnp.linalg.norm(displacement, axis=-1)
-        return 2.0 * jnp.arctanh(jnp.minimum(length, 1.0 - self.eps))
+        return jnp.sqrt(self.squared_dist(x, y))
 
     def _gyration(self, u: Array, v: Array, w: Array) -> Array:
         u2 = jnp.sum(u * u, axis=-1, keepdims=True)

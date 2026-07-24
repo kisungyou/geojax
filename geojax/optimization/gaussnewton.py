@@ -104,9 +104,10 @@ class GaussNewton:
             )
             direction = cg.solution
             directional_derivative = inner(M, x, g, direction)
-            if not math.isfinite(as_float(directional_derivative)) or as_float(
-                directional_derivative
-            ) >= 0.0:
+            if (
+                not math.isfinite(as_float(directional_derivative))
+                or as_float(directional_derivative) >= 0.0
+            ):
                 direction = tree_neg(g)
                 directional_derivative = -(gradnorm * gradnorm)
 

@@ -9,4 +9,5 @@ guidance needed to use GeoJAX. Use the API reference for complete signatures.
 foundations
 geometry
 optimization
+learning
 ```

@@ -10,7 +10,7 @@ import jax.numpy as jnp
 
 from .base import GeometryMixin, Shape, as_sample_shape
 from .grassmann import Grassmann
-from .stiefel import StiefelEuclidean
+from .stiefel import StiefelEuclidean, StiefelLogInfo
 
 Array = Any
 
@@ -52,9 +52,17 @@ class GeneralizedStiefel(GeometryMixin):
     """Frames satisfying ``X.T @ metric @ X = I``.
 
     The metric ``trace(U.T @ metric @ V)`` is the pullback of the embedded
-    Euclidean Stiefel metric under ``X -> metric^(1/2) X``.
+    Euclidean Stiefel metric under ``X -> metric^(1/2) X``. Its exact
+    exponential and numerical-local logarithm are pulled back through this
+    isometry.
     """
 
+    log_is_exact = False
+    dist_is_exact = False
+    log_kind = "numerical-local"
+    dist_kind = "numerical-local"
+    hessian_conversion_is_exact = True
+    riemannian_gradient_jvp_is_exact = True
     size: tuple[int, int]
     metric: Array
     atol: float
@@ -153,11 +161,24 @@ class GeneralizedStiefel(GeometryMixin):
     def exp(self, X: Array, U: Array) -> Array:
         return self._inverse(self._ordinary.exp(self._forward(X), self._forward(U)))
 
+    def log_with_info(self, X: Array, Y: Array) -> tuple[Array, StiefelLogInfo]:
+        """Return the pulled-back local logarithm candidate and shooting diagnostics."""
+        tangent, info = self._ordinary.log_with_info(self._forward(X), self._forward(Y))
+        return self._inverse(tangent), info
+
     def log(self, X: Array, Y: Array) -> Array:
-        return self._inverse(self._ordinary.log(self._forward(X), self._forward(Y)))
+        tangent, info = self.log_with_info(X, Y)
+        return jnp.where(
+            info.converged[..., None, None],
+            tangent,
+            jnp.full_like(tangent, jnp.nan),
+        )
 
     def dist(self, X: Array, Y: Array) -> Array:
-        return self._ordinary.dist(self._forward(X), self._forward(Y))
+        return jnp.sqrt(self.squared_dist(X, Y))
+
+    def squared_dist(self, X: Array, Y: Array) -> Array:
+        return self._ordinary.squared_dist(self._forward(X), self._forward(Y))
 
     def transport(self, X: Array, Y: Array, U: Array) -> Array:
         transported = self._ordinary.transport(self._forward(X), self._forward(Y), self._forward(U))
@@ -170,6 +191,22 @@ class GeneralizedStiefel(GeometryMixin):
         return ambient - X @ _sym(_transpose(X) @ jnp.asarray(egrad))
 
     egrad2rgrad = egrad_to_rgrad
+
+    def ehess_to_rhess(
+        self,
+        X: Array,
+        egrad: Array,
+        ehess_vec: Array,
+        U: Array,
+    ) -> Array:
+        ordinary = self._ordinary
+        converted = ordinary.ehess_to_rhess(
+            self._forward(X),
+            self._inverse(egrad),
+            self._inverse(ehess_vec),
+            self._forward(U),
+        )
+        return self._inverse(converted)
 
     def random_point(self, key: Array, sample_shape: Shape = ()) -> Array:
         return self._inverse(
@@ -282,7 +319,10 @@ class GeneralizedGrassmann(GeometryMixin):
         return self._inverse(self._ordinary.log(self._forward(X), self._forward(Y)))
 
     def dist(self, X: Array, Y: Array) -> Array:
-        return self._ordinary.dist(self._forward(X), self._forward(Y))
+        return jnp.sqrt(self.squared_dist(X, Y))
+
+    def squared_dist(self, X: Array, Y: Array) -> Array:
+        return self._ordinary.squared_dist(self._forward(X), self._forward(Y))
 
     def transport(self, X: Array, Y: Array, U: Array) -> Array:
         transported = self._ordinary.transport(self._forward(X), self._forward(Y), self._forward(U))

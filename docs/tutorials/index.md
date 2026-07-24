@@ -3,6 +3,33 @@
 Each tutorial develops a geometric problem from its mathematical formulation
 through an executable GeoJAX solution and a visual report of the result.
 
+## Geometric deep learning
+
+<div class="tutorial-gallery">
+
+  <a class="tutorial-card" href="manifold_autoencoder.html">
+    <div class="tutorial-card-media">
+      <img src="../_static/tutorials/manifold-autoencoder.png" alt="Euclidean, spherical, and hyperbolic autoencoder latent spaces">
+    </div>
+    <div class="tutorial-card-body">
+      <p class="tutorial-card-meta">Deep learning / Representation learning</p>
+      <h2>Autoencoders with curved latent spaces</h2>
+      <p>Train matched deterministic autoencoders on handwritten digits and compare Euclidean, spherical, and hyperbolic latents.</p>
+    </div>
+  </a>
+
+  <a class="tutorial-card" href="graph_curvature.html">
+    <div class="tutorial-card-media">
+      <img src="../_static/tutorials/graph-curvature.png" alt="Karate Club graph embedded in Euclidean, spherical, and hyperbolic latent spaces">
+    </div>
+    <div class="tutorial-card-body">
+      <p class="tutorial-card-meta">Graph learning / Node classification</p>
+      <h2>Curvature-aware graph learning</h2>
+      <p>Train matched intrinsic graph classifiers and compare Euclidean, spherical, and hyperbolic node representations.</p>
+    </div>
+  </a>
+</div>
+
 ## Geometric computation
 
 <div class="tutorial-gallery">
@@ -123,6 +150,8 @@ through an executable GeoJAX solution and a visual report of the result.
 
 hyperbolic_geodesics
 torus_geodesics
+manifold_autoencoder
+graph_curvature
 grassmann_pca
 sphere_kmeans
 spd_frechet_mean

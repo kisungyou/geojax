@@ -23,6 +23,9 @@ def wrap_angles(x: Array) -> Array:
 class Torus(GeometryMixin):
     """Flat ``d``-torus represented by angles in ``[-pi, pi)``."""
 
+    hessian_conversion_is_exact = True
+    riemannian_gradient_jvp_is_exact = True
+
     size: int
     atol: float
 
@@ -50,8 +53,13 @@ class Torus(GeometryMixin):
         return jnp.all((x >= -jnp.pi - tol) & (x < jnp.pi + tol), axis=-1)
 
     def is_tangent(self, x: Array, u: Array, atol: float | None = None) -> Array:
-        del x, atol
-        return jnp.asarray(jnp.shape(u)[-1] == self.size)
+        del atol
+        x = jnp.asarray(x)
+        u = jnp.asarray(u)
+        if x.ndim < 1 or u.ndim < 1 or x.shape[-1] != self.size or u.shape[-1] != self.size:
+            return jnp.asarray(False)
+        batch_shape = jnp.broadcast_shapes(x.shape[:-1], u.shape[:-1])
+        return jnp.ones(batch_shape, dtype=bool)
 
     def project(self, x: Array) -> Array:
         return self.wrap(x)

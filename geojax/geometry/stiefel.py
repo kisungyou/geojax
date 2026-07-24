@@ -7,9 +7,9 @@ from typing import Any, NamedTuple, Sequence
 
 import jax
 import jax.numpy as jnp
-import jax.scipy.linalg as jsp_linalg
 
 from .base import GeometryMixin, Shape, as_sample_shape
+from ._numerics import matrix_expm
 
 Array = Any
 
@@ -28,16 +28,6 @@ def _skew(A: Array) -> Array:
 
 def _trace_inner(A: Array, B: Array) -> Array:
     return jnp.sum(jnp.asarray(A) * jnp.asarray(B), axis=(-2, -1))
-
-
-def _matrix_expm(A: Array) -> Array:
-    """Apply the matrix exponential over optional leading batch axes."""
-    A = jnp.asarray(A)
-    if A.ndim == 2:
-        return jsp_linalg.expm(A)
-    shape = A.shape
-    flat = A.reshape((-1, shape[-2], shape[-1]))
-    return jax.vmap(jsp_linalg.expm)(flat).reshape(shape)
 
 
 def _parse_size(size: int | Sequence[int]) -> tuple[int, int]:
@@ -59,6 +49,7 @@ class StiefelLogInfo(NamedTuple):
 
     ``log`` returns nonfinite values when ``converged`` is false. Use
     ``log_with_info`` to inspect the best shooting iterate and these diagnostics.
+    Convergence certifies endpoint agreement, not global shortestness.
     """
 
     converged: Array
@@ -71,6 +62,10 @@ class StiefelLogInfo(NamedTuple):
 class _StiefelBase(GeometryMixin):
     """Shared frame representation and numerical logarithm implementation."""
 
+    log_is_exact = False
+    dist_is_exact = False
+    log_kind = "numerical-local"
+    dist_kind = "numerical-local"
     transport_is_parallel = False
 
     size: tuple[int, int]
@@ -185,8 +180,8 @@ class _StiefelBase(GeometryMixin):
     def _coordinates(self, X: Array, basis: Array, U: Array) -> Array:
         return jax.vmap(lambda vector: self.inner(X, vector, U))(basis)
 
-    def _shoot_log(self, X: Array, Y: Array) -> tuple[Array, StiefelLogInfo]:
-        """Solve ``Exp_X(U) = Y`` by damped Gauss-Newton shooting."""
+    def _shoot_log_single(self, X: Array, Y: Array) -> tuple[Array, StiefelLogInfo]:
+        """Solve one ``Exp_X(U) = Y`` problem by damped Gauss-Newton shooting."""
         X = jnp.asarray(X)
         Y = jnp.asarray(Y)
         if self.dim == 0:
@@ -271,6 +266,27 @@ class _StiefelBase(GeometryMixin):
         residual_norm = jnp.linalg.norm(residual(z))
         return tangent, StiefelLogInfo(converged, iterations, residual_norm, step_norm)
 
+    def _shoot_log(self, X: Array, Y: Array) -> tuple[Array, StiefelLogInfo]:
+        """Broadcast and solve numerical logarithms over leading batch axes."""
+        X = jnp.asarray(X)
+        Y = jnp.asarray(Y)
+        batch_shape = jnp.broadcast_shapes(X.shape[:-2], Y.shape[:-2])
+        X = jnp.broadcast_to(X, batch_shape + self.shape)
+        Y = jnp.broadcast_to(Y, batch_shape + self.shape)
+        if not batch_shape:
+            return self._shoot_log_single(X, Y)
+
+        flat_X = X.reshape((-1,) + self.shape)
+        flat_Y = Y.reshape((-1,) + self.shape)
+        tangents, info = jax.vmap(self._shoot_log_single)(flat_X, flat_Y)
+        tangent = tangents.reshape(batch_shape + self.shape)
+        return tangent, StiefelLogInfo(
+            info.converged.reshape(batch_shape),
+            info.iterations.reshape(batch_shape),
+            info.residual_norm.reshape(batch_shape),
+            info.step_norm.reshape(batch_shape),
+        )
+
     def log_with_info(self, X: Array, Y: Array) -> tuple[Array, StiefelLogInfo]:
         """Return a numerical logarithm and endpoint-shooting diagnostics.
 
@@ -282,10 +298,46 @@ class _StiefelBase(GeometryMixin):
     def log(self, X: Array, Y: Array) -> Array:
         """Return the selected local logarithm, or nonfinite values on failure."""
         tangent, info = self.log_with_info(X, Y)
-        return jnp.where(info.converged, tangent, jnp.full_like(tangent, jnp.nan))
+        return jnp.where(
+            info.converged[..., None, None],
+            tangent,
+            jnp.full_like(tangent, jnp.nan),
+        )
 
     def dist(self, X: Array, Y: Array) -> Array:
-        return self.norm(X, self.log(X, Y))
+        return jnp.sqrt(self.squared_dist(X, Y))
+
+    def _squared_dist_single(self, X: Array, Y: Array) -> Array:
+        threshold = 32.0 * jnp.sqrt(jnp.finfo(X.dtype).eps)
+        difference = Y - X
+
+        def local(_: None) -> Array:
+            tangent = self.tangent_project(X, difference)
+            return jnp.maximum(self.inner(X, tangent, tangent), 0.0)
+
+        def shooting(_: None) -> Array:
+            tangent = self.log(X, Y)
+            return jnp.maximum(self.inner(X, tangent, tangent), 0.0)
+
+        return jax.lax.cond(
+            jnp.linalg.norm(difference) <= threshold,
+            local,
+            shooting,
+            operand=None,
+        )
+
+    def squared_dist(self, X: Array, Y: Array) -> Array:
+        X = jnp.asarray(X)
+        Y = jnp.asarray(Y)
+        batch_shape = jnp.broadcast_shapes(X.shape[:-2], Y.shape[:-2])
+        X = jnp.broadcast_to(X, batch_shape + self.shape)
+        Y = jnp.broadcast_to(Y, batch_shape + self.shape)
+        if not batch_shape:
+            return self._squared_dist_single(X, Y)
+        flat_X = X.reshape((-1,) + self.shape)
+        flat_Y = Y.reshape((-1,) + self.shape)
+        values = jax.vmap(self._squared_dist_single)(flat_X, flat_Y)
+        return values.reshape(batch_shape)
 
     def transport(self, X: Array, Y: Array, U: Array) -> Array:
         """Apply an isometric group-action vector transport from ``X`` to ``Y``.
@@ -337,6 +389,8 @@ class Stiefel(_StiefelBase):
 
     The exponential map is exact. The logarithm is computed by differentiable
     damped endpoint shooting; use :meth:`log_with_info` to inspect convergence.
+    Its capability status is numerical-local because endpoint convergence does
+    not certify a globally shortest geodesic.
     """
 
     @property
@@ -358,7 +412,7 @@ class Stiefel(_StiefelBase):
         generator = (
             horizontal @ _transpose(X) - X @ _transpose(horizontal) + X @ vertical @ _transpose(X)
         )
-        return _matrix_expm(_skew(generator)) @ X
+        return matrix_expm(_skew(generator)) @ X
 
     def egrad_to_rgrad(self, X: Array, egrad: Array) -> Array:
         """Convert an ambient Euclidean gradient for the canonical metric."""
@@ -377,6 +431,9 @@ class StiefelEuclidean(_StiefelBase):
     differ whenever the tangent has a component ``X @ A`` with ``A`` skew.
     """
 
+    hessian_conversion_is_exact = True
+    riemannian_gradient_jvp_is_exact = True
+
     @property
     def _vertical_basis_scale(self) -> float:
         return 1.0 / jnp.sqrt(2.0)
@@ -389,14 +446,17 @@ class StiefelEuclidean(_StiefelBase):
         """Evaluate the exact embedded-Euclidean exponential map."""
         X = jnp.asarray(X)
         U = self.tangent_project(X, U)
+        batch_shape = jnp.broadcast_shapes(X.shape[:-2], U.shape[:-2])
+        X = jnp.broadcast_to(X, batch_shape + self.shape)
+        U = jnp.broadcast_to(U, batch_shape + self.shape)
         A = _skew(_transpose(X) @ U)
         S = _sym(_transpose(U) @ U)
         identity = jnp.broadcast_to(jnp.eye(self.k, dtype=X.dtype), A.shape)
         top = jnp.concatenate([A, -S], axis=-1)
         bottom = jnp.concatenate([identity, A], axis=-1)
         block = jnp.concatenate([top, bottom], axis=-2)
-        initial = _matrix_expm(block)[..., :, : self.k]
-        return jnp.concatenate([X, U], axis=-1) @ initial @ _matrix_expm(-A)
+        initial = matrix_expm(block)[..., :, : self.k]
+        return jnp.concatenate([X, U], axis=-1) @ initial @ matrix_expm(-A)
 
     def egrad_to_rgrad(self, X: Array, egrad: Array) -> Array:
         return self.tangent_project(X, egrad)

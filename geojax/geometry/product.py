@@ -43,6 +43,14 @@ class Product(GeometryMixin):
     def _unflatten(self, leaves: Iterable[Any]) -> Any:
         return jax.tree_util.tree_unflatten(self._treedef, list(leaves))
 
+    @staticmethod
+    def _combine_checks(checks: list[Array]) -> Array:
+        broadcast = jnp.broadcast_arrays(*(jnp.asarray(check, dtype=bool) for check in checks))
+        result = jnp.ones_like(broadcast[0], dtype=bool)
+        for check in broadcast:
+            result = result & check
+        return result
+
     @property
     def size(self) -> Any:
         return self._unflatten(
@@ -77,16 +85,43 @@ class Product(GeometryMixin):
     def transport_is_parallel(self) -> bool:
         return all(bool(getattr(M, "transport_is_parallel", True)) for M in self._factor_leaves)
 
+    @property
+    def hessian_conversion_is_exact(self) -> bool:
+        return all(
+            bool(getattr(M, "hessian_conversion_is_exact", False)) for M in self._factor_leaves
+        )
+
+    @property
+    def riemannian_gradient_jvp_is_exact(self) -> bool:
+        return all(
+            bool(getattr(M, "riemannian_gradient_jvp_is_exact", False)) for M in self._factor_leaves
+        )
+
+    def operation_kind(self, name: str) -> str:
+        if name in {"exp", "log", "dist"}:
+            kinds = [
+                M.operation_kind(name)
+                if hasattr(M, "operation_kind")
+                else ("exact" if bool(getattr(M, f"{name}_is_exact", False)) else "proxy")
+                for M in self._factor_leaves
+            ]
+            if all(kind == "exact" for kind in kinds):
+                return "exact"
+            if any(kind == "proxy" for kind in kinds):
+                return "proxy"
+            return "numerical-local"
+        return super().operation_kind(name)
+
     def belongs(self, x: Any, atol: float | None = None) -> Array:
         xs = self._flatten_like(x, "point")
         checks = []
         for M, xi in zip(self._factor_leaves, xs):
             if hasattr(M, "belongs"):
                 check = M.belongs(xi, atol=atol) if atol is not None else M.belongs(xi)
-                checks.append(jnp.all(check))
+                checks.append(check)
             else:
                 checks.append(jnp.asarray(True))
-        return jnp.all(jnp.asarray(checks))
+        return self._combine_checks(checks)
 
     def is_tangent(self, x: Any, u: Any, atol: float | None = None) -> Array:
         xs = self._flatten_like(x, "point")
@@ -97,10 +132,10 @@ class Product(GeometryMixin):
                 check = (
                     M.is_tangent(xi, ui, atol=atol) if atol is not None else M.is_tangent(xi, ui)
                 )
-                checks.append(jnp.all(check))
+                checks.append(check)
             else:
                 checks.append(jnp.asarray(True))
-        return jnp.all(jnp.asarray(checks))
+        return self._combine_checks(checks)
 
     def project(self, x: Any) -> Any:
         xs = self._flatten_like(x, "point")
@@ -175,14 +210,20 @@ class Product(GeometryMixin):
         ys = self._flatten_like(y, "point")
         return self._unflatten(M.log(xi, yi) for M, xi, yi in zip(self._factor_leaves, xs, ys))
 
-    def dist(self, x: Any, y: Any) -> Array:
+    def squared_dist(self, x: Any, y: Any) -> Array:
         xs = self._flatten_like(x, "point")
         ys = self._flatten_like(y, "point")
-        vals = [M.dist(xi, yi) ** 2 for M, xi, yi in zip(self._factor_leaves, xs, ys)]
+        vals = [
+            M.squared_dist(xi, yi) if hasattr(M, "squared_dist") else M.dist(xi, yi) ** 2
+            for M, xi, yi in zip(self._factor_leaves, xs, ys)
+        ]
         out = vals[0]
         for val in vals[1:]:
             out = out + val
-        return jnp.sqrt(jnp.maximum(out, 0.0))
+        return jnp.maximum(out, 0.0)
+
+    def dist(self, x: Any, y: Any) -> Array:
+        return jnp.sqrt(self.squared_dist(x, y))
 
     def transport(self, x: Any, y: Any, u: Any) -> Any:
         xs = self._flatten_like(x, "point")
@@ -257,7 +298,20 @@ class Product(GeometryMixin):
         u = self._unflatten(leaves)
         if normalize:
             nrm = self.norm(x, u)
-            u = jax.tree_util.tree_map(lambda z: jnp.where(nrm > 0.0, scale * z / nrm, z), u)
+            normalized = []
+            for M, leaf in zip(self._factor_leaves, leaves):
+                event_ndim = len(M.shape)
+                denominator = nrm.reshape(nrm.shape + (1,) * event_ndim)
+                coefficient = jnp.asarray(scale)
+                coefficient = coefficient.reshape(coefficient.shape + (1,) * event_ndim)
+                normalized.append(
+                    jnp.where(
+                        denominator > 0.0,
+                        coefficient * leaf / jnp.where(denominator > 0.0, denominator, 1.0),
+                        leaf,
+                    )
+                )
+            u = self._unflatten(normalized)
         return u
 
 

@@ -22,3 +22,8 @@ def test_benchmark_modules_return_solver_rows():
         assert {"solver", "final_cost", "gradnorm", "iterations", "time_sec", "success"} <= set(
             rows[0]
         )
+
+    for rows in scenarios[1:4]:
+        trust_region = next(row for row in rows if row["solver"] == "TrustRegions")
+        assert trust_region["success"] is False
+        assert "rhess_vec" in trust_region["reason"]

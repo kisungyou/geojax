@@ -16,7 +16,9 @@ $$
 
 and the exponential map adds that tangent vector modulo $2\pi$. A shortest
 path can therefore cross the edge of the angular coordinate square while
-remaining smooth on the torus itself.
+remaining smooth on the torus itself. The construction is the product metric
+and quotient representation of a flat Riemannian manifold
+{cite:p}`docarmo1992riemannian`.
 
 ```{code-cell} ipython3
 import jax
@@ -120,3 +122,9 @@ short branch automatically, and `Torus.exp` wraps every intermediate point.
 - Move one endpoint until a coordinate difference is exactly $\pi$.
 - Plot several tangent directions from the same point.
 - Use `Product` to combine a torus state with a sphere or matrix geometry.
+
+## References
+
+```{bibliography}
+:filter: docname in docnames
+```

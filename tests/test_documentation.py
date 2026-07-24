@@ -5,11 +5,20 @@ import re
 
 import numpy as np
 
-from docs.audit_html import tex_syntax_errors
+from docs.audit_html import audit_site, tex_syntax_errors
 
 
 DOCS = Path(__file__).resolve().parents[1] / "docs"
 LEGACY_MATH_DELIMITERS = (r"\(", r"\)", r"\[", r"\]")
+SCIENTIFIC_GUIDES = {
+    Path("guide/foundations.md"),
+    Path("guide/geometry.md"),
+    Path("guide/learning.md"),
+    Path("guide/optimization.md"),
+    Path("development/geometry_protocol.md"),
+    Path("development/learning_protocol.md"),
+    Path("development/optimization_protocol.md"),
+}
 
 
 def markdown_prose_blocks(path: Path):
@@ -40,9 +49,7 @@ def markdown_math_fragments(path: Path):
         paragraph = "\n".join(line for _, line in block)
         index = 0
         while index < len(paragraph):
-            if paragraph[index] != "$" or (
-                index > 0 and paragraph[index - 1] == "\\"
-            ):
+            if paragraph[index] != "$" or (index > 0 and paragraph[index - 1] == "\\"):
                 index += 1
                 continue
 
@@ -112,6 +119,18 @@ def test_tex_syntax_audit_detects_text_mode_specials():
     assert not tex_syntax_errors(r"\begin{aligned}x&=y\end{aligned}")
 
 
+def test_rendered_audit_detects_embedded_notebook_tracebacks(tmp_path):
+    page = tmp_path / "index.html"
+    page.write_text(
+        '<html><body><div class="output traceback highlight-ipythontb">'
+        "ValueError: failed</div></body></html>",
+        encoding="utf-8",
+    )
+
+    errors = audit_site(tmp_path)
+    assert any("notebook traceback" in error for error in errors)
+
+
 def test_kendall_hand_tutorial_data_is_complete():
     data_directory = DOCS / "_static" / "data" / "hands"
     hands = np.loadtxt(data_directory / "hands.txt", skiprows=1)
@@ -121,3 +140,38 @@ def test_kendall_hand_tutorial_data_is_complete():
     assert labels.shape == (52,)
     assert np.array_equal(np.unique(labels, return_counts=True)[0], np.array([0, 1]))
     assert np.array_equal(np.unique(labels, return_counts=True)[1], np.array([25, 27]))
+
+
+def test_every_scientific_page_has_citations_and_a_local_bibliography():
+    tutorial_pages = {
+        path.relative_to(DOCS)
+        for path in (DOCS / "tutorials").glob("*.md")
+        if path.name != "index.md"
+    }
+    offenders: list[str] = []
+    for relative_path in sorted(SCIENTIFIC_GUIDES | tutorial_pages):
+        text = (DOCS / relative_path).read_text(encoding="utf-8")
+        if "{cite:" not in text:
+            offenders.append(f"{relative_path}: no citation role")
+        if "```{bibliography}" not in text:
+            offenders.append(f"{relative_path}: no local bibliography")
+
+    assert not offenders, "Scientific documentation needs traceable sources:\n" + "\n".join(
+        offenders
+    )
+
+
+def test_all_documentation_citations_resolve_to_unique_bibtex_entries():
+    bibliography = (DOCS / "references.bib").read_text(encoding="utf-8")
+    keys = re.findall(r"@\w+\s*\{\s*([^,\s]+)\s*,", bibliography)
+    duplicate_keys = sorted({key for key in keys if keys.count(key) > 1})
+
+    cited_keys: set[str] = set()
+    for path in DOCS.rglob("*.md"):
+        text = path.read_text(encoding="utf-8")
+        for payload in re.findall(r"\{cite(?::\w+)?\}`([^`]+)`", text):
+            cited_keys.update(key.strip() for key in payload.split(","))
+
+    missing_keys = sorted(cited_keys - set(keys))
+    assert not duplicate_keys, f"Duplicate BibTeX keys: {duplicate_keys}"
+    assert not missing_keys, f"Missing BibTeX entries: {missing_keys}"

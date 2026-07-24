@@ -12,6 +12,7 @@ from geojax.geometry import (
     FixedRank,
     GeneralizedGrassmann,
     GeneralizedStiefel,
+    GeometryProtocol,
     Grassmann,
     GrassmannProjection,
     Hyperboloid,
@@ -86,7 +87,9 @@ def test_shared_geometry_invariants(M):
     key_x, key_y, key_u = jax.random.split(key, 3)
     x = M.random_point(key_x)
     y = M.random_point(key_y)
-    tangent_scale = 0.05 if M.exp_is_exact and M.log_is_exact else 1e-3
+    tangent_scale = (
+        0.05 if M.operation_kind("exp") == "exact" and M.operation_kind("log") == "exact" else 1e-3
+    )
     u = M.random_tangent(key_u, x, scale=tangent_scale)
     zero = tree_zeros_like(u)
 
@@ -98,7 +101,7 @@ def test_shared_geometry_invariants(M):
     assert bool(jnp.all(M.belongs(y_local)))
     recovered = M.log(x, y_local)
     assert bool(jnp.all(M.is_tangent(x, recovered)))
-    if M.log_is_exact:
+    if M.operation_kind("log") == "exact":
         assert_tree_allclose(recovered, u, atol=5e-4)
     else:
         error = M.norm(x, M.lincomb(x, 1.0, recovered, -1.0, u))
@@ -108,10 +111,10 @@ def test_shared_geometry_invariants(M):
     distance = M.dist(x, y)
     assert bool(jnp.all(jnp.isfinite(distance)))
     assert bool(jnp.all(distance >= 0.0))
-    if M.dist_is_exact:
+    if M.operation_kind("dist") == "exact":
         assert jnp.allclose(distance, M.dist(y, x), atol=1e-5, rtol=1e-5)
     else:
-        assert M.operation_kind("dist") == "proxy"
+        assert M.operation_kind("dist") in {"proxy", "numerical-local"}
 
     v = M.random_tangent(jax.random.key(3), x, scale=0.05)
     transported = M.transport(x, y_local, v)
@@ -123,12 +126,18 @@ def test_shared_geometry_invariants(M):
 @pytest.mark.parametrize("M", geometries())
 def test_optimizer_protocol_and_operation_metadata(M):
     assert isinstance(M, ManifoldProtocol)
+    assert isinstance(M, GeometryProtocol)
     for name in ("exp", "log", "dist"):
-        expected = "exact" if getattr(M, f"{name}_is_exact") else "proxy"
-        assert M.operation_kind(name) == expected
+        kind = M.operation_kind(name)
+        if getattr(M, f"{name}_is_exact"):
+            assert kind == "exact"
+        else:
+            assert kind in {"proxy", "numerical-local"}
 
     transport_kind = M.operation_kind("transport")
     assert transport_kind in {"parallel", "isometric", "vector"}
+    assert M.operation_kind("ehess_to_rhess") in {"exact", "projection"}
+    assert M.operation_kind("rgrad_jvp") in {"exact", "projection"}
 
 
 @pytest.mark.parametrize("M", geometries())

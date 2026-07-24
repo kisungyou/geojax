@@ -166,10 +166,20 @@ class _CorrelationCholeskyBase(GeometryMixin):
         raise NotImplementedError
 
     def chart_jvp(self, C: Array, U: Array) -> Array:
+        C = jnp.asarray(C)
+        U = jnp.asarray(U)
+        batch_shape = jnp.broadcast_shapes(C.shape[:-2], U.shape[:-2])
+        C = jnp.broadcast_to(C, batch_shape + self.shape)
+        U = jnp.broadcast_to(U, batch_shape + self.shape)
         U = self.tangent_project(C, U)
         return jax.jvp(self.chart, (C,), (U,))[1]
 
     def inverse_chart_jvp(self, Z: Array, W: Array) -> Array:
+        Z = jnp.asarray(Z)
+        W = jnp.asarray(W)
+        batch_shape = jnp.broadcast_shapes(Z.shape[:-2], W.shape[:-2])
+        Z = jnp.broadcast_to(Z, batch_shape + self.shape)
+        W = jnp.broadcast_to(W, batch_shape + self.shape)
         W = _strict_lower(W)
         return self.tangent_project(
             self.chart_inverse(Z), jax.jvp(self.chart_inverse, (Z,), (W,))[1]
@@ -247,8 +257,11 @@ class _CorrelationCholeskyBase(GeometryMixin):
         return self.inverse_chart_jvp(Z, self.chart(D) - Z)
 
     def dist(self, C: Array, D: Array) -> Array:
+        return jnp.sqrt(self.squared_dist(C, D))
+
+    def squared_dist(self, C: Array, D: Array) -> Array:
         Delta = self.chart(_canonical_correlation(D)) - self.chart(_canonical_correlation(C))
-        return jnp.sqrt(jnp.maximum(_trace_inner(Delta, Delta), 0.0))
+        return jnp.maximum(_trace_inner(Delta, Delta), 0.0)
 
     def transport(self, C: Array, D: Array, U: Array) -> Array:
         D = _canonical_correlation(D)
@@ -277,12 +290,12 @@ class _CorrelationCholeskyBase(GeometryMixin):
     def random_tangent(
         self, key: Array, C: Array, *, scale: float | Array = 1.0, normalize: bool = False
     ) -> Array:
-        Z = scale * _strict_lower(jax.random.normal(key, shape=jnp.shape(C)))
+        Z = _strict_lower(jax.random.normal(key, shape=jnp.shape(C)))
         U = self.inverse_chart_jvp(self.chart(_canonical_correlation(C)), Z)
         if normalize:
             nrm = self.norm(C, U)
             U = jnp.where(nrm[..., None, None] > self.eps, U / nrm[..., None, None], U)
-        return U
+        return scale * U
 
     def frechet_mean_closed_form(self, Cs: Array) -> Array:
         """Closed-form mean in the flat Cholesky chart."""

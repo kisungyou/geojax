@@ -9,6 +9,7 @@ import jax
 import jax.numpy as jnp
 
 from .base import GeometryMixin, Shape, as_sample_shape
+from ._numerics import cos_from_squared_norm, sinc_from_squared_norm
 
 Array = Any
 
@@ -146,13 +147,10 @@ class KendallShape(GeometryMixin):
     def exp(self, X: Array, U: Array) -> Array:
         X = self.project(X)
         U = self.tangent_project(X, U)
-        length = self.norm(X, U)[..., None, None]
-        sinc = jnp.where(
-            length > self.eps,
-            jnp.sin(length) / jnp.maximum(length, self.eps),
-            1.0 - length**2 / 6.0,
+        length_squared = jnp.maximum(self.inner(X, U, U), 0.0)[..., None, None]
+        return (
+            cos_from_squared_norm(length_squared) * X + sinc_from_squared_norm(length_squared) * U
         )
-        return jnp.cos(length) * X + sinc * U
 
     def retr(self, X: Array, U: Array, t: float | Array = 1.0) -> Array:
         return self.project(jnp.asarray(X) + t * self.tangent_project(X, U))
@@ -177,9 +175,7 @@ class KendallShape(GeometryMixin):
         X = self.project(X)
         aligned, _ = self.align(self.project(Y), X)
         cosine = jnp.clip(_trace_inner(X, aligned), -1.0, 1.0)
-        tangent_norm = jnp.linalg.norm(
-            aligned - cosine[..., None, None] * X, axis=(-2, -1)
-        )
+        tangent_norm = jnp.linalg.norm(aligned - cosine[..., None, None] * X, axis=(-2, -1))
         return jnp.arctan2(tangent_norm, cosine)
 
     def transport(self, X: Array, Y: Array, U: Array) -> Array:

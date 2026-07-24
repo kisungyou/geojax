@@ -113,8 +113,10 @@ class StochasticGradient:
         local_key = None
         split_key = get(problem, "split_key", None) if self.key is None else None
         if not callable(split_key):
-            local_key = jax.random.key(0) if self.key is None else (
-                jax.random.key(self.key) if isinstance(self.key, int) else self.key
+            local_key = (
+                jax.random.key(0)
+                if self.key is None
+                else (jax.random.key(self.key) if isinstance(self.key, int) else self.key)
             )
 
         def next_key() -> Array:

@@ -15,7 +15,8 @@ kernelspec:
 Symmetric positive-definite (SPD) matrices appear as covariance matrices,
 diffusion tensors, and kernel matrices. There is no single distinguished
 Riemannian metric on the SPD cone, so a Fréchet mean depends on the geometry
-chosen for the application.
+chosen for the application. The objective extends Fréchet's metric-space
+notion of a mean {cite:p}`frechet1948elements,karcher1977center`.
 
 For observations $P_1,\ldots,P_N$ and a distance $d_g$ induced by geometry
 $g$, the Fréchet objective is
@@ -43,7 +44,11 @@ $$
 The other two means generally require iteration. The affine-invariant metric
 is invariant under arbitrary invertible congruences, while the
 Bures-Wasserstein metric is the covariance component of quadratic optimal
-transport between centered Gaussian distributions.
+transport between centered Gaussian distributions. These constructions are
+developed, respectively, by
+{cite:t}`arsigny2007geometric`, {cite:t}`moakher2005differential`, and
+{cite:t}`bhatia2019bures`; the Gaussian optimal-transport interpretation is
+given by {cite:t}`malago2018wasserstein`.
 
 ```{code-cell} python
 import jax
@@ -285,3 +290,9 @@ respected:
 
 Changing `samples` is enough to repeat the comparison in higher dimensions;
 only the ellipse visualization is specific to $\operatorname{SPD}(2)$.
+
+## References
+
+```{bibliography}
+:filter: docname in docnames
+```

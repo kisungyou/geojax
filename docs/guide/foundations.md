@@ -2,10 +2,15 @@
 
 GeoJAX represents a Riemannian geometry by an object that describes points,
 tangent vectors, a metric, and the maps needed to move between them. The public
-classes follow a two-level contract. `ManifoldProtocol` contains the
-retraction-based operations required by optimizers. `GeometryProtocol` extends
-it with genuine geodesic exponential, logarithm, and distance operations.
-`GeometryMixin` supplies batching and common helpers.
+classes follow a capability-qualified contract. `ManifoldProtocol` contains the
+retraction-based operations required by optimizers. `GeometryProtocol` is a
+structural interface adding the common `exp`, `log`, and `dist` names, but
+satisfying it does not by itself assert that those operations are globally
+exact. `operation_kind` carries that mathematical status at runtime.
+`GeometryMixin` supplies batching and common helpers. Standard geometric
+definitions follow {cite:t}`docarmo1992riemannian`; the computational interface
+is informed by
+{cite:t}`absil2008optimization` and {cite:t}`boumal2023introduction`.
 
 Let $\mathcal M$ be a smooth manifold. At $x\in\mathcal M$, its tangent space is
 $T_x\mathcal M$ and its Riemannian metric is
@@ -122,12 +127,25 @@ $$
 \operatorname{Exp}_x(\operatorname{Log}_x(y))=y.
 $$
 
-`log(x, y)` returns one selected shortest initial velocity when that choice is
-well defined. The corresponding geodesic distance is
+When `operation_kind("log") == "exact"`, `log(x, y)` returns one selected
+shortest initial velocity where that choice is well defined. The corresponding
+geodesic distance is
 
 $$
 d(x,y)=\lVert\operatorname{Log}_x(y)\rVert_x.
 $$
+
+`squared_dist(x, y)` evaluates $d(x,y)^2$ without differentiating the final
+square root. It is the preferred primitive for smooth losses and Fréchet
+objectives because
+
+$$
+\nabla_y d(x,y)^2\big|_{y=x}=0
+$$
+
+is well defined even though the derivative of $d(x,y)$ itself is not defined
+at coincidence. Individual geometries use direct coordinate, angle, or
+spectral formulas where those are more stable than squaring `dist`.
 
 Globally, a logarithm can be nonunique or undefined at a cut locus. Antipodal
 sphere points and Grassmann subspaces with a principal angle $\pi/2$ are
@@ -141,16 +159,18 @@ endpoint-shooting logarithms. Class-specific behavior is documented in the
 Many useful matrix manifolds have efficient retractions but no practical
 closed geodesic formulas. GeoJAX follows the Manopt convention: optimization
 depends on `retr`, `invretr`, and `transport`, while geodesic operations are
-optional mathematically. For a coherent compositional API, retraction-only
+optional mathematically {cite:p}`boumal2014manopt`. For a coherent compositional API, retraction-only
 classes still expose `exp`, `log`, and `dist` as compatibility aliases, with
 machine-readable capability metadata:
 
 | Query | Result |
 |---|---|
 | `operation_kind("exp")` | `"exact"` or `"proxy"` |
-| `operation_kind("log")` | `"exact"` or `"proxy"` |
-| `operation_kind("dist")` | `"exact"` or `"proxy"` |
+| `operation_kind("log")` | `"exact"`, `"numerical-local"`, or `"proxy"` |
+| `operation_kind("dist")` | `"exact"`, `"numerical-local"`, or `"proxy"` |
 | `operation_kind("transport")` | `"parallel"`, `"isometric"`, or `"vector"` |
+| `operation_kind("ehess_to_rhess")` | `"exact"` or `"projection"` |
+| `operation_kind("rgrad_jvp")` | `"exact"` or `"projection"` |
 
 For a retraction-only class,
 
@@ -167,6 +187,11 @@ reported as a geodesic distance. This distinction lets generic optimizers and
 product manifolds compose uniformly without overstating the available
 geometry.
 
+`"numerical-local"` is different from `"proxy"`. It means that an exact
+exponential is available and numerical endpoint shooting seeks a local inverse,
+but convergence does not certify that the returned geodesic is globally
+shortest. The Stiefel and generalized Stiefel logarithms use this status.
+
 ## Retractions and means
 
 `retr(x, u, t)` maps a tangent step back to the manifold. A retraction
@@ -181,21 +206,26 @@ $$
 It agrees with the exponential to first order and may be cheaper to evaluate.
 The default GeoJAX implementation uses
 $R_x(tu)=\operatorname{Exp}_x(tu)$; individual geometries can override it.
+Retractions and compatible vector transports are the central abstraction for
+manifold optimization {cite:p}`absil2008optimization,boumal2023introduction`.
 
 `invretr(x, y)` is a selected local inverse of the retraction. It satisfies
 $R_x(R_x^{-1}(y))\approx y$ near $x$ and provides the displacement needed by
 some derivative-free or quasi-Newton constructions. It is not automatically a
 Riemannian logarithm.
 
-`pair_mean(x, y)` returns the midpoint of the selected geodesic:
+`pair_mean(x, y)` applies the available named maps:
 
 $$
 m(x,y)=\operatorname{Exp}_x\!\left(\tfrac12
 \operatorname{Log}_x(y)\right).
 $$
 
-This is a two-point construction. A sample Fréchet mean instead minimizes
-$\sum_i w_i d(x,x_i)^2$ and is generally an optimization problem.
+It is the selected geodesic midpoint only when `exp` and `log` are exact and the
+minimizing logarithm is unique. With proxy or numerical-local operations it is
+a midpoint-like local construction instead. A sample Fréchet mean minimizes
+$\sum_i w_i d(x,x_i)^2$ and is generally an optimization problem
+{cite:p}`frechet1948elements,karcher1977center`.
 
 ## Transport
 
@@ -238,7 +268,8 @@ This need not equal the Riemannian exponential. They coincide on
 translations; its Riemannian geodesic has a straight translation component,
 whereas the group exponential couples angular and translational velocity.
 Accordingly, the class exposes both `exp`/`log` and
-`group_exp`/`group_log`.
+`group_exp`/`group_log`. The distinction between Lie-group and Riemannian
+exponentials is reviewed by {cite:t}`hall2015lie`.
 
 ## Autodiff and Riemannian derivatives
 
@@ -265,8 +296,11 @@ $$
 
 including connection or embedding-curvature terms when a geometry supplies
 them. The mixin fallback only tangent-projects the ambient Hessian-vector
-product, so second-order solvers on curved spaces should use a geometry-specific
-conversion or a user-supplied `rhess_vec`.
+product and has `operation_kind("ehess_to_rhess") == "projection"`. GeoJAX
+second-order solvers reject that fallback: use a geometry advertising `"exact"`
+or supply `rhess_vec`. The same rule applies to the directional derivative of a
+user-supplied Riemannian gradient through `operation_kind("rgrad_jvp")`. See the
+[optimization guide](optimization.md#second-order-models) for the support table.
 
 ## Random and batched operations
 
@@ -276,7 +310,14 @@ random vector and maps it to $T_x\mathcal M$ according to the geometry. These
 routines are reproducible because randomness is controlled by explicit JAX
 keys.
 
-`GeometryMixin` also supplies leading-axis vectorization at a fixed base point:
+Core pointwise protocol operations accept points shaped
+`batch_shape + M.shape`. Scalar-valued pointwise operations return
+`batch_shape`, while point and tangent operations preserve the event
+dimensions. NumPy-style broadcasting applies to compatible leading shapes.
+Reducers such as sample means document their reduction axes separately.
+`Product` applies the pointwise contract leafwise.
+
+`GeometryMixin` retains convenience names for fixed-base collections:
 
 $$
 \begin{aligned}
@@ -286,8 +327,25 @@ $$
 \end{aligned}
 $$
 
-They are implemented with `jax.vmap`; geometry methods are therefore written
-without Python loops over sample axes.
+These methods delegate to the natively batched operations. Users may also
+compose the methods with `jax.vmap` when a transformation makes the mapped axis
+explicit.
+
+### Differentiability at numerical singularities
+
+Closed geometric formulas often contain removable expressions such as
+$\sin(r)/r$, $\sinh(r)/r$, or spectral divided differences with repeated
+eigenvalues. GeoJAX evaluates their analytic limits and supplies custom JAX
+derivatives where naïve autodiff would otherwise differentiate an undefined
+intermediate eigenbasis. Tests cover zero tangents, coincident points, and
+repeated SPD spectra under both float32 and float64.
+
+This policy does not conceal genuine singularities. Each geometry documents its
+cut-locus convention: sphere, Grassmann, and rotation logarithms return
+nonfinite values where no unique branch is selected, while `Torus` deliberately
+uses its half-open angular representation to choose one of the two directions
+at a component difference of $\pi$. Quotient constructions can likewise select
+a representative through a documented alignment rule.
 
 ## Equivariant embeddings
 
@@ -327,3 +385,9 @@ $$
 and projection, exponential, logarithm, transport, gradient conversion, and
 sampling act independently on the leaves of the matching pytree. Product
 capability metadata is exact only when every factor advertises exactness.
+
+## References
+
+```{bibliography}
+:filter: docname in docnames
+```

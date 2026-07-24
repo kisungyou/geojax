@@ -19,13 +19,9 @@ def test_kendall_shape_constraints_dimension_and_rotation_invariance(dtype_atol)
 
     assert M.dim == 6
     assert bool(M.belongs(X))
-    assert jnp.allclose(
-        jnp.mean(X, axis=0), 0.0, atol=max(1e-12, dtype_atol)
-    )
+    assert jnp.allclose(jnp.mean(X, axis=0), 0.0, atol=max(1e-12, dtype_atol))
     assert jnp.allclose(jnp.linalg.norm(X), 1.0, atol=max(1e-12, dtype_atol))
-    assert jnp.allclose(
-        M.dist(X, X @ rotation), 0.0, atol=max(1e-10, dtype_atol)
-    )
+    assert jnp.allclose(M.dist(X, X @ rotation), 0.0, atol=max(1e-10, dtype_atol))
 
 
 def test_kendall_horizontal_tangent_and_local_roundtrip(dtype_atol):

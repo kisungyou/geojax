@@ -73,17 +73,11 @@ def test_elliptope_and_spectrahedron_constraints_and_tangents(dtype_atol):
     density_tangent = spectrahedron.random_tangent(jax.random.key(3), density)
 
     assert bool(elliptope.belongs(correlation))
-    assert jnp.allclose(
-        jnp.diag(correlation), 1.0, atol=max(1e-10, dtype_atol)
-    )
-    assert jnp.allclose(
-        jnp.diag(corr_tangent), 0.0, atol=max(1e-8, dtype_atol)
-    )
+    assert jnp.allclose(jnp.diag(correlation), 1.0, atol=max(1e-10, dtype_atol))
+    assert jnp.allclose(jnp.diag(corr_tangent), 0.0, atol=max(1e-8, dtype_atol))
     assert bool(elliptope.is_tangent(correlation, corr_tangent))
 
     assert bool(spectrahedron.belongs(density))
     assert jnp.allclose(jnp.trace(density), 1.0, atol=max(1e-10, dtype_atol))
-    assert jnp.allclose(
-        jnp.trace(density_tangent), 0.0, atol=max(1e-10, dtype_atol)
-    )
+    assert jnp.allclose(jnp.trace(density_tangent), 0.0, atol=max(1e-10, dtype_atol))
     assert bool(spectrahedron.is_tangent(density, density_tangent))

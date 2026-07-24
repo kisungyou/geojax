@@ -29,9 +29,7 @@ def test_release_versions_agree():
     assert changelog_match is not None
     changelog_version, release_marker = changelog_match.groups()
     citation = (ROOT / "CITATION.cff").read_text(encoding="utf-8")
-    citation_date = re.search(
-        r"^date-released: (\d{4}-\d{2}-\d{2})$", citation, flags=re.MULTILINE
-    )
+    citation_date = re.search(r"^date-released: (\d{4}-\d{2}-\d{2})$", citation, flags=re.MULTILINE)
 
     assert project_version == geojax.__version__
     assert project_version == docs_version

@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.2.0 - Unreleased
+
+- Standardized native leading-batch semantics across every public geometry and
+  added differentiable `squared_dist` operations.
+- Stabilized zero-tangent exponentials, coincident logarithms, repeated SPD
+  spectra, matrix divided differences, and numerical Stiefel batching while
+  preserving each geometry's documented cut-locus branch policy.
+- Added the pure-JAX `geojax.learning` namespace with pairwise squared
+  distances, geodesic interpolation, and framework-neutral tangent maps,
+  including exact-capability guards and combined time/endpoint batching.
+- Classified Stiefel logarithms and distances as numerical-local endpoint
+  solutions rather than globally certified shortest geodesics.
+- Added exact Hessian capability metadata, the sphere shape-operator
+  correction, and explicit errors when a second-order method requires an
+  unsupported automatic conversion.
+- Added exhaustive numerical stability and nested-batch tests plus compiled
+  spherical and hyperbolic autoencoder release contracts.
+- Added an executable deterministic-autoencoder tutorial comparing Euclidean,
+  spherical, and hyperbolic latent spaces on handwritten digits.
+
 ## 0.1.1 - 2026-07-23
 
 - Made the public optimization API class-only and removed the former

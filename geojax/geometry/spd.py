@@ -22,12 +22,14 @@ optimization module.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import partial
 from typing import Any, Sequence, Tuple, Union
 
 import jax
 import jax.numpy as jnp
 
 from .base import GeometryMixin, as_sample_shape
+from ._numerics import matrix_expm
 
 Array = Any
 Shape = Union[int, Sequence[int], Tuple[int, ...]]
@@ -68,31 +70,93 @@ def _spd_from_eigh(Q: Array, vals: Array) -> Array:
     return (Q * vals[..., None, :]) @ jnp.swapaxes(Q, -1, -2)
 
 
-def _spd_apply_eigfunc(A: Array, func, *, min_eig: float | None = None) -> Array:
-    vals, Q = _eigh_sym(A)
-    if min_eig is not None:
-        vals = jnp.maximum(vals, min_eig)
-    return _spd_from_eigh(Q, func(vals))
-
-
 def _spd_expm(A: Array) -> Array:
-    return _spd_apply_eigfunc(A, jnp.exp)
+    return _sym(matrix_expm(_sym(A)))
 
 
 def _spd_logm(P: Array, eps: float) -> Array:
-    return _spd_apply_eigfunc(P, jnp.log, min_eig=eps)
+    return _spd_logm_differentiable(P, eps)
 
 
 def _spd_sqrtm(P: Array, eps: float) -> Array:
-    return _spd_apply_eigfunc(P, jnp.sqrt, min_eig=eps)
+    return _spd_sqrtm_differentiable(_spd_project_differentiable(P, eps))
 
 
 def _spd_invsqrtm(P: Array, eps: float) -> Array:
-    return _spd_apply_eigfunc(P, lambda x: 1.0 / jnp.sqrt(x), min_eig=eps)
+    return _spd_invsqrtm_differentiable(_spd_project_differentiable(P, eps))
 
 
 def _spd_invm(P: Array, eps: float) -> Array:
-    return _spd_apply_eigfunc(P, lambda x: 1.0 / x, min_eig=eps)
+    return jnp.linalg.inv(_spd_project_differentiable(P, eps))
+
+
+def _spectral_divided_difference(
+    eigenvalues: Array,
+    function_values: Array,
+    derivatives: Array,
+) -> Array:
+    """Stable Loewner matrix for a scalar spectral function."""
+    lam_i = eigenvalues[..., :, None]
+    lam_j = eigenvalues[..., None, :]
+    value_i = function_values[..., :, None]
+    value_j = function_values[..., None, :]
+    deriv_i = derivatives[..., :, None]
+    deriv_j = derivatives[..., None, :]
+    denominator = lam_i - lam_j
+    dtype = jnp.result_type(eigenvalues, float)
+    scale = jnp.maximum(1.0, jnp.maximum(jnp.abs(lam_i), jnp.abs(lam_j)))
+    separated = jnp.abs(denominator) > 32.0 * jnp.finfo(dtype).eps * scale
+    safe_denominator = jnp.where(separated, denominator, jnp.ones_like(denominator))
+    quotient = (value_i - value_j) / safe_denominator
+    repeated = 0.5 * (deriv_i + deriv_j)
+    return jnp.where(separated, quotient, repeated)
+
+
+@partial(jax.custom_jvp, nondiff_argnums=(1,))
+def _spd_project_differentiable(P: Array, eps: float) -> Array:
+    """Eigenvalue-clipping SPD projection with a repeated-spectrum-safe JVP."""
+    P = _sym(jnp.asarray(P))
+    eigenvalues, eigenvectors = _eigh_sym(P)
+    clipped = jnp.maximum(eigenvalues, eps)
+    return _spd_from_eigh(eigenvectors, clipped)
+
+
+@_spd_project_differentiable.defjvp
+def _spd_project_differentiable_jvp(eps, primals, tangents):
+    (P,), (E,) = primals, tangents
+    P = _sym(jnp.asarray(P))
+    E = _sym(jnp.asarray(E))
+    eigenvalues, eigenvectors = _eigh_sym(P)
+    clipped = jnp.maximum(eigenvalues, eps)
+    derivatives = (eigenvalues > eps).astype(P.dtype)
+    loewner = _spectral_divided_difference(eigenvalues, clipped, derivatives)
+    rotated = jnp.swapaxes(eigenvectors, -1, -2) @ E @ eigenvectors
+    derivative = eigenvectors @ (loewner * rotated) @ jnp.swapaxes(eigenvectors, -1, -2)
+    return _spd_from_eigh(eigenvectors, clipped), _sym(derivative)
+
+
+@partial(jax.custom_jvp, nondiff_argnums=(1,))
+def _spd_logm_differentiable(P: Array, eps: float) -> Array:
+    """Principal symmetric matrix logarithm with a stable Frechet derivative."""
+    P = _sym(jnp.asarray(P))
+    eigenvalues, eigenvectors = _eigh_sym(P)
+    safe = jnp.maximum(eigenvalues, eps)
+    return _spd_from_eigh(eigenvectors, jnp.log(safe))
+
+
+@_spd_logm_differentiable.defjvp
+def _spd_logm_differentiable_jvp(eps, primals, tangents):
+    (P,), (E,) = primals, tangents
+    P = _sym(jnp.asarray(P))
+    E = _sym(jnp.asarray(E))
+    eigenvalues, eigenvectors = _eigh_sym(P)
+    safe = jnp.maximum(eigenvalues, eps)
+    values = jnp.log(safe)
+    derivatives = jnp.where(eigenvalues > eps, 1.0 / safe, 0.0)
+    loewner = _spectral_divided_difference(eigenvalues, values, derivatives)
+    rotated = jnp.swapaxes(eigenvectors, -1, -2) @ E @ eigenvectors
+    derivative = eigenvectors @ (loewner * rotated) @ jnp.swapaxes(eigenvectors, -1, -2)
+    return _spd_from_eigh(eigenvectors, values), _sym(derivative)
 
 
 @jax.custom_jvp
@@ -154,24 +218,18 @@ def _frechet_spectral(A: Array, E: Array, func_name: str, eps: float) -> Array:
     E = _sym(E)
     vals, Q = _eigh_sym(A)
     Et = jnp.swapaxes(Q, -1, -2) @ E @ Q
-    lam_i = vals[..., :, None]
-    lam_j = vals[..., None, :]
-    denom = lam_i - lam_j
 
     if func_name == "exp":
-        f_i = jnp.exp(lam_i)
-        f_j = jnp.exp(lam_j)
-        diag_deriv = jnp.exp(lam_i)
+        function_values = jnp.exp(vals)
+        derivatives = function_values
     elif func_name == "log":
-        safe_i = jnp.maximum(lam_i, eps)
-        safe_j = jnp.maximum(lam_j, eps)
-        f_i = jnp.log(safe_i)
-        f_j = jnp.log(safe_j)
-        diag_deriv = 1.0 / safe_i
+        safe = jnp.maximum(vals, eps)
+        function_values = jnp.log(safe)
+        derivatives = jnp.where(vals > eps, 1.0 / safe, 0.0)
     else:
         raise ValueError("func_name must be 'exp' or 'log'.")
 
-    L = jnp.where(jnp.abs(denom) > eps, (f_i - f_j) / denom, diag_deriv)
+    L = _spectral_divided_difference(vals, function_values, derivatives)
     Ft = L * Et
     return _sym(Q @ Ft @ jnp.swapaxes(Q, -1, -2))
 
@@ -224,10 +282,7 @@ class SPDLogEuclidean(GeometryMixin):
         return jnp.linalg.norm(U - jnp.swapaxes(U, -1, -2), axis=(-2, -1)) <= tol
 
     def project(self, P: Array) -> Array:
-        P = _sym(jnp.asarray(P))
-        vals, Q = _eigh_sym(P)
-        vals = jnp.maximum(vals, self.eps)
-        return _spd_from_eigh(Q, vals)
+        return _spd_project_differentiable(P, self.eps)
 
     def tangent_project(self, P: Array, U: Array) -> Array:
         del P
@@ -275,8 +330,12 @@ class SPDLogEuclidean(GeometryMixin):
         return self.dexp(A, B - A)
 
     def dist(self, P: Array, Q: Array) -> Array:
+        return jnp.sqrt(self.squared_dist(P, Q))
+
+    def squared_dist(self, P: Array, Q: Array) -> Array:
+        """Squared Euclidean distance between matrix-log coordinates."""
         D = self.logm(self.project(Q)) - self.logm(self.project(P))
-        return jnp.sqrt(jnp.maximum(_trace_inner(D, D), 0.0))
+        return jnp.maximum(_trace_inner(D, D), 0.0)
 
     def transport(self, P: Array, Q: Array, U: Array) -> Array:
         B = self.logm(self.project(Q))
@@ -378,10 +437,7 @@ class SPDAffineInvariant(GeometryMixin):
         return jnp.linalg.norm(U - jnp.swapaxes(U, -1, -2), axis=(-2, -1)) <= tol
 
     def project(self, P: Array) -> Array:
-        P = _sym(jnp.asarray(P))
-        vals, Q = _eigh_sym(P)
-        vals = jnp.maximum(vals, self.eps)
-        return _spd_from_eigh(Q, vals)
+        return _spd_project_differentiable(P, self.eps)
 
     def tangent_project(self, P: Array, U: Array) -> Array:
         del P
@@ -420,13 +476,17 @@ class SPDAffineInvariant(GeometryMixin):
         A = Pinvsqrt @ Q @ Pinvsqrt
         return _sym(Psqrt @ _spd_logm(A, self.eps) @ Psqrt)
 
-    def dist(self, P: Array, Q: Array) -> Array:
+    def squared_dist(self, P: Array, Q: Array) -> Array:
+        """Squared affine-invariant distance."""
         P = self.project(P)
         Q = self.project(Q)
         Pinvsqrt = _spd_invsqrtm(P, self.eps)
         A = Pinvsqrt @ Q @ Pinvsqrt
         L = _spd_logm(A, self.eps)
-        return jnp.sqrt(jnp.maximum(_trace_inner(L, L), 0.0))
+        return jnp.maximum(_trace_inner(L, L), 0.0)
+
+    def dist(self, P: Array, Q: Array) -> Array:
+        return jnp.sqrt(self.squared_dist(P, Q))
 
     def transport(self, P: Array, Q: Array, U: Array) -> Array:
         P = self.project(P)
@@ -529,9 +589,7 @@ class SPDBuresWasserstein(GeometryMixin):
         return sym_ok & pd_ok
 
     def project(self, P: Array) -> Array:
-        P = _sym(jnp.asarray(P))
-        vals, eigvecs = _eigh_sym(P)
-        return _spd_from_eigh(eigvecs, jnp.maximum(vals, self.eps))
+        return _spd_project_differentiable(P, self.eps)
 
     def is_tangent(self, P: Array, U: Array, atol: float | None = None) -> Array:
         del P

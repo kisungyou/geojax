@@ -138,9 +138,7 @@ class ConstantStep:
         newcost = cost_value(problem, newx)
         accepted = math.isfinite(as_float(newcost))
         if not accepted:
-            return _failure(
-                "constant", x, cost, f0, df0, "non-finite trial cost", costevals=1
-            )
+            return _failure("constant", x, cost, f0, df0, "non-finite trial cost", costevals=1)
         step = alpha * norm_d
         stats = LineSearchStats(
             costevals=1,
@@ -334,15 +332,17 @@ class StrongWolfe:
         if int(self.max_steps) <= 0 or int(self.max_zoom_steps) <= 0:
             raise ValueError("max_steps and max_zoom_steps must be positive.")
 
-        base_alpha = float(self.initial_stepsize) / norm_d if self.normalize_step else float(
-            self.initial_stepsize
+        base_alpha = (
+            float(self.initial_stepsize) / norm_d
+            if self.normalize_step
+            else float(self.initial_stepsize)
         )
         if initial_alpha is not None:
             base_alpha = float(initial_alpha)
         elif state is not None and state.previous_alpha is not None:
             base_alpha = max(base_alpha, float(state.previous_alpha))
-        max_alpha = float(self.max_stepsize) / norm_d if self.normalize_step else float(
-            self.max_stepsize
+        max_alpha = (
+            float(self.max_stepsize) / norm_d if self.normalize_step else float(self.max_stepsize)
         )
         alpha = min(base_alpha, max_alpha)
         if not math.isfinite(alpha) or alpha <= 0.0:
@@ -394,7 +394,11 @@ class StrongWolfe:
                 a = 0.5 * (lo + hi)
                 point, value, grad, derivative = evaluate(a)
                 phi = as_float(value)
-                if (not math.isfinite(phi)) or phi > f0 + self.sufficient_decrease * a * df0 or phi >= phi_lo:
+                if (
+                    (not math.isfinite(phi))
+                    or phi > f0 + self.sufficient_decrease * a * df0
+                    or phi >= phi_lo
+                ):
                     hi = a
                     continue
                 if abs(derivative) <= -self.curvature * df0:

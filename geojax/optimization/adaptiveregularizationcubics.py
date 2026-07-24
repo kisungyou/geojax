@@ -65,19 +65,18 @@ class AdaptiveRegularizationCubics:
         x = require(problem, "x0")
         hessian_vector = get(problem, "rhess_vec", None)
         if hessian_vector is None:
-            raise ValueError(
-                "AdaptiveRegularizationCubics requires problem.rhess_vec(x, u)."
-            )
+            raise ValueError("AdaptiveRegularizationCubics requires problem.rhess_vec(x, u).")
         if self.initial_sigma <= 0.0:
             raise ValueError("initial_sigma must be positive.")
         if not 0.0 < self.min_sigma <= self.initial_sigma <= self.max_sigma:
-            raise ValueError("Sigma bounds must satisfy 0 < min_sigma <= initial_sigma <= max_sigma.")
+            raise ValueError(
+                "Sigma bounds must satisfy 0 < min_sigma <= initial_sigma <= max_sigma."
+            )
         if not 0.0 < self.decrease_factor < 1.0 or self.increase_factor <= 1.0:
             raise ValueError("decrease_factor must be in (0, 1) and increase_factor must exceed 1.")
         if not 0.0 <= self.acceptance_threshold < self.very_successful_threshold < 1.0:
             raise ValueError(
-                "Thresholds must satisfy 0 <= acceptance_threshold "
-                "< very_successful_threshold < 1."
+                "Thresholds must satisfy 0 <= acceptance_threshold < very_successful_threshold < 1."
             )
 
         sigma = float(self.initial_sigma)

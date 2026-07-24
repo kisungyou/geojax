@@ -1,0 +1,13 @@
+# Learning API
+
+Pure-JAX operations for manifold-valued features and geometry-aware losses.
+
+```{eval-rst}
+.. currentmodule:: geojax.learning
+
+.. autofunction:: pairwise_squared_dist
+
+.. autofunction:: geodesic_interpolate
+
+.. autofunction:: tangent_map
+```

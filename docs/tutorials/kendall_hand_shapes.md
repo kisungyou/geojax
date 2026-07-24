@@ -15,14 +15,15 @@ kernelspec:
 This tutorial analyzes real skeletal hand poses using Kendall shape space. A
 hand is represented by $22$ joints in $\mathbb R^3$. We want to compare the
 shape of a pose without letting its location, physical scale, or global
-orientation dominate the result.
+orientation dominate the result. Kendall's quotient construction supplies the
+statistical shape space used here {cite:p}`kendall1984shape`.
 
 The data are a 52-pose subset of the SHREC'17 3D hand-gesture dataset,
 distributed by the [Geomstats dataset
 module](https://github.com/geomstats/geomstats/tree/master/geomstats/datasets/data/hands).
 There are 25 **Grab** poses and 27 **Expand** poses. The source study is De
-Smedt et al., [SHREC'17 Track: 3D Hand Gesture Recognition Using a Depth and
-Skeletal Dataset](https://doi.org/10.2312/3dor.20171049).
+Smedt et al.'s SHREC'17 hand-gesture track
+{cite:p}`desmedt2017shrec`.
 
 GeoJAX vendors the two small source text files with this page, so the
 documentation remains executable without downloading data at build time. See
@@ -332,3 +333,9 @@ translation, scale, and orientation have been removed. The classifier is
 deliberately simple: it demonstrates that intrinsic distances can expose pose
 information, but a serious evaluation would use repeated subject-aware splits,
 uncertainty estimates, and comparisons with tangent-space or skeletal models.
+
+## References
+
+```{bibliography}
+:filter: docname in docnames
+```

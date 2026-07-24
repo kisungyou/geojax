@@ -16,7 +16,9 @@ Rigid registration estimates the rotation and translation that align two
 matched point sets. It appears in medical-image registration, microscopy,
 robot perception, and shape analysis. Working in two dimensions makes every
 part of the fit visible while retaining the same geometry used in higher
-dimensions.
+dimensions. The classical orthogonal Procrustes solution for the rotation uses
+an SVD {cite:p}`kabsch1976solution`; here we instead expose the same constrained
+problem to a manifold optimizer.
 
 The special Euclidean group is
 
@@ -190,3 +192,9 @@ For pose interpolation and kinematics, note that `SpecialEuclidean.exp` is the
 Riemannian exponential of the canonical product metric, while
 `SpecialEuclidean.group_exp` is the coupled matrix-group exponential. The
 [geometry guide](../guide/geometry.md) states both formulas explicitly.
+
+## References
+
+```{bibliography}
+:filter: docname in docnames
+```

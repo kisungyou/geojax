@@ -47,6 +47,9 @@ class Euclidean(GeometryMixin):
         Tolerance used in shape/tangency checks.
     """
 
+    hessian_conversion_is_exact = True
+    riemannian_gradient_jvp_is_exact = True
+
     size: tuple[int, ...]
     atol: float
 
@@ -65,11 +68,24 @@ class Euclidean(GeometryMixin):
     def belongs(self, x: Array, atol: float | None = None) -> Array:
         del atol
         x = jnp.asarray(x)
-        return jnp.asarray(tuple(x.shape) == self.shape)
+        if x.ndim < len(self.shape) or tuple(x.shape[-len(self.shape) :]) != self.shape:
+            return jnp.asarray(False)
+        return jnp.ones(x.shape[: -len(self.shape)], dtype=bool)
 
     def is_tangent(self, x: Array, u: Array, atol: float | None = None) -> Array:
-        del x, atol
-        return jnp.asarray(tuple(jnp.asarray(u).shape) == self.shape)
+        del atol
+        x = jnp.asarray(x)
+        u = jnp.asarray(u)
+        event_ndim = len(self.shape)
+        if (
+            x.ndim < event_ndim
+            or u.ndim < event_ndim
+            or tuple(x.shape[-event_ndim:]) != self.shape
+            or tuple(u.shape[-event_ndim:]) != self.shape
+        ):
+            return jnp.asarray(False)
+        batch_shape = jnp.broadcast_shapes(x.shape[:-event_ndim], u.shape[:-event_ndim])
+        return jnp.ones(batch_shape, dtype=bool)
 
     def project(self, x: Array) -> Array:
         return jnp.asarray(x)
@@ -86,7 +102,8 @@ class Euclidean(GeometryMixin):
 
     def inner(self, x: Array, u: Array, v: Array) -> Array:
         del x
-        return jnp.sum(u * v)
+        axes = tuple(range(-len(self.shape), 0))
+        return jnp.sum(u * v, axis=axes)
 
     def norm(self, x: Array, u: Array) -> Array:
         return jnp.sqrt(jnp.maximum(self.inner(x, u, u), 0.0))
@@ -146,11 +163,12 @@ class Euclidean(GeometryMixin):
         scale: float | Array = 1.0,
         normalize: bool = False,
     ) -> Array:
-        u = scale * jax.random.normal(key, shape=jnp.shape(x))
+        u = jax.random.normal(key, shape=jnp.shape(x))
         if normalize:
-            nrm = jnp.linalg.norm(u)
+            axes = tuple(range(-len(self.shape), 0))
+            nrm = jnp.sqrt(jnp.sum(u * u, axis=axes, keepdims=True))
             u = jnp.where(nrm > 0.0, u / nrm, u)
-        return u
+        return scale * u
 
 
 __all__ = ["Euclidean"]

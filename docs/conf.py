@@ -12,10 +12,11 @@ sys.path.insert(0, str(ROOT))
 project = "GeoJAX"
 author = "Kisung You"
 copyright = "2026, Kisung You"
-release = "0.1.1"
+release = "0.2.0"
 
 extensions = [
     "myst_nb",
+    "sphinxcontrib.bibtex",
     "sphinx.ext.autodoc",
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
@@ -48,9 +49,14 @@ myst_enable_extensions = [
 myst_heading_anchors = 3
 
 nb_execution_mode = "force"
-nb_execution_timeout = 180
+nb_execution_timeout = 300
 nb_execution_raise_on_error = True
 nb_merge_streams = True
+
+bibtex_bibfiles = ["references.bib"]
+bibtex_reference_style = "author_year"
+bibtex_default_style = "alpha"
+suppress_warnings = ["bibtex.duplicate_citation"]
 
 html_theme = "pydata_sphinx_theme"
 html_title = "GeoJAX"

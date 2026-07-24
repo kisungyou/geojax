@@ -7,12 +7,13 @@
 
 # GeoJAX
 
-GeoJAX is a JAX-native toolkit for Riemannian geometry and manifold
-optimization. Geometry objects provide manifold primitives, models provide
-JAX scalar cost functions, and class-style solvers combine the two.
+GeoJAX is a JAX-native toolkit for Riemannian geometry, manifold optimization,
+and manifold-valued learning. Geometry objects provide manifold primitives,
+models provide JAX computations, and optimization or learning utilities
+compose the two.
 
 > [!IMPORTANT]
-> GeoJAX is alpha software. The 0.1 series deliberately favors a coherent
+> GeoJAX is alpha software. The 0.2 series deliberately favors a coherent
 > scientific API over backward compatibility.
 
 ## Highlights
@@ -21,8 +22,10 @@ JAX scalar cost functions, and class-style solvers combine the two.
   machine-readable retraction and transport proxies elsewhere.
 - Matrix manifolds, Lie groups, hyperbolic spaces, shape spaces, low-rank
   models, and arbitrary pytree products.
-- JAX autodifferentiation, JIT-compatible geometry primitives, composable
-  batch helpers, and pytree-safe optimization state.
+- JAX autodifferentiation, JIT-compatible geometry primitives, native batches,
+  stable squared distances, and pytree-safe optimization state.
+- Framework-neutral primitives for pairwise manifold distances, geodesic
+  interpolation, and tangent-space maps in compiled learning systems.
 - Executable tutorial pages that place mathematical discussion, code, output,
   and figures in one document.
 
@@ -85,8 +88,11 @@ the iteration to the selected solver.
 Geometry instances are static configuration objects. Their numerical protocol
 methods accept array or pytree arguments and compose with `jax.jit`; random
 generation takes explicit PRNG keys, and `exp_batch`, `log_batch`, and
-`dist_batch` compose `jax.vmap` with JIT compilation. GeoJAX also supports
-JAX-derived gradients and Hessian-vector products on array and Product states.
+`dist_batch` delegate to native leading-batch behavior. The same methods
+compose with `jax.vmap` and JIT compilation. GeoJAX also supports JAX-derived
+gradients on array and Product states. Automatic Riemannian Hessian-vector
+products are enabled only for geometries advertising an exact conversion;
+other second-order problems must provide `rhess_vec` explicitly.
 
 Solver `solve()` methods are deliberately Python drivers rather than
 whole-solver JIT kernels. They perform stopping checks, callbacks, timing,
@@ -122,6 +128,7 @@ strong-Wolfe line-search strategies.
 See the
 [geometry guide](https://www.kisungyou.com/geojax/guide/geometry.html),
 [optimization guide](https://www.kisungyou.com/geojax/guide/optimization.html),
+[manifold-valued learning guide](https://www.kisungyou.com/geojax/guide/learning.html),
 and
 [executable tutorials](https://www.kisungyou.com/geojax/tutorials/)
 for the mathematical and computational conventions.
@@ -163,6 +170,8 @@ for the exact matrix.
 The
 [geometry protocol](https://www.kisungyou.com/geojax/development/geometry_protocol.html)
 and
+[learning protocol](https://www.kisungyou.com/geojax/development/learning_protocol.html),
+along with the
 [optimization protocol](https://www.kisungyou.com/geojax/development/optimization_protocol.html)
 describe the contracts expected from new implementations. Maintainers can
 follow the

@@ -20,6 +20,13 @@ import jax
 import jax.numpy as jnp
 
 from .base import GeometryMixin, as_sample_shape
+from ._numerics import (
+    acos_over_sin,
+    acos_squared,
+    cos_from_squared_norm,
+    sinc_from_squared_norm,
+    squared_norm,
+)
 
 Array = Any
 Shape = Union[int, Sequence[int], Tuple[int, ...]]
@@ -38,6 +45,9 @@ class Sphere(GeometryMixin):
     eps:
         Small positive number used in numerically stable divisions.
     """
+
+    hessian_conversion_is_exact = True
+    riemannian_gradient_jvp_is_exact = True
 
     size: int
     atol: float
@@ -140,15 +150,8 @@ class Sphere(GeometryMixin):
         """
         x = jnp.asarray(x)
         u = self.tangent_project(x, jnp.asarray(u))
-        r = jnp.linalg.norm(u, axis=-1, keepdims=True)
-        r2 = r * r
-        r_safe = jnp.where(r > self.eps, r, 1.0)
-        sin_over_r = jnp.where(
-            r > self.eps,
-            jnp.sin(r) / r_safe,
-            1.0 - r2 / 6.0 + (r2 * r2) / 120.0,
-        )
-        y = jnp.cos(r) * x + sin_over_r * u
+        r2 = squared_norm(u, axis=-1, keepdims=True)
+        y = cos_from_squared_norm(r2) * x + sinc_from_squared_norm(r2) * u
         return self.project(y)
 
     def log(self, x: Array, y: Array) -> Array:
@@ -166,23 +169,22 @@ class Sphere(GeometryMixin):
         x = self.project(x)
         y = self.project(y)
         dot = jnp.clip(self._dot(x, y, keepdims=True), -1.0, 1.0)
-        theta = jnp.arccos(dot)
         tangent = y - dot * x
-        sin_theta = jnp.sqrt(jnp.maximum(1.0 - dot * dot, 0.0))
-        theta2 = theta * theta
-        coef_small = 1.0 + theta2 / 6.0 + 7.0 * theta2 * theta2 / 360.0
-        sin_safe = jnp.where(sin_theta > self.eps, sin_theta, 1.0)
-        coef = jnp.where(sin_theta > self.eps, theta / sin_safe, coef_small)
-        v = coef * tangent
+        tangent_squared = squared_norm(tangent, axis=-1, keepdims=True)
+        v = acos_over_sin(dot, tangent_squared) * tangent
         antipodal = dot < (-1.0 + 10.0 * self.atol)
         return jnp.where(antipodal, jnp.nan, self.tangent_project(x, v))
 
-    def dist(self, x: Array, y: Array) -> Array:
-        """Geodesic distance on the unit sphere."""
+    def squared_dist(self, x: Array, y: Array) -> Array:
+        """Squared geodesic distance with a finite coincident-point gradient."""
         x = self.project(x)
         y = self.project(y)
         dot = jnp.clip(self._dot(x, y), -1.0, 1.0)
-        return jnp.arccos(dot)
+        return acos_squared(dot)
+
+    def dist(self, x: Array, y: Array) -> Array:
+        """Geodesic distance on the unit sphere."""
+        return jnp.sqrt(self.squared_dist(x, y))
 
     def transport(self, x: Array, y: Array, u: Array) -> Array:
         """Parallel transport along the unique shortest geodesic from x to y.
@@ -215,17 +217,14 @@ class Sphere(GeometryMixin):
         """
         x = self.project(x)
         v = self.tangent_project(x, v)
-        r = jnp.linalg.norm(v, axis=-1, keepdims=True)
-        tr = t * r
-        r2 = r * r
-        r_safe = jnp.where(r > self.eps, r, 1.0)
-        sin_tr_over_r = jnp.where(
-            r > self.eps,
-            jnp.sin(tr) / r_safe,
-            t - (t**3) * r2 / 6.0 + (t**5) * r2 * r2 / 120.0,
-        )
-        x_t = jnp.cos(tr) * x + sin_tr_over_r * v
-        v_t = -r * jnp.sin(tr) * x + jnp.cos(tr) * v
+        r2 = squared_norm(v, axis=-1, keepdims=True)
+        t_array = jnp.asarray(t)
+        t_array = jnp.reshape(t_array, t_array.shape + (1,))
+        tr2 = t_array * t_array * r2
+        cosine = cos_from_squared_norm(tr2)
+        sinc = sinc_from_squared_norm(tr2)
+        x_t = cosine * x + t_array * sinc * v
+        v_t = -t_array * r2 * sinc * x + cosine * v
         x_t = self.project(x_t)
         v_t = self.tangent_project(x_t, v_t)
         return x_t, v_t
@@ -236,6 +235,19 @@ class Sphere(GeometryMixin):
     def egrad_to_rgrad(self, x: Array, egrad: Array) -> Array:
         """Convert an ambient Euclidean gradient to a Riemannian gradient."""
         return self.tangent_project(x, egrad)
+
+    def ehess_to_rhess(
+        self,
+        x: Array,
+        egrad: Array,
+        ehess_vec: Array,
+        u: Array,
+    ) -> Array:
+        """Convert an ambient Hessian product using the sphere shape operator."""
+        x = self.project(x)
+        u = self.tangent_project(x, u)
+        correction = self._dot(x, jnp.asarray(egrad), keepdims=True) * u
+        return self.tangent_project(x, jnp.asarray(ehess_vec)) - correction
 
     # ------------------------------------------------------------------
     # Random initialization / tangent Gaussian

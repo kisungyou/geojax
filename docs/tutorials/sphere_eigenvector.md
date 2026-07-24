@@ -7,9 +7,9 @@ kernelspec:
 
 # Dominant eigenvector on the circle
 
-This first problem follows the classical sphere example used to introduce
-[Manopt](https://www.manopt.org/firstexample.html) and
-[Pymanopt](https://pymanopt.org/docs/stable/quickstart.html). We use
+This first problem is the classical Rayleigh-quotient example for optimization
+on a sphere and appears throughout the matrix-manifold optimization literature
+{cite:p}`edelman1998geometry,absil2008optimization,boumal2014manopt`. We use
 $S^1\subset\mathbb{R}^2$ so that the optimizer and objective can be seen
 directly.
 
@@ -142,3 +142,9 @@ plt.show()
 The estimated vector agrees with the direct eigendecomposition up to numerical
 precision. More importantly, every iterate remains on the unit circle; no
 penalty or post-hoc normalization is needed in the optimization model.
+
+## References
+
+```{bibliography}
+:filter: docname in docnames
+```

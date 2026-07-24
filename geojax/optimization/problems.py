@@ -138,6 +138,7 @@ class FiniteSum(Minimize):
 
     def batch_cost_and_grad(self, x: Array, indices: Array) -> tuple[Array, Array]:
         """Return mini-batch cost and Riemannian gradient."""
+
         def objective(point: Array) -> Array:
             return self._batch_cost(point, indices)
 
