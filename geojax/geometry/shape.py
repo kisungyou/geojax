@@ -8,7 +8,7 @@ from typing import Any, Sequence
 import jax
 import jax.numpy as jnp
 
-from .base import GeometryMixin, Shape, as_sample_shape
+from .base import ExactGeometryMixin, Shape, as_sample_shape
 from ._numerics import cos_from_squared_norm, sinc_from_squared_norm
 
 Array = Any
@@ -32,7 +32,7 @@ def _parse_size(size: int | Sequence[int]) -> tuple[int, int]:
 
 
 @dataclass(frozen=True, init=False)
-class KendallShape(GeometryMixin):
+class KendallShape(ExactGeometryMixin):
     """Regular Kendall shape space of centered, scale-normalized landmarks.
 
     Public points are pre-shape matrices of size ``landmarks x ambient_dim``.
@@ -71,7 +71,7 @@ class KendallShape(GeometryMixin):
         return preshape_dim - rotations_dim
 
     def center(self, X: Array) -> Array:
-        X = jnp.asarray(X)
+        X = self._check_shape(X, name="X")
         return X - jnp.mean(X, axis=-2, keepdims=True)
 
     def _template(self, dtype: jnp.dtype) -> Array:
@@ -83,6 +83,8 @@ class KendallShape(GeometryMixin):
     def belongs(self, X: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
         X = jnp.asarray(X)
+        if not self._shape_matches(X):
+            return self._shape_failure(X)
         centered = jnp.linalg.norm(jnp.mean(X, axis=-2), axis=-1) <= tol
         normalized = jnp.abs(jnp.linalg.norm(X, axis=(-2, -1)) - 1.0) <= tol
         singular_values = jnp.linalg.svd(X, compute_uv=False)
@@ -90,17 +92,23 @@ class KendallShape(GeometryMixin):
         return centered & normalized & regular
 
     def project(self, A: Array) -> Array:
+        A = self._check_shape(A, name="A")
         centered = self.center(A)
         length = jnp.linalg.norm(centered, axis=(-2, -1), keepdims=True)
         template = jnp.broadcast_to(self._template(centered.dtype), centered.shape)
-        return jnp.where(length > self.eps, centered / jnp.maximum(length, self.eps), template)
+        normalized = centered / jnp.maximum(length, self.eps)
+        singular_values = jnp.linalg.svd(normalized, compute_uv=False)
+        regular = jnp.min(singular_values, axis=-1) > self.atol
+        valid = (length[..., 0, 0] > self.eps) & regular
+        return jnp.where(valid[..., None, None], normalized, template)
 
     normalize = project
 
     def align(self, Y: Array, X: Array) -> tuple[Array, Array]:
         """Align ``Y`` to ``X`` by orientation-preserving Procrustes rotation."""
+        Y, X = self._check_shapes(("Y", Y), ("X", X))
         cross = _transpose(Y) @ X
-        left, _, right_t = jnp.linalg.svd(cross)
+        left, _, right_t = jnp.linalg.svd(cross, full_matrices=False)
         provisional = left @ right_t
         last_sign = jnp.where(jnp.linalg.det(provisional) < 0.0, -1.0, 1.0)
         signs = jnp.ones(left.shape[:-1], dtype=left.dtype)
@@ -120,6 +128,7 @@ class KendallShape(GeometryMixin):
 
     def tangent_project(self, X: Array, U: Array) -> Array:
         X = self.project(X)
+        _, U = self._check_shapes(("X", X), ("U", U))
         U = self.center(U)
         U = U - X * _trace_inner(X, U)[..., None, None]
         return U - X @ self._vertical_generator(X, U)
@@ -130,7 +139,9 @@ class KendallShape(GeometryMixin):
 
     def is_tangent(self, X: Array, U: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
-        U = jnp.asarray(U)
+        if not self._shape_matches(X, U):
+            return self._shape_failure(X)
+        X, U = self._check_shapes(("X", X), ("U", U))
         centered = jnp.linalg.norm(jnp.mean(U, axis=-2), axis=-1) <= tol
         spherical = jnp.abs(_trace_inner(X, U)) <= tol
         horizontal = _transpose(X) @ U
@@ -138,7 +149,7 @@ class KendallShape(GeometryMixin):
         return centered & spherical & horizontal
 
     def inner(self, X: Array, U: Array, V: Array) -> Array:
-        del X
+        _, U, V = self._check_shapes(("X", X), ("U", U), ("V", V))
         return _trace_inner(U, V)
 
     def norm(self, X: Array, U: Array) -> Array:

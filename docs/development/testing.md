@@ -31,6 +31,12 @@ zero tangents, logarithms and squared distances at coincident points, and SPD
 matrix functions at repeated eigenvalues. Directional finite differences
 independently check representative JVPs away from cut loci.
 
+Contract tests additionally project zero, noisy, indefinite, and rank-deficient
+ambient inputs and require the repaired value to pass membership. Malformed
+event dimensions must fail before an operation can silently run on a different
+manifold. Float32 tests explicitly check open-ball margins and the active
+spectral floors used by SPD and fixed-rank repairs.
+
 Second-order tests verify known Riemannian Hessian identities, including the
 sphere shape-operator term, and require unsupported automatic conversions to
 fail with an explicit request for `rhess_vec`.
@@ -55,19 +61,41 @@ python -m pip install -e ".[dev]"
 make test-matrix
 ```
 
-The tox matrix covers:
+The first run downloads managed CPython interpreters through `tox-uv`.
+Subsequent runs reuse those interpreters and isolated tox environments. Tox
+uses managed interpreters even when a matching conda or system Python happens
+to be active, making the matrix independent of a developer's base
+environment. Missing versions are errors; they are never silently skipped.
+The supported minor versions also live in `.python-versions`, so
+`uv python install` can prepare all of them directly.
+
+For a faster laptop run with bounded and coverage-safe concurrency:
+
+```bash
+make test-matrix-parallel
+```
+
+The default is two workers. Override it only when the machine has enough CPU
+and memory, for example `make test-matrix-parallel TOX_PARALLEL=3`.
+
+The release-blocking matrix is pinned and covers:
 
 | Python | Dependencies | JAX precision |
 |---|---|---|
-| 3.11 | JAX 0.6.0 and NumPy 1.26 | float32, float64 |
-| 3.11 | current compatible releases | float32, float64 |
-| 3.12 | current compatible releases | float32, float64 |
-| 3.13 | current compatible releases | float32, float64 |
+| 3.11 | JAX 0.6.0 and NumPy 1.26.4 | float32, float64 |
+| 3.11 | JAX 0.10.2 and NumPy 2.4.4 | float32, float64 |
+| 3.12 | JAX 0.11.0 and NumPy 2.4.4 | float32, float64 |
+| 3.13 | JAX 0.11.0 and NumPy 2.4.4 | float32, float64 |
+| 3.14 | JAX 0.11.0 and NumPy 2.4.4 | float32, float64 |
 
-Missing Python interpreters are errors rather than silently skipped
-environments. The lower-bound environment guards the versions promised by
-`pyproject.toml`; the latest environments expose upstream compatibility
-regressions.
+The lower-bound environments guard the oldest runtime versions promised by
+`pyproject.toml`. Stable environments pin JAX, JAXlib, NumPy, SciPy,
+`ml-dtypes`, `opt-einsum`, pytest, and coverage tooling, preventing a new
+upstream release from changing an otherwise identical release check. Update
+these pins deliberately, then run the complete matrix before merging the
+change. Tox also fixes the Python hash seed and stores coverage data inside
+each environment, so sequential and modestly parallel runs have the same
+isolation guarantees.
 
 ## Documentation
 

@@ -8,7 +8,7 @@ from typing import Any, Iterable, Sequence, Tuple, Union
 import jax
 import jax.numpy as jnp
 
-from .base import GeometryMixin, as_sample_shape
+from .base import GeometryMixin, GeometryProtocol, as_sample_shape
 
 Array = Any
 Shape = Union[int, Sequence[int], Tuple[int, ...]]
@@ -30,6 +30,13 @@ class Product(GeometryMixin):
         leaves, treedef = jax.tree_util.tree_flatten(factors)
         if not leaves:
             raise ValueError("Product requires at least one factor geometry.")
+        invalid = [type(factor).__name__ for factor in leaves if not isinstance(factor, GeometryProtocol)]
+        if invalid:
+            names = ", ".join(invalid)
+            raise TypeError(
+                "Every Product factor must satisfy GeometryProtocol; "
+                f"invalid factor types: {names}."
+            )
         object.__setattr__(self, "factors", factors)
         object.__setattr__(self, "_factor_leaves", tuple(leaves))
         object.__setattr__(self, "_treedef", treedef)
@@ -67,23 +74,23 @@ class Product(GeometryMixin):
 
     @property
     def exp_is_exact(self) -> bool:
-        return all(bool(getattr(M, "exp_is_exact", True)) for M in self._factor_leaves)
+        return all(bool(getattr(M, "exp_is_exact", False)) for M in self._factor_leaves)
 
     @property
     def log_is_exact(self) -> bool:
-        return all(bool(getattr(M, "log_is_exact", True)) for M in self._factor_leaves)
+        return all(bool(getattr(M, "log_is_exact", False)) for M in self._factor_leaves)
 
     @property
     def dist_is_exact(self) -> bool:
-        return all(bool(getattr(M, "dist_is_exact", True)) for M in self._factor_leaves)
+        return all(bool(getattr(M, "dist_is_exact", False)) for M in self._factor_leaves)
 
     @property
     def transport_is_isometric(self) -> bool:
-        return all(bool(getattr(M, "transport_is_isometric", True)) for M in self._factor_leaves)
+        return all(bool(getattr(M, "transport_is_isometric", False)) for M in self._factor_leaves)
 
     @property
     def transport_is_parallel(self) -> bool:
-        return all(bool(getattr(M, "transport_is_parallel", True)) for M in self._factor_leaves)
+        return all(bool(getattr(M, "transport_is_parallel", False)) for M in self._factor_leaves)
 
     @property
     def hessian_conversion_is_exact(self) -> bool:
@@ -116,11 +123,8 @@ class Product(GeometryMixin):
         xs = self._flatten_like(x, "point")
         checks = []
         for M, xi in zip(self._factor_leaves, xs):
-            if hasattr(M, "belongs"):
-                check = M.belongs(xi, atol=atol) if atol is not None else M.belongs(xi)
-                checks.append(check)
-            else:
-                checks.append(jnp.asarray(True))
+            check = M.belongs(xi, atol=atol) if atol is not None else M.belongs(xi)
+            checks.append(check)
         return self._combine_checks(checks)
 
     def is_tangent(self, x: Any, u: Any, atol: float | None = None) -> Array:
@@ -128,20 +132,13 @@ class Product(GeometryMixin):
         us = self._flatten_like(u, "tangent vector")
         checks = []
         for M, xi, ui in zip(self._factor_leaves, xs, us):
-            if hasattr(M, "is_tangent"):
-                check = (
-                    M.is_tangent(xi, ui, atol=atol) if atol is not None else M.is_tangent(xi, ui)
-                )
-                checks.append(check)
-            else:
-                checks.append(jnp.asarray(True))
+            check = M.is_tangent(xi, ui, atol=atol) if atol is not None else M.is_tangent(xi, ui)
+            checks.append(check)
         return self._combine_checks(checks)
 
     def project(self, x: Any) -> Any:
         xs = self._flatten_like(x, "point")
-        return self._unflatten(
-            M.project(xi) if hasattr(M, "project") else xi for M, xi in zip(self._factor_leaves, xs)
-        )
+        return self._unflatten(M.project(xi) for M, xi in zip(self._factor_leaves, xs))
 
     normalize = project
 
@@ -179,14 +176,7 @@ class Product(GeometryMixin):
             subterms = []
             for coeff, leaves in zip(terms[0::2], flattened_vectors):
                 subterms.extend([coeff, leaves[i]])
-            if hasattr(M, "lincomb"):
-                out.append(M.lincomb(xi, *subterms))
-            else:
-                total = None
-                for coeff, vec_i in zip(subterms[0::2], subterms[1::2]):
-                    term = coeff * vec_i
-                    total = term if total is None else total + term
-                out.append(M.tangent_project(xi, total))
+            out.append(M.lincomb(xi, *subterms))
         return self._unflatten(out)
 
     def exp(self, x: Any, u: Any) -> Any:
@@ -199,10 +189,7 @@ class Product(GeometryMixin):
         us = self._flatten_like(u, "tangent vector")
         out = []
         for M, xi, ui in zip(self._factor_leaves, xs, us):
-            if hasattr(M, "retr"):
-                out.append(M.retr(xi, ui, t))
-            else:
-                out.append(M.exp(xi, t * ui))
+            out.append(M.retr(xi, ui, t))
         return self._unflatten(out)
 
     def log(self, x: Any, y: Any) -> Any:
@@ -214,7 +201,7 @@ class Product(GeometryMixin):
         xs = self._flatten_like(x, "point")
         ys = self._flatten_like(y, "point")
         vals = [
-            M.squared_dist(xi, yi) if hasattr(M, "squared_dist") else M.dist(xi, yi) ** 2
+            M.squared_dist(xi, yi)
             for M, xi, yi in zip(self._factor_leaves, xs, ys)
         ]
         out = vals[0]
@@ -231,12 +218,7 @@ class Product(GeometryMixin):
         us = self._flatten_like(u, "tangent vector")
         out = []
         for M, xi, yi, ui in zip(self._factor_leaves, xs, ys, us):
-            if hasattr(M, "transport"):
-                out.append(M.transport(xi, yi, ui))
-            elif hasattr(M, "transp"):
-                out.append(M.transp(xi, yi, ui))
-            else:
-                out.append(M.tangent_project(yi, ui))
+            out.append(M.transport(xi, yi, ui))
         return self._unflatten(out)
 
     transp = transport
@@ -246,9 +228,7 @@ class Product(GeometryMixin):
         ys = self._flatten_like(y, "point")
         out = []
         for M, xi, yi in zip(self._factor_leaves, xs, ys):
-            out.append(
-                M.pair_mean(xi, yi) if hasattr(M, "pair_mean") else M.exp(xi, 0.5 * M.log(xi, yi))
-            )
+            out.append(M.pair_mean(xi, yi))
         return self._unflatten(out)
 
     def egrad_to_rgrad(self, x: Any, egrad: Any) -> Any:
@@ -267,10 +247,7 @@ class Product(GeometryMixin):
         us = self._flatten_like(u, "tangent vector")
         out = []
         for M, xi, gi, hvi, ui in zip(self._factor_leaves, xs, gs, hvs, us):
-            if hasattr(M, "ehess_to_rhess"):
-                out.append(M.ehess_to_rhess(xi, gi, hvi, ui))
-            else:
-                out.append(M.tangent_project(xi, hvi))
+            out.append(M.ehess_to_rhess(xi, gi, hvi, ui))
         return self._unflatten(out)
 
     def random_point(self, key: Array, sample_shape: Shape = ()) -> Any:

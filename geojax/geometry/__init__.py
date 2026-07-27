@@ -2,7 +2,13 @@
 
 from __future__ import annotations
 
-from .base import GeometryMixin, GeometryProtocol, ManifoldProtocol, RetractionGeometryMixin
+from .base import (
+    ExactGeometryMixin,
+    GeometryMixin,
+    GeometryProtocol,
+    ManifoldProtocol,
+    RetractionGeometryMixin,
+)
 from .elementary import Oblique, PoincareBall, ProbabilitySimplex
 from .euclidean import Euclidean
 from .generalized import GeneralizedGrassmann, GeneralizedStiefel
@@ -26,6 +32,7 @@ from .correlation import CorrelationAffineQuotient, CorrelationECM, CorrelationL
 
 __all__ = [
     "Euclidean",
+    "ExactGeometryMixin",
     "GeometryProtocol",
     "GeometryMixin",
     "ManifoldProtocol",

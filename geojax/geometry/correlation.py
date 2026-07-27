@@ -28,7 +28,7 @@ from typing import Any, Sequence, Tuple, Union
 import jax
 import jax.numpy as jnp
 
-from .base import GeometryMixin, RetractionGeometryMixin, as_sample_shape
+from .base import ExactGeometryMixin, RetractionGeometryMixin, as_sample_shape, dtype_margin
 
 Array = Any
 Shape = Union[int, Sequence[int], Tuple[int, ...]]
@@ -139,7 +139,7 @@ def _lower_expm_strict(A: Array, n: int) -> Array:
 
 
 @dataclass(frozen=True)
-class _CorrelationCholeskyBase(GeometryMixin):
+class _CorrelationCholeskyBase(ExactGeometryMixin):
     size: tuple[int, int]
     atol: float = 1e-6
     eps: float = 1e-10
@@ -166,8 +166,7 @@ class _CorrelationCholeskyBase(GeometryMixin):
         raise NotImplementedError
 
     def chart_jvp(self, C: Array, U: Array) -> Array:
-        C = jnp.asarray(C)
-        U = jnp.asarray(U)
+        C, U = self._check_shapes(("C", C), ("U", U))
         batch_shape = jnp.broadcast_shapes(C.shape[:-2], U.shape[:-2])
         C = jnp.broadcast_to(C, batch_shape + self.shape)
         U = jnp.broadcast_to(U, batch_shape + self.shape)
@@ -175,8 +174,7 @@ class _CorrelationCholeskyBase(GeometryMixin):
         return jax.jvp(self.chart, (C,), (U,))[1]
 
     def inverse_chart_jvp(self, Z: Array, W: Array) -> Array:
-        Z = jnp.asarray(Z)
-        W = jnp.asarray(W)
+        Z, W = self._check_shapes(("Z", Z), ("W", W))
         batch_shape = jnp.broadcast_shapes(Z.shape[:-2], W.shape[:-2])
         Z = jnp.broadcast_to(Z, batch_shape + self.shape)
         W = jnp.broadcast_to(W, batch_shape + self.shape)
@@ -191,29 +189,34 @@ class _CorrelationCholeskyBase(GeometryMixin):
     def belongs(self, C: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
         C = jnp.asarray(C)
+        if not self._shape_matches(C):
+            return self._shape_failure(C)
         sym_ok = jnp.linalg.norm(C - jnp.swapaxes(C, -1, -2), axis=(-2, -1)) <= tol
         diag_ok = jnp.linalg.norm(_diag(C) - 1.0, axis=-1) <= tol
         vals = jnp.linalg.eigvalsh(_sym(C))
-        pd_ok = jnp.min(vals, axis=-1) > tol
+        pd_ok = jnp.min(vals, axis=-1) > 0.0
         return sym_ok & diag_ok & pd_ok
 
     def project(self, C: Array) -> Array:
+        C = self._check_shape(C, name="C")
         vals, Q = jnp.linalg.eigh(_sym(C))
-        P = (Q * jnp.maximum(vals, self.eps)[..., None, :]) @ jnp.swapaxes(Q, -1, -2)
-        return _corr_normalize(P, self.eps)
+        floor = dtype_margin(C, configured=self.eps)
+        P = (Q * jnp.maximum(vals, floor)[..., None, :]) @ jnp.swapaxes(Q, -1, -2)
+        return _corr_normalize(P, floor)
 
     normalize = project
 
     def is_tangent(self, C: Array, U: Array, atol: float | None = None) -> Array:
-        del C
         tol = self.atol if atol is None else atol
-        U = jnp.asarray(U)
+        if not self._shape_matches(C, U):
+            return self._shape_failure(C)
+        _, U = self._check_shapes(("C", C), ("U", U))
         sym_ok = jnp.linalg.norm(U - jnp.swapaxes(U, -1, -2), axis=(-2, -1)) <= tol
         diag_ok = jnp.linalg.norm(_diag(U), axis=-1) <= tol
         return sym_ok & diag_ok
 
     def tangent_project(self, C: Array, U: Array) -> Array:
-        del C
+        _, U = self._check_shapes(("C", C), ("U", U))
         U = _sym(U)
         eye = _eye_like(U, self.n)
         return U * (1.0 - eye)
@@ -242,7 +245,7 @@ class _CorrelationCholeskyBase(GeometryMixin):
         return self.tangent_project(C, out)
 
     def exp(self, C: Array, U: Array) -> Array:
-        C = _canonical_correlation(C)
+        C = self.project(C)
         Z = self.chart(C)
         dZ = self.chart_jvp(C, U)
         return self.chart_inverse(Z + dZ)
@@ -251,8 +254,8 @@ class _CorrelationCholeskyBase(GeometryMixin):
         return self.exp(C, t * U)
 
     def log(self, C: Array, D: Array) -> Array:
-        C = _canonical_correlation(C)
-        D = _canonical_correlation(D)
+        C = self.project(C)
+        D = self.project(D)
         Z = self.chart(C)
         return self.inverse_chart_jvp(Z, self.chart(D) - Z)
 
@@ -260,17 +263,18 @@ class _CorrelationCholeskyBase(GeometryMixin):
         return jnp.sqrt(self.squared_dist(C, D))
 
     def squared_dist(self, C: Array, D: Array) -> Array:
-        Delta = self.chart(_canonical_correlation(D)) - self.chart(_canonical_correlation(C))
+        Delta = self.chart(self.project(D)) - self.chart(self.project(C))
         return jnp.maximum(_trace_inner(Delta, Delta), 0.0)
 
     def transport(self, C: Array, D: Array, U: Array) -> Array:
-        D = _canonical_correlation(D)
+        C = self.project(C)
+        D = self.project(D)
         return self.inverse_chart_jvp(self.chart(D), self.chart_jvp(C, U))
 
     transp = transport
 
     def egrad_to_rgrad(self, C: Array, egrad: Array) -> Array:
-        C = _canonical_correlation(C)
+        C = self.project(C)
         Z = self.chart(C)
         # Pull ambient covector back to flat chart coordinates and push it to
         # the tangent space. This gives the gradient for the pullback metric.
@@ -290,8 +294,9 @@ class _CorrelationCholeskyBase(GeometryMixin):
     def random_tangent(
         self, key: Array, C: Array, *, scale: float | Array = 1.0, normalize: bool = False
     ) -> Array:
+        C = self.project(C)
         Z = _strict_lower(jax.random.normal(key, shape=jnp.shape(C)))
-        U = self.inverse_chart_jvp(self.chart(_canonical_correlation(C)), Z)
+        U = self.inverse_chart_jvp(self.chart(C), Z)
         if normalize:
             nrm = self.norm(C, U)
             U = jnp.where(nrm[..., None, None] > self.eps, U / nrm[..., None, None], U)
@@ -299,6 +304,7 @@ class _CorrelationCholeskyBase(GeometryMixin):
 
     def frechet_mean_closed_form(self, Cs: Array) -> Array:
         """Closed-form mean in the flat Cholesky chart."""
+        self._check_shape(Cs, name="Cs")
         Zs = jax.vmap(self.chart)(Cs)
         return self.chart_inverse(jnp.mean(Zs, axis=0))
 
@@ -320,9 +326,10 @@ class CorrelationECM(_CorrelationCholeskyBase):
         object.__setattr__(self, "eps", eps)
 
     def chart(self, C: Array) -> Array:
-        return _strict_lower(_theta(C, self.eps))
+        return _strict_lower(_theta(self._check_shape(C, name="C"), self.eps))
 
     def chart_inverse(self, Z: Array) -> Array:
+        Z = self._check_shape(Z, name="Z")
         return _theta_inv(_unit_lower_from_strict(Z, self.n), self.eps)
 
 
@@ -344,9 +351,10 @@ class CorrelationLEC(_CorrelationCholeskyBase):
         object.__setattr__(self, "eps", eps)
 
     def chart(self, C: Array) -> Array:
-        return _lower_log_unit(_theta(C, self.eps), self.n)
+        return _lower_log_unit(_theta(self._check_shape(C, name="C"), self.eps), self.n)
 
     def chart_inverse(self, Z: Array) -> Array:
+        Z = self._check_shape(Z, name="Z")
         return _theta_inv(_lower_expm_strict(Z, self.n), self.eps)
 
 

@@ -318,10 +318,10 @@ def lincomb(M: Any, x: Array, *terms: Any) -> Array:
 
 def transport(M: Any, x: Array, y: Array, u: Array) -> Array:
     """Transport a tangent vector from ``x`` to ``y``."""
-    if hasattr(M, "transp"):
-        return M.transp(x, y, u)
     if hasattr(M, "transport"):
         return M.transport(x, y, u)
+    if hasattr(M, "transp"):
+        return M.transp(x, y, u)
     if hasattr(M, "tangent_project"):
         return M.tangent_project(y, u)
     if hasattr(M, "proj"):

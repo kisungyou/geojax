@@ -8,7 +8,7 @@ from typing import Any, Sequence, Tuple, Union
 import jax
 import jax.numpy as jnp
 
-from .base import GeometryMixin, as_sample_shape
+from .base import ExactGeometryMixin, as_sample_shape, check_event_shape, dtype_margin
 from ._numerics import (
     acosh_over_sqrt,
     acosh_squared,
@@ -21,7 +21,7 @@ Shape = Union[int, Sequence[int], Tuple[int, ...]]
 
 
 @dataclass(frozen=True, init=False)
-class Hyperboloid(GeometryMixin):
+class Hyperboloid(ExactGeometryMixin):
     """Upper-sheet hyperboloid in ambient Minkowski space ``R^size``."""
 
     size: int
@@ -45,14 +45,15 @@ class Hyperboloid(GeometryMixin):
         return (self.size,)
 
     def lorentz_inner(self, u: Array, v: Array, keepdims: bool = False) -> Array:
-        u = jnp.asarray(u)
-        v = jnp.asarray(v)
+        u, v = self._check_shapes(("u", u), ("v", v))
         out = -u[..., 0] * v[..., 0] + jnp.sum(u[..., 1:] * v[..., 1:], axis=-1)
         return out[..., None] if keepdims else out
 
     def belongs(self, x: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
         x = jnp.asarray(x)
+        if not self._shape_matches(x):
+            return self._shape_failure(x)
         sheet = x[..., 0] > 0.0
         quad = self.lorentz_inner(x, x)
         cancellation_scale = x[..., 0] ** 2 + jnp.sum(x[..., 1:] ** 2, axis=-1) + 1.0
@@ -61,8 +62,9 @@ class Hyperboloid(GeometryMixin):
 
     def is_tangent(self, x: Array, u: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
-        x = jnp.asarray(x)
-        u = jnp.asarray(u)
+        if not self._shape_matches(x, u):
+            return self._shape_failure(x)
+        x, u = self._check_shapes(("x", x), ("u", u))
         cancellation_scale = (
             jnp.abs(x[..., 0] * u[..., 0])
             + jnp.sum(jnp.abs(x[..., 1:] * u[..., 1:]), axis=-1)
@@ -72,7 +74,7 @@ class Hyperboloid(GeometryMixin):
         return jnp.abs(self.lorentz_inner(x, u)) <= tol + rounding
 
     def project(self, x: Array) -> Array:
-        x = jnp.asarray(x)
+        x = self._check_shape(x, name="x")
         spatial = x[..., 1:]
         time = jnp.sqrt(1.0 + jnp.sum(spatial * spatial, axis=-1, keepdims=True))
         return jnp.concatenate([time, spatial], axis=-1)
@@ -81,7 +83,7 @@ class Hyperboloid(GeometryMixin):
 
     def tangent_project(self, x: Array, u: Array) -> Array:
         x = self.project(x)
-        u = jnp.asarray(u)
+        _, u = self._check_shapes(("x", x), ("u", u))
         return u + self.lorentz_inner(x, u, keepdims=True) * x
 
     projection = tangent_project
@@ -89,7 +91,7 @@ class Hyperboloid(GeometryMixin):
     to_tangent = tangent_project
 
     def inner(self, x: Array, u: Array, v: Array) -> Array:
-        del x
+        self._check_shapes(("x", x), ("u", u), ("v", v))
         return self.lorentz_inner(u, v)
 
     def norm(self, x: Array, u: Array) -> Array:
@@ -150,14 +152,15 @@ class Hyperboloid(GeometryMixin):
 
     def from_poincare(self, point: Array) -> Array:
         """Convert points in the open Poincare ball to the hyperboloid."""
-        point = jnp.asarray(point)
+        point = check_event_shape(point, (self.dim,), name="point")
         squared_radius = jnp.sum(point * point, axis=-1, keepdims=True)
         radius = jnp.sqrt(jnp.maximum(squared_radius, 0.0))
-        max_radius = 1.0 - self.eps
+        margin = dtype_margin(point, configured=self.eps, atol=self.atol)
+        max_radius = 1.0 - margin
         safe_radius = jnp.where(radius > 0.0, radius, 1.0)
         point = jnp.where(radius < max_radius, point, max_radius * point / safe_radius)
         squared_radius = jnp.sum(point * point, axis=-1, keepdims=True)
-        denominator = jnp.maximum(1.0 - squared_radius, self.eps)
+        denominator = jnp.maximum(1.0 - squared_radius, margin)
         time = (1.0 + squared_radius) / denominator
         spatial = 2.0 * point / denominator
         return jnp.concatenate([time, spatial], axis=-1)

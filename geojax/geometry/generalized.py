@@ -8,7 +8,7 @@ from typing import Any, Sequence
 import jax
 import jax.numpy as jnp
 
-from .base import GeometryMixin, Shape, as_sample_shape
+from .base import ExactGeometryMixin, Shape, as_sample_shape
 from .grassmann import Grassmann
 from .stiefel import StiefelEuclidean, StiefelLogInfo
 
@@ -48,7 +48,7 @@ def _metric_factors(
 
 
 @dataclass(frozen=True, init=False)
-class GeneralizedStiefel(GeometryMixin):
+class GeneralizedStiefel(ExactGeometryMixin):
     """Frames satisfying ``X.T @ metric @ X = I``.
 
     The metric ``trace(U.T @ metric @ V)`` is the pullback of the embedded
@@ -131,38 +131,48 @@ class GeneralizedStiefel(GeometryMixin):
 
     def belongs(self, X: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
+        if not self._shape_matches(X):
+            return self._shape_failure(X)
+        X = self._check_shape(X, name="X")
         gram = _transpose(X) @ self.metric @ X
         return jnp.linalg.norm(gram - jnp.eye(self.k, dtype=gram.dtype), axis=(-2, -1)) <= tol
 
     def project(self, A: Array) -> Array:
+        A = self._check_shape(A, name="A")
         return self._inverse(self._ordinary.project(self._forward(A)))
 
     normalize = project
 
     def is_tangent(self, X: Array, U: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
+        if not self._shape_matches(X, U):
+            return self._shape_failure(X)
+        X, U = self._check_shapes(("X", X), ("U", U))
         constraint = _transpose(X) @ self.metric @ U
         return jnp.linalg.norm(constraint + _transpose(constraint), axis=(-2, -1)) <= tol
 
     def tangent_project(self, X: Array, U: Array) -> Array:
-        return jnp.asarray(U) - X @ _sym(_transpose(X) @ self.metric @ U)
+        X, U = self._check_shapes(("X", X), ("U", U))
+        return U - X @ _sym(_transpose(X) @ self.metric @ U)
 
     projection = tangent_project
     proj = tangent_project
     to_tangent = tangent_project
 
     def inner(self, X: Array, U: Array, V: Array) -> Array:
-        del X
-        return jnp.sum(jnp.asarray(U) * (self.metric @ jnp.asarray(V)), axis=(-2, -1))
+        _, U, V = self._check_shapes(("X", X), ("U", U), ("V", V))
+        return jnp.sum(U * (self.metric @ V), axis=(-2, -1))
 
     def norm(self, X: Array, U: Array) -> Array:
         return jnp.sqrt(jnp.maximum(self.inner(X, U, U), 0.0))
 
     def exp(self, X: Array, U: Array) -> Array:
+        X, U = self._check_shapes(("X", X), ("U", U))
         return self._inverse(self._ordinary.exp(self._forward(X), self._forward(U)))
 
     def log_with_info(self, X: Array, Y: Array) -> tuple[Array, StiefelLogInfo]:
         """Return the pulled-back local logarithm candidate and shooting diagnostics."""
+        X, Y = self._check_shapes(("X", X), ("Y", Y))
         tangent, info = self._ordinary.log_with_info(self._forward(X), self._forward(Y))
         return self._inverse(tangent), info
 
@@ -181,6 +191,7 @@ class GeneralizedStiefel(GeometryMixin):
         return self._ordinary.squared_dist(self._forward(X), self._forward(Y))
 
     def transport(self, X: Array, Y: Array, U: Array) -> Array:
+        X, Y, U = self._check_shapes(("X", X), ("Y", Y), ("U", U))
         transported = self._ordinary.transport(self._forward(X), self._forward(Y), self._forward(U))
         return self._inverse(transported)
 
@@ -229,7 +240,7 @@ class GeneralizedStiefel(GeometryMixin):
 
 
 @dataclass(frozen=True, init=False)
-class GeneralizedGrassmann(GeometryMixin):
+class GeneralizedGrassmann(ExactGeometryMixin):
     """Generalized Grassmann geometry for ``metric``-orthonormal subspaces."""
 
     size: tuple[int, int]
@@ -286,36 +297,46 @@ class GeneralizedGrassmann(GeometryMixin):
 
     def belongs(self, X: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
+        if not self._shape_matches(X):
+            return self._shape_failure(X)
+        X = self._check_shape(X, name="X")
         gram = _transpose(X) @ self.metric @ X
         return jnp.linalg.norm(gram - jnp.eye(self.k, dtype=gram.dtype), axis=(-2, -1)) <= tol
 
     def project(self, A: Array) -> Array:
+        A = self._check_shape(A, name="A")
         return self._inverse(self._ordinary.project(self._forward(A)))
 
     normalize = project
 
     def is_tangent(self, X: Array, U: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
+        if not self._shape_matches(X, U):
+            return self._shape_failure(X)
+        X, U = self._check_shapes(("X", X), ("U", U))
         return jnp.linalg.norm(_transpose(X) @ self.metric @ U, axis=(-2, -1)) <= tol
 
     def tangent_project(self, X: Array, U: Array) -> Array:
-        return jnp.asarray(U) - X @ (_transpose(X) @ self.metric @ U)
+        X, U = self._check_shapes(("X", X), ("U", U))
+        return U - X @ (_transpose(X) @ self.metric @ U)
 
     projection = tangent_project
     proj = tangent_project
     to_tangent = tangent_project
 
     def inner(self, X: Array, U: Array, V: Array) -> Array:
-        del X
-        return jnp.sum(jnp.asarray(U) * (self.metric @ jnp.asarray(V)), axis=(-2, -1))
+        _, U, V = self._check_shapes(("X", X), ("U", U), ("V", V))
+        return jnp.sum(U * (self.metric @ V), axis=(-2, -1))
 
     def norm(self, X: Array, U: Array) -> Array:
         return jnp.sqrt(jnp.maximum(self.inner(X, U, U), 0.0))
 
     def exp(self, X: Array, U: Array) -> Array:
+        X, U = self._check_shapes(("X", X), ("U", U))
         return self._inverse(self._ordinary.exp(self._forward(X), self._forward(U)))
 
     def log(self, X: Array, Y: Array) -> Array:
+        X, Y = self._check_shapes(("X", X), ("Y", Y))
         return self._inverse(self._ordinary.log(self._forward(X), self._forward(Y)))
 
     def dist(self, X: Array, Y: Array) -> Array:
@@ -325,6 +346,7 @@ class GeneralizedGrassmann(GeometryMixin):
         return self._ordinary.squared_dist(self._forward(X), self._forward(Y))
 
     def transport(self, X: Array, Y: Array, U: Array) -> Array:
+        X, Y, U = self._check_shapes(("X", X), ("Y", Y), ("U", U))
         transported = self._ordinary.transport(self._forward(X), self._forward(Y), self._forward(U))
         return self._inverse(transported)
 

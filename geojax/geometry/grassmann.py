@@ -8,12 +8,13 @@ objective functions should be right-O(rank)-invariant: f(X R) = f(X).
 Tangent vectors are represented by horizontal matrices U satisfying X^T U = 0.
 The metric is the canonical quotient metric <U,V> = tr(U^T V).
 
-``GrassmannProjection`` uses the equivariant projection embedding [X] -> XX^T.
-Its points are symmetric rank-r orthogonal projectors and its tangent vectors
-are symmetric matrices.  The normalized Frobenius metric 0.5 tr(HK) makes this
-representation isometric to the canonical quotient geometry.  The ambient
-Euclidean chord is available separately as ``chordal_dist``; it is not a
-Riemannian geodesic distance.
+``GrassmannProjection`` keeps the same public orthonormal-frame points and
+horizontal tangent vectors, but evaluates operations through the equivariant
+embedding [X] -> XX^T. Internally, embedded points are symmetric rank-r
+orthogonal projectors and embedded tangents are symmetric matrices. The
+normalized Frobenius metric 0.5 tr(HK) makes this representation isometric to
+the canonical quotient geometry. The ambient Euclidean chord is available
+separately as ``chordal_dist``; it is not a Riemannian geodesic distance.
 """
 
 from __future__ import annotations
@@ -24,7 +25,7 @@ from typing import Any, Sequence, Tuple, Union
 import jax
 import jax.numpy as jnp
 
-from .base import GeometryMixin, as_sample_shape
+from .base import ExactGeometryMixin, as_sample_shape, check_event_shape
 from ._numerics import matrix_expm
 
 Array = Any
@@ -94,7 +95,7 @@ def _matrix_arctan_polar(M: Array) -> Array:
 
 
 @dataclass(frozen=True, init=False)
-class Grassmann(GeometryMixin):
+class Grassmann(ExactGeometryMixin):
     """Canonical Grassmann geometry Gr(rank, size).
 
     Parameters
@@ -132,26 +133,29 @@ class Grassmann(GeometryMixin):
     def belongs(self, X: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
         X = jnp.asarray(X)
+        if not self._shape_matches(X):
+            return self._shape_failure(X)
         gram = jnp.swapaxes(X, -1, -2) @ X
         identity = jnp.eye(self.rank, dtype=X.dtype)
         return jnp.linalg.norm(gram - identity, axis=(-2, -1)) <= tol
 
     def is_tangent(self, X: Array, U: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
-        X = jnp.asarray(X)
-        U = jnp.asarray(U)
+        if not self._shape_matches(X, U):
+            return self._shape_failure(X)
+        X, U = self._check_shapes(("X", X), ("U", U))
         xtu = jnp.swapaxes(X, -1, -2) @ U
         return jnp.linalg.norm(xtu, axis=(-2, -1)) <= tol
 
     def project(self, X: Array) -> Array:
-        X = jnp.asarray(X)
+        X = self._check_shape(X, name="X")
         return _orthonormalize(X, self.eps)
 
     normalize = project
 
     def tangent_project(self, X: Array, U: Array) -> Array:
         X = self.project(X)
-        U = jnp.asarray(U)
+        _, U = self._check_shapes(("X", X), ("U", U))
         return U - X @ (jnp.swapaxes(X, -1, -2) @ U)
 
     projection = tangent_project
@@ -159,7 +163,7 @@ class Grassmann(GeometryMixin):
     to_tangent = tangent_project
 
     def inner(self, X: Array, U: Array, V: Array) -> Array:
-        del X
+        _, U, V = self._check_shapes(("X", X), ("U", U), ("V", V))
         return _trace_inner(U, V)
 
     def norm(self, X: Array, U: Array) -> Array:
@@ -252,8 +256,7 @@ class Grassmann(GeometryMixin):
         )
 
     def squared_dist(self, X: Array, Y: Array) -> Array:
-        X = jnp.asarray(X)
-        Y = jnp.asarray(Y)
+        X, Y = self._check_shapes(("X", X), ("Y", Y))
         batch_shape = jnp.broadcast_shapes(X.shape[:-2], Y.shape[:-2])
         X = jnp.broadcast_to(X, batch_shape + self.shape)
         Y = jnp.broadcast_to(Y, batch_shape + self.shape)
@@ -323,7 +326,7 @@ class Grassmann(GeometryMixin):
 
 
 @dataclass(frozen=True, init=False)
-class GrassmannProjection(GeometryMixin):
+class GrassmannProjection(ExactGeometryMixin):
     """Projection-embedded Grassmann geometry.
 
     Public points are ``(n, k)`` orthonormal frames ``X``, exactly as for
@@ -401,8 +404,9 @@ class GrassmannProjection(GeometryMixin):
     normalize = project
 
     def _projector_tangent_project(self, P: Array, A: Array) -> Array:
-        P = _sym(jnp.asarray(P))
-        A = _sym(jnp.asarray(A))
+        embedding_shape = (self.ambient_dim, self.ambient_dim)
+        P = _sym(check_event_shape(P, embedding_shape, name="P"))
+        A = _sym(check_event_shape(A, embedding_shape, name="A"))
         identity = jnp.eye(self.ambient_dim, dtype=P.dtype)
         complement = identity - P
         return P @ A @ complement + complement @ A @ P
@@ -410,6 +414,7 @@ class GrassmannProjection(GeometryMixin):
     def tangent_project(self, X: Array, A: Array) -> Array:
         """Project an ambient frame vector through projector coordinates."""
         X = self.project(X)
+        _, A = self._check_shapes(("X", X), ("A", A))
         P = self.embed(X)
         ambient_projector_tangent = A @ jnp.swapaxes(X, -1, -2)
         ambient_projector_tangent += X @ jnp.swapaxes(A, -1, -2)
@@ -441,7 +446,12 @@ class GrassmannProjection(GeometryMixin):
         If ``reference`` is supplied, the recovered frame is right-aligned to
         it by the orthogonal Procrustes solution.
         """
-        P = _sym(jnp.asarray(P))
+        P = check_event_shape(
+            P,
+            (self.ambient_dim, self.ambient_dim),
+            name="P",
+        )
+        P = _sym(P)
         _, eigenvectors = jnp.linalg.eigh(P)
         frame = eigenvectors[..., :, -self.rank :]
         if reference is None:

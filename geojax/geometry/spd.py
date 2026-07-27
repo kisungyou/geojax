@@ -15,7 +15,7 @@ logarithm is an isometry from SPD(n) to the vector space Sym(n).
 factors.  Its distance agrees with the 2-Wasserstein distance between
 zero-mean Gaussian distributions.
 
-Both classes expose the same small Manopt-style geometry interface used by the
+All three geometries expose the same Manopt-style interface used by the
 optimization module.
 """
 
@@ -28,7 +28,7 @@ from typing import Any, Sequence, Tuple, Union
 import jax
 import jax.numpy as jnp
 
-from .base import GeometryMixin, as_sample_shape
+from .base import ExactGeometryMixin, as_sample_shape, dtype_margin
 from ._numerics import matrix_expm
 
 Array = Any
@@ -235,7 +235,7 @@ def _frechet_spectral(A: Array, E: Array, func_name: str, eps: float) -> Array:
 
 
 @dataclass(frozen=True, init=False)
-class SPDLogEuclidean(GeometryMixin):
+class SPDLogEuclidean(ExactGeometryMixin):
     """Log-Euclidean geometry on SPD(size).
 
     The logarithm map ``log: SPD(n) -> Sym(n)`` is an isometry.  Therefore
@@ -270,23 +270,28 @@ class SPDLogEuclidean(GeometryMixin):
     def belongs(self, P: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
         P = jnp.asarray(P)
+        if not self._shape_matches(P):
+            return self._shape_failure(P)
         sym_ok = jnp.linalg.norm(P - jnp.swapaxes(P, -1, -2), axis=(-2, -1)) <= tol
         vals = jnp.linalg.eigvalsh(_sym(P))
-        pd_ok = jnp.min(vals, axis=-1) > tol
+        pd_ok = jnp.min(vals, axis=-1) > 0.0
         return sym_ok & pd_ok
 
     def is_tangent(self, P: Array, U: Array, atol: float | None = None) -> Array:
-        del P
         tol = self.atol if atol is None else atol
-        U = jnp.asarray(U)
+        if not self._shape_matches(P, U):
+            return self._shape_failure(P)
+        _, U = self._check_shapes(("P", P), ("U", U))
         return jnp.linalg.norm(U - jnp.swapaxes(U, -1, -2), axis=(-2, -1)) <= tol
 
     def project(self, P: Array) -> Array:
-        return _spd_project_differentiable(P, self.eps)
+        P = self._check_shape(P, name="P")
+        floor = dtype_margin(P, configured=self.eps)
+        return _spd_project_differentiable(P, floor)
 
     def tangent_project(self, P: Array, U: Array) -> Array:
-        del P
-        return _sym(jnp.asarray(U))
+        _, U = self._check_shapes(("P", P), ("U", U))
+        return _sym(U)
 
     projection = tangent_project
     proj = tangent_project
@@ -296,7 +301,7 @@ class SPDLogEuclidean(GeometryMixin):
         return _spd_logm(self.project(P), self.eps)
 
     def expm(self, A: Array) -> Array:
-        return _spd_expm(_sym(A))
+        return _spd_expm(_sym(self._check_shape(A, name="A")))
 
     def dlog(self, P: Array, U: Array) -> Array:
         return _frechet_spectral(self.project(P), self.tangent_project(P, U), "log", self.eps)
@@ -389,7 +394,7 @@ class SPDLogEuclidean(GeometryMixin):
 
 
 @dataclass(frozen=True, init=False)
-class SPDAffineInvariant(GeometryMixin):
+class SPDAffineInvariant(ExactGeometryMixin):
     """Affine-invariant geometry on SPD(size).
 
     The metric is
@@ -425,23 +430,28 @@ class SPDAffineInvariant(GeometryMixin):
     def belongs(self, P: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
         P = jnp.asarray(P)
+        if not self._shape_matches(P):
+            return self._shape_failure(P)
         sym_ok = jnp.linalg.norm(P - jnp.swapaxes(P, -1, -2), axis=(-2, -1)) <= tol
         vals = jnp.linalg.eigvalsh(_sym(P))
-        pd_ok = jnp.min(vals, axis=-1) > tol
+        pd_ok = jnp.min(vals, axis=-1) > 0.0
         return sym_ok & pd_ok
 
     def is_tangent(self, P: Array, U: Array, atol: float | None = None) -> Array:
-        del P
         tol = self.atol if atol is None else atol
-        U = jnp.asarray(U)
+        if not self._shape_matches(P, U):
+            return self._shape_failure(P)
+        _, U = self._check_shapes(("P", P), ("U", U))
         return jnp.linalg.norm(U - jnp.swapaxes(U, -1, -2), axis=(-2, -1)) <= tol
 
     def project(self, P: Array) -> Array:
-        return _spd_project_differentiable(P, self.eps)
+        P = self._check_shape(P, name="P")
+        floor = dtype_margin(P, configured=self.eps)
+        return _spd_project_differentiable(P, floor)
 
     def tangent_project(self, P: Array, U: Array) -> Array:
-        del P
-        return _sym(jnp.asarray(U))
+        _, U = self._check_shapes(("P", P), ("U", U))
+        return _sym(U)
 
     projection = tangent_project
     proj = tangent_project
@@ -542,7 +552,7 @@ class SPDAffineInvariant(GeometryMixin):
 
 
 @dataclass(frozen=True, init=False)
-class SPDBuresWasserstein(GeometryMixin):
+class SPDBuresWasserstein(ExactGeometryMixin):
     """Bures-Wasserstein geometry on SPD(size).
 
     If ``P = Q diag(d) Q.T`` and ``U_tilde = Q.T @ U @ Q``, the metric is
@@ -583,23 +593,28 @@ class SPDBuresWasserstein(GeometryMixin):
     def belongs(self, P: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
         P = jnp.asarray(P)
+        if not self._shape_matches(P):
+            return self._shape_failure(P)
         sym_ok = jnp.linalg.norm(P - jnp.swapaxes(P, -1, -2), axis=(-2, -1)) <= tol
         vals = jnp.linalg.eigvalsh(_sym(P))
-        pd_ok = jnp.min(vals, axis=-1) > tol
+        pd_ok = jnp.min(vals, axis=-1) > 0.0
         return sym_ok & pd_ok
 
     def project(self, P: Array) -> Array:
-        return _spd_project_differentiable(P, self.eps)
+        P = self._check_shape(P, name="P")
+        floor = dtype_margin(P, configured=self.eps)
+        return _spd_project_differentiable(P, floor)
 
     def is_tangent(self, P: Array, U: Array, atol: float | None = None) -> Array:
-        del P
         tol = self.atol if atol is None else atol
-        U = jnp.asarray(U)
+        if not self._shape_matches(P, U):
+            return self._shape_failure(P)
+        _, U = self._check_shapes(("P", P), ("U", U))
         return jnp.linalg.norm(U - jnp.swapaxes(U, -1, -2), axis=(-2, -1)) <= tol
 
     def tangent_project(self, P: Array, U: Array) -> Array:
-        del P
-        return _sym(jnp.asarray(U))
+        _, U = self._check_shapes(("P", P), ("U", U))
+        return _sym(U)
 
     projection = tangent_project
     proj = tangent_project
@@ -607,7 +622,7 @@ class SPDBuresWasserstein(GeometryMixin):
 
     def sylvester(self, P: Array, U: Array) -> Array:
         """Solve ``P A + A P = U`` for symmetric ``A``."""
-        P = _sym(jnp.asarray(P))
+        P = self.project(P)
         U = self.tangent_project(P, U)
         identity = jnp.eye(self.n, dtype=P.dtype)
         operator = jnp.einsum("...ik,jl->...ijkl", P, identity)
@@ -618,7 +633,7 @@ class SPDBuresWasserstein(GeometryMixin):
         return _sym(solution.reshape(U.shape))
 
     def inner(self, P: Array, U: Array, V: Array) -> Array:
-        P = _sym(jnp.asarray(P))
+        P = self.project(P)
         V = self.tangent_project(P, V)
         return 0.5 * _trace_inner(self.sylvester(P, U), V)
 
@@ -626,33 +641,37 @@ class SPDBuresWasserstein(GeometryMixin):
         return jnp.sqrt(jnp.maximum(self.inner(P, U, U), 0.0))
 
     def exp(self, P: Array, U: Array) -> Array:
-        P = _sym(jnp.asarray(P))
+        P = self.project(P)
         U = self.tangent_project(P, U)
         A = self.sylvester(P, U)
         # P + U + A P A = (I + A) P (I + A) on the valid branch.
-        return _sym(P + U + A @ P @ A)
+        result = _sym(P + U + A @ P @ A)
+        lift = jnp.eye(self.n, dtype=P.dtype) + A
+        threshold = dtype_margin(P, configured=self.eps)
+        valid = jnp.min(jnp.linalg.svd(lift, compute_uv=False), axis=-1) > threshold
+        return jnp.where(valid[..., None, None], result, jnp.full_like(result, jnp.nan))
 
     def retr(self, P: Array, U: Array, t: float | Array = 1.0) -> Array:
         return self.exp(P, t * U)
 
     def optimal_transport_map(self, P: Array, Q: Array) -> Array:
         """Return the optimal Gaussian transport map from covariance P to Q."""
-        P = _sym(jnp.asarray(P))
-        Q = _sym(jnp.asarray(Q))
+        P = self.project(P)
+        Q = self.project(Q)
         Psqrt = _spd_sqrtm_differentiable(P)
         Pinvsqrt = _spd_invsqrtm_differentiable(P)
         middle = _spd_sqrtm_differentiable(Psqrt @ Q @ Psqrt)
         return _sym(Pinvsqrt @ middle @ Pinvsqrt)
 
     def log(self, P: Array, Q: Array) -> Array:
-        P = _sym(jnp.asarray(P))
+        P = self.project(P)
         transport_map = self.optimal_transport_map(P, Q)
         displacement = transport_map - jnp.eye(self.n, dtype=P.dtype)
         return _sym(displacement @ P + P @ displacement)
 
     def squared_dist(self, P: Array, Q: Array) -> Array:
-        P = _sym(jnp.asarray(P))
-        Q = _sym(jnp.asarray(Q))
+        P = self.project(P)
+        Q = self.project(Q)
         Psqrt = _spd_sqrtm_differentiable(P)
         cross = _spd_sqrtm_differentiable(Psqrt @ Q @ Psqrt)
         value = jnp.trace(P, axis1=-2, axis2=-1)
@@ -665,7 +684,7 @@ class SPDBuresWasserstein(GeometryMixin):
 
     def _metric_coordinates(self, P: Array, U: Array) -> Array:
         """Map a tangent isometrically to the fixed Euclidean Sym(n) space."""
-        P = _sym(jnp.asarray(P))
+        P = self.project(P)
         U = self.tangent_project(P, U)
         vals, eigvecs = _eigh_sym(P)
         rotated = jnp.swapaxes(eigvecs, -1, -2) @ U @ eigvecs
@@ -674,7 +693,11 @@ class SPDBuresWasserstein(GeometryMixin):
         return _sym(eigvecs @ coordinates @ jnp.swapaxes(eigvecs, -1, -2))
 
     def _from_metric_coordinates(self, P: Array, coordinates: Array) -> Array:
-        P = _sym(jnp.asarray(P))
+        P, coordinates = self._check_shapes(
+            ("P", P),
+            ("coordinates", coordinates),
+        )
+        P = self.project(P)
         vals, eigvecs = _eigh_sym(P)
         rotated = jnp.swapaxes(eigvecs, -1, -2) @ _sym(coordinates) @ eigvecs
         weights = jnp.sqrt(2.0 * (vals[..., :, None] + vals[..., None, :]))
@@ -691,7 +714,7 @@ class SPDBuresWasserstein(GeometryMixin):
     transp = transport
 
     def egrad_to_rgrad(self, P: Array, egrad: Array) -> Array:
-        P = _sym(jnp.asarray(P))
+        P = self.project(P)
         E = self.tangent_project(P, egrad)
         return _sym(2.0 * (P @ E + E @ P))
 

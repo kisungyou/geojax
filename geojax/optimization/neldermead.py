@@ -44,6 +44,8 @@ class NelderMead:
     def solve(self, problem: Any) -> tuple[Array, float, List[InfoEntry]]:
         M = require(problem, "M")
         x0 = require(problem, "x0")
+        if self.initial_scale <= 0.0:
+            raise ValueError("initial_scale must be positive.")
         dim = int(getattr(M, "dim", 1))
         start_time = time.perf_counter()
         simplex = [x0]
@@ -53,9 +55,9 @@ class NelderMead:
                     problem.split_key(), x0, scale=self.initial_scale, normalize=True
                 )
                 simplex.append(
-                    M.retr(x0, u, self.initial_scale)
+                    M.retr(x0, u)
                     if hasattr(M, "retr")
-                    else M.exp(x0, tree_lincomb(self.initial_scale, u))
+                    else M.exp(x0, u)
                 )
             else:
                 simplex.append(M.random_point(problem.split_key()))
@@ -166,8 +168,11 @@ def _centroid(M: Any, points: list[Array]) -> Array:
 def _diameter(M: Any, points: list[Array]) -> float:
     if not hasattr(M, "dist"):
         return math.nan
-    best = points[0]
-    vals = [as_float(M.dist(best, p)) for p in points[1:]]
+    vals = [
+        as_float(M.dist(points[i], points[j]))
+        for i in range(len(points))
+        for j in range(i + 1, len(points))
+    ]
     return max(vals) if vals else 0.0
 
 

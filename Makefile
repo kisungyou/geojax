@@ -19,8 +19,9 @@ JUPYTER_EXECUTE_DIR ?= jupyter_execute
 JUPYTER_CACHE_DIR ?= .jupyter_cache
 SPHINXOPTS ?= -E -a
 PYTESTOPTS ?= --cov=geojax --cov-report=term-missing
+TOX_PARALLEL ?= 2
 
-.PHONY: help install test test-float32 test-matrix website serve release-check clean
+.PHONY: help install test test-float32 test-matrix test-matrix-parallel website serve release-check clean
 
 help:
 	@echo "GeoJAX targets"
@@ -30,6 +31,8 @@ help:
 	@echo "                 Run the full float32 test suite with coverage"
 	@echo "  make test-matrix"
 	@echo "                 Run the supported Python/JAX/precision matrix with tox"
+	@echo "  make test-matrix-parallel"
+	@echo "                 Run the matrix with bounded parallelism"
 	@echo "  make website   Execute tutorials and build the documentation website"
 	@echo "  make serve     Serve the built website at http://127.0.0.1:8000"
 	@echo "  make release-check"
@@ -40,6 +43,7 @@ help:
 	@echo "  PYTHON=$(PYTHON)"
 	@echo "  VERSION=$(VERSION)"
 	@echo "  PYTESTOPTS=$(PYTESTOPTS)"
+	@echo "  TOX_PARALLEL=$(TOX_PARALLEL)"
 	@echo "  SPHINXOPTS=$(SPHINXOPTS)"
 
 install:
@@ -56,6 +60,9 @@ test-float32:
 
 test-matrix:
 	$(PYTHON) -m tox run
+
+test-matrix-parallel:
+	$(PYTHON) -m tox run-parallel -p $(TOX_PARALLEL) --parallel-no-spinner
 
 website:
 	$(PYTHON) -m sphinx $(SPHINXOPTS) -W --keep-going -b html $(DOCS_DIR) $(SITE_DIR)

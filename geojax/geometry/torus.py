@@ -8,7 +8,7 @@ from typing import Any, Sequence, Tuple, Union
 import jax
 import jax.numpy as jnp
 
-from .base import GeometryMixin, as_sample_shape
+from .base import ExactGeometryMixin, as_sample_shape
 
 Array = Any
 Shape = Union[int, Sequence[int], Tuple[int, ...]]
@@ -20,7 +20,7 @@ def wrap_angles(x: Array) -> Array:
 
 
 @dataclass(frozen=True, init=False)
-class Torus(GeometryMixin):
+class Torus(ExactGeometryMixin):
     """Flat ``d``-torus represented by angles in ``[-pi, pi)``."""
 
     hessian_conversion_is_exact = True
@@ -45,19 +45,20 @@ class Torus(GeometryMixin):
         return (self.size,)
 
     def wrap(self, x: Array) -> Array:
-        return wrap_angles(x)
+        return wrap_angles(self._check_shape(x, name="x"))
 
     def belongs(self, x: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
         x = jnp.asarray(x)
+        if not self._shape_matches(x):
+            return self._shape_failure(x)
         return jnp.all((x >= -jnp.pi - tol) & (x < jnp.pi + tol), axis=-1)
 
     def is_tangent(self, x: Array, u: Array, atol: float | None = None) -> Array:
         del atol
-        x = jnp.asarray(x)
-        u = jnp.asarray(u)
-        if x.ndim < 1 or u.ndim < 1 or x.shape[-1] != self.size or u.shape[-1] != self.size:
-            return jnp.asarray(False)
+        if not self._shape_matches(x, u):
+            return self._shape_failure(x)
+        x, u = self._check_shapes(("x", x), ("u", u))
         batch_shape = jnp.broadcast_shapes(x.shape[:-1], u.shape[:-1])
         return jnp.ones(batch_shape, dtype=bool)
 
@@ -67,35 +68,38 @@ class Torus(GeometryMixin):
     normalize = project
 
     def tangent_project(self, x: Array, u: Array) -> Array:
-        del x
-        return jnp.asarray(u)
+        _, u = self._check_shapes(("x", x), ("u", u))
+        return u
 
     projection = tangent_project
     proj = tangent_project
     to_tangent = tangent_project
 
     def inner(self, x: Array, u: Array, v: Array) -> Array:
-        del x
+        _, u, v = self._check_shapes(("x", x), ("u", u), ("v", v))
         return jnp.sum(u * v, axis=-1)
 
     def norm(self, x: Array, u: Array) -> Array:
         return jnp.sqrt(jnp.maximum(self.inner(x, u, u), 0.0))
 
     def exp(self, x: Array, u: Array) -> Array:
-        return self.wrap(jnp.asarray(x) + jnp.asarray(u))
+        x, u = self._check_shapes(("x", x), ("u", u))
+        return self.wrap(x + u)
 
     def retr(self, x: Array, u: Array, t: float | Array = 1.0) -> Array:
-        return self.wrap(jnp.asarray(x) + t * jnp.asarray(u))
+        x, u = self._check_shapes(("x", x), ("u", u))
+        return self.wrap(x + t * u)
 
     def log(self, x: Array, y: Array) -> Array:
-        return self.wrap(jnp.asarray(y) - jnp.asarray(x))
+        x, y = self._check_shapes(("x", x), ("y", y))
+        return self.wrap(y - x)
 
     def dist(self, x: Array, y: Array) -> Array:
         return self.norm(x, self.log(x, y))
 
     def transport(self, x: Array, y: Array, u: Array) -> Array:
-        del x, y
-        return jnp.asarray(u)
+        _, _, u = self._check_shapes(("x", x), ("y", y), ("u", u))
+        return u
 
     transp = transport
 
@@ -103,8 +107,8 @@ class Torus(GeometryMixin):
         return self.exp(x, 0.5 * self.log(x, y))
 
     def egrad_to_rgrad(self, x: Array, egrad: Array) -> Array:
-        del x
-        return jnp.asarray(egrad)
+        _, egrad = self._check_shapes(("x", x), ("egrad", egrad))
+        return egrad
 
     egrad2rgrad = egrad_to_rgrad
 
@@ -125,6 +129,7 @@ class Torus(GeometryMixin):
         scale: float | Array = 1.0,
         normalize: bool = False,
     ) -> Array:
+        self._check_shape(x, name="x")
         u = jax.random.normal(key, shape=jnp.shape(x))
         if normalize:
             n = jnp.linalg.norm(u, axis=-1, keepdims=True)

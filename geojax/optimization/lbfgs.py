@@ -101,12 +101,14 @@ class LBFGS:
             yy = as_float(inner(M, newx, y, y))
             ss = as_float(inner(M, newx, step, step))
 
-            transported_memory = []
-            for s_i, y_i, rho_i in memory:
-                transported_memory.append(
-                    (transport(M, x, newx, s_i), transport(M, x, newx, y_i), rho_i)
-                )
-            memory = transported_memory
+            memory = _transport_memory(
+                M,
+                x,
+                newx,
+                memory,
+                cautious_update=self.cautious_update,
+                cautious_threshold=self.cautious_threshold,
+            )
             if sy > 1e-300 and yy > 0.0 and ss > 0.0:
                 if (not self.cautious_update) or sy >= self.cautious_threshold * ss:
                     memory.append((step, y, 1.0 / sy))
@@ -151,6 +153,36 @@ def _two_loop(M: Any, x: Array, grad: Array, memory: list[tuple[Array, Array, fl
         b = rho * as_float(inner(M, x, y, r))
         r = tree_lincomb(1.0, r, a - b, s)
     return r
+
+
+def _transport_memory(
+    M: Any,
+    x: Array,
+    newx: Array,
+    memory: list[tuple[Array, Array, float]],
+    *,
+    cautious_update: bool,
+    cautious_threshold: float,
+) -> list[tuple[Array, Array, float]]:
+    """Transport L-BFGS pairs and rebuild their curvature reciprocals.
+
+    A general manifold vector transport need not preserve the metric. The
+    reciprocal ``rho = 1 / <s, y>`` must therefore be evaluated after both
+    vectors reach the new tangent space. Pairs that lose positive curvature
+    under a non-isometric transport are discarded.
+    """
+    transported: list[tuple[Array, Array, float]] = []
+    for s_i, y_i, _ in memory:
+        new_s = transport(M, x, newx, s_i)
+        new_y = transport(M, x, newx, y_i)
+        sy = as_float(inner(M, newx, new_s, new_y))
+        ss = as_float(inner(M, newx, new_s, new_s))
+        yy = as_float(inner(M, newx, new_y, new_y))
+        cautious_ok = (not cautious_update) or sy >= cautious_threshold * ss
+        if math.isfinite(sy) and math.isfinite(ss) and math.isfinite(yy):
+            if sy > 1e-300 and ss > 0.0 and yy > 0.0 and cautious_ok:
+                transported.append((new_s, new_y, 1.0 / sy))
+    return transported
 
 
 __all__ = ["LBFGS"]

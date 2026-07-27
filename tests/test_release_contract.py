@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import configparser
 from pathlib import Path
 import re
 import tomllib
@@ -49,3 +50,42 @@ def test_release_guide_uses_current_version():
     assert f"dist/{version}" in release_guide
     assert f"geojax=={version}" in release_guide
     assert f"v{version}" in release_guide
+
+
+def test_pep561_marker_is_packaged():
+    pyproject = tomllib.loads((ROOT / "pyproject.toml").read_text())
+    package_data = pyproject["tool"]["setuptools"]["package-data"]["geojax"]
+
+    assert (ROOT / "geojax" / "py.typed").is_file()
+    assert "py.typed" in package_data
+
+
+def test_supported_python_matrix_is_consistent():
+    pyproject = tomllib.loads((ROOT / "pyproject.toml").read_text())
+    manifest = (ROOT / "MANIFEST.in").read_text(encoding="utf-8").splitlines()
+    supported = tuple(
+        line.strip()
+        for line in (ROOT / ".python-versions").read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    )
+    classifiers = set(pyproject["project"]["classifiers"])
+
+    parser = configparser.ConfigParser()
+    parser.read(ROOT / "tox.ini", encoding="utf-8")
+    environments = set(parser["tox"]["env_list"].split())
+
+    assert supported == ("3.11", "3.12", "3.13", "3.14")
+    assert pyproject["project"]["requires-python"] == ">=3.11"
+    assert "include .python-versions" in manifest
+    for version in supported:
+        assert f"Programming Language :: Python :: {version}" in classifiers
+        factor = version.replace(".", "")
+        assert f"py{factor}-stable-float32" in environments
+        assert f"py{factor}-stable-float64" in environments
+
+    assert "py311-min-float32" in environments
+    assert "py311-min-float64" in environments
+    assert not any("-latest-" in environment for environment in environments)
+    assert parser["testenv"]["uv_python_preference"] == "only-managed"
+    assert "COVERAGE_FILE={env_tmp_dir}/.coverage" in parser["testenv"]["set_env"]
+    assert "PYTHONHASHSEED=0" in parser["testenv"]["set_env"]

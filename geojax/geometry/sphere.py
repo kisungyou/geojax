@@ -19,7 +19,7 @@ from typing import Any, Sequence, Tuple, Union
 import jax
 import jax.numpy as jnp
 
-from .base import GeometryMixin, as_sample_shape
+from .base import ExactGeometryMixin, as_sample_shape
 from ._numerics import (
     acos_over_sin,
     acos_squared,
@@ -33,7 +33,7 @@ Shape = Union[int, Sequence[int], Tuple[int, ...]]
 
 
 @dataclass(frozen=True, init=False)
-class Sphere(GeometryMixin):
+class Sphere(ExactGeometryMixin):
     """Canonical geometry of the unit sphere S^d in R^{d+1}.
 
     Parameters
@@ -92,11 +92,16 @@ class Sphere(GeometryMixin):
         """Check whether x lies on the unit sphere."""
         tol = self.atol if atol is None else atol
         x = jnp.asarray(x)
+        if not self._shape_matches(x):
+            return self._shape_failure(x)
         return jnp.abs(jnp.linalg.norm(x, axis=-1) - 1.0) <= tol
 
     def is_tangent(self, x: Array, u: Array, atol: float | None = None) -> Array:
         """Check whether u is tangent at x, i.e. <x, u> = 0."""
         tol = self.atol if atol is None else atol
+        if not self._shape_matches(x, u):
+            return self._shape_failure(x)
+        x, u = self._check_shapes(("x", x), ("u", u))
         return jnp.abs(self._dot(x, u)) <= tol
 
     def project(self, x: Array) -> Array:
@@ -105,7 +110,7 @@ class Sphere(GeometryMixin):
         This is for initialization or numerical repair. The core geometry
         methods use exact sphere formulas.
         """
-        x = jnp.asarray(x)
+        x = self._check_shape(x, name="x")
         norm = jnp.linalg.norm(x, axis=-1, keepdims=True)
         norm_safe = jnp.where(norm > self.eps, norm, 1.0)
         e0 = self._safe_unit_first_axis(x)
@@ -121,8 +126,7 @@ class Sphere(GeometryMixin):
 
         Formula: Proj_x(u) = u - <x, u> x.
         """
-        x = jnp.asarray(x)
-        u = jnp.asarray(u)
+        x, u = self._check_shapes(("x", x), ("u", u))
         return u - self._dot(x, u, keepdims=True) * x
 
     # Common aliases used by manifold libraries.
@@ -132,7 +136,7 @@ class Sphere(GeometryMixin):
 
     def inner(self, x: Array, u: Array, v: Array) -> Array:
         """Canonical Riemannian inner product on T_x S^d."""
-        del x  # The metric is independent of x for the embedded unit sphere.
+        _, u, v = self._check_shapes(("x", x), ("u", u), ("v", v))
         return self._dot(u, v)
 
     def norm(self, x: Array, u: Array) -> Array:
@@ -298,7 +302,7 @@ class SphereExtrinsic(Sphere):
 
     def embed(self, x: Array) -> Array:
         """Apply the identity embedding ``j(x) = x``."""
-        return jnp.asarray(x)
+        return self._check_shape(x, name="x")
 
     to_embedding = embed
 

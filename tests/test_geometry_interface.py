@@ -9,9 +9,11 @@ from geojax.geometry import (
     CorrelationECM,
     CorrelationLEC,
     Elliptope,
+    Euclidean,
     FixedRank,
     GeneralizedGrassmann,
     GeneralizedStiefel,
+    GeometryMixin,
     GeometryProtocol,
     Grassmann,
     GrassmannProjection,
@@ -155,3 +157,61 @@ def test_batch_helpers_and_random_sample_shape(M):
     assert jnp.shape(dists) == (3,)
     assert len(jax.tree_util.tree_leaves(logs)) > 0
     assert bool(jnp.all(M.belongs(exps)))
+
+
+@pytest.mark.parametrize("M", geometries())
+def test_project_repairs_zero_and_noisy_ambient_inputs(M):
+    point = M.random_point(jax.random.key(20))
+    leaves, treedef = jax.tree_util.tree_flatten(point)
+    keys = jax.random.split(jax.random.key(21), len(leaves))
+    zero = jax.tree_util.tree_unflatten(treedef, [jnp.zeros_like(leaf) for leaf in leaves])
+    noisy = jax.tree_util.tree_unflatten(
+        treedef,
+        [
+            10.0 * jax.random.normal(key, shape=leaf.shape, dtype=leaf.dtype)
+            for key, leaf in zip(keys, leaves)
+        ],
+    )
+
+    for ambient in (zero, noisy):
+        projected = M.project(ambient)
+        assert bool(jnp.all(M.belongs(projected))), type(M).__name__
+        assert all(
+            bool(jnp.all(jnp.isfinite(leaf)))
+            for leaf in jax.tree_util.tree_leaves(projected)
+        )
+
+
+@pytest.mark.parametrize("M", [M for M in geometries() if not isinstance(M, Product)])
+def test_array_geometries_enforce_declared_event_shape(M):
+    wrong_shape = M.shape[:-1] + (M.shape[-1] + 1,)
+    point = jnp.zeros(wrong_shape)
+    tangent = jnp.zeros(wrong_shape)
+
+    assert not bool(jnp.any(M.belongs(point)))
+    assert not bool(jnp.any(M.is_tangent(point, tangent)))
+    with pytest.raises(ValueError, match="trailing event shape"):
+        M.project(point)
+    with pytest.raises(ValueError, match="trailing event shape"):
+        M.tangent_project(point, tangent)
+
+
+def test_product_rejects_non_geometry_factors_and_uncertified_metadata():
+    with pytest.raises(TypeError, match="GeometryProtocol"):
+        Product({"valid": Sphere(3), "invalid": object()})
+
+    class UncertifiedEuclidean(Euclidean):
+        exp_is_exact = False
+        log_is_exact = False
+        dist_is_exact = False
+        transport_is_isometric = False
+        transport_is_parallel = False
+
+    factor = UncertifiedEuclidean(2)
+    assert isinstance(factor, GeometryMixin)
+    product = Product((Sphere(3), factor))
+    assert not product.exp_is_exact
+    assert not product.log_is_exact
+    assert not product.dist_is_exact
+    assert not product.transport_is_isometric
+    assert not product.transport_is_parallel

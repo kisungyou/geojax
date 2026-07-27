@@ -6,7 +6,7 @@ import pytest
 
 import geojax
 import geojax.optimization as optimization
-from geojax.geometry import Euclidean, Grassmann, Product, Sphere, Torus
+from geojax.geometry import Euclidean, Grassmann, Product, RankKPSD, Sphere, Torus
 from geojax.optimization._conjugate_gradient import (
     _compute_beta_and_direction,
     _finite_scalar,
@@ -22,6 +22,8 @@ from geojax.optimization import (
     SteepestDescent,
     TrustRegions,
 )
+from geojax.optimization.lbfgs import _transport_memory
+from geojax.optimization.neldermead import _diameter
 
 
 def test_only_class_style_solvers_are_public():
@@ -234,3 +236,71 @@ def test_conjugate_gradient_product_pytree_smoke():
     assert bool(M.belongs(sol))
     assert jnp.isfinite(final_cost)
     assert len(info) >= 1
+
+
+def test_lbfgs_recomputes_curvature_after_nonisometric_transport():
+    class ScaledTransportEuclidean(Euclidean):
+        transport_is_isometric = False
+        transport_is_parallel = False
+
+        def transport(self, x, y, u):
+            del x, y
+            return 2.0 * u
+
+    M = ScaledTransportEuclidean(1)
+    s = jnp.array([2.0])
+    y = jnp.array([3.0])
+    memory = [(s, y, 1.0 / 6.0)]
+    transported = _transport_memory(
+        M,
+        jnp.array([0.0]),
+        jnp.array([1.0]),
+        memory,
+        cautious_update=False,
+        cautious_threshold=0.0,
+    )
+
+    new_s, new_y, new_rho = transported[0]
+    assert jnp.allclose(new_s, 2.0 * s)
+    assert jnp.allclose(new_y, 2.0 * y)
+    assert jnp.allclose(new_rho, 1.0 / jnp.vdot(new_s, new_y))
+    assert not jnp.allclose(new_rho, memory[0][2])
+
+
+def test_lbfgs_smoke_with_nonisometric_rank_stratum_transport():
+    M = RankKPSD(size=(3, 3), rank=2)
+    target = M.random_point(jax.random.key(120))
+    x0 = M.random_point(jax.random.key(121))
+
+    solution, final_cost, info = Minimize(
+        M=M,
+        cost=lambda point: 0.5 * jnp.sum((point - target) ** 2),
+        x0=x0,
+        solver=LBFGS(maxiter=4, verbosity=0),
+    ).solve()
+
+    assert bool(M.belongs(solution))
+    assert jnp.isfinite(final_cost)
+    assert all(jnp.isfinite(entry.cost) for entry in info)
+
+
+def test_nelder_mead_initial_scale_is_applied_once():
+    scale = 0.2
+    solution, _, _ = Minimize(
+        M=Euclidean(1),
+        cost=lambda x: -jnp.sum(x * x),
+        x0=jnp.zeros(1),
+        key=123,
+        solver=NelderMead(
+            initial_scale=scale,
+            maxiter=0,
+            tolcostspread=-1.0,
+            verbosity=0,
+        ),
+    ).solve()
+    assert jnp.allclose(jnp.linalg.norm(solution), scale, atol=1e-6)
+
+
+def test_nelder_mead_diameter_uses_every_vertex_pair():
+    points = [jnp.array([0.0]), jnp.array([1.0]), jnp.array([-1.0])]
+    assert _diameter(Euclidean(1), points) == pytest.approx(2.0)

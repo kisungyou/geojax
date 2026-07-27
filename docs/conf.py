@@ -65,6 +65,10 @@ html_favicon = "_static/brand/geojax-gj-favicon.png"
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
 html_theme_options = {
+    "announcement": (
+        "These are the development docs for unreleased GeoJAX 0.2.0. "
+        "PyPI currently provides the stable 0.1.1 release."
+    ),
     "logo": {
         "text": "Geo",
         "image_light": "_static/brand/geojax-gj-mark.png",

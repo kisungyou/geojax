@@ -8,7 +8,7 @@ from typing import Any, Sequence
 import jax
 import jax.numpy as jnp
 
-from .base import RetractionGeometryMixin, Shape, as_sample_shape
+from .base import RetractionGeometryMixin, Shape, as_sample_shape, dtype_margin
 
 Array = Any
 
@@ -87,27 +87,43 @@ class FixedRank(RetractionGeometryMixin):
         return self.rank * (self.m + self.n - self.rank)
 
     def _factors(self, X: Array) -> tuple[Array, Array, Array]:
-        U, singular_values, Vh = jnp.linalg.svd(jnp.asarray(X), full_matrices=False)
+        X = self._check_shape(X, name="X")
+        U, singular_values, Vh = jnp.linalg.svd(X, full_matrices=False)
         return U[..., :, : self.rank], singular_values[..., : self.rank], Vh[..., : self.rank, :]
 
     def belongs(self, X: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
-        singular_values = jnp.linalg.svd(jnp.asarray(X), compute_uv=False)
+        if not self._shape_matches(X):
+            return self._shape_failure(X)
+        X = self._check_shape(X, name="X")
+        singular_values = jnp.linalg.svd(X, compute_uv=False)
         active = singular_values[..., self.rank - 1] > tol
         if self.rank == min(self.size):
             return active
-        inactive = singular_values[..., self.rank] <= tol
+        dtype = jnp.result_type(X, float)
+        roundoff = (
+            10.0
+            * max(self.size)
+            * jnp.finfo(dtype).eps
+            * jnp.maximum(jnp.linalg.norm(X, axis=(-2, -1)), 1.0)
+        )
+        inactive = singular_values[..., self.rank] <= tol + roundoff
         return active & inactive
 
     def project(self, A: Array) -> Array:
+        A = self._check_shape(A, name="A")
         U, singular_values, Vh = self._factors(A)
-        singular_values = jnp.maximum(singular_values, self.eps)
+        floor = dtype_margin(A, configured=self.eps, atol=self.atol)
+        singular_values = jnp.maximum(singular_values, floor)
         return (U * singular_values[..., None, :]) @ Vh
 
     normalize = project
 
     def is_tangent(self, X: Array, Z: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
+        if not self._shape_matches(X, Z):
+            return self._shape_failure(X)
+        X, Z = self._check_shapes(("X", X), ("Z", Z))
         U, _, Vh = self._factors(X)
         V = _transpose(Vh)
         normal = Z - U @ (_transpose(U) @ Z) - Z @ V @ _transpose(V)
@@ -115,6 +131,7 @@ class FixedRank(RetractionGeometryMixin):
         return jnp.linalg.norm(normal, axis=(-2, -1)) <= tol
 
     def tangent_project(self, X: Array, Z: Array) -> Array:
+        X, Z = self._check_shapes(("X", X), ("Z", Z))
         U, _, Vh = self._factors(X)
         V = _transpose(Vh)
         projected = U @ (_transpose(U) @ Z) + Z @ V @ _transpose(V)
@@ -125,7 +142,7 @@ class FixedRank(RetractionGeometryMixin):
     to_tangent = tangent_project
 
     def inner(self, X: Array, U: Array, V: Array) -> Array:
-        del X
+        _, U, V = self._check_shapes(("X", X), ("U", U), ("V", V))
         return _trace_inner(U, V)
 
     def norm(self, X: Array, U: Array) -> Array:
@@ -205,6 +222,7 @@ class _RankKPSDBase(RetractionGeometryMixin):
         return self.n * self.rank - self.rank * (self.rank - 1) // 2
 
     def _eigen_factors(self, P: Array) -> tuple[Array, Array]:
+        P = self._check_shape(P, name="P")
         eigenvalues, eigenvectors = jnp.linalg.eigh(_sym(P))
         return eigenvalues[..., -self.rank :], eigenvectors[..., :, -self.rank :]
 
@@ -215,22 +233,34 @@ class _RankKPSDBase(RetractionGeometryMixin):
     def belongs(self, P: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
         P = jnp.asarray(P)
+        if not self._shape_matches(P):
+            return self._shape_failure(P)
         symmetric = jnp.linalg.norm(P - _transpose(P), axis=(-2, -1)) <= tol
         eigenvalues = jnp.linalg.eigvalsh(_sym(P))
         positive = jnp.min(eigenvalues[..., -self.rank :], axis=-1) > tol
         if self.rank == self.n:
             return symmetric & positive
-        zero = jnp.max(jnp.abs(eigenvalues[..., : -self.rank]), axis=-1) <= tol
+        dtype = jnp.result_type(P, float)
+        roundoff = (
+            10.0
+            * self.n
+            * jnp.finfo(dtype).eps
+            * jnp.maximum(jnp.linalg.norm(P, axis=(-2, -1)), 1.0)
+        )
+        zero = jnp.max(jnp.abs(eigenvalues[..., : -self.rank]), axis=-1) <= tol + roundoff
         return symmetric & positive & zero
 
     def project(self, A: Array) -> Array:
+        A = self._check_shape(A, name="A")
         eigenvalues, eigenvectors = self._eigen_factors(A)
-        eigenvalues = jnp.maximum(eigenvalues, self.eps)
+        floor = dtype_margin(A, configured=self.eps, atol=self.atol)
+        eigenvalues = jnp.maximum(eigenvalues, floor)
         return (eigenvectors * eigenvalues[..., None, :]) @ _transpose(eigenvectors)
 
     normalize = project
 
     def tangent_project(self, P: Array, Z: Array) -> Array:
+        P, Z = self._check_shapes(("P", P), ("Z", Z))
         support = self._support_projector(P)
         Z = _sym(Z)
         return _sym(support @ Z + Z @ support - support @ Z @ support)
@@ -241,7 +271,9 @@ class _RankKPSDBase(RetractionGeometryMixin):
 
     def is_tangent(self, P: Array, U: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
-        U = jnp.asarray(U)
+        if not self._shape_matches(P, U):
+            return self._shape_failure(P)
+        P, U = self._check_shapes(("P", P), ("U", U))
         residual = U - self.tangent_project(P, U)
         dtype = jnp.result_type(U, float)
         roundoff = (
@@ -253,7 +285,7 @@ class _RankKPSDBase(RetractionGeometryMixin):
         return jnp.linalg.norm(residual, axis=(-2, -1)) <= tol + roundoff
 
     def inner(self, P: Array, U: Array, V: Array) -> Array:
-        del P
+        _, U, V = self._check_shapes(("P", P), ("U", U), ("V", V))
         return _trace_inner(U, V)
 
     def norm(self, P: Array, U: Array) -> Array:
@@ -332,7 +364,10 @@ class RankKPSDBuresWasserstein(_RankKPSDBase):
         Q = self.project(Q)
         factor_p = self._factor(P)
         factor_q = self._factor(Q)
-        left, _, right_t = jnp.linalg.svd(_transpose(factor_q) @ factor_p)
+        left, _, right_t = jnp.linalg.svd(
+            _transpose(factor_q) @ factor_p,
+            full_matrices=False,
+        )
         alignment = left @ right_t
         horizontal = factor_q @ alignment - factor_p
         return _sym(horizontal @ _transpose(factor_p) + factor_p @ _transpose(horizontal))
@@ -345,7 +380,10 @@ class RankKPSDBuresWasserstein(_RankKPSDBase):
         Q = self.project(Q)
         factor_p = self._factor(P)
         factor_q = self._factor(Q)
-        left, _, right_t = jnp.linalg.svd(_transpose(factor_q) @ factor_p)
+        left, _, right_t = jnp.linalg.svd(
+            _transpose(factor_q) @ factor_p,
+            full_matrices=False,
+        )
         difference = factor_q @ (left @ right_t) - factor_p
         return jnp.linalg.norm(difference, axis=(-2, -1))
 
@@ -371,6 +409,8 @@ class Elliptope(_RankKPSDBase):
 
     def belongs(self, P: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
+        if not self._shape_matches(P):
+            return self._shape_failure(P)
         return super().belongs(P, atol=tol) & jnp.all(
             jnp.abs(jnp.diagonal(P, axis1=-2, axis2=-1) - 1.0) <= tol, axis=-1
         )
@@ -380,7 +420,10 @@ class Elliptope(_RankKPSDBase):
         eigenvalues, eigenvectors = self._eigen_factors(base)
         factor = eigenvectors * jnp.sqrt(jnp.maximum(eigenvalues, self.eps))[..., None, :]
         row_norms = jnp.linalg.norm(factor, axis=-1, keepdims=True)
-        factor = factor / jnp.maximum(row_norms, self.eps)
+        floor = dtype_margin(factor, configured=self.eps)
+        fallback = jnp.eye(self.rank, dtype=factor.dtype)[jnp.arange(self.n) % self.rank]
+        fallback = jnp.broadcast_to(fallback, factor.shape)
+        factor = jnp.where(row_norms > floor, factor / jnp.maximum(row_norms, floor), fallback)
         return _sym(factor @ _transpose(factor))
 
     def tangent_project(self, P: Array, Z: Array) -> Array:
@@ -413,6 +456,8 @@ class Spectrahedron(_RankKPSDBase):
 
     def belongs(self, P: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
+        if not self._shape_matches(P):
+            return self._shape_failure(P)
         return super().belongs(P, atol=tol) & (
             jnp.abs(jnp.trace(P, axis1=-2, axis2=-1) - 1.0) <= tol
         )

@@ -2,6 +2,22 @@
 
 ## 0.2.0 - Unreleased
 
+- Added a self-provisioning, release-blocking test matrix for Python
+  3.11--3.14, minimum and pinned stable JAX stacks, and both float32 and
+  float64 modes, using managed interpreters, isolated coverage data,
+  deterministic hash seeds, and a release-contract test preventing metadata
+  drift.
+- Enforced declared event shapes across every array geometry, added adversarial
+  projection tests, and made zero, noisy, indefinite, and rank-deficient
+  repairs satisfy the public membership contract in both precision modes.
+- Added dtype-aware open-set and spectral margins, including stable float32
+  Poincare-ball and hyperboloid conversions.
+- Made capability metadata fail closed, validated Product factors against the
+  structural geometry protocol, and shipped the `py.typed` marker.
+- Corrected L-BFGS curvature reciprocals after non-isometric transport and
+  corrected Nelder-Mead simplex scaling and full pairwise diameter reporting.
+- Distinguished the stable PyPI package from the unreleased documentation and
+  expanded the method-level geometry API contract.
 - Standardized native leading-batch semantics across every public geometry and
   added differentiable `squared_dist` operations.
 - Stabilized zero-tangent exponentials, coincident logarithms, repeated SPD

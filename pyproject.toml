@@ -28,6 +28,7 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Topic :: Scientific/Engineering :: Mathematics",
 ]
 dependencies = [
@@ -48,7 +49,8 @@ dev = [
   "ruff>=0.8",
   "build>=1.2",
   "twine>=5",
-  "tox>=4.25",
+  "tox>=4.58,<5",
+  "tox-uv>=1.36,<2",
 ]
 docs = [
   "sphinx>=8.2",
@@ -70,6 +72,9 @@ examples = [
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["geojax*"]
+
+[tool.setuptools.package-data]
+geojax = ["py.typed"]
 
 [tool.ruff]
 line-length = 100

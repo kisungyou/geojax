@@ -8,7 +8,7 @@ from typing import Any, NamedTuple, Sequence
 import jax
 import jax.numpy as jnp
 
-from .base import GeometryMixin, Shape, as_sample_shape
+from .base import ExactGeometryMixin, Shape, as_sample_shape
 from ._numerics import matrix_expm
 
 Array = Any
@@ -59,7 +59,7 @@ class StiefelLogInfo(NamedTuple):
 
 
 @dataclass(frozen=True, init=False)
-class _StiefelBase(GeometryMixin):
+class _StiefelBase(ExactGeometryMixin):
     """Shared frame representation and numerical logarithm implementation."""
 
     log_is_exact = False
@@ -122,12 +122,14 @@ class _StiefelBase(GeometryMixin):
     def belongs(self, X: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
         X = jnp.asarray(X)
+        if not self._shape_matches(X):
+            return self._shape_failure(X)
         identity = jnp.eye(self.k, dtype=X.dtype)
         return jnp.linalg.norm(_transpose(X) @ X - identity, axis=(-2, -1)) <= tol
 
     def project(self, A: Array) -> Array:
         """Return the nearest orthonormal frame in Frobenius norm."""
-        A = jnp.asarray(A)
+        A = self._check_shape(A, name="A")
         U, _, Vh = jnp.linalg.svd(A, full_matrices=False)
         return U @ Vh
 
@@ -135,13 +137,15 @@ class _StiefelBase(GeometryMixin):
 
     def is_tangent(self, X: Array, U: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
-        constraint = _transpose(jnp.asarray(X)) @ jnp.asarray(U)
+        if not self._shape_matches(X, U):
+            return self._shape_failure(X)
+        X, U = self._check_shapes(("X", X), ("U", U))
+        constraint = _transpose(X) @ U
         return jnp.linalg.norm(constraint + _transpose(constraint), axis=(-2, -1)) <= tol
 
     def tangent_project(self, X: Array, A: Array) -> Array:
         """Orthogonally project an ambient matrix onto the frame tangent space."""
-        X = jnp.asarray(X)
-        A = jnp.asarray(A)
+        X, A = self._check_shapes(("X", X), ("A", A))
         return A - X @ _sym(_transpose(X) @ A)
 
     projection = tangent_project
@@ -293,7 +297,8 @@ class _StiefelBase(GeometryMixin):
         The tangent result is the best iterate even if the solver does not
         converge. Check ``info.converged`` before using it as a logarithm.
         """
-        return self._shoot_log(jnp.asarray(X), jnp.asarray(Y))
+        X, Y = self._check_shapes(("X", X), ("Y", Y))
+        return self._shoot_log(X, Y)
 
     def log(self, X: Array, Y: Array) -> Array:
         """Return the selected local logarithm, or nonfinite values on failure."""
@@ -327,8 +332,7 @@ class _StiefelBase(GeometryMixin):
         )
 
     def squared_dist(self, X: Array, Y: Array) -> Array:
-        X = jnp.asarray(X)
-        Y = jnp.asarray(Y)
+        X, Y = self._check_shapes(("X", X), ("Y", Y))
         batch_shape = jnp.broadcast_shapes(X.shape[:-2], Y.shape[:-2])
         X = jnp.broadcast_to(X, batch_shape + self.shape)
         Y = jnp.broadcast_to(Y, batch_shape + self.shape)
@@ -345,8 +349,7 @@ class _StiefelBase(GeometryMixin):
         This transport is tangent and exactly metric-preserving, but it is not
         the Levi-Civita parallel transport for either Stiefel metric.
         """
-        X = jnp.asarray(X)
-        Y = jnp.asarray(Y)
+        X, Y = self._check_shapes(("X", X), ("Y", Y))
         U = self.tangent_project(X, U)
         frame_X = jnp.concatenate([X, self._orthogonal_complement(X)], axis=-1)
         frame_Y = jnp.concatenate([Y, self._orthogonal_complement(Y)], axis=-1)
@@ -398,9 +401,7 @@ class Stiefel(_StiefelBase):
         return 1.0
 
     def inner(self, X: Array, U: Array, V: Array) -> Array:
-        X = jnp.asarray(X)
-        U = jnp.asarray(U)
-        V = jnp.asarray(V)
+        X, U, V = self._check_shapes(("X", X), ("U", U), ("V", V))
         return _trace_inner(U, V) - 0.5 * _trace_inner(_transpose(X) @ U, _transpose(X) @ V)
 
     def exp(self, X: Array, U: Array) -> Array:
@@ -416,8 +417,7 @@ class Stiefel(_StiefelBase):
 
     def egrad_to_rgrad(self, X: Array, egrad: Array) -> Array:
         """Convert an ambient Euclidean gradient for the canonical metric."""
-        X = jnp.asarray(X)
-        egrad = jnp.asarray(egrad)
+        X, egrad = self._check_shapes(("X", X), ("egrad", egrad))
         return egrad - X @ _transpose(egrad) @ X
 
     egrad2rgrad = egrad_to_rgrad
@@ -439,7 +439,7 @@ class StiefelEuclidean(_StiefelBase):
         return 1.0 / jnp.sqrt(2.0)
 
     def inner(self, X: Array, U: Array, V: Array) -> Array:
-        del X
+        _, U, V = self._check_shapes(("X", X), ("U", U), ("V", V))
         return _trace_inner(U, V)
 
     def exp(self, X: Array, U: Array) -> Array:

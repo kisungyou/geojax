@@ -8,7 +8,7 @@ from typing import Any, Sequence, Tuple, Union
 import jax
 import jax.numpy as jnp
 
-from .base import GeometryMixin, as_sample_shape
+from .base import ExactGeometryMixin, as_sample_shape, check_event_shape
 from ._numerics import matrix_expm
 
 Array = Any
@@ -79,7 +79,7 @@ def _principal_orthogonal_log_jvp(primals, tangents):
 
 
 @dataclass(frozen=True, init=False)
-class SpecialOrthogonal(GeometryMixin):
+class SpecialOrthogonal(ExactGeometryMixin):
     """Rotation group SO(n) with the Frobenius bi-invariant metric.
 
     A point is an ``n x n`` matrix ``R`` satisfying ``R.T @ R = I`` and
@@ -121,13 +121,24 @@ class SpecialOrthogonal(GeometryMixin):
     def belongs(self, R: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
         R = jnp.asarray(R)
+        if not self._shape_matches(R):
+            return self._shape_failure(R)
         identity = jnp.eye(self.n, dtype=R.dtype)
-        orthogonal = jnp.linalg.norm(_transpose(R) @ R - identity, axis=(-2, -1)) <= tol
-        orientation = jnp.abs(jnp.linalg.det(R) - 1.0) <= tol
+        roundoff = (
+            10.0
+            * self.n
+            * jnp.finfo(jnp.result_type(R, float)).eps
+            * jnp.maximum(jnp.linalg.norm(R, axis=(-2, -1)), 1.0)
+        )
+        orthogonal = (
+            jnp.linalg.norm(_transpose(R) @ R - identity, axis=(-2, -1))
+            <= tol + roundoff
+        )
+        orientation = jnp.abs(jnp.linalg.det(R) - 1.0) <= tol + roundoff
         return orthogonal & orientation
 
     def project(self, A: Array) -> Array:
-        A = jnp.asarray(A)
+        A = self._check_shape(A, name="A")
         U, _, Vh = jnp.linalg.svd(A, full_matrices=False)
         provisional = U @ Vh
         last_sign = jnp.where(jnp.linalg.det(provisional) < 0.0, -1.0, 1.0)
@@ -137,20 +148,23 @@ class SpecialOrthogonal(GeometryMixin):
 
     def is_tangent(self, R: Array, U: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
-        body = _transpose(jnp.asarray(R)) @ jnp.asarray(U)
+        if not self._shape_matches(R, U):
+            return self._shape_failure(R)
+        R, U = self._check_shapes(("R", R), ("U", U))
+        body = _transpose(R) @ U
         return jnp.linalg.norm(body + _transpose(body), axis=(-2, -1)) <= tol
 
     def tangent_project(self, R: Array, A: Array) -> Array:
-        R = jnp.asarray(R)
-        return R @ _skew(_transpose(R) @ jnp.asarray(A))
+        R, A = self._check_shapes(("R", R), ("A", A))
+        return R @ _skew(_transpose(R) @ A)
 
     projection = tangent_project
     proj = tangent_project
     to_tangent = tangent_project
 
     def inner(self, R: Array, U: Array, V: Array) -> Array:
-        del R
-        return jnp.sum(jnp.asarray(U) * jnp.asarray(V), axis=(-2, -1))
+        _, U, V = self._check_shapes(("R", R), ("U", U), ("V", V))
+        return jnp.sum(U * V, axis=(-2, -1))
 
     def norm(self, R: Array, U: Array) -> Array:
         return jnp.sqrt(jnp.maximum(self.inner(R, U, U), 0.0))
@@ -164,7 +178,7 @@ class SpecialOrthogonal(GeometryMixin):
         return jnp.where(at_cut[..., None, None], jnp.nan, log_relative)
 
     def exp(self, R: Array, U: Array) -> Array:
-        R = jnp.asarray(R)
+        R = self._check_shape(R, name="R")
         U = self.tangent_project(R, U)
         omega = _skew(_transpose(R) @ U)
         return R @ matrix_expm(omega)
@@ -175,8 +189,7 @@ class SpecialOrthogonal(GeometryMixin):
     def log(self, R: Array, Q: Array) -> Array:
         # Do not insert an SVD projection here: its repeated singular values on
         # SO(n) make an otherwise smooth distance nondifferentiable to JAX.
-        R = jnp.asarray(R)
-        Q = jnp.asarray(Q)
+        R, Q = self._check_shapes(("R", R), ("Q", Q))
         return R @ self._relative_log(_transpose(R) @ Q)
 
     def dist(self, R: Array, Q: Array) -> Array:
@@ -188,8 +201,7 @@ class SpecialOrthogonal(GeometryMixin):
 
     def transport(self, R: Array, Q: Array, U: Array) -> Array:
         """Parallel transport along the selected shortest geodesic."""
-        R = jnp.asarray(R)
-        Q = jnp.asarray(Q)
+        R, Q = self._check_shapes(("R", R), ("Q", Q))
         U = self.tangent_project(R, U)
         omega = self._relative_log(_transpose(R) @ Q)
         half = matrix_expm(0.5 * omega)
@@ -209,21 +221,24 @@ class SpecialOrthogonal(GeometryMixin):
         return self.tangent_project(R, jnp.asarray(ehess_vec) - correction)
 
     def compose(self, R: Array, Q: Array) -> Array:
-        return jnp.asarray(R) @ jnp.asarray(Q)
+        R, Q = self._check_shapes(("R", R), ("Q", Q))
+        return R @ Q
 
     def inverse(self, R: Array) -> Array:
-        return _transpose(jnp.asarray(R))
+        return _transpose(self._check_shape(R, name="R"))
 
     def group_exp(self, omega: Array) -> Array:
         """Lie-group exponential from a skew matrix at the identity."""
-        return matrix_expm(_skew(jnp.asarray(omega)))
+        return matrix_expm(_skew(self._check_shape(omega, name="omega")))
 
     def group_log(self, R: Array) -> Array:
         """Principal Lie-group logarithm, undefined at rotations by pi."""
-        return self._relative_log(jnp.asarray(R))
+        return self._relative_log(self._check_shape(R, name="R"))
 
     def apply(self, R: Array, points: Array) -> Array:
-        return jnp.einsum("...ij,...j->...i", jnp.asarray(R), jnp.asarray(points))
+        R = self._check_shape(R, name="R")
+        points = check_event_shape(points, (self.n,), name="points")
+        return jnp.einsum("...ij,...j->...i", R, points)
 
     def random_point(self, key: Array, sample_shape: Shape = ()) -> Array:
         sample_shape = as_sample_shape(sample_shape)
@@ -254,7 +269,7 @@ class SpecialOrthogonal(GeometryMixin):
 
 
 @dataclass(frozen=True, init=False)
-class SpecialEuclidean(GeometryMixin):
+class SpecialEuclidean(ExactGeometryMixin):
     """Rigid-motion group SE(n) with its canonical product metric.
 
     Points use homogeneous matrices ``[[R, t], [0, 1]]``.  The metric is the
@@ -299,29 +314,37 @@ class SpecialEuclidean(GeometryMixin):
         return jnp.eye(self.n + 1)
 
     def from_components(self, rotation: Array, translation: Array) -> Array:
-        rotation = jnp.asarray(rotation)
-        translation = jnp.asarray(translation)
+        rotation = check_event_shape(rotation, (self.n, self.n), name="rotation")
+        translation = check_event_shape(translation, (self.n,), name="translation")
+        batch_shape = jnp.broadcast_shapes(rotation.shape[:-2], translation.shape[:-1])
+        rotation = jnp.broadcast_to(rotation, batch_shape + (self.n, self.n))
+        translation = jnp.broadcast_to(translation, batch_shape + (self.n,))
         out = jnp.zeros(rotation.shape[:-2] + self.shape, dtype=rotation.dtype)
         out = out.at[..., : self.n, : self.n].set(rotation)
         out = out.at[..., : self.n, self.n].set(translation)
         return out.at[..., self.n, self.n].set(1.0)
 
     def tangent_from_components(self, rotation: Array, translation: Array) -> Array:
-        rotation = jnp.asarray(rotation)
-        translation = jnp.asarray(translation)
+        rotation = check_event_shape(rotation, (self.n, self.n), name="rotation")
+        translation = check_event_shape(translation, (self.n,), name="translation")
+        batch_shape = jnp.broadcast_shapes(rotation.shape[:-2], translation.shape[:-1])
+        rotation = jnp.broadcast_to(rotation, batch_shape + (self.n, self.n))
+        translation = jnp.broadcast_to(translation, batch_shape + (self.n,))
         out = jnp.zeros(rotation.shape[:-2] + self.shape, dtype=rotation.dtype)
         out = out.at[..., : self.n, : self.n].set(rotation)
         return out.at[..., : self.n, self.n].set(translation)
 
     def rotation(self, G: Array) -> Array:
-        return jnp.asarray(G)[..., : self.n, : self.n]
+        return self._check_shape(G, name="G")[..., : self.n, : self.n]
 
     def translation(self, G: Array) -> Array:
-        return jnp.asarray(G)[..., : self.n, self.n]
+        return self._check_shape(G, name="G")[..., : self.n, self.n]
 
     def belongs(self, G: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
         G = jnp.asarray(G)
+        if not self._shape_matches(G):
+            return self._shape_failure(G)
         rotation_ok = self._rotations.belongs(self.rotation(G), atol=tol)
         expected_bottom = jnp.zeros(G.shape[:-2] + (self.n + 1,), dtype=G.dtype)
         expected_bottom = expected_bottom.at[..., -1].set(1.0)
@@ -329,17 +352,20 @@ class SpecialEuclidean(GeometryMixin):
         return rotation_ok & bottom_ok
 
     def project(self, A: Array) -> Array:
-        A = jnp.asarray(A)
+        A = self._check_shape(A, name="A")
         return self.from_components(self._rotations.project(self.rotation(A)), self.translation(A))
 
     def is_tangent(self, G: Array, U: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
-        U = jnp.asarray(U)
+        if not self._shape_matches(G, U):
+            return self._shape_failure(G)
+        G, U = self._check_shapes(("G", G), ("U", U))
         rotation_ok = self._rotations.is_tangent(self.rotation(G), self.rotation(U), atol=tol)
         bottom_ok = jnp.linalg.norm(U[..., self.n, :], axis=-1) <= tol
         return rotation_ok & bottom_ok
 
     def tangent_project(self, G: Array, A: Array) -> Array:
+        G, A = self._check_shapes(("G", G), ("A", A))
         return self.tangent_from_components(
             self._rotations.tangent_project(self.rotation(G), self.rotation(A)),
             self.translation(A),
@@ -350,6 +376,7 @@ class SpecialEuclidean(GeometryMixin):
     to_tangent = tangent_project
 
     def inner(self, G: Array, U: Array, V: Array) -> Array:
+        G, U, V = self._check_shapes(("G", G), ("U", U), ("V", V))
         rotation_inner = self._rotations.inner(self.rotation(G), self.rotation(U), self.rotation(V))
         translation_inner = jnp.sum(self.translation(U) * self.translation(V), axis=-1)
         return rotation_inner + translation_inner
@@ -358,7 +385,7 @@ class SpecialEuclidean(GeometryMixin):
         return jnp.sqrt(jnp.maximum(self.inner(G, U, U), 0.0))
 
     def exp(self, G: Array, U: Array) -> Array:
-        G = jnp.asarray(G)
+        G = self._check_shape(G, name="G")
         U = self.tangent_project(G, U)
         R = self.rotation(G)
         next_R = self._rotations.exp(R, self.rotation(U))
@@ -369,8 +396,7 @@ class SpecialEuclidean(GeometryMixin):
         return self.exp(G, t * U)
 
     def log(self, G: Array, H: Array) -> Array:
-        G = jnp.asarray(G)
-        H = jnp.asarray(H)
+        G, H = self._check_shapes(("G", G), ("H", H))
         return self.tangent_from_components(
             self._rotations.log(self.rotation(G), self.rotation(H)),
             self.translation(H) - self.translation(G),

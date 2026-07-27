@@ -35,13 +35,15 @@ GeoJAX requires Python 3.11 or newer. The human-facing project name is
 **GeoJAX**; the Python package, repository slug, and PyPI distribution are all
 lowercase **`geojax`**. Install it with:
 
-**PyPI**
+**Stable release from PyPI**
+
+PyPI currently provides 0.1.1:
 
 ```bash
-python -m pip install geojax
+python -m pip install "geojax==0.1.1"
 ```
 
-**GitHub source**
+**Unreleased 0.2.0 development source**
 
 ```bash
 git clone https://github.com/kisungyou/geojax.git
@@ -51,6 +53,9 @@ python -m pip install .
 
 For development, replace the final command with
 `python -m pip install -e ".[dev,docs,examples]"`.
+
+The website built from `main` documents 0.2.0. Until that version is published,
+features under `geojax.learning` require the GitHub installation.
 
 ## Quick Start
 
@@ -161,9 +166,12 @@ python -m build
 python -m twine check dist/*
 ```
 
-Before a release, `make test-matrix` exercises the supported Python versions,
-the declared dependency floor, current dependencies, and both JAX precision
-modes. See the
+Before a release, `make test-matrix` provisions and exercises Python
+3.11--3.14, the declared dependency floor, a pinned stable dependency set, and
+both JAX precision modes. Missing interpreters are downloaded and managed by
+`tox-uv` rather than skipped or inherited from the active base environment.
+`make test-matrix-parallel` provides a coverage-safe two-worker alternative.
+See the
 [testing guide](https://www.kisungyou.com/geojax/development/testing.html)
 for the exact matrix.
 

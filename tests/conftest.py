@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import os
+import platform
 
 import pytest
+import jax
+import numpy as np
 from jax import config
 
 
@@ -16,7 +19,10 @@ config.update("jax_enable_x64", _X64_VALUES[_x64_setting])
 
 def pytest_report_header() -> str:
     precision = "float64" if config.jax_enable_x64 else "float32"
-    return f"GeoJAX numerical precision: {precision}"
+    return (
+        f"GeoJAX matrix: Python {platform.python_version()}, "
+        f"JAX {jax.__version__}, NumPy {np.__version__}, {precision}"
+    )
 
 
 @pytest.fixture

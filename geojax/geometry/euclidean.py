@@ -16,7 +16,7 @@ from typing import Any, Sequence, Tuple, Union
 import jax
 import jax.numpy as jnp
 
-from .base import GeometryMixin, as_sample_shape
+from .base import ExactGeometryMixin, as_sample_shape
 
 Array = Any
 Shape = Union[int, Sequence[int], Tuple[int, ...]]
@@ -36,7 +36,7 @@ def _parse_size(size: Shape) -> tuple[int, ...]:
 
 
 @dataclass(frozen=True, init=False)
-class Euclidean(GeometryMixin):
+class Euclidean(ExactGeometryMixin):
     """Flat Euclidean geometry.
 
     Parameters
@@ -68,40 +68,34 @@ class Euclidean(GeometryMixin):
     def belongs(self, x: Array, atol: float | None = None) -> Array:
         del atol
         x = jnp.asarray(x)
-        if x.ndim < len(self.shape) or tuple(x.shape[-len(self.shape) :]) != self.shape:
-            return jnp.asarray(False)
+        if not self._shape_matches(x):
+            return self._shape_failure(x)
         return jnp.ones(x.shape[: -len(self.shape)], dtype=bool)
 
     def is_tangent(self, x: Array, u: Array, atol: float | None = None) -> Array:
         del atol
-        x = jnp.asarray(x)
-        u = jnp.asarray(u)
+        if not self._shape_matches(x, u):
+            return self._shape_failure(x)
+        x, u = self._check_shapes(("x", x), ("u", u))
         event_ndim = len(self.shape)
-        if (
-            x.ndim < event_ndim
-            or u.ndim < event_ndim
-            or tuple(x.shape[-event_ndim:]) != self.shape
-            or tuple(u.shape[-event_ndim:]) != self.shape
-        ):
-            return jnp.asarray(False)
         batch_shape = jnp.broadcast_shapes(x.shape[:-event_ndim], u.shape[:-event_ndim])
         return jnp.ones(batch_shape, dtype=bool)
 
     def project(self, x: Array) -> Array:
-        return jnp.asarray(x)
+        return self._check_shape(x, name="x")
 
     normalize = project
 
     def tangent_project(self, x: Array, u: Array) -> Array:
-        del x
-        return jnp.asarray(u)
+        _, u = self._check_shapes(("x", x), ("u", u))
+        return u
 
     projection = tangent_project
     proj = tangent_project
     to_tangent = tangent_project
 
     def inner(self, x: Array, u: Array, v: Array) -> Array:
-        del x
+        _, u, v = self._check_shapes(("x", x), ("u", u), ("v", v))
         axes = tuple(range(-len(self.shape), 0))
         return jnp.sum(u * v, axis=axes)
 
@@ -109,7 +103,6 @@ class Euclidean(GeometryMixin):
         return jnp.sqrt(jnp.maximum(self.inner(x, u, u), 0.0))
 
     def lincomb(self, x: Array, *terms: Any) -> Array:
-        del x
         if len(terms) % 2 != 0:
             raise ValueError("lincomb expects coefficient/vector pairs.")
         out = None
@@ -118,38 +111,47 @@ class Euclidean(GeometryMixin):
             out = term if out is None else out + term
         if out is None:
             raise ValueError("lincomb requires at least one coefficient/vector pair.")
-        return out
+        return self.tangent_project(x, out)
 
     def exp(self, x: Array, u: Array) -> Array:
-        return jnp.asarray(x) + jnp.asarray(u)
+        x, u = self._check_shapes(("x", x), ("u", u))
+        return x + u
 
     def retr(self, x: Array, u: Array, t: float | Array = 1.0) -> Array:
-        return jnp.asarray(x) + t * jnp.asarray(u)
+        x, u = self._check_shapes(("x", x), ("u", u))
+        return x + t * u
 
     def log(self, x: Array, y: Array) -> Array:
-        return jnp.asarray(y) - jnp.asarray(x)
+        x, y = self._check_shapes(("x", x), ("y", y))
+        return y - x
 
     def dist(self, x: Array, y: Array) -> Array:
         return self.norm(x, self.log(x, y))
 
     def transport(self, x: Array, y: Array, u: Array) -> Array:
-        del x, y
-        return jnp.asarray(u)
+        _, _, u = self._check_shapes(("x", x), ("y", y), ("u", u))
+        return u
 
     transp = transport
 
     def pair_mean(self, x: Array, y: Array) -> Array:
-        return 0.5 * (jnp.asarray(x) + jnp.asarray(y))
+        x, y = self._check_shapes(("x", x), ("y", y))
+        return 0.5 * (x + y)
 
     def egrad_to_rgrad(self, x: Array, egrad: Array) -> Array:
-        del x
-        return jnp.asarray(egrad)
+        _, egrad = self._check_shapes(("x", x), ("egrad", egrad))
+        return egrad
 
     egrad2rgrad = egrad_to_rgrad
 
     def ehess_to_rhess(self, x: Array, egrad: Array, ehess_vec: Array, u: Array) -> Array:
-        del x, egrad, u
-        return jnp.asarray(ehess_vec)
+        _, _, ehess_vec, _ = self._check_shapes(
+            ("x", x),
+            ("egrad", egrad),
+            ("ehess_vec", ehess_vec),
+            ("u", u),
+        )
+        return ehess_vec
 
     def random_point(self, key: Array, sample_shape: Shape = ()) -> Array:
         sample_shape = as_sample_shape(sample_shape)
@@ -163,6 +165,7 @@ class Euclidean(GeometryMixin):
         scale: float | Array = 1.0,
         normalize: bool = False,
     ) -> Array:
+        self._check_shape(x, name="x")
         u = jax.random.normal(key, shape=jnp.shape(x))
         if normalize:
             axes = tuple(range(-len(self.shape), 0))
