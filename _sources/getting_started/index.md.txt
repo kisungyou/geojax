@@ -2,22 +2,35 @@
 
 ## Installation
 
-GeoJAX requires Python 3.11 or newer. Choose either the published package or
-the current GitHub source. The distribution name, import package, repository
-slug, and PyPI project are all lowercase `geojax`.
+GeoJAX requires Python 3.11 or newer. The distribution name, import package,
+repository slug, and PyPI project are all lowercase `geojax`.
 
-### Option 1: PyPI
+### Option 1: stable release from PyPI
+
+PyPI currently provides GeoJAX 0.1.1. Pinning the version makes an experiment
+reproducible and distinguishes the stable package from these development
+documentation pages.
 
 ```bash
-python -m pip install geojax
+python -m pip install "geojax==0.1.1"
 ```
 
-### Option 2: GitHub source
+### Option 2: development version from GitHub
+
+The `main` branch and this website document the unreleased 0.2.0 development
+version, including `geojax.learning`.
 
 ```bash
 git clone https://github.com/kisungyou/geojax.git
 cd geojax
 python -m pip install .
+```
+
+For an editable development installation with the complete test and
+documentation toolchain, use
+
+```bash
+python -m pip install -e ".[dev,docs,examples]"
 ```
 
 ## First optimization problem

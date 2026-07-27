@@ -97,6 +97,9 @@
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">These are the development docs for unreleased GeoJAX 0.2.0. PyPI currently provides the stable 0.1.1 release.</div>
+</aside>
 
   
     <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -450,8 +453,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/optimization.html#geojax.optimization.FiniteSum.batch_cost_and_grad">batch_cost_and_grad() (geojax.optimization.FiniteSum method)</a>
 </li>
-      <li><a href="api/geometry.html#geojax.geometry.Sphere.belongs">belongs() (geojax.geometry.Sphere method)</a>
+      <li><a href="api/geometry.html#geojax.geometry.base.ManifoldProtocol.belongs">belongs() (geojax.geometry.base.ManifoldProtocol method)</a>
+
+      <ul>
+        <li><a href="api/geometry.html#geojax.geometry.Sphere.belongs">(geojax.geometry.Sphere method)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -490,9 +497,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/geometry.html#geojax.geometry.Sphere.dim">dim (geojax.geometry.Sphere property)</a>
 </li>
-      <li><a href="api/geometry.html#geojax.geometry.base.RetractionGeometryMixin.dist">dist() (geojax.geometry.base.RetractionGeometryMixin method)</a>
+      <li><a href="api/geometry.html#geojax.geometry.base.GeometryProtocol.dist">dist() (geojax.geometry.base.GeometryProtocol method)</a>
 
       <ul>
+        <li><a href="api/geometry.html#geojax.geometry.base.RetractionGeometryMixin.dist">(geojax.geometry.base.RetractionGeometryMixin method)</a>
+</li>
         <li><a href="api/geometry.html#geojax.geometry.CorrelationAffineQuotient.dist">(geojax.geometry.CorrelationAffineQuotient method)</a>
 </li>
         <li><a href="api/geometry.html#geojax.geometry.Elliptope.dist">(geojax.geometry.Elliptope method)</a>
@@ -548,15 +557,19 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/geometry.html#geojax.geometry.Stiefel.egrad2rgrad">egrad2rgrad() (geojax.geometry.Stiefel method)</a>
 </li>
-      <li><a href="api/geometry.html#geojax.geometry.Sphere.egrad_to_rgrad">egrad_to_rgrad() (geojax.geometry.Sphere method)</a>
+      <li><a href="api/geometry.html#geojax.geometry.base.ManifoldProtocol.egrad_to_rgrad">egrad_to_rgrad() (geojax.geometry.base.ManifoldProtocol method)</a>
 
       <ul>
+        <li><a href="api/geometry.html#geojax.geometry.Sphere.egrad_to_rgrad">(geojax.geometry.Sphere method)</a>
+</li>
         <li><a href="api/geometry.html#geojax.geometry.Stiefel.egrad_to_rgrad">(geojax.geometry.Stiefel method)</a>
 </li>
       </ul></li>
       <li><a href="api/geometry.html#geojax.geometry.base.GeometryMixin.ehess_to_rhess">ehess_to_rhess() (geojax.geometry.base.GeometryMixin method)</a>
 
       <ul>
+        <li><a href="api/geometry.html#geojax.geometry.base.ManifoldProtocol.ehess_to_rhess">(geojax.geometry.base.ManifoldProtocol method)</a>
+</li>
         <li><a href="api/geometry.html#geojax.geometry.CorrelationAffineQuotient.ehess_to_rhess">(geojax.geometry.CorrelationAffineQuotient method)</a>
 </li>
         <li><a href="api/geometry.html#geojax.geometry.Elliptope.ehess_to_rhess">(geojax.geometry.Elliptope method)</a>
@@ -610,9 +623,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/geometry.html#geojax.geometry.Euclidean">Euclidean (class in geojax.geometry)</a>
 </li>
-      <li><a href="api/geometry.html#geojax.geometry.base.RetractionGeometryMixin.exp">exp() (geojax.geometry.base.RetractionGeometryMixin method)</a>
+      <li><a href="api/geometry.html#geojax.geometry.base.ExactGeometryMixin">ExactGeometryMixin (class in geojax.geometry.base)</a>
+</li>
+      <li><a href="api/geometry.html#geojax.geometry.base.GeometryProtocol.exp">exp() (geojax.geometry.base.GeometryProtocol method)</a>
 
       <ul>
+        <li><a href="api/geometry.html#geojax.geometry.base.RetractionGeometryMixin.exp">(geojax.geometry.base.RetractionGeometryMixin method)</a>
+</li>
         <li><a href="api/geometry.html#geojax.geometry.CorrelationAffineQuotient.exp">(geojax.geometry.CorrelationAffineQuotient method)</a>
 </li>
         <li><a href="api/geometry.html#geojax.geometry.Elliptope.exp">(geojax.geometry.Elliptope method)</a>
@@ -758,11 +775,17 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/optimization.html#geojax.optimization.InfoEntry">InfoEntry (class in geojax.optimization)</a>
 </li>
-      <li><a href="api/geometry.html#geojax.geometry.Sphere.inner">inner() (geojax.geometry.Sphere method)</a>
+      <li><a href="api/geometry.html#geojax.geometry.base.ManifoldProtocol.inner">inner() (geojax.geometry.base.ManifoldProtocol method)</a>
+
+      <ul>
+        <li><a href="api/geometry.html#geojax.geometry.Sphere.inner">(geojax.geometry.Sphere method)</a>
 </li>
+      </ul></li>
       <li><a href="api/geometry.html#geojax.geometry.base.GeometryMixin.invretr">invretr() (geojax.geometry.base.GeometryMixin method)</a>
 
       <ul>
+        <li><a href="api/geometry.html#geojax.geometry.base.ManifoldProtocol.invretr">(geojax.geometry.base.ManifoldProtocol method)</a>
+</li>
         <li><a href="api/geometry.html#geojax.geometry.CorrelationAffineQuotient.invretr">(geojax.geometry.CorrelationAffineQuotient method)</a>
 </li>
         <li><a href="api/geometry.html#geojax.geometry.Elliptope.invretr">(geojax.geometry.Elliptope method)</a>
@@ -788,8 +811,12 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/geometry.html#geojax.geometry.Sphere.is_tangent">is_tangent() (geojax.geometry.Sphere method)</a>
+      <li><a href="api/geometry.html#geojax.geometry.base.ManifoldProtocol.is_tangent">is_tangent() (geojax.geometry.base.ManifoldProtocol method)</a>
+
+      <ul>
+        <li><a href="api/geometry.html#geojax.geometry.Sphere.is_tangent">(geojax.geometry.Sphere method)</a>
 </li>
+      </ul></li>
       <li><a href="api/geometry.html#geojax.geometry.StiefelLogInfo.iterations">iterations (geojax.geometry.StiefelLogInfo attribute)</a>
 </li>
   </ul></td>
@@ -831,6 +858,8 @@
       <li><a href="api/geometry.html#geojax.geometry.base.GeometryMixin.lincomb">lincomb() (geojax.geometry.base.GeometryMixin method)</a>
 
       <ul>
+        <li><a href="api/geometry.html#geojax.geometry.base.ManifoldProtocol.lincomb">(geojax.geometry.base.ManifoldProtocol method)</a>
+</li>
         <li><a href="api/geometry.html#geojax.geometry.CorrelationAffineQuotient.lincomb">(geojax.geometry.CorrelationAffineQuotient method)</a>
 </li>
         <li><a href="api/geometry.html#geojax.geometry.Elliptope.lincomb">(geojax.geometry.Elliptope method)</a>
@@ -874,9 +903,11 @@
 </li>
       <li><a href="api/optimization.html#geojax.optimization.LineSearchStats">LineSearchStats (class in geojax.optimization)</a>
 </li>
-      <li><a href="api/geometry.html#geojax.geometry.base.RetractionGeometryMixin.log">log() (geojax.geometry.base.RetractionGeometryMixin method)</a>
+      <li><a href="api/geometry.html#geojax.geometry.base.GeometryProtocol.log">log() (geojax.geometry.base.GeometryProtocol method)</a>
 
       <ul>
+        <li><a href="api/geometry.html#geojax.geometry.base.RetractionGeometryMixin.log">(geojax.geometry.base.RetractionGeometryMixin method)</a>
+</li>
         <li><a href="api/geometry.html#geojax.geometry.CorrelationAffineQuotient.log">(geojax.geometry.CorrelationAffineQuotient method)</a>
 </li>
         <li><a href="api/geometry.html#geojax.geometry.Elliptope.log">(geojax.geometry.Elliptope method)</a>
@@ -966,8 +997,12 @@
 </li>
       <li><a href="api/optimization.html#geojax.optimization.NewtonCG">NewtonCG (class in geojax.optimization)</a>
 </li>
-      <li><a href="api/geometry.html#geojax.geometry.Sphere.norm">norm() (geojax.geometry.Sphere method)</a>
+      <li><a href="api/geometry.html#geojax.geometry.base.ManifoldProtocol.norm">norm() (geojax.geometry.base.ManifoldProtocol method)</a>
+
+      <ul>
+        <li><a href="api/geometry.html#geojax.geometry.Sphere.norm">(geojax.geometry.Sphere method)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/optimization.html#geojax.optimization.LeastSquares.normal_operator">normal_operator() (geojax.optimization.LeastSquares method)</a>
@@ -993,6 +1028,8 @@
       <li><a href="api/geometry.html#geojax.geometry.base.GeometryMixin.operation_kind">operation_kind() (geojax.geometry.base.GeometryMixin method)</a>
 
       <ul>
+        <li><a href="api/geometry.html#geojax.geometry.base.GeometryProtocol.operation_kind">(geojax.geometry.base.GeometryProtocol method)</a>
+</li>
         <li><a href="api/geometry.html#geojax.geometry.CorrelationAffineQuotient.operation_kind">(geojax.geometry.CorrelationAffineQuotient method)</a>
 </li>
         <li><a href="api/geometry.html#geojax.geometry.Elliptope.operation_kind">(geojax.geometry.Elliptope method)</a>
@@ -1031,6 +1068,8 @@
       <li><a href="api/geometry.html#geojax.geometry.base.GeometryMixin.pair_mean">pair_mean() (geojax.geometry.base.GeometryMixin method)</a>
 
       <ul>
+        <li><a href="api/geometry.html#geojax.geometry.base.GeometryProtocol.pair_mean">(geojax.geometry.base.GeometryProtocol method)</a>
+</li>
         <li><a href="api/geometry.html#geojax.geometry.CorrelationAffineQuotient.pair_mean">(geojax.geometry.CorrelationAffineQuotient method)</a>
 </li>
         <li><a href="api/geometry.html#geojax.geometry.Elliptope.pair_mean">(geojax.geometry.Elliptope method)</a>
@@ -1084,9 +1123,11 @@
         <li><a href="api/geometry.html#geojax.geometry.StiefelEuclidean.proj">(geojax.geometry.StiefelEuclidean method)</a>
 </li>
       </ul></li>
-      <li><a href="api/geometry.html#geojax.geometry.GrassmannProjection.project">project() (geojax.geometry.GrassmannProjection method)</a>
+      <li><a href="api/geometry.html#geojax.geometry.base.ManifoldProtocol.project">project() (geojax.geometry.base.ManifoldProtocol method)</a>
 
       <ul>
+        <li><a href="api/geometry.html#geojax.geometry.GrassmannProjection.project">(geojax.geometry.GrassmannProjection method)</a>
+</li>
         <li><a href="api/geometry.html#geojax.geometry.Sphere.project">(geojax.geometry.Sphere method)</a>
 </li>
         <li><a href="api/geometry.html#geojax.geometry.Stiefel.project">(geojax.geometry.Stiefel method)</a>
@@ -1120,10 +1161,18 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/geometry.html#geojax.geometry.Sphere.random_point">random_point() (geojax.geometry.Sphere method)</a>
+      <li><a href="api/geometry.html#geojax.geometry.base.ManifoldProtocol.random_point">random_point() (geojax.geometry.base.ManifoldProtocol method)</a>
+
+      <ul>
+        <li><a href="api/geometry.html#geojax.geometry.Sphere.random_point">(geojax.geometry.Sphere method)</a>
 </li>
-      <li><a href="api/geometry.html#geojax.geometry.Sphere.random_tangent">random_tangent() (geojax.geometry.Sphere method)</a>
+      </ul></li>
+      <li><a href="api/geometry.html#geojax.geometry.base.ManifoldProtocol.random_tangent">random_tangent() (geojax.geometry.base.ManifoldProtocol method)</a>
+
+      <ul>
+        <li><a href="api/geometry.html#geojax.geometry.Sphere.random_tangent">(geojax.geometry.Sphere method)</a>
 </li>
+      </ul></li>
       <li><a href="api/geometry.html#geojax.geometry.RankKPSD">RankKPSD (class in geojax.geometry)</a>
 </li>
       <li><a href="api/geometry.html#geojax.geometry.RankKPSDBuresWasserstein">RankKPSDBuresWasserstein (class in geojax.geometry)</a>
@@ -1137,6 +1186,8 @@
       <li><a href="api/geometry.html#geojax.geometry.base.GeometryMixin.retr">retr() (geojax.geometry.base.GeometryMixin method)</a>
 
       <ul>
+        <li><a href="api/geometry.html#geojax.geometry.base.ManifoldProtocol.retr">(geojax.geometry.base.ManifoldProtocol method)</a>
+</li>
         <li><a href="api/geometry.html#geojax.geometry.CorrelationAffineQuotient.retr">(geojax.geometry.CorrelationAffineQuotient method)</a>
 </li>
         <li><a href="api/geometry.html#geojax.geometry.Elliptope.retr">(geojax.geometry.Elliptope method)</a>
@@ -1235,6 +1286,8 @@
       <li><a href="api/geometry.html#geojax.geometry.base.GeometryMixin.squared_dist">squared_dist() (geojax.geometry.base.GeometryMixin method)</a>
 
       <ul>
+        <li><a href="api/geometry.html#geojax.geometry.base.GeometryProtocol.squared_dist">(geojax.geometry.base.GeometryProtocol method)</a>
+</li>
         <li><a href="api/geometry.html#geojax.geometry.CorrelationAffineQuotient.squared_dist">(geojax.geometry.CorrelationAffineQuotient method)</a>
 </li>
         <li><a href="api/geometry.html#geojax.geometry.Elliptope.squared_dist">(geojax.geometry.Elliptope method)</a>
@@ -1312,9 +1365,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/learning.html#geojax.learning.tangent_map">tangent_map() (in module geojax.learning)</a>
 </li>
-      <li><a href="api/geometry.html#geojax.geometry.GrassmannProjection.tangent_project">tangent_project() (geojax.geometry.GrassmannProjection method)</a>
+      <li><a href="api/geometry.html#geojax.geometry.base.ManifoldProtocol.tangent_project">tangent_project() (geojax.geometry.base.ManifoldProtocol method)</a>
 
       <ul>
+        <li><a href="api/geometry.html#geojax.geometry.GrassmannProjection.tangent_project">(geojax.geometry.GrassmannProjection method)</a>
+</li>
         <li><a href="api/geometry.html#geojax.geometry.Sphere.tangent_project">(geojax.geometry.Sphere method)</a>
 </li>
         <li><a href="api/geometry.html#geojax.geometry.Stiefel.tangent_project">(geojax.geometry.Stiefel method)</a>
@@ -1370,9 +1425,11 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/geometry.html#geojax.geometry.base.RetractionGeometryMixin.transport">transport() (geojax.geometry.base.RetractionGeometryMixin method)</a>
+      <li><a href="api/geometry.html#geojax.geometry.base.ManifoldProtocol.transport">transport() (geojax.geometry.base.ManifoldProtocol method)</a>
 
       <ul>
+        <li><a href="api/geometry.html#geojax.geometry.base.RetractionGeometryMixin.transport">(geojax.geometry.base.RetractionGeometryMixin method)</a>
+</li>
         <li><a href="api/geometry.html#geojax.geometry.CorrelationAffineQuotient.transport">(geojax.geometry.CorrelationAffineQuotient method)</a>
 </li>
         <li><a href="api/geometry.html#geojax.geometry.Elliptope.transport">(geojax.geometry.Elliptope method)</a>

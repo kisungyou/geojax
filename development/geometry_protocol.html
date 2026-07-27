@@ -100,6 +100,9 @@
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">These are the development docs for unreleased GeoJAX 0.2.0. PyPI currently provides the stable 0.1.1 release.</div>
+</aside>
 
   
     <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -467,6 +470,12 @@ dist(x, y) == dist(y, x)             # when dist is exact
 norm(y, transport(x, y, u)) ~= norm(x, u)  # when transport is isometric
 </pre></div>
 </div>
+<p>The projection invariant must use genuinely ambient inputs, not only valid
+random points. Include zeros, large nonsymmetric or indefinite arrays,
+rank-deficient arrays, and both float32 and float64. For array geometries,
+<code class="docutils literal notranslate"><span class="pre">belongs</span></code> and <code class="docutils literal notranslate"><span class="pre">is_tangent</span></code> must return <code class="docutils literal notranslate"><span class="pre">False</span></code> on malformed event shapes;
+operations that construct values must raise a clear <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> before
+performing accidental computations in another dimension.</p>
 <p>Random tangent generation must document its normalization and scaling
 conventions under the Riemannian metric.</p>
 <section id="jax-transformation-contract">
@@ -494,7 +503,9 @@ across vector, quotient, matrix, Lie-group, numerical-logarithm, retraction,
 shape, and Product families. A new geometry belongs in those tests before it
 is added to the public namespace.</p>
 <p>Every class must set exactness, Hessian-conversion, and transport metadata
-correctly. If
+correctly. The defaults are deliberately uncertified: use
+<code class="docutils literal notranslate"><span class="pre">ExactGeometryMixin</span></code> only after testing the corresponding mathematical
+guarantees. If
 <code class="docutils literal notranslate"><span class="pre">transport</span></code> is not Levi-Civita parallel transport, its class and guide must name
 the construction precisely and state which properties it preserves.
 Differentiable routines must be tested at zero tangent vectors and coincident

@@ -28,6 +28,13 @@ dist(x, y) == dist(y, x)             # when dist is exact
 norm(y, transport(x, y, u)) ~= norm(x, u)  # when transport is isometric
 ```
 
+The projection invariant must use genuinely ambient inputs, not only valid
+random points. Include zeros, large nonsymmetric or indefinite arrays,
+rank-deficient arrays, and both float32 and float64. For array geometries,
+`belongs` and `is_tangent` must return `False` on malformed event shapes;
+operations that construct values must raise a clear `ValueError` before
+performing accidental computations in another dimension.
+
 Random tangent generation must document its normalization and scaling
 conventions under the Riemannian metric.
 
@@ -60,7 +67,9 @@ shape, and Product families. A new geometry belongs in those tests before it
 is added to the public namespace.
 
 Every class must set exactness, Hessian-conversion, and transport metadata
-correctly. If
+correctly. The defaults are deliberately uncertified: use
+`ExactGeometryMixin` only after testing the corresponding mathematical
+guarantees. If
 `transport` is not Levi-Civita parallel transport, its class and guide must name
 the construction precisely and state which properties it preserves.
 Differentiable routines must be tested at zero tangent vectors and coincident

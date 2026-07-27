@@ -100,6 +100,9 @@
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">These are the development docs for unreleased GeoJAX 0.2.0. PyPI currently provides the stable 0.1.1 release.</div>
+</aside>
 
   
     <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -446,6 +449,94 @@ metric in the class name so constructors follow the same convention as
 <code class="docutils literal notranslate"><span class="pre">GrassmannProjection</span></code>. Capability metadata distinguishes exact geodesic
 operations from numerical-local candidates and retraction proxies, and marks
 whether automatic Hessian conversion is mathematically exact.</p>
+<section id="core-method-contract">
+<h2>Core method contract<a class="headerlink" href="#core-method-contract" title="Link to this heading">#</a></h2>
+<p>For an array geometry with event shape <code class="docutils literal notranslate"><span class="pre">M.shape</span></code>, every point or tangent has
+shape <code class="docutils literal notranslate"><span class="pre">batch_shape</span> <span class="pre">+</span> <span class="pre">M.shape</span></code>. Leading batch dimensions may broadcast; event
+dimensions never broadcast and must match exactly. <code class="docutils literal notranslate"><span class="pre">Product</span></code> applies the same
+rule independently to every leaf of its factor pytree.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Member</p></th>
+<th class="head"><p>Inputs</p></th>
+<th class="head"><p>Result and contract</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">belongs(x,</span> <span class="pre">atol=None)</span></code></p></td>
+<td><p>ambient point candidate</p></td>
+<td><p>Boolean over the inferable batch shape. A malformed event shape returns <code class="docutils literal notranslate"><span class="pre">False</span></code>. Open constraints such as positive definiteness and ball membership remain strict.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">project(x)</span></code></p></td>
+<td><p>ambient array with exactly <code class="docutils literal notranslate"><span class="pre">M.shape</span></code> event axes</p></td>
+<td><p>A finite manifold point satisfying <code class="docutils literal notranslate"><span class="pre">belongs(project(x))</span></code>. Malformed event axes raise <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>; zero, indefinite, rank-deficient, and noisy values are valid repair inputs.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">is_tangent(x,</span> <span class="pre">u,</span> <span class="pre">atol=None)</span></code></p></td>
+<td><p>point and tangent candidate</p></td>
+<td><p>Boolean over broadcast batch axes. Malformed or incompatible shapes return <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tangent_project(x,</span> <span class="pre">u)</span></code></p></td>
+<td><p>point and ambient vector</p></td>
+<td><p>A tangent satisfying <code class="docutils literal notranslate"><span class="pre">is_tangent(x,</span> <span class="pre">tangent_project(x,</span> <span class="pre">u))</span></code>; malformed event axes raise <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inner(x,</span> <span class="pre">u,</span> <span class="pre">v)</span></code></p></td>
+<td><p>point and two tangent vectors</p></td>
+<td><p>The Riemannian inner product over broadcast batch axes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">norm(x,</span> <span class="pre">u)</span></code></p></td>
+<td><p>point and tangent vector</p></td>
+<td><p>The nonnegative metric norm.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">retr(x,</span> <span class="pre">u,</span> <span class="pre">t=1)</span></code></p></td>
+<td><p>point, tangent, and scalar or batched step</p></td>
+<td><p>A manifold point obtained from the documented retraction.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">exp(x,</span> <span class="pre">u)</span></code></p></td>
+<td><p>point and tangent</p></td>
+<td><p>Exact exponential, numerical-local operation, or retraction proxy according to <code class="docutils literal notranslate"><span class="pre">operation_kind(&quot;exp&quot;)</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">invretr(x,</span> <span class="pre">y)</span></code></p></td>
+<td><p>base and endpoint</p></td>
+<td><p>Local inverse of the advertised retraction.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">log(x,</span> <span class="pre">y)</span></code></p></td>
+<td><p>base and endpoint</p></td>
+<td><p>Exact, numerical-local, or proxy displacement according to <code class="docutils literal notranslate"><span class="pre">operation_kind(&quot;log&quot;)</span></code>. Genuine cut loci follow each class’s documented branch policy.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">squared_dist(x,</span> <span class="pre">y)</span></code> / <code class="docutils literal notranslate"><span class="pre">dist(x,</span> <span class="pre">y)</span></code></p></td>
+<td><p>two points</p></td>
+<td><p>Scalar per batch element with the status reported by <code class="docutils literal notranslate"><span class="pre">operation_kind(&quot;dist&quot;)</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">transport(x,</span> <span class="pre">y,</span> <span class="pre">u)</span></code></p></td>
+<td><p>endpoints and source tangent</p></td>
+<td><p>A target tangent. <code class="docutils literal notranslate"><span class="pre">operation_kind(&quot;transport&quot;)</span></code> reports <code class="docutils literal notranslate"><span class="pre">parallel</span></code>, <code class="docutils literal notranslate"><span class="pre">isometric</span></code>, or <code class="docutils literal notranslate"><span class="pre">vector</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">egrad_to_rgrad(x,</span> <span class="pre">egrad)</span></code></p></td>
+<td><p>point and ambient gradient</p></td>
+<td><p>Metric-dual tangent gradient.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">random_point(key,</span> <span class="pre">sample_shape=())</span></code></p></td>
+<td><p>JAX key and static shape</p></td>
+<td><p>Samples shaped <code class="docutils literal notranslate"><span class="pre">sample_shape</span> <span class="pre">+</span> <span class="pre">M.shape</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">random_tangent(key,</span> <span class="pre">x,</span> <span class="pre">scale=1,</span> <span class="pre">normalize=False)</span></code></p></td>
+<td><p>JAX key and point</p></td>
+<td><p>Tangent samples matching <code class="docutils literal notranslate"><span class="pre">x</span></code>; normalization uses the Riemannian norm before <code class="docutils literal notranslate"><span class="pre">scale</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Numerical repairs use dtype-aware interior margins. A configured <code class="docutils literal notranslate"><span class="pre">eps</span></code> is
+never allowed to disappear through float32 rounding, and fixed-rank repairs
+place active singular values above the numerical-rank threshold. These repair
+conventions do not redefine exact maps at genuine cut loci or manifold
+boundaries.</p>
+<p>Capability declarations are conservative. <code class="docutils literal notranslate"><span class="pre">GeometryMixin</span></code> certifies no exact
+or isometric operation by default; exact geometries opt into
+<code class="docutils literal notranslate"><span class="pre">ExactGeometryMixin</span></code>, while retraction geometries use
+<code class="docutils literal notranslate"><span class="pre">RetractionGeometryMixin</span></code>. Product metadata is certified only if every factor
+provides the corresponding guarantee.</p>
+</section>
 <section id="shared-interface-and-vector-geometries">
 <h2>Shared interface and vector geometries<a class="headerlink" href="#shared-interface-and-vector-geometries" title="Link to this heading">#</a></h2>
 <dl class="py class">
@@ -456,6 +547,105 @@ whether automatic Hessian conversion is mathematically exact.</p>
 <p>Retraction-only geometries may satisfy this structural protocol through
 documented compatibility aliases. Use <code class="docutils literal notranslate"><span class="pre">operation_kind</span></code> to distinguish
 exact geodesic operations from numerical-local or retraction proxies.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.base.GeometryProtocol.operation_kind">
+<span class="sig-name descname"><span class="pre">operation_kind</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.GeometryProtocol.operation_kind" title="Link to this definition">#</a></dt>
+<dd><p>Return the certified status of a named geometric operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.base.GeometryProtocol.exp">
+<span class="sig-name descname"><span class="pre">exp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.GeometryProtocol.exp" title="Link to this definition">#</a></dt>
+<dd><p>Apply the capability-qualified exponential or retraction proxy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>u</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.base.GeometryProtocol.log">
+<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.GeometryProtocol.log" title="Link to this definition">#</a></dt>
+<dd><p>Apply the capability-qualified logarithm or inverse-retraction proxy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>y</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.base.GeometryProtocol.squared_dist">
+<span class="sig-name descname"><span class="pre">squared_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.GeometryProtocol.squared_dist" title="Link to this definition">#</a></dt>
+<dd><p>Return the squared capability-qualified point distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>y</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.base.GeometryProtocol.dist">
+<span class="sig-name descname"><span class="pre">dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.GeometryProtocol.dist" title="Link to this definition">#</a></dt>
+<dd><p>Return the capability-qualified point distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>y</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.base.GeometryProtocol.pair_mean">
+<span class="sig-name descname"><span class="pre">pair_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.GeometryProtocol.pair_mean" title="Link to this definition">#</a></dt>
+<dd><p>Return the midpoint-like construction supported by the geometry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>y</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -465,6 +655,249 @@ exact geodesic operations from numerical-local or retraction proxies.</p>
 <p>Retraction-based interface consumed by manifold optimizers.</p>
 <p>This is the GeoJAX counterpart of Manopt’s core manifold structure. Exact
 geodesic maps are deliberately not required.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.base.ManifoldProtocol.belongs">
+<span class="sig-name descname"><span class="pre">belongs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.ManifoldProtocol.belongs" title="Link to this definition">#</a></dt>
+<dd><p>Return one membership boolean per broadcast batch element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>atol</strong> (<em>float</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.base.ManifoldProtocol.project">
+<span class="sig-name descname"><span class="pre">project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.ManifoldProtocol.project" title="Link to this definition">#</a></dt>
+<dd><p>Repair an ambient array with event shape <code class="docutils literal notranslate"><span class="pre">shape</span></code> into the manifold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>Any</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.base.ManifoldProtocol.is_tangent">
+<span class="sig-name descname"><span class="pre">is_tangent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.ManifoldProtocol.is_tangent" title="Link to this definition">#</a></dt>
+<dd><p>Return whether <code class="docutils literal notranslate"><span class="pre">u</span></code> satisfies the tangent constraints at <code class="docutils literal notranslate"><span class="pre">x</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>u</strong> (<em>Any</em>)</p></li>
+<li><p><strong>atol</strong> (<em>float</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.base.ManifoldProtocol.tangent_project">
+<span class="sig-name descname"><span class="pre">tangent_project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.ManifoldProtocol.tangent_project" title="Link to this definition">#</a></dt>
+<dd><p>Project an ambient vector onto the represented tangent space at <code class="docutils literal notranslate"><span class="pre">x</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>u</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.base.ManifoldProtocol.inner">
+<span class="sig-name descname"><span class="pre">inner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.ManifoldProtocol.inner" title="Link to this definition">#</a></dt>
+<dd><p>Evaluate the Riemannian inner product at <code class="docutils literal notranslate"><span class="pre">x</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>u</strong> (<em>Any</em>)</p></li>
+<li><p><strong>v</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.base.ManifoldProtocol.norm">
+<span class="sig-name descname"><span class="pre">norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.ManifoldProtocol.norm" title="Link to this definition">#</a></dt>
+<dd><p>Evaluate the Riemannian norm induced by <code class="docutils literal notranslate"><span class="pre">inner</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>u</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.base.ManifoldProtocol.lincomb">
+<span class="sig-name descname"><span class="pre">lincomb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">terms</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.ManifoldProtocol.lincomb" title="Link to this definition">#</a></dt>
+<dd><p>Form coefficient/vector pairs in the tangent space at <code class="docutils literal notranslate"><span class="pre">x</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>terms</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.base.ManifoldProtocol.retr">
+<span class="sig-name descname"><span class="pre">retr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.ManifoldProtocol.retr" title="Link to this definition">#</a></dt>
+<dd><p>Retract <code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">*</span> <span class="pre">u</span></code> from <code class="docutils literal notranslate"><span class="pre">x</span></code> to a manifold point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>u</strong> (<em>Any</em>)</p></li>
+<li><p><strong>t</strong> (<em>float</em><em> | </em><em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.base.ManifoldProtocol.invretr">
+<span class="sig-name descname"><span class="pre">invretr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.ManifoldProtocol.invretr" title="Link to this definition">#</a></dt>
+<dd><p>Return the documented local inverse-retraction displacement.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>y</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.base.ManifoldProtocol.transport">
+<span class="sig-name descname"><span class="pre">transport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.ManifoldProtocol.transport" title="Link to this definition">#</a></dt>
+<dd><p>Move <code class="docutils literal notranslate"><span class="pre">u</span></code> from <code class="docutils literal notranslate"><span class="pre">T_x</span> <span class="pre">M</span></code> to <code class="docutils literal notranslate"><span class="pre">T_y</span> <span class="pre">M</span></code> using the advertised transport.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>y</strong> (<em>Any</em>)</p></li>
+<li><p><strong>u</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.base.ManifoldProtocol.egrad_to_rgrad">
+<span class="sig-name descname"><span class="pre">egrad_to_rgrad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">egrad</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.ManifoldProtocol.egrad_to_rgrad" title="Link to this definition">#</a></dt>
+<dd><p>Convert an ambient Euclidean gradient to the metric-dual tangent gradient.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>egrad</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.base.ManifoldProtocol.ehess_to_rhess">
+<span class="sig-name descname"><span class="pre">ehess_to_rhess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">egrad</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ehess_vec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.ManifoldProtocol.ehess_to_rhess" title="Link to this definition">#</a></dt>
+<dd><p>Convert an ambient Hessian-vector product using the advertised capability.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>egrad</strong> (<em>Any</em>)</p></li>
+<li><p><strong>ehess_vec</strong> (<em>Any</em>)</p></li>
+<li><p><strong>u</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.base.ManifoldProtocol.random_point">
+<span class="sig-name descname"><span class="pre">random_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.ManifoldProtocol.random_point" title="Link to this definition">#</a></dt>
+<dd><p>Sample points with shape <code class="docutils literal notranslate"><span class="pre">sample_shape</span> <span class="pre">+</span> <span class="pre">shape</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>Any</em>)</p></li>
+<li><p><strong>sample_shape</strong> (<em>int</em><em> | </em><em>Sequence</em><em>[</em><em>int</em><em>] </em><em>| </em><em>Tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geojax.geometry.base.ManifoldProtocol.random_tangent">
+<span class="sig-name descname"><span class="pre">random_tangent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.base.ManifoldProtocol.random_tangent" title="Link to this definition">#</a></dt>
+<dd><p>Sample tangent vectors, optionally normalizing before applying <code class="docutils literal notranslate"><span class="pre">scale</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>Any</em>)</p></li>
+<li><p><strong>x</strong> (<em>Any</em>)</p></li>
+<li><p><strong>scale</strong> (<em>float</em><em> | </em><em>Any</em>)</p></li>
+<li><p><strong>normalize</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -651,6 +1084,13 @@ selected logarithm is the unique minimizing one.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="geojax.geometry.base.ExactGeometryMixin">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.geometry.base.</span></span><span class="sig-name descname"><span class="pre">ExactGeometryMixin</span></span><a class="headerlink" href="#geojax.geometry.base.ExactGeometryMixin" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.GeometryMixin" title="geojax.geometry.base.GeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryMixin</span></code></a></p>
+<p>Opt-in defaults for geometries with certified exact geodesic operations.</p>
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="geojax.geometry.base.RetractionGeometryMixin">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.geometry.base.</span></span><span class="sig-name descname"><span class="pre">RetractionGeometryMixin</span></span><a class="headerlink" href="#geojax.geometry.base.RetractionGeometryMixin" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.GeometryMixin" title="geojax.geometry.base.GeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryMixin</span></code></a></p>
@@ -750,7 +1190,7 @@ metadata identifies them as proxies rather than genuine geodesic maps.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="geojax.geometry.Euclidean">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.geometry.</span></span><span class="sig-name descname"><span class="pre">Euclidean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Euclidean" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.GeometryMixin" title="geojax.geometry.base.GeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryMixin</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.ExactGeometryMixin" title="geojax.geometry.base.ExactGeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExactGeometryMixin</span></code></a></p>
 <p>Flat Euclidean geometry.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -838,7 +1278,7 @@ selected logarithm is the unique minimizing one.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="geojax.geometry.Oblique">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.geometry.</span></span><span class="sig-name descname"><span class="pre">Oblique</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-12</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Oblique" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.GeometryMixin" title="geojax.geometry.base.GeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryMixin</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.ExactGeometryMixin" title="geojax.geometry.base.ExactGeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExactGeometryMixin</span></code></a></p>
 <p>Matrices whose columns have unit Euclidean norm.</p>
 <p><code class="docutils literal notranslate"><span class="pre">Oblique(size=(n,</span> <span class="pre">m))</span></code> is the efficient matrix representation of a
 product of <code class="docutils literal notranslate"><span class="pre">m</span></code> copies of the sphere <code class="docutils literal notranslate"><span class="pre">S^(n-1)</span></code>.</p>
@@ -877,7 +1317,7 @@ semantics of <code class="docutils literal notranslate"><span class="pre">log</s
 <dl class="py class">
 <dt class="sig sig-object py" id="geojax.geometry.ProbabilitySimplex">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.geometry.</span></span><span class="sig-name descname"><span class="pre">ProbabilitySimplex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.ProbabilitySimplex" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.GeometryMixin" title="geojax.geometry.base.GeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryMixin</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.ExactGeometryMixin" title="geojax.geometry.base.ExactGeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExactGeometryMixin</span></code></a></p>
 <p>Interior probability simplex with the Fisher–Rao metric.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -932,7 +1372,7 @@ semantics of <code class="docutils literal notranslate"><span class="pre">log</s
 <dl class="py class">
 <dt class="sig sig-object py" id="geojax.geometry.Sphere">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.geometry.</span></span><span class="sig-name descname"><span class="pre">Sphere</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-12</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Sphere" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.GeometryMixin" title="geojax.geometry.base.GeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryMixin</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.ExactGeometryMixin" title="geojax.geometry.base.ExactGeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExactGeometryMixin</span></code></a></p>
 <p>Canonical geometry of the unit sphere S^d in R^{d+1}.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1481,7 +1921,7 @@ returns NaNs in that case.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="geojax.geometry.PoincareBall">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.geometry.</span></span><span class="sig-name descname"><span class="pre">PoincareBall</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.PoincareBall" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.GeometryMixin" title="geojax.geometry.base.GeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryMixin</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.ExactGeometryMixin" title="geojax.geometry.base.ExactGeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExactGeometryMixin</span></code></a></p>
 <p>Poincaré ball model of curvature-minus-one hyperbolic space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1518,7 +1958,7 @@ semantics of <code class="docutils literal notranslate"><span class="pre">log</s
 <dl class="py class">
 <dt class="sig sig-object py" id="geojax.geometry.Grassmann">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.geometry.</span></span><span class="sig-name descname"><span class="pre">Grassmann</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-12</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Grassmann" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.GeometryMixin" title="geojax.geometry.base.GeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryMixin</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.ExactGeometryMixin" title="geojax.geometry.base.ExactGeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExactGeometryMixin</span></code></a></p>
 <p>Canonical Grassmann geometry Gr(rank, size).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1687,7 +2127,7 @@ endpoint representative Y and is horizontally projected there.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="geojax.geometry.GrassmannProjection">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.geometry.</span></span><span class="sig-name descname"><span class="pre">GrassmannProjection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-12</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.GrassmannProjection" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.GeometryMixin" title="geojax.geometry.base.GeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryMixin</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.ExactGeometryMixin" title="geojax.geometry.base.ExactGeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExactGeometryMixin</span></code></a></p>
 <p>Projection-embedded Grassmann geometry.</p>
 <p>Public points are <code class="docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">k)</span></code> orthonormal frames <code class="docutils literal notranslate"><span class="pre">X</span></code>, exactly as for
 <a class="reference internal" href="#geojax.geometry.Grassmann" title="geojax.geometry.Grassmann"><code class="xref py py-class docutils literal notranslate"><span class="pre">Grassmann</span></code></a>. Operations are evaluated after the equivariant
@@ -3043,7 +3483,7 @@ Convergence certifies endpoint agreement, not global shortestness.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="geojax.geometry.GeneralizedStiefel">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.geometry.</span></span><span class="sig-name descname"><span class="pre">GeneralizedStiefel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_maxiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-09</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.GeneralizedStiefel" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.GeometryMixin" title="geojax.geometry.base.GeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryMixin</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.ExactGeometryMixin" title="geojax.geometry.base.ExactGeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExactGeometryMixin</span></code></a></p>
 <p>Frames satisfying <code class="docutils literal notranslate"><span class="pre">X.T</span> <span class="pre">&#64;</span> <span class="pre">metric</span> <span class="pre">&#64;</span> <span class="pre">X</span> <span class="pre">=</span> <span class="pre">I</span></code>.</p>
 <p>The metric <code class="docutils literal notranslate"><span class="pre">trace(U.T</span> <span class="pre">&#64;</span> <span class="pre">metric</span> <span class="pre">&#64;</span> <span class="pre">V)</span></code> is the pullback of the embedded
 Euclidean Stiefel metric under <code class="docutils literal notranslate"><span class="pre">X</span> <span class="pre">-&gt;</span> <span class="pre">metric^(1/2)</span> <span class="pre">X</span></code>. Its exact
@@ -3259,7 +3699,7 @@ selected logarithm is the unique minimizing one.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="geojax.geometry.GeneralizedGrassmann">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.geometry.</span></span><span class="sig-name descname"><span class="pre">GeneralizedGrassmann</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.GeneralizedGrassmann" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.GeometryMixin" title="geojax.geometry.base.GeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryMixin</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.ExactGeometryMixin" title="geojax.geometry.base.ExactGeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExactGeometryMixin</span></code></a></p>
 <p>Generalized Grassmann geometry for <code class="docutils literal notranslate"><span class="pre">metric</span></code>-orthonormal subspaces.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -3452,7 +3892,7 @@ selected logarithm is the unique minimizing one.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="geojax.geometry.Hyperboloid">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.geometry.</span></span><span class="sig-name descname"><span class="pre">Hyperboloid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-12</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Hyperboloid" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.GeometryMixin" title="geojax.geometry.base.GeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryMixin</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.ExactGeometryMixin" title="geojax.geometry.base.ExactGeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExactGeometryMixin</span></code></a></p>
 <p>Upper-sheet hyperboloid in ambient Minkowski space <code class="docutils literal notranslate"><span class="pre">R^size</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -3513,7 +3953,7 @@ selected logarithm is the unique minimizing one.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="geojax.geometry.Torus">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.geometry.</span></span><span class="sig-name descname"><span class="pre">Torus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.Torus" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.GeometryMixin" title="geojax.geometry.base.GeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryMixin</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.ExactGeometryMixin" title="geojax.geometry.base.ExactGeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExactGeometryMixin</span></code></a></p>
 <p>Flat <code class="docutils literal notranslate"><span class="pre">d</span></code>-torus represented by angles in <code class="docutils literal notranslate"><span class="pre">[-pi,</span> <span class="pre">pi)</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -3746,7 +4186,7 @@ selected logarithm is the unique minimizing one.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="geojax.geometry.SpecialOrthogonal">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.geometry.</span></span><span class="sig-name descname"><span class="pre">SpecialOrthogonal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-12</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.SpecialOrthogonal" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.GeometryMixin" title="geojax.geometry.base.GeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryMixin</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.ExactGeometryMixin" title="geojax.geometry.base.ExactGeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExactGeometryMixin</span></code></a></p>
 <p>Rotation group SO(n) with the Frobenius bi-invariant metric.</p>
 <p>A point is an <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">x</span> <span class="pre">n</span></code> matrix <code class="docutils literal notranslate"><span class="pre">R</span></code> satisfying <code class="docutils literal notranslate"><span class="pre">R.T</span> <span class="pre">&#64;</span> <span class="pre">R</span> <span class="pre">=</span> <span class="pre">I</span></code> and
 <code class="docutils literal notranslate"><span class="pre">det(R)</span> <span class="pre">=</span> <span class="pre">1</span></code>.  A tangent vector at <code class="docutils literal notranslate"><span class="pre">R</span></code> is represented in ambient form
@@ -3887,7 +4327,7 @@ semantics of <code class="docutils literal notranslate"><span class="pre">log</s
 <dl class="py class">
 <dt class="sig sig-object py" id="geojax.geometry.SpecialEuclidean">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.geometry.</span></span><span class="sig-name descname"><span class="pre">SpecialEuclidean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-12</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.SpecialEuclidean" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.GeometryMixin" title="geojax.geometry.base.GeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryMixin</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.ExactGeometryMixin" title="geojax.geometry.base.ExactGeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExactGeometryMixin</span></code></a></p>
 <p>Rigid-motion group SE(n) with its canonical product metric.</p>
 <p>Points use homogeneous matrices <code class="docutils literal notranslate"><span class="pre">[[R,</span> <span class="pre">t],</span> <span class="pre">[0,</span> <span class="pre">1]]</span></code>.  The metric is the
 direct product of the Frobenius bi-invariant metric on <code class="docutils literal notranslate"><span class="pre">SO(n)</span></code> and the
@@ -3996,7 +4436,7 @@ semantics of <code class="docutils literal notranslate"><span class="pre">log</s
 <dl class="py class">
 <dt class="sig sig-object py" id="geojax.geometry.SPDLogEuclidean">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.geometry.</span></span><span class="sig-name descname"><span class="pre">SPDLogEuclidean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.SPDLogEuclidean" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.GeometryMixin" title="geojax.geometry.base.GeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryMixin</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.ExactGeometryMixin" title="geojax.geometry.base.ExactGeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExactGeometryMixin</span></code></a></p>
 <p>Log-Euclidean geometry on SPD(size).</p>
 <p>The logarithm map <code class="docutils literal notranslate"><span class="pre">log:</span> <span class="pre">SPD(n)</span> <span class="pre">-&gt;</span> <span class="pre">Sym(n)</span></code> is an isometry.  Therefore
 distances and geodesics are Euclidean after applying the matrix logarithm.
@@ -4068,7 +4508,7 @@ Tangent vectors are symmetric matrices of the same shape.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="geojax.geometry.SPDAffineInvariant">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.geometry.</span></span><span class="sig-name descname"><span class="pre">SPDAffineInvariant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.SPDAffineInvariant" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.GeometryMixin" title="geojax.geometry.base.GeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryMixin</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.ExactGeometryMixin" title="geojax.geometry.base.ExactGeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExactGeometryMixin</span></code></a></p>
 <p>Affine-invariant geometry on SPD(size).</p>
 <p>The metric is</p>
 <blockquote>
@@ -4141,7 +4581,7 @@ Tangent vectors are symmetric matrices of the same shape.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="geojax.geometry.SPDBuresWasserstein">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.geometry.</span></span><span class="sig-name descname"><span class="pre">SPDBuresWasserstein</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.SPDBuresWasserstein" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.GeometryMixin" title="geojax.geometry.base.GeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryMixin</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.ExactGeometryMixin" title="geojax.geometry.base.ExactGeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExactGeometryMixin</span></code></a></p>
 <p>Bures-Wasserstein geometry on SPD(size).</p>
 <p>If <code class="docutils literal notranslate"><span class="pre">P</span> <span class="pre">=</span> <span class="pre">Q</span> <span class="pre">diag(d)</span> <span class="pre">Q.T</span></code> and <code class="docutils literal notranslate"><span class="pre">U_tilde</span> <span class="pre">=</span> <span class="pre">Q.T</span> <span class="pre">&#64;</span> <span class="pre">U</span> <span class="pre">&#64;</span> <span class="pre">Q</span></code>, the metric is</p>
 <blockquote>
@@ -6053,7 +6493,7 @@ semantics of <code class="docutils literal notranslate"><span class="pre">log</s
 <dl class="py class">
 <dt class="sig sig-object py" id="geojax.geometry.KendallShape">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.geometry.</span></span><span class="sig-name descname"><span class="pre">KendallShape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.geometry.KendallShape" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.GeometryMixin" title="geojax.geometry.base.GeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryMixin</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#geojax.geometry.base.ExactGeometryMixin" title="geojax.geometry.base.ExactGeometryMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExactGeometryMixin</span></code></a></p>
 <p>Regular Kendall shape space of centered, scale-normalized landmarks.</p>
 <p>Public points are pre-shape matrices of size <code class="docutils literal notranslate"><span class="pre">landmarks</span> <span class="pre">x</span> <span class="pre">ambient_dim</span></code>.
 Frames related by a right action of <code class="docutils literal notranslate"><span class="pre">SO(ambient_dim)</span></code> represent the same
@@ -6329,9 +6769,34 @@ semantics of <code class="docutils literal notranslate"><span class="pre">log</s
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#core-method-contract">Core method contract</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#shared-interface-and-vector-geometries">Shared interface and vector geometries</a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.GeometryProtocol"><code class="docutils literal notranslate"><span class="pre">GeometryProtocol</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.ManifoldProtocol"><code class="docutils literal notranslate"><span class="pre">ManifoldProtocol</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.GeometryProtocol"><code class="docutils literal notranslate"><span class="pre">GeometryProtocol</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.GeometryProtocol.operation_kind"><code class="docutils literal notranslate"><span class="pre">GeometryProtocol.operation_kind()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.GeometryProtocol.exp"><code class="docutils literal notranslate"><span class="pre">GeometryProtocol.exp()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.GeometryProtocol.log"><code class="docutils literal notranslate"><span class="pre">GeometryProtocol.log()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.GeometryProtocol.squared_dist"><code class="docutils literal notranslate"><span class="pre">GeometryProtocol.squared_dist()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.GeometryProtocol.dist"><code class="docutils literal notranslate"><span class="pre">GeometryProtocol.dist()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.GeometryProtocol.pair_mean"><code class="docutils literal notranslate"><span class="pre">GeometryProtocol.pair_mean()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.ManifoldProtocol"><code class="docutils literal notranslate"><span class="pre">ManifoldProtocol</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.ManifoldProtocol.belongs"><code class="docutils literal notranslate"><span class="pre">ManifoldProtocol.belongs()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.ManifoldProtocol.project"><code class="docutils literal notranslate"><span class="pre">ManifoldProtocol.project()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.ManifoldProtocol.is_tangent"><code class="docutils literal notranslate"><span class="pre">ManifoldProtocol.is_tangent()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.ManifoldProtocol.tangent_project"><code class="docutils literal notranslate"><span class="pre">ManifoldProtocol.tangent_project()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.ManifoldProtocol.inner"><code class="docutils literal notranslate"><span class="pre">ManifoldProtocol.inner()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.ManifoldProtocol.norm"><code class="docutils literal notranslate"><span class="pre">ManifoldProtocol.norm()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.ManifoldProtocol.lincomb"><code class="docutils literal notranslate"><span class="pre">ManifoldProtocol.lincomb()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.ManifoldProtocol.retr"><code class="docutils literal notranslate"><span class="pre">ManifoldProtocol.retr()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.ManifoldProtocol.invretr"><code class="docutils literal notranslate"><span class="pre">ManifoldProtocol.invretr()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.ManifoldProtocol.transport"><code class="docutils literal notranslate"><span class="pre">ManifoldProtocol.transport()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.ManifoldProtocol.egrad_to_rgrad"><code class="docutils literal notranslate"><span class="pre">ManifoldProtocol.egrad_to_rgrad()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.ManifoldProtocol.ehess_to_rhess"><code class="docutils literal notranslate"><span class="pre">ManifoldProtocol.ehess_to_rhess()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.ManifoldProtocol.random_point"><code class="docutils literal notranslate"><span class="pre">ManifoldProtocol.random_point()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.ManifoldProtocol.random_tangent"><code class="docutils literal notranslate"><span class="pre">ManifoldProtocol.random_tangent()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.GeometryMixin"><code class="docutils literal notranslate"><span class="pre">GeometryMixin</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.GeometryMixin.operation_kind"><code class="docutils literal notranslate"><span class="pre">GeometryMixin.operation_kind()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.GeometryMixin.exp_batch"><code class="docutils literal notranslate"><span class="pre">GeometryMixin.exp_batch()</span></code></a></li>
@@ -6345,6 +6810,7 @@ semantics of <code class="docutils literal notranslate"><span class="pre">log</s
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.GeometryMixin.ehess_to_rhess"><code class="docutils literal notranslate"><span class="pre">GeometryMixin.ehess_to_rhess()</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.ExactGeometryMixin"><code class="docutils literal notranslate"><span class="pre">ExactGeometryMixin</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.RetractionGeometryMixin"><code class="docutils literal notranslate"><span class="pre">RetractionGeometryMixin</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.RetractionGeometryMixin.exp"><code class="docutils literal notranslate"><span class="pre">RetractionGeometryMixin.exp()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geojax.geometry.base.RetractionGeometryMixin.log"><code class="docutils literal notranslate"><span class="pre">RetractionGeometryMixin.log()</span></code></a></li>

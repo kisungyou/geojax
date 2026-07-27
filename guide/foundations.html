@@ -102,6 +102,9 @@
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">These are the development docs for unreleased GeoJAX 0.2.0. PyPI currently provides the stable 0.1.1 release.</div>
+</aside>
 
   
     <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -760,6 +763,12 @@ keys.</p>
 dimensions. NumPy-style broadcasting applies to compatible leading shapes.
 Reducers such as sample means document their reduction axes separately.
 <code class="docutils literal notranslate"><span class="pre">Product</span></code> applies the pointwise contract leafwise.</p>
+<p>Event axes are part of the manifold definition, not broadcast dimensions.
+Consequently, <code class="docutils literal notranslate"><span class="pre">belongs</span></code> and <code class="docutils literal notranslate"><span class="pre">is_tangent</span></code> return <code class="docutils literal notranslate"><span class="pre">False</span></code> for malformed event
+shapes, while constructors such as <code class="docutils literal notranslate"><span class="pre">project</span></code> and <code class="docutils literal notranslate"><span class="pre">tangent_project</span></code> raise
+<code class="docutils literal notranslate"><span class="pre">ValueError</span></code>. For correctly shaped ambient data, including zero or
+rank-deficient matrices, <code class="docutils literal notranslate"><span class="pre">project</span></code> guarantees a finite point accepted by
+<code class="docutils literal notranslate"><span class="pre">belongs</span></code>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">GeometryMixin</span></code> retains convenience names for fixed-base collections:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -821,7 +830,10 @@ d(x,y)^2=\sum_{i=1}^r d_i(x_i,y_i)^2,
 \]</div>
 <p>and projection, exponential, logarithm, transport, gradient conversion, and
 sampling act independently on the leaves of the matching pytree. Product
-capability metadata is exact only when every factor advertises exactness.</p>
+capability metadata is exact only when every factor advertises exactness.
+Construction rejects leaves that do not satisfy <code class="docutils literal notranslate"><span class="pre">GeometryProtocol</span></code>; absent
+third-party capability metadata is never interpreted as a mathematical
+guarantee.</p>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>

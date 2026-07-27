@@ -102,6 +102,9 @@
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">These are the development docs for unreleased GeoJAX 0.2.0. PyPI currently provides the stable 0.1.1 release.</div>
+</aside>
 
   
     <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -411,20 +414,29 @@
 <h1>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading">#</a></h1>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
-<p>GeoJAX requires Python 3.11 or newer. Choose either the published package or
-the current GitHub source. The distribution name, import package, repository
-slug, and PyPI project are all lowercase <code class="docutils literal notranslate"><span class="pre">geojax</span></code>.</p>
-<section id="option-1-pypi">
-<h3>Option 1: PyPI<a class="headerlink" href="#option-1-pypi" title="Link to this heading">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>geojax
+<p>GeoJAX requires Python 3.11 or newer. The distribution name, import package,
+repository slug, and PyPI project are all lowercase <code class="docutils literal notranslate"><span class="pre">geojax</span></code>.</p>
+<section id="option-1-stable-release-from-pypi">
+<h3>Option 1: stable release from PyPI<a class="headerlink" href="#option-1-stable-release-from-pypi" title="Link to this heading">#</a></h3>
+<p>PyPI currently provides GeoJAX 0.1.1. Pinning the version makes an experiment
+reproducible and distinguishes the stable package from these development
+documentation pages.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;geojax==0.1.1&quot;</span>
 </pre></div>
 </div>
 </section>
-<section id="option-2-github-source">
-<h3>Option 2: GitHub source<a class="headerlink" href="#option-2-github-source" title="Link to this heading">#</a></h3>
+<section id="option-2-development-version-from-github">
+<h3>Option 2: development version from GitHub<a class="headerlink" href="#option-2-development-version-from-github" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">main</span></code> branch and this website document the unreleased 0.2.0 development
+version, including <code class="docutils literal notranslate"><span class="pre">geojax.learning</span></code>.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/kisungyou/geojax.git
 <span class="nb">cd</span><span class="w"> </span>geojax
 python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.
+</pre></div>
+</div>
+<p>For an editable development installation with the complete test and
+documentation toolchain, use</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[dev,docs,examples]&quot;</span>
 </pre></div>
 </div>
 </section>
@@ -530,8 +542,8 @@ develops the optimization example with diagnostics and figures.</p>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#option-1-pypi">Option 1: PyPI</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#option-2-github-source">Option 2: GitHub source</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#option-1-stable-release-from-pypi">Option 1: stable release from PyPI</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#option-2-development-version-from-github">Option 2: development version from GitHub</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#first-optimization-problem">First optimization problem</a></li>

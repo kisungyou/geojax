@@ -317,6 +317,13 @@ dimensions. NumPy-style broadcasting applies to compatible leading shapes.
 Reducers such as sample means document their reduction axes separately.
 `Product` applies the pointwise contract leafwise.
 
+Event axes are part of the manifold definition, not broadcast dimensions.
+Consequently, `belongs` and `is_tangent` return `False` for malformed event
+shapes, while constructors such as `project` and `tangent_project` raise
+`ValueError`. For correctly shaped ambient data, including zero or
+rank-deficient matrices, `project` guarantees a finite point accepted by
+`belongs`.
+
 `GeometryMixin` retains convenience names for fixed-base collections:
 
 $$
@@ -385,6 +392,9 @@ $$
 and projection, exponential, logarithm, transport, gradient conversion, and
 sampling act independently on the leaves of the matching pytree. Product
 capability metadata is exact only when every factor advertises exactness.
+Construction rejects leaves that do not satisfy `GeometryProtocol`; absent
+third-party capability metadata is never interpreted as a mathematical
+guarantee.
 
 ## References
 
