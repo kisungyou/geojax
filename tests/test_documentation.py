@@ -142,6 +142,35 @@ def test_kendall_hand_tutorial_data_is_complete():
     assert np.array_equal(np.unique(labels, return_counts=True)[1], np.array([25, 27]))
 
 
+def test_physionet_eeg_tutorial_data_is_complete():
+    data_path = DOCS / "_static" / "data" / "eeg" / "physionet_motor_imagery.npz"
+    with np.load(data_path) as data:
+        epochs = data["epochs"]
+        labels = data["labels"]
+        runs = data["runs"]
+        subjects = data["subjects"]
+        channels = data["channels"]
+
+    assert epochs.shape == (225, 8, 480)
+    assert epochs.dtype == np.float32
+    assert np.isfinite(epochs).all()
+    assert np.array_equal(np.unique(subjects), np.arange(1, 6))
+    assert np.array_equal(np.unique(runs, return_counts=True)[0], np.array([4, 8, 12]))
+    assert np.array_equal(np.unique(runs, return_counts=True)[1], np.array([75, 75, 75]))
+    assert np.array_equal(np.unique(labels, return_counts=True)[0], np.array([0, 1]))
+    assert np.array_equal(np.unique(labels, return_counts=True)[1], np.array([113, 112]))
+    assert channels.tolist() == [
+        "Fc3.",
+        "Fc4.",
+        "C3..",
+        "C1..",
+        "C2..",
+        "C4..",
+        "Cp3.",
+        "Cp4.",
+    ]
+
+
 def test_every_scientific_page_has_citations_and_a_local_bibliography():
     tutorial_pages = {
         path.relative_to(DOCS)

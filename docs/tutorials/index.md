@@ -28,6 +28,17 @@ through an executable GeoJAX solution and a visual report of the result.
       <p>Train matched intrinsic graph classifiers and compare Euclidean, spherical, and hyperbolic node representations.</p>
     </div>
   </a>
+
+  <a class="tutorial-card" href="spd_eeg_classifier.html">
+    <div class="tutorial-card-media">
+      <img src="../_static/tutorials/spd-eeg-classifier.png" alt="Motor-imagery EEG covariance matrices and SPD latent representations">
+    </div>
+    <div class="tutorial-card-body">
+      <p class="tutorial-card-meta">SPD learning / Real EEG</p>
+      <h2>SPD prototype networks for motor-imagery EEG</h2>
+      <p>Transform public sensorimotor EEG into covariance features and compare three geometric prototype heads.</p>
+    </div>
+  </a>
 </div>
 
 ## Geometric computation
@@ -152,6 +163,7 @@ hyperbolic_geodesics
 torus_geodesics
 manifold_autoencoder
 graph_curvature
+spd_eeg_classifier
 grassmann_pca
 sphere_kmeans
 spd_frechet_mean

@@ -24,6 +24,23 @@ Depth and Skeletal Dataset," DOI
 data should cite the source study and comply with any terms that apply to the
 original dataset.
 
+## PhysioNet motor-imagery EEG derivative
+
+File:
+
+- `docs/_static/data/eeg/physionet_motor_imagery.npz`
+
+This compact derivative contains selected epochs from the
+[PhysioNet EEG Motor Movement/Imagery Dataset, version
+1.0.0](https://physionet.org/content/eegmmidb/1.0.0/), contributed by Gerwin
+Schalk. The upstream dataset DOI is
+[10.13026/C28G6P](https://doi.org/10.13026/C28G6P).
+
+The upstream files are distributed under the Open Data Commons Attribution
+License v1.0. GeoJAX redistributes this derivative under the same attribution
+terms. The complete selection, processing, and licensing notice is available
+at `docs/_static/data/eeg/NOTICE.txt`.
+
 ## Sora font
 
 Files:

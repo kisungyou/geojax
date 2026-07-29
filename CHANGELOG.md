@@ -35,6 +35,10 @@
   spherical and hyperbolic autoencoder release contracts.
 - Added an executable deterministic-autoencoder tutorial comparing Euclidean,
   spherical, and hyperbolic latent spaces on handwritten digits.
+- Added a real-data geometric-learning tutorial that derives SPD covariance
+  descriptors from an attributed PhysioNet motor-imagery EEG subset and
+  compares log-Euclidean, affine-invariant, and Bures--Wasserstein prototype
+  heads under a recording-run holdout protocol.
 
 ## 0.1.1 - 2026-07-23
 
