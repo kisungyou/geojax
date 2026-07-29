@@ -455,7 +455,7 @@
 <p>The cost is a scalar JAX function. Supply a Riemannian <code class="docutils literal notranslate"><span class="pre">grad</span></code>, an ambient
 <code class="docutils literal notranslate"><span class="pre">egrad</span></code>, or let JAX differentiate the cost and let the geometry convert the
 result. The underlying smooth-manifold optimization framework follows
-<span class="bibtex-citation" id="id1">Absil <em>et al.</em> [<a class="reference internal" href="#id10" title="P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. Optimization Algorithms on Matrix Manifolds. Princeton University Press, 2008. doi:10.1515/9781400830244.">2008</a>]</span> and <span class="bibtex-citation" id="id2">Boumal [<a class="reference internal" href="#id17" title="Nicolas Boumal. An Introduction to Optimization on Smooth Manifolds. Cambridge University Press, 2023. doi:10.1017/9781009166164.">2023</a>]</span>.</p>
+<span class="bibtex-citation" id="id1">Absil <em>et al.</em> [<a class="reference internal" href="#id10" title="P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. Optimization Algorithms on Matrix Manifolds. Princeton University Press, 2008. doi:10.1515/9781400830244.">2008</a>]</span> and <span class="bibtex-citation" id="id2">Boumal [<a class="reference internal" href="#id18" title="Nicolas Boumal. An Introduction to Optimization on Smooth Manifolds. Cambridge University Press, 2023. doi:10.1017/9781009166164.">2023</a>]</span>.</p>
 <section id="jax-transformation-boundary">
 <h2>JAX transformation boundary<a class="headerlink" href="#jax-transformation-boundary" title="Link to this heading">#</a></h2>
 <p>Geometry methods and numerical derivative products can be used inside
@@ -489,7 +489,7 @@ f(x)=\frac12\lVert r(x)\rVert_2^2
 \]</div>
 <p>and provides matrix-free products with the residual Jacobian <span class="math notranslate nohighlight">\(J_x\)</span> and its
 adjoint <span class="math notranslate nohighlight">\(J_x^*\)</span>. <code class="docutils literal notranslate"><span class="pre">GaussNewton</span></code> and <code class="docutils literal notranslate"><span class="pre">LevenbergMarquardt</span></code> consume this richer
-contract directly <span class="bibtex-citation" id="id3">[<a class="reference internal" href="#id35" title="Kenneth Levenberg. A method for the solution of certain non-linear problems in least squares. Quarterly of Applied Mathematics, 2(2):164–168, 1944. doi:10.1090/qam/10666.">Levenberg, 1944</a>, <a class="reference internal" href="#id41" title="Donald W. Marquardt. An algorithm for least-squares estimation of nonlinear parameters. Journal of the Society for Industrial and Applied Mathematics, 11(2):431–441, 1963. doi:10.1137/0111030.">Marquardt, 1963</a>, <a class="reference internal" href="#id47" title="Jorge Nocedal and Stephen J. Wright. Numerical Optimization. Springer, 2 edition, 2006. doi:10.1007/978-0-387-40065-5.">Nocedal and Wright, 2006</a>]</span>.</p>
+contract directly <span class="bibtex-citation" id="id3">[<a class="reference internal" href="#id37" title="Kenneth Levenberg. A method for the solution of certain non-linear problems in least squares. Quarterly of Applied Mathematics, 2(2):164–168, 1944. doi:10.1090/qam/10666.">Levenberg, 1944</a>, <a class="reference internal" href="#id43" title="Donald W. Marquardt. An algorithm for least-squares estimation of nonlinear parameters. Journal of the Society for Industrial and Applied Mathematics, 11(2):431–441, 1963. doi:10.1137/0111030.">Marquardt, 1963</a>, <a class="reference internal" href="#id49" title="Jorge Nocedal and Stephen J. Wright. Numerical Optimization. Springer, 2 edition, 2006. doi:10.1007/978-0-387-40065-5.">Nocedal and Wright, 2006</a>]</span>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">LeastSquares</span><span class="p">(</span>
     <span class="n">M</span><span class="o">=</span><span class="n">M</span><span class="p">,</span>
     <span class="n">residual</span><span class="o">=</span><span class="n">residual</span><span class="p">,</span>
@@ -501,7 +501,7 @@ contract directly <span class="bibtex-citation" id="id3">[<a class="reference in
 <p><code class="docutils literal notranslate"><span class="pre">FiniteSum</span></code> represents <span class="math notranslate nohighlight">\(f(x)=N^{-1}\sum_{i=1}^N f_i(x)\)</span> without requiring
 <code class="docutils literal notranslate"><span class="pre">StochasticGradient</span></code> to evaluate every term at every update. The Riemannian
 stochastic-gradient convergence framework is given by
-<span class="bibtex-citation" id="id4">Bonnabel [<a class="reference internal" href="#id16" title="Silvère Bonnabel. Stochastic gradient descent on Riemannian manifolds. IEEE Transactions on Automatic Control, 58(9):2217–2229, 2013. doi:10.1109/TAC.2013.2254619.">2013</a>]</span>.</p>
+<span class="bibtex-citation" id="id4">Bonnabel [<a class="reference internal" href="#id17" title="Silvère Bonnabel. Stochastic gradient descent on Riemannian manifolds. IEEE Transactions on Automatic Control, 58(9):2217–2229, 2013. doi:10.1109/TAC.2013.2254619.">2013</a>]</span>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">FiniteSum</span><span class="p">(</span>
     <span class="n">M</span><span class="o">=</span><span class="n">M</span><span class="p">,</span>
     <span class="n">loss</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="n">per_sample_loss</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span>
@@ -570,7 +570,7 @@ stochastic-gradient convergence framework is given by
 methods, consume <code class="docutils literal notranslate"><span class="pre">Minimize</span></code>.</p>
 <p>The table spans classical spectral, quasi-Newton, derivative-free, and
 second-order families
-<span class="bibtex-citation" id="id5">[<a class="reference internal" href="#id14" title="Jonathan Barzilai and Jonathan M. Borwein. Two-point step size gradient methods. IMA Journal of Numerical Analysis, 8(1):141–148, 1988. doi:10.1093/imanum/8.1.141.">Barzilai and Borwein, 1988</a>, <a class="reference internal" href="#id20" title="Coralia Cartis, Nicholas I. M. Gould, and Philippe L. Toint. Adaptive cubic regularisation methods for unconstrained optimization. part i: motivation, convergence and numerical results. Mathematical Programming, 127:245–295, 2011. doi:10.1007/s10107-009-0286-5.">Cartis <em>et al.</em>, 2011</a>, <a class="reference internal" href="#id33" title="James Kennedy and Russell Eberhart. Particle swarm optimization. In Proceedings of ICNN'95 - International Conference on Neural Networks, volume 4, 1942–1948. 1995. doi:10.1109/ICNN.1995.488968.">Kennedy and Eberhart, 1995</a>, <a class="reference internal" href="#id37" title="Dong C. Liu and Jorge Nocedal. On the limited memory BFGS method for large scale optimization. Mathematical Programming, 45:503–528, 1989. doi:10.1007/BF01589116.">Liu and Nocedal, 1989</a>, <a class="reference internal" href="#id46" title="John A. Nelder and Roger Mead. A simplex method for function minimization. The Computer Journal, 7(4):308–313, 1965. doi:10.1093/comjnl/7.4.308.">Nelder and Mead, 1965</a>]</span>.</p>
+<span class="bibtex-citation" id="id5">[<a class="reference internal" href="#id14" title="Jonathan Barzilai and Jonathan M. Borwein. Two-point step size gradient methods. IMA Journal of Numerical Analysis, 8(1):141–148, 1988. doi:10.1093/imanum/8.1.141.">Barzilai and Borwein, 1988</a>, <a class="reference internal" href="#id21" title="Coralia Cartis, Nicholas I. M. Gould, and Philippe L. Toint. Adaptive cubic regularisation methods for unconstrained optimization. part i: motivation, convergence and numerical results. Mathematical Programming, 127:245–295, 2011. doi:10.1007/s10107-009-0286-5.">Cartis <em>et al.</em>, 2011</a>, <a class="reference internal" href="#id35" title="James Kennedy and Russell Eberhart. Particle swarm optimization. In Proceedings of ICNN'95 - International Conference on Neural Networks, volume 4, 1942–1948. 1995. doi:10.1109/ICNN.1995.488968.">Kennedy and Eberhart, 1995</a>, <a class="reference internal" href="#id39" title="Dong C. Liu and Jorge Nocedal. On the limited memory BFGS method for large scale optimization. Mathematical Programming, 45:503–528, 1989. doi:10.1007/BF01589116.">Liu and Nocedal, 1989</a>, <a class="reference internal" href="#id48" title="John A. Nelder and Roger Mead. A simplex method for function minimization. The Computer Journal, 7(4):308–313, 1965. doi:10.1093/comjnl/7.4.308.">Nelder and Mead, 1965</a>]</span>.</p>
 </section>
 <section id="line-searches">
 <h2>Line searches<a class="headerlink" href="#line-searches" title="Link to this heading">#</a></h2>
@@ -613,7 +613,7 @@ That is the exact derivative of the search curve for a geodesic with parallel
 transport. With a general retraction and vector transport, it is the standard
 transported-derivative proxy, so classical Wolfe guarantees require the usual
 compatibility assumptions. The sufficient-decrease and curvature conditions
-trace to <span class="bibtex-citation" id="id6">Armijo [<a class="reference internal" href="#id12" title="Larry Armijo. Minimization of functions having lipschitz continuous first partial derivatives. Pacific Journal of Mathematics, 16(1):1–3, 1966. doi:10.2140/pjm.1966.16.1.">1966</a>]</span> and <span class="bibtex-citation" id="id7">Wolfe [<a class="reference internal" href="#id53" title="Philip Wolfe. Convergence conditions for ascent methods. SIAM Review, 11(2):226–235, 1969. doi:10.1137/1011036.">1969</a>]</span>.</p>
+trace to <span class="bibtex-citation" id="id6">Armijo [<a class="reference internal" href="#id12" title="Larry Armijo. Minimization of functions having lipschitz continuous first partial derivatives. Pacific Journal of Mathematics, 16(1):1–3, 1966. doi:10.2140/pjm.1966.16.1.">1966</a>]</span> and <span class="bibtex-citation" id="id7">Wolfe [<a class="reference internal" href="#id57" title="Philip Wolfe. Convergence conditions for ascent methods. SIAM Review, 11(2):226–235, 1969. doi:10.1137/1011036.">1969</a>]</span>.</p>
 </section>
 <section id="second-order-models">
 <h2>Second-order models<a class="headerlink" href="#second-order-models" title="Link to this heading">#</a></h2>
@@ -630,7 +630,7 @@ m_x(\eta)
 <p>The regularization parameter <span class="math notranslate nohighlight">\(\sigma\)</span> is adapted from the agreement between
 predicted and actual decrease. The iteration history records acceptance,
 gain ratio, regularization, inner iterations, and curvature events in
-<code class="docutils literal notranslate"><span class="pre">InfoEntry.extra</span></code> <span class="bibtex-citation" id="id8">[<a class="reference internal" href="#id20" title="Coralia Cartis, Nicholas I. M. Gould, and Philippe L. Toint. Adaptive cubic regularisation methods for unconstrained optimization. part i: motivation, convergence and numerical results. Mathematical Programming, 127:245–295, 2011. doi:10.1007/s10107-009-0286-5.">Cartis <em>et al.</em>, 2011</a>]</span>.</p>
+<code class="docutils literal notranslate"><span class="pre">InfoEntry.extra</span></code> <span class="bibtex-citation" id="id8">[<a class="reference internal" href="#id21" title="Coralia Cartis, Nicholas I. M. Gould, and Philippe L. Toint. Adaptive cubic regularisation methods for unconstrained optimization. part i: motivation, convergence and numerical results. Mathematical Programming, 127:245–295, 2011. doi:10.1007/s10107-009-0286-5.">Cartis <em>et al.</em>, 2011</a>]</span>.</p>
 <p>Automatic ambient-to-Riemannian Hessian conversion is currently exact for:</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -686,44 +686,44 @@ the point.</p>
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">BB88</a><span class="fn-bracket">]</span></span>
 <p>Jonathan Barzilai and Jonathan M. Borwein. Two-point step size gradient methods. <em>IMA Journal of Numerical Analysis</em>, 8(1):141–148, 1988. <a class="reference external" href="https://doi.org/10.1093/imanum/8.1.141">doi:10.1093/imanum/8.1.141</a>.</p>
 </div>
-<div class="citation" id="id16" role="doc-biblioentry">
+<div class="citation" id="id17" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">Bon13</a><span class="fn-bracket">]</span></span>
 <p>Silvère Bonnabel. Stochastic gradient descent on Riemannian manifolds. <em>IEEE Transactions on Automatic Control</em>, 58(9):2217–2229, 2013. <a class="reference external" href="https://doi.org/10.1109/TAC.2013.2254619">doi:10.1109/TAC.2013.2254619</a>.</p>
 </div>
-<div class="citation" id="id17" role="doc-biblioentry">
+<div class="citation" id="id18" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">Bou23</a><span class="fn-bracket">]</span></span>
 <p>Nicolas Boumal. <em>An Introduction to Optimization on Smooth Manifolds</em>. Cambridge University Press, 2023. <a class="reference external" href="https://doi.org/10.1017/9781009166164">doi:10.1017/9781009166164</a>.</p>
 </div>
-<div class="citation" id="id20" role="doc-biblioentry">
+<div class="citation" id="id21" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span>CGT11<span class="fn-bracket">]</span></span>
 <span class="backrefs">(<a role="doc-backlink" href="#id5">1</a>,<a role="doc-backlink" href="#id8">2</a>)</span>
 <p>Coralia Cartis, Nicholas I. M. Gould, and Philippe L. Toint. Adaptive cubic regularisation methods for unconstrained optimization. part i: motivation, convergence and numerical results. <em>Mathematical Programming</em>, 127:245–295, 2011. <a class="reference external" href="https://doi.org/10.1007/s10107-009-0286-5">doi:10.1007/s10107-009-0286-5</a>.</p>
 </div>
-<div class="citation" id="id33" role="doc-biblioentry">
+<div class="citation" id="id35" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">KE95</a><span class="fn-bracket">]</span></span>
 <p>James Kennedy and Russell Eberhart. Particle swarm optimization. In <em>Proceedings of ICNN'95 - International Conference on Neural Networks</em>, volume 4, 1942–1948. 1995. <a class="reference external" href="https://doi.org/10.1109/ICNN.1995.488968">doi:10.1109/ICNN.1995.488968</a>.</p>
 </div>
-<div class="citation" id="id35" role="doc-biblioentry">
+<div class="citation" id="id37" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">Lev44</a><span class="fn-bracket">]</span></span>
 <p>Kenneth Levenberg. A method for the solution of certain non-linear problems in least squares. <em>Quarterly of Applied Mathematics</em>, 2(2):164–168, 1944. <a class="reference external" href="https://doi.org/10.1090/qam/10666">doi:10.1090/qam/10666</a>.</p>
 </div>
-<div class="citation" id="id37" role="doc-biblioentry">
+<div class="citation" id="id39" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">LN89</a><span class="fn-bracket">]</span></span>
 <p>Dong C. Liu and Jorge Nocedal. On the limited memory BFGS method for large scale optimization. <em>Mathematical Programming</em>, 45:503–528, 1989. <a class="reference external" href="https://doi.org/10.1007/BF01589116">doi:10.1007/BF01589116</a>.</p>
 </div>
-<div class="citation" id="id41" role="doc-biblioentry">
+<div class="citation" id="id43" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">Mar63</a><span class="fn-bracket">]</span></span>
 <p>Donald W. Marquardt. An algorithm for least-squares estimation of nonlinear parameters. <em>Journal of the Society for Industrial and Applied Mathematics</em>, 11(2):431–441, 1963. <a class="reference external" href="https://doi.org/10.1137/0111030">doi:10.1137/0111030</a>.</p>
 </div>
-<div class="citation" id="id46" role="doc-biblioentry">
+<div class="citation" id="id48" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">NM65</a><span class="fn-bracket">]</span></span>
 <p>John A. Nelder and Roger Mead. A simplex method for function minimization. <em>The Computer Journal</em>, 7(4):308–313, 1965. <a class="reference external" href="https://doi.org/10.1093/comjnl/7.4.308">doi:10.1093/comjnl/7.4.308</a>.</p>
 </div>
-<div class="citation" id="id47" role="doc-biblioentry">
+<div class="citation" id="id49" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">NW06</a><span class="fn-bracket">]</span></span>
 <p>Jorge Nocedal and Stephen J. Wright. <em>Numerical Optimization</em>. Springer, 2 edition, 2006. <a class="reference external" href="https://doi.org/10.1007/978-0-387-40065-5">doi:10.1007/978-0-387-40065-5</a>.</p>
 </div>
-<div class="citation" id="id53" role="doc-biblioentry">
+<div class="citation" id="id57" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id7">Wol69</a><span class="fn-bracket">]</span></span>
 <p>Philip Wolfe. Convergence conditions for ascent methods. <em>SIAM Review</em>, 11(2):226–235, 1969. <a class="reference external" href="https://doi.org/10.1137/1011036">doi:10.1137/1011036</a>.</p>
 </div>

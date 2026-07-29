@@ -82,6 +82,23 @@ hyperbolic representation learning
 retraction-only and numerical-local source maps must be composed explicitly by
 the user.
 
+## Worked patterns
+
+The geometric-deep-learning tutorials deliberately use plain JAX parameter
+pytrees so the geometric part remains visible:
+
+- [deterministic autoencoders](../tutorials/manifold_autoencoder.md) place a
+  learned bottleneck in Euclidean, spherical, or hyperbolic space;
+- [curvature-aware graph learning](../tutorials/graph_curvature.md) performs
+  tangent-space message aggregation and geodesic prototype classification;
+  and
+- [SPD prototype networks](../tutorials/spd_eeg_classifier.md) transform real
+  EEG covariances into learned SPD activations and compare three matrix
+  geometries.
+
+Together they cover manifold-valued activations, intrinsic aggregation, and
+geometry-aware output heads without coupling GeoJAX to one neural framework.
+
 ## Current scope
 
 Version 0.2 establishes differentiable geometry for manifold-valued features.

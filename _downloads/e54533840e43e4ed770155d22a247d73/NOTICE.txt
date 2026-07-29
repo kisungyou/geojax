@@ -1,0 +1,57 @@
+GeoJAX PhysioNet motor-imagery tutorial data
+=============================================
+
+File
+----
+
+physionet_motor_imagery.npz
+
+Upstream dataset
+----------------
+
+EEG Motor Movement/Imagery Dataset, version 1.0.0
+Gerwin Schalk, PhysioNet, 2009
+DOI: https://doi.org/10.13026/C28G6P
+Dataset page: https://physionet.org/content/eegmmidb/1.0.0/
+
+The upstream recordings were collected with the BCI2000 system described in:
+
+Gerwin Schalk, Dennis J. McFarland, Thilo Hinterberger, Niels Birbaumer,
+and Jonathan R. Wolpaw. "BCI2000: A General-Purpose Brain-Computer
+Interface (BCI) System." IEEE Transactions on Biomedical Engineering,
+51(6):1034-1043, 2004. DOI: https://doi.org/10.1109/TBME.2004.827072
+
+License
+-------
+
+The upstream data files are licensed under the Open Data Commons
+Attribution License (ODC-By) v1.0:
+
+https://opendatacommons.org/licenses/by/1-0/
+
+This file is a derived subset redistributed under the same attribution
+terms. GeoJAX's MIT software license does not replace or supersede the
+dataset license.
+
+Derivation
+----------
+
+The derivative was prepared from subjects S001 through S005 and unilateral
+motor-imagery runs R04, R08, and R12. Event T1 denotes imagined left-fist
+movement and T2 denotes imagined right-fist movement for these runs.
+
+For every T1 or T2 annotation, the derivative stores the interval from
+0.5 seconds through 3.5 seconds after event onset. The eight retained
+sensorimotor channels, in file order, are:
+
+Fc3., Fc4., C3.., C1.., C2.., C4.., Cp3., Cp4.
+
+Signals are stored as float32 microvolts at the original 160 Hz sampling
+rate. No filtering, covariance estimation, trial rejection, or learned
+transformation was applied before storage. The executable tutorial performs
+those steps visibly. The derivative contains 225 trials with shape
+(225, 8, 480), plus event labels, subject identifiers, run identifiers,
+channel names, and acquisition metadata.
+
+The derivative contains no names or contact information. Subject identifiers
+are the public pseudonymous identifiers used by the upstream dataset.

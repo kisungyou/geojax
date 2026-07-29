@@ -54,7 +54,7 @@
     <link rel="icon" href="../_static/geojax-gj-favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Principal component as a Grassmann point" href="grassmann_pca.html" />
+    <link rel="next" title="SPD prototype networks for motor-imagery EEG" href="spd_eeg_classifier.html" />
     <link rel="prev" title="Deterministic autoencoders with curved latent spaces" href="manifold_autoencoder.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -385,6 +385,7 @@
 <li class="toctree-l1"><a class="reference internal" href="torus_geodesics.html">Wrapped geodesics on the flat torus</a></li>
 <li class="toctree-l1"><a class="reference internal" href="manifold_autoencoder.html">Deterministic autoencoders with curved latent spaces</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Curvature-aware graph learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spd_eeg_classifier.html">SPD prototype networks for motor-imagery EEG</a></li>
 <li class="toctree-l1"><a class="reference internal" href="grassmann_pca.html">Principal component as a Grassmann point</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sphere_kmeans.html">Intrinsic k-means on the circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spd_frechet_mean.html">Comparing Fréchet Means of SPD Matrices</a></li>
@@ -458,7 +459,7 @@
 manifold-valued learning changes the space in which the resulting features
 live. This tutorial puts the two ideas together on Zachary’s Karate Club
 network, a published social network with 34 people and 78 observed
-relationships <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id52" title="Wayne W. Zachary. An information flow model for conflict and fission in small groups. Journal of Anthropological Research, 33(4):452–473, 1977. doi:10.1086/jar.33.4.3629752.">Zachary, 1977</a>]</span>.</p>
+relationships <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id56" title="Wayne W. Zachary. An information flow model for conflict and fission in small groups. Journal of Anthropological Research, 33(4):452–473, 1977. doi:10.1086/jar.33.4.3629752.">Zachary, 1977</a>]</span>.</p>
 <p>We compare matched node classifiers whose two-dimensional latent
 representations live in</p>
 <div class="math notranslate nohighlight">
@@ -475,10 +476,10 @@ distance to two learned class prototypes.</p>
 <p>This is a controlled demonstration of GeoJAX primitives, not a reproduction
 of a full hyperbolic graph neural network or a benchmark claim. Modern graph
 convolutions motivate the normalized adjacency encoder
-<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id32" title="Thomas N. Kipf and Max Welling. Semi-supervised classification with graph convolutional networks. In International Conference on Learning Representations. 2017. URL: https://openreview.net/forum?id=SJU4ayYgl.">Kipf and Welling, 2017</a>]</span>, while hyperbolic graph networks motivate
+<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id34" title="Thomas N. Kipf and Max Welling. Semi-supervised classification with graph convolutional networks. In International Conference on Learning Representations. 2017. URL: https://openreview.net/forum?id=SJU4ayYgl.">Kipf and Welling, 2017</a>]</span>, while hyperbolic graph networks motivate
 performing representation learning beyond Euclidean space
-<span class="bibtex-citation" id="id3">[<a class="reference internal" href="#id19" title="Ines Chami, Rex Ying, Christopher Ré, and Jure Leskovec. Hyperbolic graph convolutional neural networks. In Advances in Neural Information Processing Systems, volume 32. 2019. URL: https://proceedings.neurips.cc/paper/2019/hash/0415740eaa4d9decbc8da001d3fd805f-Abstract.html.">Chami <em>et al.</em>, 2019</a>]</span>. The broader geometric-deep-learning viewpoint
-is surveyed by <span class="bibtex-citation" id="id4">Bronstein <em>et al.</em> [<a class="reference internal" href="#id17" title="Michael M. Bronstein, Joan Bruna, Taco Cohen, and Petar Veličković. Geometric deep learning: grids, groups, graphs, geodesics, and gauges. arXiv preprint arXiv:2104.13478, 2021. doi:10.48550/arXiv.2104.13478.">2021</a>]</span>.</p>
+<span class="bibtex-citation" id="id3">[<a class="reference internal" href="#id20" title="Ines Chami, Rex Ying, Christopher Ré, and Jure Leskovec. Hyperbolic graph convolutional neural networks. In Advances in Neural Information Processing Systems, volume 32. 2019. URL: https://proceedings.neurips.cc/paper/2019/hash/0415740eaa4d9decbc8da001d3fd805f-Abstract.html.">Chami <em>et al.</em>, 2019</a>]</span>. The broader geometric-deep-learning viewpoint
+is surveyed by <span class="bibtex-citation" id="id4">Bronstein <em>et al.</em> [<a class="reference internal" href="#id18" title="Michael M. Bronstein, Joan Bruna, Taco Cohen, and Petar Veličković. Geometric deep learning: grids, groups, graphs, geodesics, and gauges. arXiv preprint arXiv:2104.13478, 2021. doi:10.48550/arXiv.2104.13478.">2021</a>]</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
@@ -697,7 +698,7 @@ before being expressed in a common tangent space.</p>
 <p>This prototype rule makes the decision geometry explicit. Hyperbolic neural
 networks use related exponential/logarithmic constructions, although
 production architectures may also learn curvature, change tangent bases
-between layers, and use richer aggregation <span class="bibtex-citation" id="id5">[<a class="reference internal" href="#id19" title="Ines Chami, Rex Ying, Christopher Ré, and Jure Leskovec. Hyperbolic graph convolutional neural networks. In Advances in Neural Information Processing Systems, volume 32. 2019. URL: https://proceedings.neurips.cc/paper/2019/hash/0415740eaa4d9decbc8da001d3fd805f-Abstract.html.">Chami <em>et al.</em>, 2019</a>, <a class="reference internal" href="#id24" title="Octavian-Eugen Ganea, Gary Bécigneul, and Thomas Hofmann. Hyperbolic neural networks. In Advances in Neural Information Processing Systems, volume 31. 2018. URL: https://proceedings.neurips.cc/paper/2018/hash/dbab2adc8f9d078009ee3fa810bea142-Abstract.html.">Ganea <em>et al.</em>, 2018</a>]</span>.</p>
+between layers, and use richer aggregation <span class="bibtex-citation" id="id5">[<a class="reference internal" href="#id20" title="Ines Chami, Rex Ying, Christopher Ré, and Jure Leskovec. Hyperbolic graph convolutional neural networks. In Advances in Neural Information Processing Systems, volume 32. 2019. URL: https://proceedings.neurips.cc/paper/2019/hash/0415740eaa4d9decbc8da001d3fd805f-Abstract.html.">Chami <em>et al.</em>, 2019</a>, <a class="reference internal" href="#id25" title="Octavian-Eugen Ganea, Gary Bécigneul, and Thomas Hofmann. Hyperbolic neural networks. In Advances in Neural Information Processing Systems, volume 31. 2018. URL: https://proceedings.neurips.cc/paper/2018/hash/dbab2adc8f9d078009ee3fa810bea142-Abstract.html.">Ganea <em>et al.</em>, 2018</a>]</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adjacency</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">adjacency_np</span><span class="p">)</span>
@@ -1399,7 +1400,7 @@ correlation was not optimized directly.</p>
 classification objective, not a graph-distortion objective. The diagnostic
 nevertheless makes a useful methodological distinction. Curvature can change
 how latent volume grows and how graph neighborhoods are arranged
-<span class="bibtex-citation" id="id6">[<a class="reference internal" href="#id19" title="Ines Chami, Rex Ying, Christopher Ré, and Jure Leskovec. Hyperbolic graph convolutional neural networks. In Advances in Neural Information Processing Systems, volume 32. 2019. URL: https://proceedings.neurips.cc/paper/2019/hash/0415740eaa4d9decbc8da001d3fd805f-Abstract.html.">Chami <em>et al.</em>, 2019</a>, <a class="reference internal" href="#id43" title="Maximilian Nickel and Douwe Kiela. Poincaré embeddings for learning hierarchical representations. In Advances in Neural Information Processing Systems, volume 30. 2017. URL: https://proceedings.neurips.cc/paper/2017/hash/59dfa2df42d9e3d41f5b02bfc32229dd-Abstract.html.">Nickel and Kiela, 2017</a>]</span>, but that benefit must be
+<span class="bibtex-citation" id="id6">[<a class="reference internal" href="#id20" title="Ines Chami, Rex Ying, Christopher Ré, and Jure Leskovec. Hyperbolic graph convolutional neural networks. In Advances in Neural Information Processing Systems, volume 32. 2019. URL: https://proceedings.neurips.cc/paper/2019/hash/0415740eaa4d9decbc8da001d3fd805f-Abstract.html.">Chami <em>et al.</em>, 2019</a>, <a class="reference internal" href="#id45" title="Maximilian Nickel and Douwe Kiela. Poincaré embeddings for learning hierarchical representations. In Advances in Neural Information Processing Systems, volume 30. 2017. URL: https://proceedings.neurips.cc/paper/2017/hash/59dfa2df42d9e3d41f5b02bfc32229dd-Abstract.html.">Nickel and Kiela, 2017</a>]</span>, but that benefit must be
 tested with an objective and data whose structure can reveal it.</p>
 </section>
 <section id="what-this-example-establishes">
@@ -1422,28 +1423,28 @@ geometry-aware computation demonstrated here remains the same.</p>
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id7">
 <div role="list" class="citation-list">
-<div class="citation" id="id17" role="doc-biblioentry">
+<div class="citation" id="id18" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">BBCVelivckovic21</a><span class="fn-bracket">]</span></span>
 <p>Michael M. Bronstein, Joan Bruna, Taco Cohen, and Petar Veličković. Geometric deep learning: grids, groups, graphs, geodesics, and gauges. <em>arXiv preprint arXiv:2104.13478</em>, 2021. <a class="reference external" href="https://doi.org/10.48550/arXiv.2104.13478">doi:10.48550/arXiv.2104.13478</a>.</p>
 </div>
-<div class="citation" id="id19" role="doc-biblioentry">
+<div class="citation" id="id20" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span>CYReL19<span class="fn-bracket">]</span></span>
 <span class="backrefs">(<a role="doc-backlink" href="#id3">1</a>,<a role="doc-backlink" href="#id5">2</a>,<a role="doc-backlink" href="#id6">3</a>)</span>
 <p>Ines Chami, Rex Ying, Christopher Ré, and Jure Leskovec. Hyperbolic graph convolutional neural networks. In <em>Advances in Neural Information Processing Systems</em>, volume 32. 2019. URL: <a class="reference external" href="https://proceedings.neurips.cc/paper/2019/hash/0415740eaa4d9decbc8da001d3fd805f-Abstract.html">https://proceedings.neurips.cc/paper/2019/hash/0415740eaa4d9decbc8da001d3fd805f-Abstract.html</a>.</p>
 </div>
-<div class="citation" id="id24" role="doc-biblioentry">
+<div class="citation" id="id25" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">GBecigneulH18</a><span class="fn-bracket">]</span></span>
 <p>Octavian-Eugen Ganea, Gary Bécigneul, and Thomas Hofmann. Hyperbolic neural networks. In <em>Advances in Neural Information Processing Systems</em>, volume 31. 2018. URL: <a class="reference external" href="https://proceedings.neurips.cc/paper/2018/hash/dbab2adc8f9d078009ee3fa810bea142-Abstract.html">https://proceedings.neurips.cc/paper/2018/hash/dbab2adc8f9d078009ee3fa810bea142-Abstract.html</a>.</p>
 </div>
-<div class="citation" id="id32" role="doc-biblioentry">
+<div class="citation" id="id34" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">KW17</a><span class="fn-bracket">]</span></span>
 <p>Thomas N. Kipf and Max Welling. Semi-supervised classification with graph convolutional networks. In <em>International Conference on Learning Representations</em>. 2017. URL: <a class="reference external" href="https://openreview.net/forum?id=SJU4ayYgl">https://openreview.net/forum?id=SJU4ayYgl</a>.</p>
 </div>
-<div class="citation" id="id43" role="doc-biblioentry">
+<div class="citation" id="id45" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">NK17</a><span class="fn-bracket">]</span></span>
 <p>Maximilian Nickel and Douwe Kiela. Poincaré embeddings for learning hierarchical representations. In <em>Advances in Neural Information Processing Systems</em>, volume 30. 2017. URL: <a class="reference external" href="https://proceedings.neurips.cc/paper/2017/hash/59dfa2df42d9e3d41f5b02bfc32229dd-Abstract.html">https://proceedings.neurips.cc/paper/2017/hash/59dfa2df42d9e3d41f5b02bfc32229dd-Abstract.html</a>.</p>
 </div>
-<div class="citation" id="id52" role="doc-biblioentry">
+<div class="citation" id="id56" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Zac77</a><span class="fn-bracket">]</span></span>
 <p>Wayne W. Zachary. An information flow model for conflict and fission in small groups. <em>Journal of Anthropological Research</em>, 33(4):452–473, 1977. <a class="reference external" href="https://doi.org/10.1086/jar.33.4.3629752">doi:10.1086/jar.33.4.3629752</a>.</p>
 </div>
@@ -1472,11 +1473,11 @@ geometry-aware computation demonstrated here remains the same.</p>
       </div>
     </a>
     <a class="right-next"
-       href="grassmann_pca.html"
+       href="spd_eeg_classifier.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Principal component as a Grassmann point</p>
+        <p class="prev-next-title">SPD prototype networks for motor-imagery EEG</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

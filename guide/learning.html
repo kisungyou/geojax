@@ -452,7 +452,7 @@ a neural-network framework. Parameters owned by Flax, Equinox, Haiku, or plain
 JAX functions remain external; geometry objects govern manifold-valued
 activations and comparisons. This separates geometric primitives from model
 architecture in the broader geometric-deep-learning spirit
-<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id13" title="Michael M. Bronstein, Joan Bruna, Taco Cohen, and Petar Veličković. Geometric deep learning: grids, groups, graphs, geodesics, and gauges. arXiv preprint arXiv:2104.13478, 2021. doi:10.48550/arXiv.2104.13478.">Bronstein <em>et al.</em>, 2021</a>]</span>.</p>
+<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id14" title="Michael M. Bronstein, Joan Bruna, Taco Cohen, and Petar Veličković. Geometric deep learning: grids, groups, graphs, geodesics, and gauges. arXiv preprint arXiv:2104.13478, 2021. doi:10.48550/arXiv.2104.13478.">Bronstein <em>et al.</em>, 2021</a>]</span>.</p>
 <section id="batch-contract">
 <h2>Batch contract<a class="headerlink" href="#batch-contract" title="Link to this heading">#</a></h2>
 <p>For a manifold with event shape <code class="docutils literal notranslate"><span class="pre">M.shape</span></code>, points use
@@ -518,10 +518,27 @@ framework’s parameters. GeoJAX deliberately uses ambient tangent arrays
 instead of promising global tangent coordinates, which do not exist smoothly
 for every manifold. Exponential/logarithmic tangent-space layers are common in
 hyperbolic representation learning
-<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id15" title="Ines Chami, Rex Ying, Christopher Ré, and Jure Leskovec. Hyperbolic graph convolutional neural networks. In Advances in Neural Information Processing Systems, volume 32. 2019. URL: https://proceedings.neurips.cc/paper/2019/hash/0415740eaa4d9decbc8da001d3fd805f-Abstract.html.">Chami <em>et al.</em>, 2019</a>, <a class="reference internal" href="#id20" title="Octavian-Eugen Ganea, Gary Bécigneul, and Thomas Hofmann. Hyperbolic neural networks. In Advances in Neural Information Processing Systems, volume 31. 2018. URL: https://proceedings.neurips.cc/paper/2018/hash/dbab2adc8f9d078009ee3fa810bea142-Abstract.html.">Ganea <em>et al.</em>, 2018</a>]</span>.
+<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id16" title="Ines Chami, Rex Ying, Christopher Ré, and Jure Leskovec. Hyperbolic graph convolutional neural networks. In Advances in Neural Information Processing Systems, volume 32. 2019. URL: https://proceedings.neurips.cc/paper/2019/hash/0415740eaa4d9decbc8da001d3fd805f-Abstract.html.">Chami <em>et al.</em>, 2019</a>, <a class="reference internal" href="#id21" title="Octavian-Eugen Ganea, Gary Bécigneul, and Thomas Hofmann. Hyperbolic neural networks. In Advances in Neural Information Processing Systems, volume 31. 2018. URL: https://proceedings.neurips.cc/paper/2018/hash/dbab2adc8f9d078009ee3fa810bea142-Abstract.html.">Ganea <em>et al.</em>, 2018</a>]</span>.
 <code class="docutils literal notranslate"><span class="pre">tangent_map</span></code> requires an exact source logarithm and exact target exponential;
 retraction-only and numerical-local source maps must be composed explicitly by
 the user.</p>
+</section>
+<section id="worked-patterns">
+<h2>Worked patterns<a class="headerlink" href="#worked-patterns" title="Link to this heading">#</a></h2>
+<p>The geometric-deep-learning tutorials deliberately use plain JAX parameter
+pytrees so the geometric part remains visible:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../tutorials/manifold_autoencoder.html"><span class="std std-doc">deterministic autoencoders</span></a> place a
+learned bottleneck in Euclidean, spherical, or hyperbolic space;</p></li>
+<li><p><a class="reference internal" href="../tutorials/graph_curvature.html"><span class="std std-doc">curvature-aware graph learning</span></a> performs
+tangent-space message aggregation and geodesic prototype classification;
+and</p></li>
+<li><p><a class="reference internal" href="../tutorials/spd_eeg_classifier.html"><span class="std std-doc">SPD prototype networks</span></a> transform real
+EEG covariances into learned SPD activations and compare three matrix
+geometries.</p></li>
+</ul>
+<p>Together they cover manifold-valued activations, intrinsic aggregation, and
+geometry-aware output heads without coupling GeoJAX to one neural framework.</p>
 </section>
 <section id="current-scope">
 <h2>Current scope<a class="headerlink" href="#current-scope" title="Link to this heading">#</a></h2>
@@ -538,15 +555,15 @@ that remains a separate, future addition.</p>
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id3">
 <div role="list" class="citation-list">
-<div class="citation" id="id13" role="doc-biblioentry">
+<div class="citation" id="id14" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">BBCVelivckovic21</a><span class="fn-bracket">]</span></span>
 <p>Michael M. Bronstein, Joan Bruna, Taco Cohen, and Petar Veličković. Geometric deep learning: grids, groups, graphs, geodesics, and gauges. <em>arXiv preprint arXiv:2104.13478</em>, 2021. <a class="reference external" href="https://doi.org/10.48550/arXiv.2104.13478">doi:10.48550/arXiv.2104.13478</a>.</p>
 </div>
-<div class="citation" id="id15" role="doc-biblioentry">
+<div class="citation" id="id16" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">CYReL19</a><span class="fn-bracket">]</span></span>
 <p>Ines Chami, Rex Ying, Christopher Ré, and Jure Leskovec. Hyperbolic graph convolutional neural networks. In <em>Advances in Neural Information Processing Systems</em>, volume 32. 2019. URL: <a class="reference external" href="https://proceedings.neurips.cc/paper/2019/hash/0415740eaa4d9decbc8da001d3fd805f-Abstract.html">https://proceedings.neurips.cc/paper/2019/hash/0415740eaa4d9decbc8da001d3fd805f-Abstract.html</a>.</p>
 </div>
-<div class="citation" id="id20" role="doc-biblioentry">
+<div class="citation" id="id21" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">GBecigneulH18</a><span class="fn-bracket">]</span></span>
 <p>Octavian-Eugen Ganea, Gary Bécigneul, and Thomas Hofmann. Hyperbolic neural networks. In <em>Advances in Neural Information Processing Systems</em>, volume 31. 2018. URL: <a class="reference external" href="https://proceedings.neurips.cc/paper/2018/hash/dbab2adc8f9d078009ee3fa810bea142-Abstract.html">https://proceedings.neurips.cc/paper/2018/hash/dbab2adc8f9d078009ee3fa810bea142-Abstract.html</a>.</p>
 </div>
@@ -606,6 +623,7 @@ that remains a separate, future addition.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pairwise-distances">Pairwise distances</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#geodesic-interpolation">Geodesic interpolation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tangent-space-maps">Tangent-space maps</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#worked-patterns">Worked patterns</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#current-scope">Current scope</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
 </ul>

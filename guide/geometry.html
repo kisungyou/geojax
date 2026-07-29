@@ -451,9 +451,9 @@
 <code class="docutils literal notranslate"><span class="pre">M.shape</span></code>, a tangent vector normally uses the same ambient representation, and
 leading axes may be used for batches. The formulas below state the conventions
 used by the implementation. General Riemannian notation follows
-<span class="bibtex-citation" id="id1">do Carmo [<a class="reference internal" href="#id37" title="Manfredo P. do Carmo. Riemannian Geometry. Birkhäuser, 1992. doi:10.1007/978-1-4757-2201-7.">1992</a>]</span>; matrix-manifold conventions follow
-<span class="bibtex-citation" id="id2">Edelman <em>et al.</em> [<a class="reference internal" href="#id38" title="Alan Edelman, Tomás A. Arias, and Steven T. Smith. The geometry of algorithms with orthogonality constraints. SIAM Journal on Matrix Analysis and Applications, 20(2):303–353, 1998. doi:10.1137/S0895479895290954.">1998</a>]</span>, <span class="bibtex-citation" id="id3">Absil <em>et al.</em> [<a class="reference internal" href="#id24" title="P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. Optimization Algorithms on Matrix Manifolds. Princeton University Press, 2008. doi:10.1515/9781400830244.">2008</a>]</span>, and
-<span class="bibtex-citation" id="id4">Boumal [<a class="reference internal" href="#id31" title="Nicolas Boumal. An Introduction to Optimization on Smooth Manifolds. Cambridge University Press, 2023. doi:10.1017/9781009166164.">2023</a>]</span>.</p>
+<span class="bibtex-citation" id="id1">do Carmo [<a class="reference internal" href="#id38" title="Manfredo P. do Carmo. Riemannian Geometry. Birkhäuser, 1992. doi:10.1007/978-1-4757-2201-7.">1992</a>]</span>; matrix-manifold conventions follow
+<span class="bibtex-citation" id="id2">Edelman <em>et al.</em> [<a class="reference internal" href="#id39" title="Alan Edelman, Tomás A. Arias, and Steven T. Smith. The geometry of algorithms with orthogonality constraints. SIAM Journal on Matrix Analysis and Applications, 20(2):303–353, 1998. doi:10.1137/S0895479895290954.">1998</a>]</span>, <span class="bibtex-citation" id="id3">Absil <em>et al.</em> [<a class="reference internal" href="#id24" title="P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. Optimization Algorithms on Matrix Manifolds. Princeton University Press, 2008. doi:10.1515/9781400830244.">2008</a>]</span>, and
+<span class="bibtex-citation" id="id4">Boumal [<a class="reference internal" href="#id32" title="Nicolas Boumal. An Introduction to Optimization on Smooth Manifolds. Cambridge University Press, 2023. doi:10.1017/9781009166164.">2023</a>]</span>.</p>
 <section id="available-spaces">
 <h2>Available spaces<a class="headerlink" href="#available-spaces" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="table">
@@ -732,7 +732,7 @@ d(p,q)=2\arccos\left(\sum_i\sqrt{p_iq_i}\right).
 <p><code class="docutils literal notranslate"><span class="pre">retr</span></code> uses positive normalized addition for stable optimizer steps. The exact
 exponential is local to the positive orthant and reports nonfinite output if a
 step crosses that chart boundary. This metric is the classical Fisher–Rao
-information geometry <span class="bibtex-citation" id="id5">[<a class="reference internal" href="#id25" title="Shun-ichi Amari and Hiroshi Nagaoka. Methods of Information Geometry. Volume 191 of Translations of Mathematical Monographs. American Mathematical Society and Oxford University Press, 2000.">Amari and Nagaoka, 2000</a>, <a class="reference internal" href="#id63" title="C. R. Rao. Information and the accuracy attainable in the estimation of statistical parameters. Bulletin of the Calcutta Mathematical Society, 37:81–91, 1945.">Rao, 1945</a>]</span>.</p>
+information geometry <span class="bibtex-citation" id="id5">[<a class="reference internal" href="#id25" title="Shun-ichi Amari and Hiroshi Nagaoka. Methods of Information Geometry. Volume 191 of Translations of Mathematical Monographs. American Mathematical Society and Oxford University Press, 2000.">Amari and Nagaoka, 2000</a>, <a class="reference internal" href="#id65" title="C. R. Rao. Information and the accuracy attainable in the estimation of statistical parameters. Bulletin of the Calcutta Mathematical Society, 37:81–91, 1945.">Rao, 1945</a>]</span>.</p>
 </section>
 <section id="sphere">
 <h2>Sphere<a class="headerlink" href="#sphere" title="Link to this heading">#</a></h2>
@@ -851,7 +851,7 @@ d([X],[Y])=\left(\sum_{i=1}^k\theta_i^2\right)^{1/2}.
 the SVD of <span class="math notranslate nohighlight">\(\operatorname{Log}_X(Y)\)</span>. The logarithm requires <span class="math notranslate nohighlight">\(X^\top Y\)</span> to be
 nonsingular, so it is not defined by this chart when a principal angle equals
 <span class="math notranslate nohighlight">\(\pi/2\)</span>. The quotient and principal-angle formulas follow
-<span class="bibtex-citation" id="id6">Edelman <em>et al.</em> [<a class="reference internal" href="#id38" title="Alan Edelman, Tomás A. Arias, and Steven T. Smith. The geometry of algorithms with orthogonality constraints. SIAM Journal on Matrix Analysis and Applications, 20(2):303–353, 1998. doi:10.1137/S0895479895290954.">1998</a>]</span>.</p>
+<span class="bibtex-citation" id="id6">Edelman <em>et al.</em> [<a class="reference internal" href="#id39" title="Alan Edelman, Tomás A. Arias, and Steven T. Smith. The geometry of algorithms with orthogonality constraints. SIAM Journal on Matrix Analysis and Applications, 20(2):303–353, 1998. doi:10.1137/S0895479895290954.">1998</a>]</span>.</p>
 </section>
 <section id="projection-embedding">
 <h3>Projection embedding<a class="headerlink" href="#projection-embedding" title="Link to this heading">#</a></h3>
@@ -1009,9 +1009,9 @@ therefore uses an isometric group-action vector transport. Complete <span class=
 \]</div>
 <p>This map is tangent and preserves either metric exactly, but it is not labeled
 as Levi-Civita parallel transport. The canonical and embedded metric formulas
-follow <span class="bibtex-citation" id="id7">Edelman <em>et al.</em> [<a class="reference internal" href="#id38" title="Alan Edelman, Tomás A. Arias, and Steven T. Smith. The geometry of algorithms with orthogonality constraints. SIAM Journal on Matrix Analysis and Applications, 20(2):303–353, 1998. doi:10.1137/S0895479895290954.">1998</a>]</span>; local endpoint algorithms and their
+follow <span class="bibtex-citation" id="id7">Edelman <em>et al.</em> [<a class="reference internal" href="#id39" title="Alan Edelman, Tomás A. Arias, and Steven T. Smith. The geometry of algorithms with orthogonality constraints. SIAM Journal on Matrix Analysis and Applications, 20(2):303–353, 1998. doi:10.1137/S0895479895290954.">1998</a>]</span>; local endpoint algorithms and their
 convergence scope are studied by
-<span class="bibtex-citation" id="id8">Zimmermann [<a class="reference internal" href="#id69" title="Ralf Zimmermann. A matrix-algebraic algorithm for the Riemannian logarithm on the Stiefel manifold under the canonical metric. SIAM Journal on Matrix Analysis and Applications, 38(2):322–342, 2017. doi:10.1137/16M1074485.">2017</a>]</span> and <span class="bibtex-citation" id="id9">Zimmermann and Hüper [<a class="reference internal" href="#id70" title="Ralf Zimmermann and Knut Hüper. Computing the Riemannian logarithm on the Stiefel manifold: metrics, methods, and performance. SIAM Journal on Matrix Analysis and Applications, 43(2):953–980, 2022. doi:10.1137/21M1425426.">2022</a>]</span>.</p>
+<span class="bibtex-citation" id="id8">Zimmermann [<a class="reference internal" href="#id73" title="Ralf Zimmermann. A matrix-algebraic algorithm for the Riemannian logarithm on the Stiefel manifold under the canonical metric. SIAM Journal on Matrix Analysis and Applications, 38(2):322–342, 2017. doi:10.1137/16M1074485.">2017</a>]</span> and <span class="bibtex-citation" id="id9">Zimmermann and Hüper [<a class="reference internal" href="#id74" title="Ralf Zimmermann and Knut Hüper. Computing the Riemannian logarithm on the Stiefel manifold: metrics, methods, and performance. SIAM Journal on Matrix Analysis and Applications, 43(2):953–980, 2022. doi:10.1137/21M1425426.">2022</a>]</span>.</p>
 </section>
 <section id="generalized-orthogonality">
 <h3>Generalized orthogonality<a class="headerlink" href="#generalized-orthogonality" title="Link to this heading">#</a></h3>
@@ -1122,7 +1122,7 @@ J(\Omega)=\int_0^1 e^{s\Omega}\,ds.
 \]</div>
 <p>Use <code class="docutils literal notranslate"><span class="pre">exp</span></code> and <code class="docutils literal notranslate"><span class="pre">log</span></code> for manifold optimization and distances. Use
 <code class="docutils literal notranslate"><span class="pre">group_exp</span></code>, <code class="docutils literal notranslate"><span class="pre">group_log</span></code>, <code class="docutils literal notranslate"><span class="pre">compose</span></code>, <code class="docutils literal notranslate"><span class="pre">inverse</span></code>, and <code class="docutils literal notranslate"><span class="pre">apply</span></code> for group actions
-and rigid-body kinematics <span class="bibtex-citation" id="id10">[<a class="reference internal" href="#id41" title="Brian C. Hall. Lie Groups, Lie Algebras, and Representations: An Elementary Introduction. Volume 222 of Graduate Texts in Mathematics. Springer, 2 edition, 2015. doi:10.1007/978-3-319-13467-3.">Hall, 2015</a>]</span>.</p>
+and rigid-body kinematics <span class="bibtex-citation" id="id10">[<a class="reference internal" href="#id42" title="Brian C. Hall. Lie Groups, Lie Algebras, and Representations: An Elementary Introduction. Volume 222 of Graduate Texts in Mathematics. Springer, 2 edition, 2015. doi:10.1007/978-3-319-13467-3.">Hall, 2015</a>]</span>.</p>
 </section>
 <section id="symmetric-positive-definite-matrices">
 <h2>Symmetric positive-definite matrices<a class="headerlink" href="#symmetric-positive-definite-matrices" title="Link to this heading">#</a></h2>
@@ -1137,8 +1137,8 @@ T_P\operatorname{SPD}(n)=\operatorname{Sym}(n).
 <p><code class="docutils literal notranslate"><span class="pre">project</span></code> symmetrizes an input, eigendecomposes it, and clips eigenvalues below
 the configured positive threshold. Tangent projection is symmetrization.</p>
 <p>The log-Euclidean, affine-invariant, and Bures–Wasserstein constructions below
-follow <span class="bibtex-citation" id="id11">Arsigny <em>et al.</em> [<a class="reference internal" href="#id27" title="Vincent Arsigny, Pierre Fillard, Xavier Pennec, and Nicholas Ayache. Geometric means in a novel vector space structure on symmetric positive-definite matrices. SIAM Journal on Matrix Analysis and Applications, 29(1):328–347, 2007. doi:10.1137/050637996.">2007</a>]</span>, <span class="bibtex-citation" id="id12">Moakher [<a class="reference internal" href="#id58" title="Maher Moakher. A differential geometric approach to the geometric mean of symmetric positive-definite matrices. SIAM Journal on Matrix Analysis and Applications, 26(3):735–747, 2005. doi:10.1137/S0895479803436937.">2005</a>]</span>, and
-<span class="bibtex-citation" id="id13">Bhatia <em>et al.</em> [<a class="reference internal" href="#id29" title="Rajendra Bhatia, Tanvi Jain, and Yongdo Lim. On the Bures–Wasserstein distance between positive definite matrices. Expositiones Mathematicae, 37(2):165–191, 2019. doi:10.1016/j.exmath.2018.01.002.">2019</a>]</span>, respectively.</p>
+follow <span class="bibtex-citation" id="id11">Arsigny <em>et al.</em> [<a class="reference internal" href="#id27" title="Vincent Arsigny, Pierre Fillard, Xavier Pennec, and Nicholas Ayache. Geometric means in a novel vector space structure on symmetric positive-definite matrices. SIAM Journal on Matrix Analysis and Applications, 29(1):328–347, 2007. doi:10.1137/050637996.">2007</a>]</span>, <span class="bibtex-citation" id="id12">Moakher [<a class="reference internal" href="#id60" title="Maher Moakher. A differential geometric approach to the geometric mean of symmetric positive-definite matrices. SIAM Journal on Matrix Analysis and Applications, 26(3):735–747, 2005. doi:10.1137/S0895479803436937.">2005</a>]</span>, and
+<span class="bibtex-citation" id="id13">Bhatia <em>et al.</em> [<a class="reference internal" href="#id30" title="Rajendra Bhatia, Tanvi Jain, and Yongdo Lim. On the Bures–Wasserstein distance between positive definite matrices. Expositiones Mathematicae, 37(2):165–191, 2019. doi:10.1016/j.exmath.2018.01.002.">2019</a>]</span>, respectively.</p>
 <section id="log-euclidean-metric">
 <h3>Log-Euclidean metric<a class="headerlink" href="#log-euclidean-metric" title="Link to this heading">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">SPDLogEuclidean</span></code> treats <span class="math notranslate nohighlight">\(\phi(P)=\log P\)</span> as an isometry from SPD matrices to
@@ -1246,7 +1246,7 @@ parallel transport.</p>
 derivatives. This avoids undefined eigenvector derivatives when an SPD matrix
 has repeated eigenvalues, such as an isotropic covariance.</p>
 <p>The Gaussian covariance interpretation is developed by
-<span class="bibtex-citation" id="id14">Malagò <em>et al.</em> [<a class="reference internal" href="#id54" title="Luigi Malagò, Luigi Montrucchio, and Giovanni Pistone. Wasserstein Riemannian geometry of gaussian densities. Information Geometry, 1:137–179, 2018. doi:10.1007/s41884-018-0014-z.">2018</a>]</span>.</p>
+<span class="bibtex-citation" id="id14">Malagò <em>et al.</em> [<a class="reference internal" href="#id56" title="Luigi Malagò, Luigi Montrucchio, and Giovanni Pistone. Wasserstein Riemannian geometry of gaussian densities. Information Geometry, 1:137–179, 2018. doi:10.1007/s41884-018-0014-z.">2018</a>]</span>.</p>
 </section>
 </section>
 <section id="fixed-rank-matrices">
@@ -1266,7 +1266,7 @@ the tangent projector is</p>
 <span class="math notranslate nohighlight">\(Y-X\)</span> into <span class="math notranslate nohighlight">\(T_X\mathcal M_k\)</span>. Closed exact geodesic maps are not provided:
 <code class="docutils literal notranslate"><span class="pre">exp</span></code>, <code class="docutils literal notranslate"><span class="pre">log</span></code>, and <code class="docutils literal notranslate"><span class="pre">dist</span></code> are explicitly labeled retraction proxies. This
 embedded fixed-rank model is standard in Riemannian low-rank optimization
-<span class="bibtex-citation" id="id15">[<a class="reference internal" href="#id66" title="Bart Vandereycken. Low-rank matrix completion by Riemannian optimization. SIAM Journal on Optimization, 23(2):1214–1236, 2013. doi:10.1137/110845768.">Vandereycken, 2013</a>]</span>.</p>
+<span class="bibtex-citation" id="id15">[<a class="reference internal" href="#id70" title="Bart Vandereycken. Low-rank matrix completion by Riemannian optimization. SIAM Journal on Optimization, 23(2):1214–1236, 2013. doi:10.1137/110845768.">Vandereycken, 2013</a>]</span>.</p>
 </section>
 <section id="fixed-rank-positive-semidefinite-matrices">
 <h2>Fixed-rank positive semidefinite matrices<a class="headerlink" href="#fixed-rank-positive-semidefinite-matrices" title="Link to this heading">#</a></h2>
@@ -1298,7 +1298,7 @@ g_P(U,V)=\tfrac12\operatorname{tr}(LV).
 <p>The class provides exact local Bures exponential, logarithm, and distance.
 Its endpoint projection transport is a general vector transport, not parallel
 transport. The fixed-rank quotient construction follows
-<span class="bibtex-citation" id="id16">Massart and Absil [<a class="reference internal" href="#id56" title="Estelle Massart and P.-A. Absil. Quotient geometry with simple geodesics for the manifold of fixed-rank positive-semidefinite matrices. SIAM Journal on Matrix Analysis and Applications, 41(1):171–198, 2020. doi:10.1137/18M1231389.">2020</a>]</span>.</p>
+<span class="bibtex-citation" id="id16">Massart and Absil [<a class="reference internal" href="#id58" title="Estelle Massart and P.-A. Absil. Quotient geometry with simple geodesics for the manifold of fixed-rank positive-semidefinite matrices. SIAM Journal on Matrix Analysis and Applications, 41(1):171–198, 2020. doi:10.1137/18M1231389.">2020</a>]</span>.</p>
 <section id="elliptope-and-spectrahedron">
 <h3>Elliptope and spectrahedron<a class="headerlink" href="#elliptope-and-spectrahedron" title="Link to this heading">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">Elliptope(size=(n,</span> <span class="pre">n),</span> <span class="pre">rank=k)</span></code> is the rank-<span class="math notranslate nohighlight">\(k\)</span> correlation stratum</p>
@@ -1312,7 +1312,7 @@ rank-<span class="math notranslate nohighlight">\(k\)</span> tangent constraint 
 <span class="math notranslate nohighlight">\(\operatorname{tr}(P)=1\)</span> and <span class="math notranslate nohighlight">\(\operatorname{tr}(U)=0\)</span>. Both use the embedded
 Frobenius metric, spectral retractions, and labeled retraction proxies. Such
 factorized low-rank PSD models are discussed by
-<span class="bibtex-citation" id="id17">Journée <em>et al.</em> [<a class="reference internal" href="#id43" title="Michel Journée, Francis Bach, P.-A. Absil, and Rodolphe Sepulchre. Low-rank optimization on the cone of positive semidefinite matrices. SIAM Journal on Optimization, 20(5):2327–2351, 2010. doi:10.1137/080731359.">2010</a>]</span>.</p>
+<span class="bibtex-citation" id="id17">Journée <em>et al.</em> [<a class="reference internal" href="#id45" title="Michel Journée, Francis Bach, P.-A. Absil, and Rodolphe Sepulchre. Low-rank optimization on the cone of positive semidefinite matrices. SIAM Journal on Optimization, 20(5):2327–2351, 2010. doi:10.1137/080731359.">2010</a>]</span>.</p>
 </section>
 </section>
 <section id="full-rank-correlation-matrices">
@@ -1379,9 +1379,9 @@ d(C,B)&amp;=\lVert\phi(B)-\phi(C)\rVert_F,\\
 \end{split}\]</div>
 <p>Thus ECM and LEC have the same point set and tangent representation but
 different geodesics and distances. Cholesky pullback metrics for
-positive-definite matrices are developed by <span class="bibtex-citation" id="id18">Lin [<a class="reference internal" href="#id50" title="Zhenhua Lin. Riemannian geometry of symmetric positive definite matrices via Cholesky decomposition. SIAM Journal on Matrix Analysis and Applications, 40(4):1353–1370, 2019. doi:10.1137/18M1221084.">2019</a>]</span>; the
+positive-definite matrices are developed by <span class="bibtex-citation" id="id18">Lin [<a class="reference internal" href="#id52" title="Zhenhua Lin. Riemannian geometry of symmetric positive definite matrices via Cholesky decomposition. SIAM Journal on Matrix Analysis and Applications, 40(4):1353–1370, 2019. doi:10.1137/18M1221084.">2019</a>]</span>; the
 Euclidean- and log-Euclidean-Cholesky correlation geometries used here are
-derived specifically by <span class="bibtex-citation" id="id19">Thanwerdas and Pennec [<a class="reference internal" href="#id65" title="Yann Thanwerdas and Xavier Pennec. Theoretically and computationally convenient geometries on full-rank correlation matrices. SIAM Journal on Matrix Analysis and Applications, 43(4):1851–1872, 2022. doi:10.1137/22M1471729.">2022</a>]</span>.</p>
+derived specifically by <span class="bibtex-citation" id="id19">Thanwerdas and Pennec [<a class="reference internal" href="#id69" title="Yann Thanwerdas and Xavier Pennec. Theoretically and computationally convenient geometries on full-rank correlation matrices. SIAM Journal on Matrix Analysis and Applications, 43(4):1851–1872, 2022. doi:10.1137/22M1471729.">2022</a>]</span>.</p>
 </section>
 <section id="affine-invariant-quotient-metric">
 <h3>Affine-invariant quotient metric<a class="headerlink" href="#affine-invariant-quotient-metric" title="Link to this heading">#</a></h3>
@@ -1404,7 +1404,7 @@ normalized-addition retraction and projected difference inverse retraction;
 accordingly <code class="docutils literal notranslate"><span class="pre">exp</span></code>, <code class="docutils literal notranslate"><span class="pre">log</span></code>, and <code class="docutils literal notranslate"><span class="pre">dist</span></code> are documented proxies rather than claims
 of closed affine-quotient geodesics. The quotient-affine construction and
 related correlation geometries are analyzed by
-<span class="bibtex-citation" id="id20">Thanwerdas and Pennec [<a class="reference internal" href="#id65" title="Yann Thanwerdas and Xavier Pennec. Theoretically and computationally convenient geometries on full-rank correlation matrices. SIAM Journal on Matrix Analysis and Applications, 43(4):1851–1872, 2022. doi:10.1137/22M1471729.">2022</a>]</span>.</p>
+<span class="bibtex-citation" id="id20">Thanwerdas and Pennec [<a class="reference internal" href="#id69" title="Yann Thanwerdas and Xavier Pennec. Theoretically and computationally convenient geometries on full-rank correlation matrices. SIAM Journal on Matrix Analysis and Applications, 43(4):1851–1872, 2022. doi:10.1137/22M1471729.">2022</a>]</span>.</p>
 </section>
 </section>
 <section id="poincare-ball">
@@ -1431,7 +1431,7 @@ d(x,y)&amp;=2\operatorname{artanh}\lVert(-x)\oplus y\rVert.
 <p>Parallel transport uses the associated gyration and conformal-factor ratio.
 <code class="docutils literal notranslate"><span class="pre">PoincareBall(size=d)</span></code> and <code class="docutils literal notranslate"><span class="pre">Hyperboloid(size=d+1)</span></code> describe the same
 constant-curvature <span class="math notranslate nohighlight">\(-1\)</span> geometry in different coordinates
-<span class="bibtex-citation" id="id21">[<a class="reference internal" href="#id62" title="John G. Ratcliffe. Foundations of Hyperbolic Manifolds. Springer, 2 edition, 2006. doi:10.1007/978-0-387-47322-2.">Ratcliffe, 2006</a>]</span>.</p>
+<span class="bibtex-citation" id="id21">[<a class="reference internal" href="#id64" title="John G. Ratcliffe. Foundations of Hyperbolic Manifolds. Springer, 2 edition, 2006. doi:10.1007/978-0-387-47322-2.">Ratcliffe, 2006</a>]</span>.</p>
 </section>
 <section id="hyperboloid">
 <h2>Hyperboloid<a class="headerlink" href="#hyperboloid" title="Link to this heading">#</a></h2>
@@ -1536,7 +1536,7 @@ excluded because they are not part of the regular quotient stratum. When the
 optimal Procrustes alignment is nonunique, the SVD selects one representative;
 the resulting logarithm is a valid branch but need not be differentiable across
 that alignment locus. This is Kendall’s shape-space construction
-<span class="bibtex-citation" id="id22">[<a class="reference internal" href="#id46" title="David G. Kendall. Shape manifolds, procrustean metrics, and complex projective spaces. Bulletin of the London Mathematical Society, 16(2):81–121, 1984. doi:10.1112/blms/16.2.81.">Kendall, 1984</a>]</span>.</p>
+<span class="bibtex-citation" id="id22">[<a class="reference internal" href="#id48" title="David G. Kendall. Shape manifolds, procrustean metrics, and complex projective spaces. Bulletin of the London Mathematical Society, 16(2):81–121, 1984. doi:10.1112/blms/16.2.81.">Kendall, 1984</a>]</span>.</p>
 </section>
 <section id="product">
 <h2>Product<a class="headerlink" href="#product" title="Link to this heading">#</a></h2>
@@ -1572,73 +1572,73 @@ key once per factor while preserving the pytree structure.</p>
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id11">AFPA07</a><span class="fn-bracket">]</span></span>
 <p>Vincent Arsigny, Pierre Fillard, Xavier Pennec, and Nicholas Ayache. Geometric means in a novel vector space structure on symmetric positive-definite matrices. <em>SIAM Journal on Matrix Analysis and Applications</em>, 29(1):328–347, 2007. <a class="reference external" href="https://doi.org/10.1137/050637996">doi:10.1137/050637996</a>.</p>
 </div>
-<div class="citation" id="id29" role="doc-biblioentry">
+<div class="citation" id="id30" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id13">BJL19</a><span class="fn-bracket">]</span></span>
 <p>Rajendra Bhatia, Tanvi Jain, and Yongdo Lim. On the Bures–Wasserstein distance between positive definite matrices. <em>Expositiones Mathematicae</em>, 37(2):165–191, 2019. <a class="reference external" href="https://doi.org/10.1016/j.exmath.2018.01.002">doi:10.1016/j.exmath.2018.01.002</a>.</p>
 </div>
-<div class="citation" id="id31" role="doc-biblioentry">
+<div class="citation" id="id32" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">Bou23</a><span class="fn-bracket">]</span></span>
 <p>Nicolas Boumal. <em>An Introduction to Optimization on Smooth Manifolds</em>. Cambridge University Press, 2023. <a class="reference external" href="https://doi.org/10.1017/9781009166164">doi:10.1017/9781009166164</a>.</p>
 </div>
-<div class="citation" id="id37" role="doc-biblioentry">
+<div class="citation" id="id38" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">dC92</a><span class="fn-bracket">]</span></span>
 <p>Manfredo P. do Carmo. <em>Riemannian Geometry</em>. Birkhäuser, 1992. <a class="reference external" href="https://doi.org/10.1007/978-1-4757-2201-7">doi:10.1007/978-1-4757-2201-7</a>.</p>
 </div>
-<div class="citation" id="id38" role="doc-biblioentry">
+<div class="citation" id="id39" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span>EAS98<span class="fn-bracket">]</span></span>
 <span class="backrefs">(<a role="doc-backlink" href="#id2">1</a>,<a role="doc-backlink" href="#id6">2</a>,<a role="doc-backlink" href="#id7">3</a>)</span>
 <p>Alan Edelman, Tomás A. Arias, and Steven T. Smith. The geometry of algorithms with orthogonality constraints. <em>SIAM Journal on Matrix Analysis and Applications</em>, 20(2):303–353, 1998. <a class="reference external" href="https://doi.org/10.1137/S0895479895290954">doi:10.1137/S0895479895290954</a>.</p>
 </div>
-<div class="citation" id="id41" role="doc-biblioentry">
+<div class="citation" id="id42" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id10">Hal15</a><span class="fn-bracket">]</span></span>
 <p>Brian C. Hall. <em>Lie Groups, Lie Algebras, and Representations: An Elementary Introduction</em>. Volume 222 of Graduate Texts in Mathematics. Springer, 2 edition, 2015. <a class="reference external" href="https://doi.org/10.1007/978-3-319-13467-3">doi:10.1007/978-3-319-13467-3</a>.</p>
 </div>
-<div class="citation" id="id43" role="doc-biblioentry">
+<div class="citation" id="id45" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id17">JourneeBAS10</a><span class="fn-bracket">]</span></span>
 <p>Michel Journée, Francis Bach, P.-A. Absil, and Rodolphe Sepulchre. Low-rank optimization on the cone of positive semidefinite matrices. <em>SIAM Journal on Optimization</em>, 20(5):2327–2351, 2010. <a class="reference external" href="https://doi.org/10.1137/080731359">doi:10.1137/080731359</a>.</p>
 </div>
-<div class="citation" id="id46" role="doc-biblioentry">
+<div class="citation" id="id48" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id22">Ken84</a><span class="fn-bracket">]</span></span>
 <p>David G. Kendall. Shape manifolds, procrustean metrics, and complex projective spaces. <em>Bulletin of the London Mathematical Society</em>, 16(2):81–121, 1984. <a class="reference external" href="https://doi.org/10.1112/blms/16.2.81">doi:10.1112/blms/16.2.81</a>.</p>
 </div>
-<div class="citation" id="id50" role="doc-biblioentry">
+<div class="citation" id="id52" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id18">Lin19</a><span class="fn-bracket">]</span></span>
 <p>Zhenhua Lin. Riemannian geometry of symmetric positive definite matrices via Cholesky decomposition. <em>SIAM Journal on Matrix Analysis and Applications</em>, 40(4):1353–1370, 2019. <a class="reference external" href="https://doi.org/10.1137/18M1221084">doi:10.1137/18M1221084</a>.</p>
 </div>
-<div class="citation" id="id54" role="doc-biblioentry">
+<div class="citation" id="id56" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id14">MalagoMP18</a><span class="fn-bracket">]</span></span>
 <p>Luigi Malagò, Luigi Montrucchio, and Giovanni Pistone. Wasserstein Riemannian geometry of gaussian densities. <em>Information Geometry</em>, 1:137–179, 2018. <a class="reference external" href="https://doi.org/10.1007/s41884-018-0014-z">doi:10.1007/s41884-018-0014-z</a>.</p>
 </div>
-<div class="citation" id="id56" role="doc-biblioentry">
+<div class="citation" id="id58" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id16">MA20</a><span class="fn-bracket">]</span></span>
 <p>Estelle Massart and P.-A. Absil. Quotient geometry with simple geodesics for the manifold of fixed-rank positive-semidefinite matrices. <em>SIAM Journal on Matrix Analysis and Applications</em>, 41(1):171–198, 2020. <a class="reference external" href="https://doi.org/10.1137/18M1231389">doi:10.1137/18M1231389</a>.</p>
 </div>
-<div class="citation" id="id58" role="doc-biblioentry">
+<div class="citation" id="id60" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id12">Moa05</a><span class="fn-bracket">]</span></span>
 <p>Maher Moakher. A differential geometric approach to the geometric mean of symmetric positive-definite matrices. <em>SIAM Journal on Matrix Analysis and Applications</em>, 26(3):735–747, 2005. <a class="reference external" href="https://doi.org/10.1137/S0895479803436937">doi:10.1137/S0895479803436937</a>.</p>
 </div>
-<div class="citation" id="id63" role="doc-biblioentry">
+<div class="citation" id="id65" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">Rao45</a><span class="fn-bracket">]</span></span>
 <p>C. R. Rao. Information and the accuracy attainable in the estimation of statistical parameters. <em>Bulletin of the Calcutta Mathematical Society</em>, 37:81–91, 1945.</p>
 </div>
-<div class="citation" id="id62" role="doc-biblioentry">
+<div class="citation" id="id64" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id21">Rat06</a><span class="fn-bracket">]</span></span>
 <p>John G. Ratcliffe. <em>Foundations of Hyperbolic Manifolds</em>. Springer, 2 edition, 2006. <a class="reference external" href="https://doi.org/10.1007/978-0-387-47322-2">doi:10.1007/978-0-387-47322-2</a>.</p>
 </div>
-<div class="citation" id="id65" role="doc-biblioentry">
+<div class="citation" id="id69" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span>TP22<span class="fn-bracket">]</span></span>
 <span class="backrefs">(<a role="doc-backlink" href="#id19">1</a>,<a role="doc-backlink" href="#id20">2</a>)</span>
 <p>Yann Thanwerdas and Xavier Pennec. Theoretically and computationally convenient geometries on full-rank correlation matrices. <em>SIAM Journal on Matrix Analysis and Applications</em>, 43(4):1851–1872, 2022. <a class="reference external" href="https://doi.org/10.1137/22M1471729">doi:10.1137/22M1471729</a>.</p>
 </div>
-<div class="citation" id="id66" role="doc-biblioentry">
+<div class="citation" id="id70" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id15">Van13</a><span class="fn-bracket">]</span></span>
 <p>Bart Vandereycken. Low-rank matrix completion by Riemannian optimization. <em>SIAM Journal on Optimization</em>, 23(2):1214–1236, 2013. <a class="reference external" href="https://doi.org/10.1137/110845768">doi:10.1137/110845768</a>.</p>
 </div>
-<div class="citation" id="id69" role="doc-biblioentry">
+<div class="citation" id="id73" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id8">Zim17</a><span class="fn-bracket">]</span></span>
 <p>Ralf Zimmermann. A matrix-algebraic algorithm for the Riemannian logarithm on the Stiefel manifold under the canonical metric. <em>SIAM Journal on Matrix Analysis and Applications</em>, 38(2):322–342, 2017. <a class="reference external" href="https://doi.org/10.1137/16M1074485">doi:10.1137/16M1074485</a>.</p>
 </div>
-<div class="citation" id="id70" role="doc-biblioentry">
+<div class="citation" id="id74" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id9">ZHuper22</a><span class="fn-bracket">]</span></span>
 <p>Ralf Zimmermann and Knut Hüper. Computing the Riemannian logarithm on the Stiefel manifold: metrics, methods, and performance. <em>SIAM Journal on Matrix Analysis and Applications</em>, 43(2):953–980, 2022. <a class="reference external" href="https://doi.org/10.1137/21M1425426">doi:10.1137/21M1425426</a>.</p>
 </div>

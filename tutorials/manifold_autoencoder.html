@@ -385,6 +385,7 @@
 <li class="toctree-l1"><a class="reference internal" href="torus_geodesics.html">Wrapped geodesics on the flat torus</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Deterministic autoencoders with curved latent spaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph_curvature.html">Curvature-aware graph learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spd_eeg_classifier.html">SPD prototype networks for motor-imagery EEG</a></li>
 <li class="toctree-l1"><a class="reference internal" href="grassmann_pca.html">Principal component as a Grassmann point</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sphere_kmeans.html">Intrinsic k-means on the circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spd_frechet_mean.html">Comparing Fréchet Means of SPD Matrices</a></li>
@@ -456,7 +457,7 @@
 <h1>Deterministic autoencoders with curved latent spaces<a class="headerlink" href="#deterministic-autoencoders-with-curved-latent-spaces" title="Link to this heading">#</a></h1>
 <p>A deterministic autoencoder learns an encoder <span class="math notranslate nohighlight">\(f_\theta\)</span> and decoder
 <span class="math notranslate nohighlight">\(g_\phi\)</span> by minimizing reconstruction error. Ordinarily its latent variable
-belongs to a Euclidean vector space <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id22" title="Geoffrey E. Hinton and Ruslan R. Salakhutdinov. Reducing the dimensionality of data with neural networks. Science, 313(5786):504–507, 2006. doi:10.1126/science.1127647.">Hinton and Salakhutdinov, 2006</a>]</span>. Here we keep the neural networks
+belongs to a Euclidean vector space <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id23" title="Geoffrey E. Hinton and Ruslan R. Salakhutdinov. Reducing the dimensionality of data with neural networks. Science, 313(5786):504–507, 2006. doi:10.1126/science.1127647.">Hinton and Salakhutdinov, 2006</a>]</span>. Here we keep the neural networks
 deliberately small and compare three two-dimensional latent geometries:</p>
 <div class="math notranslate nohighlight">
 \[
@@ -473,7 +474,7 @@ coordinates. This is an illustrative comparison, not evidence that one
 curvature is universally preferable.</p>
 <p>Spherical and hyperbolic latent-variable models have been developed most
 extensively in variational settings
-<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id16" title="Tim R. Davidson, Luca Falorsi, Nicola De Cao, Thomas Kipf, and Jakub M. Tomczak. Hyperspherical variational auto-encoders. Proceedings of the 34th Conference on Uncertainty in Artificial Intelligence, pages 856–865, 2018. URL: https://proceedings.mlr.press/vau18/davidson18a.html.">Davidson <em>et al.</em>, 2018</a>, <a class="reference internal" href="#id37" title="Emile Mathieu, Charline Le Lan, Chris J. Maddison, Ryota Tomioka, and Yee Whye Teh. Continuous hierarchical representations with Poincaré variational auto-encoders. In Advances in Neural Information Processing Systems, volume 32. 2019. URL: https://proceedings.neurips.cc/paper/2019/hash/1b33d16fc562464579b7199ca3114982-Abstract.html.">Mathieu <em>et al.</em>, 2019</a>]</span>. The deterministic
+<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id17" title="Tim R. Davidson, Luca Falorsi, Nicola De Cao, Thomas Kipf, and Jakub M. Tomczak. Hyperspherical variational auto-encoders. Proceedings of the 34th Conference on Uncertainty in Artificial Intelligence, pages 856–865, 2018. URL: https://proceedings.mlr.press/vau18/davidson18a.html.">Davidson <em>et al.</em>, 2018</a>, <a class="reference internal" href="#id39" title="Emile Mathieu, Charline Le Lan, Chris J. Maddison, Ryota Tomioka, and Yee Whye Teh. Continuous hierarchical representations with Poincaré variational auto-encoders. In Advances in Neural Information Processing Systems, volume 32. 2019. URL: https://proceedings.neurips.cc/paper/2019/hash/1b33d16fc562464579b7199ca3114982-Abstract.html.">Mathieu <em>et al.</em>, 2019</a>]</span>. The deterministic
 experiment below strips away the stochastic objective so that the role of
 GeoJAX’s manifold-valued activations can be inspected directly.</p>
 <section id="from-encoder-coordinates-to-a-manifold">
@@ -1046,15 +1047,15 @@ part of the computation visible and testable.</p>
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id3">
 <div role="list" class="citation-list">
-<div class="citation" id="id16" role="doc-biblioentry">
+<div class="citation" id="id17" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">DFDC+18</a><span class="fn-bracket">]</span></span>
 <p>Tim R. Davidson, Luca Falorsi, Nicola De Cao, Thomas Kipf, and Jakub M. Tomczak. Hyperspherical variational auto-encoders. <em>Proceedings of the 34th Conference on Uncertainty in Artificial Intelligence</em>, pages 856–865, 2018. URL: <a class="reference external" href="https://proceedings.mlr.press/vau18/davidson18a.html">https://proceedings.mlr.press/vau18/davidson18a.html</a>.</p>
 </div>
-<div class="citation" id="id22" role="doc-biblioentry">
+<div class="citation" id="id23" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">HS06</a><span class="fn-bracket">]</span></span>
 <p>Geoffrey E. Hinton and Ruslan R. Salakhutdinov. Reducing the dimensionality of data with neural networks. <em>Science</em>, 313(5786):504–507, 2006. <a class="reference external" href="https://doi.org/10.1126/science.1127647">doi:10.1126/science.1127647</a>.</p>
 </div>
-<div class="citation" id="id37" role="doc-biblioentry">
+<div class="citation" id="id39" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">MLLM+19</a><span class="fn-bracket">]</span></span>
 <p>Emile Mathieu, Charline Le Lan, Chris J. Maddison, Ryota Tomioka, and Yee Whye Teh. Continuous hierarchical representations with Poincaré variational auto-encoders. In <em>Advances in Neural Information Processing Systems</em>, volume 32. 2019. URL: <a class="reference external" href="https://proceedings.neurips.cc/paper/2019/hash/1b33d16fc562464579b7199ca3114982-Abstract.html">https://proceedings.neurips.cc/paper/2019/hash/1b33d16fc562464579b7199ca3114982-Abstract.html</a>.</p>
 </div>

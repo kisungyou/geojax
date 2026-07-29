@@ -385,6 +385,7 @@
 <li class="toctree-l1"><a class="reference internal" href="torus_geodesics.html">Wrapped geodesics on the flat torus</a></li>
 <li class="toctree-l1"><a class="reference internal" href="manifold_autoencoder.html">Deterministic autoencoders with curved latent spaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph_curvature.html">Curvature-aware graph learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spd_eeg_classifier.html">SPD prototype networks for motor-imagery EEG</a></li>
 <li class="toctree-l1"><a class="reference internal" href="grassmann_pca.html">Principal component as a Grassmann point</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sphere_kmeans.html">Intrinsic k-means on the circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spd_frechet_mean.html">Comparing Fréchet Means of SPD Matrices</a></li>
@@ -458,13 +459,13 @@
 hand is represented by <span class="math notranslate nohighlight">\(22\)</span> joints in <span class="math notranslate nohighlight">\(\mathbb R^3\)</span>. We want to compare the
 shape of a pose without letting its location, physical scale, or global
 orientation dominate the result. Kendall’s quotient construction supplies the
-statistical shape space used here <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id26" title="David G. Kendall. Shape manifolds, procrustean metrics, and complex projective spaces. Bulletin of the London Mathematical Society, 16(2):81–121, 1984. doi:10.1112/blms/16.2.81.">Kendall, 1984</a>]</span>.</p>
+statistical shape space used here <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id28" title="David G. Kendall. Shape manifolds, procrustean metrics, and complex projective spaces. Bulletin of the London Mathematical Society, 16(2):81–121, 1984. doi:10.1112/blms/16.2.81.">Kendall, 1984</a>]</span>.</p>
 <p>The data are a 52-pose subset of the SHREC’17 3D hand-gesture dataset,
 distributed by the <a class="reference external" href="https://github.com/geomstats/geomstats/tree/master/geomstats/datasets/data/hands">Geomstats dataset
 module</a>.
 There are 25 <strong>Grab</strong> poses and 27 <strong>Expand</strong> poses. The source study is De
 Smedt et al.’s SHREC’17 hand-gesture track
-<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id32" title="Quentin De Smedt, Hazem Wannous, Jean-Philippe Vandeborre, Joris Guerry, Bertrand Le Saux, and David Filliat. SHREC'17 track: 3d hand gesture recognition using a depth and skeletal dataset. In Eurographics Workshop on 3D Object Retrieval, 33–38. The Eurographics Association, 2017. doi:10.2312/3dor.20171049.">De Smedt <em>et al.</em>, 2017</a>]</span>.</p>
+<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id34" title="Quentin De Smedt, Hazem Wannous, Jean-Philippe Vandeborre, Joris Guerry, Bertrand Le Saux, and David Filliat. SHREC'17 track: 3d hand gesture recognition using a depth and skeletal dataset. In Eurographics Workshop on 3D Object Retrieval, 33–38. The Eurographics Association, 2017. doi:10.2312/3dor.20171049.">De Smedt <em>et al.</em>, 2017</a>]</span>.</p>
 <p>GeoJAX vendors the two small source text files with this page, so the
 documentation remains executable without downloading data at build time. See
 the accompanying <a class="reference download internal" download="" href="../_downloads/b0243b3de80a6336f6c80c681630d5a1/NOTICE.txt"><span class="xref download myst">license and provenance
@@ -825,11 +826,11 @@ uncertainty estimates, and comparisons with tangent-space or skeletal models.</p
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id3">
 <div role="list" class="citation-list">
-<div class="citation" id="id32" role="doc-biblioentry">
+<div class="citation" id="id34" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">DSWV+17</a><span class="fn-bracket">]</span></span>
 <p>Quentin De Smedt, Hazem Wannous, Jean-Philippe Vandeborre, Joris Guerry, Bertrand Le Saux, and David Filliat. SHREC'17 track: 3d hand gesture recognition using a depth and skeletal dataset. In <em>Eurographics Workshop on 3D Object Retrieval</em>, 33–38. The Eurographics Association, 2017. <a class="reference external" href="https://doi.org/10.2312/3dor.20171049">doi:10.2312/3dor.20171049</a>.</p>
 </div>
-<div class="citation" id="id26" role="doc-biblioentry">
+<div class="citation" id="id28" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Ken84</a><span class="fn-bracket">]</span></span>
 <p>David G. Kendall. Shape manifolds, procrustean metrics, and complex projective spaces. <em>Bulletin of the London Mathematical Society</em>, 16(2):81–121, 1984. <a class="reference external" href="https://doi.org/10.1112/blms/16.2.81">doi:10.1112/blms/16.2.81</a>.</p>
 </div>
