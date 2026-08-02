@@ -441,6 +441,36 @@ documentation toolchain, use</p>
 </div>
 </section>
 </section>
+<section id="first-manifold-valued-learning-workflow">
+<h2>First manifold-valued learning workflow<a class="headerlink" href="#first-manifold-valued-learning-workflow" title="Link to this heading">#</a></h2>
+<p>Learning methods begin with a geometry and a collection of observations. The
+adapter validates the sample axis, event shape, finite values, and manifold
+membership once; the resulting <code class="docutils literal notranslate"><span class="pre">ManifoldData</span></code> object can then be reused.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">geojax.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sphere</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">geojax.learning</span><span class="w"> </span><span class="kn">import</span> <span class="n">as_manifold_data</span><span class="p">,</span> <span class="n">frechet_mean</span><span class="p">,</span> <span class="n">pairwise_distances</span>
+
+<span class="n">M</span> <span class="o">=</span> <span class="n">Sphere</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">observations</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">random_point</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">12</span><span class="p">),</span> <span class="n">sample_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">24</span><span class="p">,))</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">as_manifold_data</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">observations</span><span class="p">)</span>
+
+<span class="n">summary</span> <span class="o">=</span> <span class="n">frechet_mean</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="n">distances</span> <span class="o">=</span> <span class="n">pairwise_distances</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">summary</span><span class="o">.</span><span class="n">point</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">distances</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># (24, 24)</span>
+</pre></div>
+</div>
+<p>For an array geometry, canonical data have shape
+<code class="docutils literal notranslate"><span class="pre">batch_shape</span> <span class="pre">+</span> <span class="pre">(n_samples,)</span> <span class="pre">+</span> <span class="pre">M.shape</span></code>. Matrix-valued points keep their matrix
+event shape, while Product observations keep their nested pytree. Explicit
+adapters convert supported scientific representations such as SPD Cholesky
+factors, Grassmann projectors, and Poincaré-ball coordinates.</p>
+<p>The <a class="reference internal" href="../guide/learning.html"><span class="std std-doc">learning guide</span></a> explains validation levels,
+capability requirements, and the distinction between differentiable
+primitives and higher-level statistical algorithms.</p>
+</section>
 <section id="first-optimization-problem">
 <h2>First optimization problem<a class="headerlink" href="#first-optimization-problem" title="Link to this heading">#</a></h2>
 <p>A GeoJAX problem has three pieces:</p>
@@ -546,6 +576,7 @@ develops the optimization example with diagnostics and figures.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#option-2-development-version-from-github">Option 2: development version from GitHub</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#first-manifold-valued-learning-workflow">First manifold-valued learning workflow</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#first-optimization-problem">First optimization problem</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#geometry-primitives">Geometry primitives</a></li>
 </ul>

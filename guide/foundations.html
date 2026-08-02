@@ -455,9 +455,9 @@ structural interface adding the common <code class="docutils literal notranslate
 satisfying it does not by itself assert that those operations are globally
 exact. <code class="docutils literal notranslate"><span class="pre">operation_kind</span></code> carries that mathematical status at runtime.
 <code class="docutils literal notranslate"><span class="pre">GeometryMixin</span></code> supplies batching and common helpers. Standard geometric
-definitions follow <span class="bibtex-citation" id="id1">do Carmo [<a class="reference internal" href="#id23" title="Manfredo P. do Carmo. Riemannian Geometry. Birkhäuser, 1992. doi:10.1007/978-1-4757-2201-7.">1992</a>]</span>; the computational interface
+definitions follow <span class="bibtex-citation" id="id1">do Carmo [<a class="reference internal" href="#id31" title="Manfredo P. do Carmo. Riemannian Geometry. Birkhäuser, 1992. doi:10.1007/978-1-4757-2201-7.">1992</a>]</span>; the computational interface
 is informed by
-<span class="bibtex-citation" id="id2">Absil <em>et al.</em> [<a class="reference internal" href="#id9" title="P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. Optimization Algorithms on Matrix Manifolds. Princeton University Press, 2008. doi:10.1515/9781400830244.">2008</a>]</span> and <span class="bibtex-citation" id="id3">Boumal [<a class="reference internal" href="#id17" title="Nicolas Boumal. An Introduction to Optimization on Smooth Manifolds. Cambridge University Press, 2023. doi:10.1017/9781009166164.">2023</a>]</span>.</p>
+<span class="bibtex-citation" id="id2">Absil <em>et al.</em> [<a class="reference internal" href="#id9" title="P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. Optimization Algorithms on Matrix Manifolds. Princeton University Press, 2008. doi:10.1515/9781400830244.">2008</a>]</span> and <span class="bibtex-citation" id="id3">Boumal [<a class="reference internal" href="#id25" title="Nicolas Boumal. An Introduction to Optimization on Smooth Manifolds. Cambridge University Press, 2023. doi:10.1017/9781009166164.">2023</a>]</span>.</p>
 <p>Let <span class="math notranslate nohighlight">\(\mathcal M\)</span> be a smooth manifold. At <span class="math notranslate nohighlight">\(x\in\mathcal M\)</span>, its tangent space is
 <span class="math notranslate nohighlight">\(T_x\mathcal M\)</span> and its Riemannian metric is</p>
 <div class="math notranslate nohighlight">
@@ -601,7 +601,7 @@ endpoint-shooting logarithms. Class-specific behavior is documented in the
 <p>Many useful matrix manifolds have efficient retractions but no practical
 closed geodesic formulas. GeoJAX follows the Manopt convention: optimization
 depends on <code class="docutils literal notranslate"><span class="pre">retr</span></code>, <code class="docutils literal notranslate"><span class="pre">invretr</span></code>, and <code class="docutils literal notranslate"><span class="pre">transport</span></code>, while geodesic operations are
-optional mathematically <span class="bibtex-citation" id="id4">[<a class="reference internal" href="#id18" title="Nicolas Boumal, Bamdev Mishra, P.-A. Absil, and Rodolphe Sepulchre. Manopt, a Matlab toolbox for optimization on manifolds. Journal of Machine Learning Research, 15(42):1455–1459, 2014. URL: https://jmlr.org/papers/v15/boumal14a.html.">Boumal <em>et al.</em>, 2014</a>]</span>. For a coherent compositional API, retraction-only
+optional mathematically <span class="bibtex-citation" id="id4">[<a class="reference internal" href="#id26" title="Nicolas Boumal, Bamdev Mishra, P.-A. Absil, and Rodolphe Sepulchre. Manopt, a Matlab toolbox for optimization on manifolds. Journal of Machine Learning Research, 15(42):1455–1459, 2014. URL: https://jmlr.org/papers/v15/boumal14a.html.">Boumal <em>et al.</em>, 2014</a>]</span>. For a coherent compositional API, retraction-only
 classes still expose <code class="docutils literal notranslate"><span class="pre">exp</span></code>, <code class="docutils literal notranslate"><span class="pre">log</span></code>, and <code class="docutils literal notranslate"><span class="pre">dist</span></code> as compatibility aliases, with
 machine-readable capability metadata:</p>
 <div class="pst-scrollable-table-container"><table class="table">
@@ -665,7 +665,7 @@ DR_x(0)=\operatorname{id}_{T_x\mathcal M}.
 The default GeoJAX implementation uses
 <span class="math notranslate nohighlight">\(R_x(tu)=\operatorname{Exp}_x(tu)\)</span>; individual geometries can override it.
 Retractions and compatible vector transports are the central abstraction for
-manifold optimization <span class="bibtex-citation" id="id5">[<a class="reference internal" href="#id9" title="P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. Optimization Algorithms on Matrix Manifolds. Princeton University Press, 2008. doi:10.1515/9781400830244.">Absil <em>et al.</em>, 2008</a>, <a class="reference internal" href="#id17" title="Nicolas Boumal. An Introduction to Optimization on Smooth Manifolds. Cambridge University Press, 2023. doi:10.1017/9781009166164.">Boumal, 2023</a>]</span>.</p>
+manifold optimization <span class="bibtex-citation" id="id5">[<a class="reference internal" href="#id9" title="P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. Optimization Algorithms on Matrix Manifolds. Princeton University Press, 2008. doi:10.1515/9781400830244.">Absil <em>et al.</em>, 2008</a>, <a class="reference internal" href="#id25" title="Nicolas Boumal. An Introduction to Optimization on Smooth Manifolds. Cambridge University Press, 2023. doi:10.1017/9781009166164.">Boumal, 2023</a>]</span>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">invretr(x,</span> <span class="pre">y)</span></code> is a selected local inverse of the retraction. It satisfies
 <span class="math notranslate nohighlight">\(R_x(R_x^{-1}(y))\approx y\)</span> near <span class="math notranslate nohighlight">\(x\)</span> and provides the displacement needed by
 some derivative-free or quasi-Newton constructions. It is not automatically a
@@ -680,7 +680,7 @@ m(x,y)=\operatorname{Exp}_x\!\left(\tfrac12
 minimizing logarithm is unique. With proxy or numerical-local operations it is
 a midpoint-like local construction instead. A sample Fréchet mean minimizes
 <span class="math notranslate nohighlight">\(\sum_i w_i d(x,x_i)^2\)</span> and is generally an optimization problem
-<span class="bibtex-citation" id="id6">[<a class="reference internal" href="#id25" title="Maurice Fréchet. Les éléments aléatoires de nature quelconque dans un espace distancié. Annales de l'Institut Henri Poincaré, 10(4):215–310, 1948. URL: https://www.numdam.org/item/AIHP_1948__10_4_215_0/.">Fréchet, 1948</a>, <a class="reference internal" href="#id32" title="Hermann Karcher. Riemannian center of mass and mollifier smoothing. Communications on Pure and Applied Mathematics, 30(5):509–541, 1977. doi:10.1002/cpa.3160300502.">Karcher, 1977</a>]</span>.</p>
+<span class="bibtex-citation" id="id6">[<a class="reference internal" href="#id33" title="Maurice Fréchet. Les éléments aléatoires de nature quelconque dans un espace distancié. Annales de l'Institut Henri Poincaré, 10(4):215–310, 1948. URL: https://www.numdam.org/item/AIHP_1948__10_4_215_0/.">Fréchet, 1948</a>, <a class="reference internal" href="#id40" title="Hermann Karcher. Riemannian center of mass and mollifier smoothing. Communications on Pure and Applied Mathematics, 30(5):509–541, 1977. doi:10.1002/cpa.3160300502.">Karcher, 1977</a>]</span>.</p>
 </section>
 <section id="transport">
 <h2>Transport<a class="headerlink" href="#transport" title="Link to this heading">#</a></h2>
@@ -720,7 +720,7 @@ translations; its Riemannian geodesic has a straight translation component,
 whereas the group exponential couples angular and translational velocity.
 Accordingly, the class exposes both <code class="docutils literal notranslate"><span class="pre">exp</span></code>/<code class="docutils literal notranslate"><span class="pre">log</span></code> and
 <code class="docutils literal notranslate"><span class="pre">group_exp</span></code>/<code class="docutils literal notranslate"><span class="pre">group_log</span></code>. The distinction between Lie-group and Riemannian
-exponentials is reviewed by <span class="bibtex-citation" id="id7">Hall [<a class="reference internal" href="#id27" title="Brian C. Hall. Lie Groups, Lie Algebras, and Representations: An Elementary Introduction. Volume 222 of Graduate Texts in Mathematics. Springer, 2 edition, 2015. doi:10.1007/978-3-319-13467-3.">2015</a>]</span>.</p>
+exponentials is reviewed by <span class="bibtex-citation" id="id7">Hall [<a class="reference internal" href="#id35" title="Brian C. Hall. Lie Groups, Lie Algebras, and Representations: An Elementary Introduction. Volume 222 of Graduate Texts in Mathematics. Springer, 2 edition, 2015. doi:10.1007/978-3-319-13467-3.">2015</a>]</span>.</p>
 </section>
 <section id="autodiff-and-riemannian-derivatives">
 <h2>Autodiff and Riemannian derivatives<a class="headerlink" href="#autodiff-and-riemannian-derivatives" title="Link to this heading">#</a></h2>
@@ -844,28 +844,28 @@ guarantee.</p>
 <span class="backrefs">(<a role="doc-backlink" href="#id2">1</a>,<a role="doc-backlink" href="#id5">2</a>)</span>
 <p>P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. <em>Optimization Algorithms on Matrix Manifolds</em>. Princeton University Press, 2008. <a class="reference external" href="https://doi.org/10.1515/9781400830244">doi:10.1515/9781400830244</a>.</p>
 </div>
-<div class="citation" id="id17" role="doc-biblioentry">
+<div class="citation" id="id25" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span>Bou23<span class="fn-bracket">]</span></span>
 <span class="backrefs">(<a role="doc-backlink" href="#id3">1</a>,<a role="doc-backlink" href="#id5">2</a>)</span>
 <p>Nicolas Boumal. <em>An Introduction to Optimization on Smooth Manifolds</em>. Cambridge University Press, 2023. <a class="reference external" href="https://doi.org/10.1017/9781009166164">doi:10.1017/9781009166164</a>.</p>
 </div>
-<div class="citation" id="id18" role="doc-biblioentry">
+<div class="citation" id="id26" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">BMAS14</a><span class="fn-bracket">]</span></span>
 <p>Nicolas Boumal, Bamdev Mishra, P.-A. Absil, and Rodolphe Sepulchre. Manopt, a Matlab toolbox for optimization on manifolds. <em>Journal of Machine Learning Research</em>, 15(42):1455–1459, 2014. URL: <a class="reference external" href="https://jmlr.org/papers/v15/boumal14a.html">https://jmlr.org/papers/v15/boumal14a.html</a>.</p>
 </div>
-<div class="citation" id="id23" role="doc-biblioentry">
+<div class="citation" id="id31" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">dC92</a><span class="fn-bracket">]</span></span>
 <p>Manfredo P. do Carmo. <em>Riemannian Geometry</em>. Birkhäuser, 1992. <a class="reference external" href="https://doi.org/10.1007/978-1-4757-2201-7">doi:10.1007/978-1-4757-2201-7</a>.</p>
 </div>
-<div class="citation" id="id25" role="doc-biblioentry">
+<div class="citation" id="id33" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">Frechet48</a><span class="fn-bracket">]</span></span>
 <p>Maurice Fréchet. Les éléments aléatoires de nature quelconque dans un espace distancié. <em>Annales de l'Institut Henri Poincaré</em>, 10(4):215–310, 1948. URL: <a class="reference external" href="https://www.numdam.org/item/AIHP_1948__10_4_215_0/">https://www.numdam.org/item/AIHP_1948__10_4_215_0/</a>.</p>
 </div>
-<div class="citation" id="id27" role="doc-biblioentry">
+<div class="citation" id="id35" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id7">Hal15</a><span class="fn-bracket">]</span></span>
 <p>Brian C. Hall. <em>Lie Groups, Lie Algebras, and Representations: An Elementary Introduction</em>. Volume 222 of Graduate Texts in Mathematics. Springer, 2 edition, 2015. <a class="reference external" href="https://doi.org/10.1007/978-3-319-13467-3">doi:10.1007/978-3-319-13467-3</a>.</p>
 </div>
-<div class="citation" id="id32" role="doc-biblioentry">
+<div class="citation" id="id40" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">Kar77</a><span class="fn-bracket">]</span></span>
 <p>Hermann Karcher. Riemannian center of mass and mollifier smoothing. <em>Communications on Pure and Applied Mathematics</em>, 30(5):509–541, 1977. <a class="reference external" href="https://doi.org/10.1002/cpa.3160300502">doi:10.1002/cpa.3160300502</a>.</p>
 </div>

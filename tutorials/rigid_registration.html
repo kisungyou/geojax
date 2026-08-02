@@ -388,8 +388,21 @@
 <li class="toctree-l1"><a class="reference internal" href="spd_eeg_classifier.html">SPD prototype networks for motor-imagery EEG</a></li>
 <li class="toctree-l1"><a class="reference internal" href="grassmann_pca.html">Principal component as a Grassmann point</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sphere_kmeans.html">Intrinsic k-means on the circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manifold_classification.html">Classification with Manifold-Valued Predictors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manifold_response_regression.html">Regression with Circular Responses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="barycentric_dictionary.html">Barycentric Dictionary Learning on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="robust_scalable_learning.html">Robust and Scalable Circular Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="semi_supervised_circle.html">Semi-Supervised Learning on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="robust_spherical_summaries.html">Robust Location Summaries on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering_comparison.html">Comparing Clustering Methods on the Circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spd_frechet_mean.html">Comparing Fréchet Means of SPD Matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="kendall_hand_shapes.html">Hand Poses in Kendall Shape Space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="two_sample_inference.html">Two-Sample Inference on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spd_pga_regression.html">PGA and Regression with SPD Predictors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="product_adapter.html">Adapting Nested Product Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_transport.html">Exact Transport on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dimension_reduction.html">Comparing Manifold Embeddings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spherical_metric_learning.html">Supervised Metric Learning on the Sphere</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sphere_eigenvector.html">Dominant eigenvector on the circle</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Rigid landmark registration in SE(2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="solver_comparison.html">Comparing solvers in a curved valley</a></li>
@@ -460,7 +473,7 @@ matched point sets. It appears in medical-image registration, microscopy,
 robot perception, and shape analysis. Working in two dimensions makes every
 part of the fit visible while retaining the same geometry used in higher
 dimensions. The classical orthogonal Procrustes solution for the rotation uses
-an SVD <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id25" title="Wolfgang Kabsch. A solution for the best rotation to relate two sets of vectors. Acta Crystallographica Section A, 32(5):922–923, 1976. doi:10.1107/S0567739476001873.">Kabsch, 1976</a>]</span>; here we instead expose the same constrained
+an SVD <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id33" title="Wolfgang Kabsch. A solution for the best rotation to relate two sets of vectors. Acta Crystallographica Section A, 32(5):922–923, 1976. doi:10.1107/S0567739476001873.">Kabsch, 1976</a>]</span>; here we instead expose the same constrained
 problem to a manifold optimizer.</p>
 <p>The special Euclidean group is</p>
 <div class="math notranslate nohighlight">
@@ -656,7 +669,7 @@ Riemannian exponential of the canonical product metric, while
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id2">
 <div role="list" class="citation-list">
-<div class="citation" id="id25" role="doc-biblioentry">
+<div class="citation" id="id33" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Kab76</a><span class="fn-bracket">]</span></span>
 <p>Wolfgang Kabsch. A solution for the best rotation to relate two sets of vectors. <em>Acta Crystallographica Section A</em>, 32(5):922–923, 1976. <a class="reference external" href="https://doi.org/10.1107/S0567739476001873">doi:10.1107/S0567739476001873</a>.</p>
 </div>

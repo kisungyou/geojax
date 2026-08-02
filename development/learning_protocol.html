@@ -46,6 +46,8 @@
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=fd10adb8"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'development/learning_protocol';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="canonical" href="https://www.kisungyou.com/geojax/development/learning_protocol.html" />
@@ -446,68 +448,102 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="learning-protocol">
 <h1>Learning protocol<a class="headerlink" href="#learning-protocol" title="Link to this heading">#</a></h1>
-<p>The <code class="docutils literal notranslate"><span class="pre">geojax.learning</span></code> namespace contains small geometry-aware functions, not a
-neural-network framework. New functions must remain pure JAX and may not make
-Flax, Equinox, Haiku, Optax, or scikit-learn runtime dependencies. This narrow
-boundary keeps the package focused on reusable geometric ingredients rather
-than prescribing one geometric-deep-learning architecture
-<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id13" title="Michael M. Bronstein, Joan Bruna, Taco Cohen, and Petar Veličković. Geometric deep learning: grids, groups, graphs, geodesics, and gauges. arXiv preprint arXiv:2104.13478, 2021. doi:10.48550/arXiv.2104.13478.">Bronstein <em>et al.</em>, 2021</a>]</span>.</p>
-<section id="functional-boundary">
-<h2>Functional boundary<a class="headerlink" href="#functional-boundary" title="Link to this heading">#</a></h2>
-<p>A learning primitive receives geometry objects as static configuration and
-arrays or pytrees as dynamic values. Trainable parameters belong to the
-user-supplied callable:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mapped</span> <span class="o">=</span> <span class="n">tangent_map</span><span class="p">(</span>
-    <span class="n">source</span><span class="p">,</span>
-    <span class="n">target</span><span class="p">,</span>
-    <span class="n">x</span><span class="p">,</span>
-    <span class="n">source_base</span><span class="o">=</span><span class="n">source_base</span><span class="p">,</span>
-    <span class="n">target_base</span><span class="o">=</span><span class="n">target_base</span><span class="p">,</span>
-    <span class="n">transform</span><span class="o">=</span><span class="k">lambda</span> <span class="n">tangent</span><span class="p">:</span> <span class="n">network</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">tangent</span><span class="p">),</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>This boundary lets the same operation compose with plain JAX or any compatible
-neural library. GeoJAX should not introduce a second parameter container,
-module abstraction, random-state convention, or graph representation.</p>
-</section>
-<section id="numerical-contract">
-<h2>Numerical contract<a class="headerlink" href="#numerical-contract" title="Link to this heading">#</a></h2>
-<p>Learning losses should use <code class="docutils literal notranslate"><span class="pre">squared_dist</span></code> rather than <code class="docutils literal notranslate"><span class="pre">dist(...)</span> <span class="pre">**</span> <span class="pre">2</span></code>.
-Every new operation must:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">geojax.learning</span></code> namespace is a manifold-independent statistical layer,
+not a neural-network framework. It may depend at runtime on JAX and NumPy only;
+OTT-JAX is isolated in the optional <code class="docutils literal notranslate"><span class="pre">ot</span></code> extra. SciPy, scikit-learn, POT, and
+PHATE may be test or documentation oracles but cannot be imported by the
+runtime package. This boundary follows the separation between geometric
+primitives and model-level learning used throughout geometric machine learning
+<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id22" title="Michael M. Bronstein, Joan Bruna, Taco Cohen, and Petar Veličković. Geometric deep learning: grids, groups, graphs, geodesics, and gauges. arXiv preprint arXiv:2104.13478, 2021. doi:10.48550/arXiv.2104.13478.">Bronstein <em>et al.</em>, 2021</a>]</span>.</p>
+<section id="data-boundary">
+<h2>Data boundary<a class="headerlink" href="#data-boundary" title="Link to this heading">#</a></h2>
+<p>Every high-level method starts with <code class="docutils literal notranslate"><span class="pre">(manifold,</span> <span class="pre">data,</span> <span class="pre">...)</span></code>. Raw canonical data
+are converted through <code class="docutils literal notranslate"><span class="pre">as_manifold_data</span></code>; callers can adapt once and reuse the
+immutable result. New methods must not implement private shape conventions or
+silently normalize points.</p>
+<p>An adapter must:</p>
 <ul class="simple">
-<li><p>preserve each geometry’s event shape and arbitrary leading batch axes;</p></li>
-<li><p>support <code class="docutils literal notranslate"><span class="pre">Product</span></code> pytrees when the operation is geometrically meaningful;</p></li>
-<li><p>compile under <code class="docutils literal notranslate"><span class="pre">jax.jit</span></code>;</p></li>
-<li><p>have finite first derivatives at zero tangents and coincident points;</p></li>
-<li><p>require exact capabilities when its public name promises a distance or
-geodesic, and reject proxy or numerical-local operations;</p></li>
-<li><p>preserve or explicitly document each geometry’s cut-locus branch policy; and</p></li>
-<li><p>avoid Python data-dependent control flow over traced values.</p></li>
+<li><p>preserve the mathematical point represented by an alternate coordinate;</p></li>
+<li><p>place the sample axis immediately before event dimensions;</p></li>
+<li><p>preserve the Product factor pytree and shared batch/sample axes;</p></li>
+<li><p>reject nonfinite values before numerical kernels; and</p></li>
+<li><p>distinguish representation conversion from explicit <code class="docutils literal notranslate"><span class="pre">repair=True</span></code>.</p></li>
 </ul>
-<p>Pairwise operations interpret the axis immediately before the manifold event
-as the collection axis. Leading batch axes use NumPy broadcasting.
-Interpolation parameters add axes before all endpoint batch and event axes, so
-tests must include both batched endpoints and vector-valued interpolation
-times.</p>
+<p>External representations register through
+<code class="docutils literal notranslate"><span class="pre">register_manifold_data_adapter(geometry_type,</span> <span class="pre">name,</span> <span class="pre">converter)</span></code>. Names are
+explicit; automatic representation inference is prohibited.</p>
 </section>
-<section id="release-contract">
-<h2>Release contract<a class="headerlink" href="#release-contract" title="Link to this heading">#</a></h2>
-<p>A manifold-learning feature is incomplete until it participates in a compiled
-end-to-end test. The deterministic autoencoder test compiles one training step
-for spherical and hyperbolic latent spaces, verifies decreasing loss and finite
-encoder gradients, and checks manifold membership of every resulting latent.</p>
-<p>Tutorial-only dependencies belong in the <code class="docutils literal notranslate"><span class="pre">docs</span></code> or <code class="docutils literal notranslate"><span class="pre">examples</span></code> optional extras.
-Executable tutorials must be self-contained Markdown documents and may not
-import hidden training scripts or retain generated notebooks in the repository.</p>
+<section id="capability-boundary">
+<h2>Capability boundary<a class="headerlink" href="#capability-boundary" title="Link to this heading">#</a></h2>
+<p>Algorithms declare their required exact operations at entry. A distance-based
+method asks for exact <code class="docutils literal notranslate"><span class="pre">dist</span></code>; intrinsic center updates ask for exact <code class="docutils literal notranslate"><span class="pre">dist</span></code>,
+<code class="docutils literal notranslate"><span class="pre">log</span></code>, and <code class="docutils literal notranslate"><span class="pre">exp</span></code>; RMML asks for an equivariant embedding. Proxy or
+numerical-local operations raise <code class="docutils literal notranslate"><span class="pre">LearningCapabilityError</span></code> and are never
+enabled through an undocumented fallback.</p>
+<p>Methods that introduce an additional analytic object must validate that object
+separately. In particular, a kernel method cannot infer positive
+semidefiniteness from the existence of a geodesic distance, a tangent model
+must construct coordinates with <code class="docutils literal notranslate"><span class="pre">M.inner</span></code>, and a graph method must distinguish
+transductive vertex predictions from an out-of-sample model.</p>
+</section>
+<section id="transformation-boundary">
+<h2>Transformation boundary<a class="headerlink" href="#transformation-boundary" title="Link to this heading">#</a></h2>
+<p>Differentiable primitives such as <code class="docutils literal notranslate"><span class="pre">pairwise_distances</span></code>,
+<code class="docutils literal notranslate"><span class="pre">geodesic_interpolation</span></code>, and <code class="docutils literal notranslate"><span class="pre">tangent_space_map</span></code> must compile under <code class="docutils literal notranslate"><span class="pre">jax.jit</span></code>
+and retain finite documented derivatives away from cut loci. Statistical
+algorithms may use Python orchestration around compiled JAX kernels. Exact
+transport pivots, cluster assignments, graph topology, eigenspace selection,
+and permutation tests carry no end-to-end gradient guarantee.</p>
+<p>Randomized methods receive an explicit JAX key. Public parameter names follow
+<code class="docutils literal notranslate"><span class="pre">n_clusters</span></code>, <code class="docutils literal notranslate"><span class="pre">n_neighbors</span></code>, <code class="docutils literal notranslate"><span class="pre">n_components</span></code>, <code class="docutils literal notranslate"><span class="pre">sample_weight</span></code>, <code class="docutils literal notranslate"><span class="pre">maxiter</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">tol</span></code>. Iterative immutable results expose <code class="docutils literal notranslate"><span class="pre">objective</span></code>, <code class="docutils literal notranslate"><span class="pre">iterations</span></code>,
+<code class="docutils literal notranslate"><span class="pre">converged</span></code>, <code class="docutils literal notranslate"><span class="pre">reason</span></code>, and family-specific diagnostics.</p>
+<p>Fitted predictors own the geometry and validated training representation they
+need for prediction. A classifier must preserve the user’s class labels while
+keeping encoded labels inside numerical kernels. A manifold-response model
+returns canonical manifold points, not flattened coordinates. Barycentric
+codes use explicit simplex constraints, and any routine described as sparse
+must have a penalty whose value is not constant on its feasible set.</p>
+</section>
+<section id="numerical-and-testing-contract">
+<h2>Numerical and testing contract<a class="headerlink" href="#numerical-and-testing-contract" title="Link to this heading">#</a></h2>
+<p>Dense distance algorithms must state their <span class="math notranslate nohighlight">\(O(n^2)\)</span> memory use; graph methods
+with cubic work must say so. Implementations should use <code class="docutils literal notranslate"><span class="pre">squared_dist</span></code> in
+smooth squared-distance objectives and preserve each geometry’s cut-locus
+branch policy.</p>
+<p>A new method is incomplete until tests cover:</p>
+<ul class="simple">
+<li><p>analytic Euclidean behavior and at least one curved geometry;</p></li>
+<li><p>nested Product points when its operations support Product;</p></li>
+<li><p>deterministic fixed-key results;</p></li>
+<li><p>malformed data and missing-capability failures;</p></li>
+<li><p>float32 and float64 execution; and</p></li>
+<li><p>independent reference outputs or invariant checks.</p></li>
+</ul>
+<p>Inference tests additionally need fixed-seed null checks and explicit
+assumptions: negative type for distribution-characterizing energy distances,
+PSD kernels for MMD, and exchangeability for sign or label permutations.
+Scalable estimates must be compared with their full-batch counterparts on an
+analytic Euclidean fixture and identify order dependence on curved spaces.</p>
+<p>Runtime dependency tests must demonstrate that importing <code class="docutils literal notranslate"><span class="pre">geojax.learning</span></code>
+does not import SciPy, scikit-learn, POT, or PHATE. Executable tutorials remain
+self-contained Markdown and may not retain generated notebooks.</p>
+<p>The implementation literature is part of the protocol: algorithm docstrings
+and scientific tutorials must identify the objective actually computed. For
+example, entropically regularized transport must not be presented as the exact
+linear program <span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id64" title="Marco Cuturi. Sinkhorn distances: lightspeed computation of optimal transport. In Advances in Neural Information Processing Systems, volume 26, 2292–2300. 2013.">Cuturi, 2013</a>]</span>.</p>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
-<div class="docutils container" id="id2">
+<div class="docutils container" id="id3">
 <div role="list" class="citation-list">
-<div class="citation" id="id13" role="doc-biblioentry">
+<div class="citation" id="id22" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">BBCVelivckovic21</a><span class="fn-bracket">]</span></span>
 <p>Michael M. Bronstein, Joan Bruna, Taco Cohen, and Petar Veličković. Geometric deep learning: grids, groups, graphs, geodesics, and gauges. <em>arXiv preprint arXiv:2104.13478</em>, 2021. <a class="reference external" href="https://doi.org/10.48550/arXiv.2104.13478">doi:10.48550/arXiv.2104.13478</a>.</p>
+</div>
+<div class="citation" id="id64" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">Cut13</a><span class="fn-bracket">]</span></span>
+<p>Marco Cuturi. Sinkhorn distances: lightspeed computation of optimal transport. In <em>Advances in Neural Information Processing Systems</em>, volume 26, 2292–2300. 2013.</p>
 </div>
 </div>
 </div>
@@ -561,9 +597,10 @@ import hidden training scripts or retain generated notebooks in the repository.<
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functional-boundary">Functional boundary</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#numerical-contract">Numerical contract</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-contract">Release contract</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-boundary">Data boundary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#capability-boundary">Capability boundary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transformation-boundary">Transformation boundary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#numerical-and-testing-contract">Numerical and testing contract</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
 </ul>
   </nav></div>

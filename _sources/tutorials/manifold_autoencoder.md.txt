@@ -83,7 +83,7 @@ from sklearn.datasets import load_digits
 from sklearn.model_selection import train_test_split
 
 from geojax.geometry import Euclidean, Hyperboloid, Sphere
-from geojax.learning import geodesic_interpolate, pairwise_squared_dist
+from geojax.learning import geodesic_interpolation, pairwise_distances
 
 plt.rcParams.update({
     "figure.dpi": 200,
@@ -261,7 +261,9 @@ def train_model(geometry, epochs=180, learning_rate=3e-3):
     train_latent = encode(parameters, x_train)
     test_latent = encode(parameters, x_test)
     nearest = jnp.argmin(
-        pairwise_squared_dist(geometry, test_latent, train_latent),
+        pairwise_distances(
+            geometry, test_latent, train_latent, squared=True
+        ),
         axis=-1,
     )
     accuracy = jnp.mean(jnp.asarray(y_train)[nearest] == jnp.asarray(y_test))
@@ -518,7 +520,7 @@ interpolations = {}
 for name, geometry in geometries.items():
     result = results[name]
     latent_endpoints = result["encode"](result["parameters"], endpoints)
-    latent_path = geodesic_interpolate(
+    latent_path = geodesic_interpolation(
         geometry,
         latent_endpoints[0],
         latent_endpoints[1],

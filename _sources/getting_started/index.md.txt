@@ -33,6 +33,39 @@ documentation toolchain, use
 python -m pip install -e ".[dev,docs,examples]"
 ```
 
+## First manifold-valued learning workflow
+
+Learning methods begin with a geometry and a collection of observations. The
+adapter validates the sample axis, event shape, finite values, and manifold
+membership once; the resulting `ManifoldData` object can then be reused.
+
+```python
+import jax
+
+from geojax.geometry import Sphere
+from geojax.learning import as_manifold_data, frechet_mean, pairwise_distances
+
+M = Sphere(size=3)
+observations = M.random_point(jax.random.key(12), sample_shape=(24,))
+data = as_manifold_data(M, observations)
+
+summary = frechet_mean(M, data)
+distances = pairwise_distances(M, data)
+
+print(summary.point)
+print(distances.shape)  # (24, 24)
+```
+
+For an array geometry, canonical data have shape
+`batch_shape + (n_samples,) + M.shape`. Matrix-valued points keep their matrix
+event shape, while Product observations keep their nested pytree. Explicit
+adapters convert supported scientific representations such as SPD Cholesky
+factors, Grassmann projectors, and Poincaré-ball coordinates.
+
+The [learning guide](../guide/learning.md) explains validation levels,
+capability requirements, and the distinction between differentiable
+primitives and higher-level statistical algorithms.
+
 ## First optimization problem
 
 A GeoJAX problem has three pieces:

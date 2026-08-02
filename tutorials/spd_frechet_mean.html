@@ -55,7 +55,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Hand Poses in Kendall Shape Space" href="kendall_hand_shapes.html" />
-    <link rel="prev" title="Intrinsic k-means on the circle" href="sphere_kmeans.html" />
+    <link rel="prev" title="Comparing Clustering Methods on the Circle" href="clustering_comparison.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -388,8 +388,21 @@
 <li class="toctree-l1"><a class="reference internal" href="spd_eeg_classifier.html">SPD prototype networks for motor-imagery EEG</a></li>
 <li class="toctree-l1"><a class="reference internal" href="grassmann_pca.html">Principal component as a Grassmann point</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sphere_kmeans.html">Intrinsic k-means on the circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manifold_classification.html">Classification with Manifold-Valued Predictors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manifold_response_regression.html">Regression with Circular Responses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="barycentric_dictionary.html">Barycentric Dictionary Learning on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="robust_scalable_learning.html">Robust and Scalable Circular Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="semi_supervised_circle.html">Semi-Supervised Learning on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="robust_spherical_summaries.html">Robust Location Summaries on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering_comparison.html">Comparing Clustering Methods on the Circle</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Comparing Fréchet Means of SPD Matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="kendall_hand_shapes.html">Hand Poses in Kendall Shape Space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="two_sample_inference.html">Two-Sample Inference on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spd_pga_regression.html">PGA and Regression with SPD Predictors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="product_adapter.html">Adapting Nested Product Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_transport.html">Exact Transport on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dimension_reduction.html">Comparing Manifold Embeddings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spherical_metric_learning.html">Supervised Metric Learning on the Sphere</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sphere_eigenvector.html">Dominant eigenvector on the circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rigid_registration.html">Rigid landmark registration in SE(2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="solver_comparison.html">Comparing solvers in a curved valley</a></li>
@@ -459,12 +472,12 @@
 diffusion tensors, and kernel matrices. There is no single distinguished
 Riemannian metric on the SPD cone, so a Fréchet mean depends on the geometry
 chosen for the application. The objective extends Fréchet’s metric-space
-notion of a mean <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id23" title="Maurice Fréchet. Les éléments aléatoires de nature quelconque dans un espace distancié. Annales de l'Institut Henri Poincaré, 10(4):215–310, 1948. URL: https://www.numdam.org/item/AIHP_1948__10_4_215_0/.">Fréchet, 1948</a>, <a class="reference internal" href="#id30" title="Hermann Karcher. Riemannian center of mass and mollifier smoothing. Communications on Pure and Applied Mathematics, 30(5):509–541, 1977. doi:10.1002/cpa.3160300502.">Karcher, 1977</a>]</span>.</p>
+notion of a mean <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id31" title="Maurice Fréchet. Les éléments aléatoires de nature quelconque dans un espace distancié. Annales de l'Institut Henri Poincaré, 10(4):215–310, 1948. URL: https://www.numdam.org/item/AIHP_1948__10_4_215_0/.">Fréchet, 1948</a>, <a class="reference internal" href="#id38" title="Hermann Karcher. Riemannian center of mass and mollifier smoothing. Communications on Pure and Applied Mathematics, 30(5):509–541, 1977. doi:10.1002/cpa.3160300502.">Karcher, 1977</a>]</span>.</p>
 <p>For observations <span class="math notranslate nohighlight">\(P_1,\ldots,P_N\)</span> and a distance <span class="math notranslate nohighlight">\(d_g\)</span> induced by geometry
 <span class="math notranslate nohighlight">\(g\)</span>, the Fréchet objective is</p>
 <div class="math notranslate nohighlight">
 \[
-F_g(P)=\frac{1}{2N}\sum_{i=1}^N d_g(P,P_i)^2.
+F_g(P)=\frac{1}{N}\sum_{i=1}^N d_g(P,P_i)^2.
 \]</div>
 <p>We compare three common choices:</p>
 <div class="pst-scrollable-table-container"><table class="table">
@@ -498,9 +511,9 @@ is invariant under arbitrary invertible congruences, while the
 Bures-Wasserstein metric is the covariance component of quadratic optimal
 transport between centered Gaussian distributions. These constructions are
 developed, respectively, by
-<span class="bibtex-citation" id="id2">Arsigny <em>et al.</em> [<a class="reference internal" href="#id10" title="Vincent Arsigny, Pierre Fillard, Xavier Pennec, and Nicholas Ayache. Geometric means in a novel vector space structure on symmetric positive-definite matrices. SIAM Journal on Matrix Analysis and Applications, 29(1):328–347, 2007. doi:10.1137/050637996.">2007</a>]</span>, <span class="bibtex-citation" id="id3">Moakher [<a class="reference internal" href="#id43" title="Maher Moakher. A differential geometric approach to the geometric mean of symmetric positive-definite matrices. SIAM Journal on Matrix Analysis and Applications, 26(3):735–747, 2005. doi:10.1137/S0895479803436937.">2005</a>]</span>, and
+<span class="bibtex-citation" id="id2">Arsigny <em>et al.</em> [<a class="reference internal" href="#id10" title="Vincent Arsigny, Pierre Fillard, Xavier Pennec, and Nicholas Ayache. Geometric means in a novel vector space structure on symmetric positive-definite matrices. SIAM Journal on Matrix Analysis and Applications, 29(1):328–347, 2007. doi:10.1137/050637996.">2007</a>]</span>, <span class="bibtex-citation" id="id3">Moakher [<a class="reference internal" href="#id51" title="Maher Moakher. A differential geometric approach to the geometric mean of symmetric positive-definite matrices. SIAM Journal on Matrix Analysis and Applications, 26(3):735–747, 2005. doi:10.1137/S0895479803436937.">2005</a>]</span>, and
 <span class="bibtex-citation" id="id4">Bhatia <em>et al.</em> [<a class="reference internal" href="#id13" title="Rajendra Bhatia, Tanvi Jain, and Yongdo Lim. On the Bures–Wasserstein distance between positive definite matrices. Expositiones Mathematicae, 37(2):165–191, 2019. doi:10.1016/j.exmath.2018.01.002.">2019</a>]</span>; the Gaussian optimal-transport interpretation is
-given by <span class="bibtex-citation" id="id5">Malagò <em>et al.</em> [<a class="reference internal" href="#id39" title="Luigi Malagò, Luigi Montrucchio, and Giovanni Pistone. Wasserstein Riemannian geometry of gaussian densities. Information Geometry, 1:137–179, 2018. doi:10.1007/s41884-018-0014-z.">2018</a>]</span>.</p>
+given by <span class="bibtex-citation" id="id5">Malagò <em>et al.</em> [<a class="reference internal" href="#id47" title="Luigi Malagò, Luigi Montrucchio, and Giovanni Pistone. Wasserstein Riemannian geometry of gaussian densities. Information Geometry, 1:137–179, 2018. doi:10.1007/s41884-018-0014-z.">2018</a>]</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
@@ -516,7 +529,8 @@ given by <span class="bibtex-citation" id="id5">Malagò <em>et al.</em> [<a clas
     <span class="n">SPDBuresWasserstein</span><span class="p">,</span>
     <span class="n">SPDLogEuclidean</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">geojax.optimization</span><span class="w"> </span><span class="kn">import</span> <span class="n">BarzilaiBorwein</span><span class="p">,</span> <span class="n">Minimize</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">geojax.learning</span><span class="w"> </span><span class="kn">import</span> <span class="n">frechet_mean</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">geojax.optimization</span><span class="w"> </span><span class="kn">import</span> <span class="n">BarzilaiBorwein</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
     <span class="s2">&quot;figure.dpi&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
@@ -591,44 +605,39 @@ Bures-Wasserstein   : all observations valid = True
 </section>
 <section id="solve-one-frechet-problem-per-geometry">
 <h2>Solve one Fréchet problem per geometry<a class="headerlink" href="#solve-one-frechet-problem-per-geometry" title="Link to this heading">#</a></h2>
-<p>The code below is intentionally geometry-agnostic. Only the object passed as
-<code class="docutils literal notranslate"><span class="pre">M</span></code> changes; <code class="docutils literal notranslate"><span class="pre">dist_batch</span></code> and the optimizer consume the common GeoJAX
-interface. All three runs start from the arithmetic mean and use the same
-solver settings.</p>
+<p>The code below is intentionally geometry-agnostic. Only the geometry passed to
+<a class="reference internal" href="../api/learning.html#geojax.learning.frechet_mean" title="geojax.learning.frechet_mean"><code class="xref py py-func docutils literal notranslate"><span class="pre">geojax.learning.frechet_mean()</span></code></a> changes. The learning function validates
+the observations, constructs the weighted squared-distance objective, and
+delegates its minimization to the supplied GeoJAX solver. All three runs start
+from the arithmetic mean and use the same solver settings.</p>
 <p>The objective values should not be compared directly across rows because the
 three metrics use different units. The estimates, eigenvalues, determinants,
 and convergence histories are directly informative.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">make_frechet_cost</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">observations</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">cost</span><span class="p">(</span><span class="n">P</span><span class="p">):</span>
-        <span class="n">squared_distances</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">dist_batch</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">observations</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
-        <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">squared_distances</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">cost</span>
-
-
-<span class="n">initial</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">initial</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">estimates</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="n">histories</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="n">final_costs</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">mean_results</span> <span class="o">=</span> <span class="p">{}</span>
 
 <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">geometry</span> <span class="ow">in</span> <span class="n">geometries</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="n">problem</span> <span class="o">=</span> <span class="n">Minimize</span><span class="p">(</span>
-        <span class="n">M</span><span class="o">=</span><span class="n">geometry</span><span class="p">,</span>
-        <span class="n">cost</span><span class="o">=</span><span class="n">make_frechet_cost</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">samples</span><span class="p">),</span>
-        <span class="n">x0</span><span class="o">=</span><span class="n">initial</span><span class="p">,</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">frechet_mean</span><span class="p">(</span>
+        <span class="n">geometry</span><span class="p">,</span>
+        <span class="n">samples</span><span class="p">,</span>
+        <span class="n">initial_point</span><span class="o">=</span><span class="n">initial</span><span class="p">,</span>
         <span class="n">solver</span><span class="o">=</span><span class="n">BarzilaiBorwein</span><span class="p">(</span>
             <span class="n">initial_stepsize</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
             <span class="n">maxiter</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>
             <span class="n">tolgradnorm</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">,</span>
             <span class="n">verbosity</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
         <span class="p">),</span>
+        <span class="n">tol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">estimate</span><span class="p">,</span> <span class="n">final_cost</span><span class="p">,</span> <span class="n">history</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
-    <span class="n">estimates</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">estimate</span>
-    <span class="n">histories</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">history</span>
-    <span class="n">final_costs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_cost</span>
+    <span class="n">mean_results</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+    <span class="n">estimates</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">point</span>
+    <span class="n">histories</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">diagnostics</span><span class="p">[</span><span class="s2">&quot;history&quot;</span><span class="p">]</span>
+    <span class="n">final_costs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">objective</span>
 
 <span class="nb">print</span><span class="p">(</span>
     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;geometry&#39;</span><span class="si">:</span><span class="s2">20s</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;iter&#39;</span><span class="si">:</span><span class="s2">&gt;5s</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;cost&#39;</span><span class="si">:</span><span class="s2">&gt;12s</span><span class="si">}</span><span class="s2"> &quot;</span>
@@ -647,9 +656,9 @@ and convergence histories are directly informative.</p>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>geometry              iter         cost    grad norm    det(mean)
 --------------------------------------------------------------------
-Log-Euclidean            2     1.366771    7.550e-16     1.242951
-Affine-invariant         7     1.367706    8.525e-10     1.242951
-Bures-Wasserstein        7     0.446111    3.566e-10     2.376709
+Log-Euclidean            1     2.733541    2.726e-15     1.242951
+Affine-invariant         6     2.735411    5.737e-10     1.242951
+Bures-Wasserstein        7     0.892222    1.272e-10     2.376709
 </pre></div>
 </div>
 </div>
@@ -667,7 +676,7 @@ optimization.</p>
 <span class="n">closed_form_error</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">estimates</span><span class="p">[</span><span class="s2">&quot;Log-Euclidean&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">closed_form</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Closed-form log-Euclidean mean:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">closed_form</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Optimization error: </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">closed_form_error</span><span class="p">)</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;GeoJAX learning error: </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">closed_form_error</span><span class="p">)</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -675,7 +684,7 @@ optimization.</p>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Closed-form log-Euclidean mean:
  [[1.06239834 0.07742265]
  [0.07742265 1.17559048]]
-Optimization error: 3.925e-16
+GeoJAX learning error: 1.328e-15
 </pre></div>
 </div>
 </div>
@@ -763,7 +772,7 @@ log-Euclidean and affine-invariant metrics penalize multiplicative dispersion.</
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/950c00babcf64d0c74413404c623385fd94ef406ebc9cddbbc8127408103a57e.png" src="../_images/950c00babcf64d0c74413404c623385fd94ef406ebc9cddbbc8127408103a57e.png" />
+<img alt="../_images/07629d0d5ad1750325ef050eea96883a7379e1eae22caa9026b1a7d646a719b7.png" src="../_images/07629d0d5ad1750325ef050eea96883a7379e1eae22caa9026b1a7d646a719b7.png" />
 </div>
 </div>
 </section>
@@ -795,19 +804,19 @@ only the ellipse visualization is specific to <span class="math notranslate nohi
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">BJL19</a><span class="fn-bracket">]</span></span>
 <p>Rajendra Bhatia, Tanvi Jain, and Yongdo Lim. On the Bures–Wasserstein distance between positive definite matrices. <em>Expositiones Mathematicae</em>, 37(2):165–191, 2019. <a class="reference external" href="https://doi.org/10.1016/j.exmath.2018.01.002">doi:10.1016/j.exmath.2018.01.002</a>.</p>
 </div>
-<div class="citation" id="id23" role="doc-biblioentry">
+<div class="citation" id="id31" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Frechet48</a><span class="fn-bracket">]</span></span>
 <p>Maurice Fréchet. Les éléments aléatoires de nature quelconque dans un espace distancié. <em>Annales de l'Institut Henri Poincaré</em>, 10(4):215–310, 1948. URL: <a class="reference external" href="https://www.numdam.org/item/AIHP_1948__10_4_215_0/">https://www.numdam.org/item/AIHP_1948__10_4_215_0/</a>.</p>
 </div>
-<div class="citation" id="id30" role="doc-biblioentry">
+<div class="citation" id="id38" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Kar77</a><span class="fn-bracket">]</span></span>
 <p>Hermann Karcher. Riemannian center of mass and mollifier smoothing. <em>Communications on Pure and Applied Mathematics</em>, 30(5):509–541, 1977. <a class="reference external" href="https://doi.org/10.1002/cpa.3160300502">doi:10.1002/cpa.3160300502</a>.</p>
 </div>
-<div class="citation" id="id39" role="doc-biblioentry">
+<div class="citation" id="id47" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">MalagoMP18</a><span class="fn-bracket">]</span></span>
 <p>Luigi Malagò, Luigi Montrucchio, and Giovanni Pistone. Wasserstein Riemannian geometry of gaussian densities. <em>Information Geometry</em>, 1:137–179, 2018. <a class="reference external" href="https://doi.org/10.1007/s41884-018-0014-z">doi:10.1007/s41884-018-0014-z</a>.</p>
 </div>
-<div class="citation" id="id43" role="doc-biblioentry">
+<div class="citation" id="id51" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">Moa05</a><span class="fn-bracket">]</span></span>
 <p>Maher Moakher. A differential geometric approach to the geometric mean of symmetric positive-definite matrices. <em>SIAM Journal on Matrix Analysis and Applications</em>, 26(3):735–747, 2005. <a class="reference external" href="https://doi.org/10.1137/S0895479803436937">doi:10.1137/S0895479803436937</a>.</p>
 </div>
@@ -827,12 +836,12 @@ only the ellipse visualization is specific to <span class="math notranslate nohi
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="sphere_kmeans.html"
+       href="clustering_comparison.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Intrinsic k-means on the circle</p>
+        <p class="prev-next-title">Comparing Clustering Methods on the Circle</p>
       </div>
     </a>
     <a class="right-next"

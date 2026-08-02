@@ -439,11 +439,11 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="development">
 <h1>Development<a class="headerlink" href="#development" title="Link to this heading">#</a></h1>
-<p>GeoJAX separates geometry, learning primitives, problem definition, and solver
-implementation through small structural protocols. Geometry objects provide
-manifold operations; learning functions compose them inside JAX models;
-<code class="docutils literal notranslate"><span class="pre">Minimize</span></code> supplies an objective and its derivatives; solvers consume both and
-return a common iteration history.</p>
+<p>GeoJAX separates geometry, manifold-data adaptation, learning algorithms,
+problem definition, and solver implementation through small structural
+protocols. Geometry objects provide mathematical operations; learning methods
+consume validated observations and declared capabilities; <code class="docutils literal notranslate"><span class="pre">Minimize</span></code> supplies
+an objective and its derivatives; solvers return a common iteration history.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="geometry_protocol.html">Geometry protocol</a></li>

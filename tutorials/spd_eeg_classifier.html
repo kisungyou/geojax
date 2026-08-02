@@ -388,8 +388,21 @@
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">SPD prototype networks for motor-imagery EEG</a></li>
 <li class="toctree-l1"><a class="reference internal" href="grassmann_pca.html">Principal component as a Grassmann point</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sphere_kmeans.html">Intrinsic k-means on the circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manifold_classification.html">Classification with Manifold-Valued Predictors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manifold_response_regression.html">Regression with Circular Responses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="barycentric_dictionary.html">Barycentric Dictionary Learning on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="robust_scalable_learning.html">Robust and Scalable Circular Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="semi_supervised_circle.html">Semi-Supervised Learning on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="robust_spherical_summaries.html">Robust Location Summaries on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering_comparison.html">Comparing Clustering Methods on the Circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spd_frechet_mean.html">Comparing Fréchet Means of SPD Matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="kendall_hand_shapes.html">Hand Poses in Kendall Shape Space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="two_sample_inference.html">Two-Sample Inference on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spd_pga_regression.html">PGA and Regression with SPD Predictors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="product_adapter.html">Adapting Nested Product Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_transport.html">Exact Transport on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dimension_reduction.html">Comparing Manifold Embeddings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spherical_metric_learning.html">Supervised Metric Learning on the Sphere</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sphere_eigenvector.html">Dominant eigenvector on the circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rigid_registration.html">Rigid landmark registration in SE(2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="solver_comparison.html">Comparing solvers in a curved valley</a></li>
@@ -470,7 +483,7 @@ as unconstrained vectors discards their natural geometry. Riemannian
 covariance classifiers have a long history in brain–computer interfaces
 <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id11" title="Alexandre Barachant, Stéphane Bonnet, Marco Congedo, and Christian Jutten. Multiclass brain–computer interface classification by Riemannian geometry. IEEE Transactions on Biomedical Engineering, 59(4):920–928, 2012. doi:10.1109/TBME.2011.2172210.">Barachant <em>et al.</em>, 2012</a>]</span>, while SPD-valued neural layers provide a
 way to learn nonlinear representations without leaving the cone
-<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id26" title="Zhiwu Huang and Luc Van Gool. A Riemannian network for SPD matrix learning. In Proceedings of the AAAI Conference on Artificial Intelligence, volume 31, 2036–2042. 2017. doi:10.1609/aaai.v31i1.10866.">Huang and Van Gool, 2017</a>]</span>.</p>
+<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id34" title="Zhiwu Huang and Luc Van Gool. A Riemannian network for SPD matrix learning. In Proceedings of the AAAI Conference on Artificial Intelligence, volume 31, 2036–2042. 2017. doi:10.1609/aaai.v31i1.10866.">Huang and Van Gool, 2017</a>]</span>.</p>
 <p>This tutorial builds a small, deterministic network on real motor-imagery EEG.
 It compares log-Euclidean, affine-invariant, and Bures–Wasserstein prototype
 heads while keeping the data, encoder, initialization, and optimization
@@ -479,8 +492,8 @@ pattern, not to claim benchmark-level EEG decoding.</p>
 <section id="public-data-and-reproducible-scope">
 <h2>Public data and reproducible scope<a class="headerlink" href="#public-data-and-reproducible-scope" title="Link to this heading">#</a></h2>
 <p>The source is the open PhysioNet EEG Motor Movement/Imagery Dataset
-<span class="bibtex-citation" id="id3">[<a class="reference internal" href="#id50" title="Gerwin Schalk. EEG motor movement/imagery dataset. 2009. URL: https://physionet.org/content/eegmmidb/1.0.0/, doi:10.13026/C28G6P.">Schalk, 2009</a>]</span>, recorded with the BCI2000 system
-<span class="bibtex-citation" id="id4">[<a class="reference internal" href="#id49" title="Gerwin Schalk, Dennis J. McFarland, Thilo Hinterberger, Niels Birbaumer, and Jonathan R. Wolpaw. BCI2000: a general-purpose brain–computer interface (BCI) system. IEEE Transactions on Biomedical Engineering, 51(6):1034–1043, 2004. doi:10.1109/TBME.2004.827072.">Schalk <em>et al.</em>, 2004</a>]</span>. We use:</p>
+<span class="bibtex-citation" id="id3">[<a class="reference internal" href="#id58" title="Gerwin Schalk. EEG motor movement/imagery dataset. 2009. URL: https://physionet.org/content/eegmmidb/1.0.0/, doi:10.13026/C28G6P.">Schalk, 2009</a>]</span>, recorded with the BCI2000 system
+<span class="bibtex-citation" id="id4">[<a class="reference internal" href="#id57" title="Gerwin Schalk, Dennis J. McFarland, Thilo Hinterberger, Niels Birbaumer, and Jonathan R. Wolpaw. BCI2000: a general-purpose brain–computer interface (BCI) system. IEEE Transactions on Biomedical Engineering, 51(6):1034–1043, 2004. doi:10.1109/TBME.2004.827072.">Schalk <em>et al.</em>, 2004</a>]</span>. We use:</p>
 <ul class="simple">
 <li><p>subjects S001 through S005;</p></li>
 <li><p>unilateral motor-imagery runs R04, R08, and R12;</p></li>
@@ -508,7 +521,7 @@ upstream Open Data Commons Attribution terms.</p>
     <span class="n">SPDBuresWasserstein</span><span class="p">,</span>
     <span class="n">SPDLogEuclidean</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">geojax.learning</span><span class="w"> </span><span class="kn">import</span> <span class="n">pairwise_squared_dist</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">geojax.learning</span><span class="w"> </span><span class="kn">import</span> <span class="n">classical_mds</span><span class="p">,</span> <span class="n">pairwise_distances</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
     <span class="s2">&quot;figure.dpi&quot;</span><span class="p">:</span> <span class="mi">210</span><span class="p">,</span>
@@ -798,10 +811,11 @@ training.</p>
         <span class="n">prototypes</span> <span class="o">=</span> <span class="n">latent_chart</span><span class="o">.</span><span class="n">expm</span><span class="p">(</span><span class="n">prototype_tangent</span><span class="p">)</span>
 
         <span class="n">temperature</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">softplus</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;raw_temperature&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="mf">0.5</span>
-        <span class="n">logits</span> <span class="o">=</span> <span class="o">-</span><span class="n">temperature</span> <span class="o">*</span> <span class="n">pairwise_squared_dist</span><span class="p">(</span>
+        <span class="n">logits</span> <span class="o">=</span> <span class="o">-</span><span class="n">temperature</span> <span class="o">*</span> <span class="n">pairwise_distances</span><span class="p">(</span>
             <span class="n">geometry</span><span class="p">,</span>
             <span class="n">latent_points</span><span class="p">,</span>
             <span class="n">prototypes</span><span class="p">,</span>
+            <span class="n">squared</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">logits</span><span class="p">,</span> <span class="n">latent_points</span><span class="p">,</span> <span class="n">prototypes</span><span class="p">,</span> <span class="n">temperature</span>
 
@@ -1090,37 +1104,24 @@ majority-class accuracy in R12.</p>
 <section id="geometry-aware-views-of-the-latent-spd-matrices">
 <h2>Geometry-aware views of the latent SPD matrices<a class="headerlink" href="#geometry-aware-views-of-the-latent-spd-matrices" title="Link to this heading">#</a></h2>
 <p>An SPD matrix does not have canonical two-dimensional coordinates. For each
-geometry, we therefore compute all squared geodesic distances among the 75
-test activations and the two learned prototypes, then apply classical metric
-multidimensional scaling solely for display. The classifier still uses the
-full <span class="math notranslate nohighlight">\(3\times3\)</span> matrices and exact GeoJAX distances.</p>
+geometry, we therefore call <a class="reference internal" href="../api/learning.html#geojax.learning.classical_mds" title="geojax.learning.classical_mds"><code class="xref py py-func docutils literal notranslate"><span class="pre">geojax.learning.classical_mds()</span></code></a> on the 75
+test activations and the two learned prototypes. The routine computes exact
+geodesic distances and applies classical metric scaling solely for display.
+The classifier still uses the full <span class="math notranslate nohighlight">\(3\times3\)</span> matrices and exact GeoJAX
+distances.</p>
 <p>Crosses mark incorrectly classified test trials. Stars are the learned class
 prototypes.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">classical_mds</span><span class="p">(</span><span class="n">squared_distances</span><span class="p">,</span> <span class="n">output_dimension</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-    <span class="n">squared_distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">squared_distances</span><span class="p">)</span>
-    <span class="n">squared_distances</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span>
-        <span class="n">squared_distances</span> <span class="o">+</span> <span class="n">squared_distances</span><span class="o">.</span><span class="n">T</span>
-    <span class="p">)</span>
-    <span class="n">count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">squared_distances</span><span class="p">)</span>
-    <span class="n">centering</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">count</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">count</span><span class="p">,</span> <span class="n">count</span><span class="p">))</span> <span class="o">/</span> <span class="n">count</span>
-    <span class="n">gram</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">centering</span> <span class="o">@</span> <span class="n">squared_distances</span> <span class="o">@</span> <span class="n">centering</span>
-    <span class="n">eigenvalues</span><span class="p">,</span> <span class="n">eigenvectors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">gram</span><span class="p">)</span>
-    <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">eigenvalues</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="n">output_dimension</span><span class="p">]</span>
-    <span class="n">positive</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">eigenvalues</span><span class="p">[</span><span class="n">order</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">eigenvectors</span><span class="p">[:,</span> <span class="n">order</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">positive</span><span class="p">)</span>
-
-
-<span class="n">test_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">test_mask</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">test_mask</span><span class="p">)</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">13.1</span><span class="p">,</span> <span class="mf">4.15</span><span class="p">),</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">axis</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">geometries</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
     <span class="n">test_points</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;latent_points&quot;</span><span class="p">][</span><span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">test_indices</span><span class="p">)]</span>
     <span class="n">combined</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">test_points</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;prototypes&quot;</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">squared_distances</span> <span class="o">=</span> <span class="n">pairwise_squared_dist</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">combined</span><span class="p">,</span> <span class="n">combined</span><span class="p">)</span>
-    <span class="n">coordinates</span> <span class="o">=</span> <span class="n">classical_mds</span><span class="p">(</span><span class="n">squared_distances</span><span class="p">)</span>
+    <span class="n">embedding</span> <span class="o">=</span> <span class="n">classical_mds</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">combined</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">coordinates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">embedding</span><span class="o">.</span><span class="n">coordinates</span><span class="p">)</span>
     <span class="n">point_coordinates</span> <span class="o">=</span> <span class="n">coordinates</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
     <span class="n">prototype_coordinates</span> <span class="o">=</span> <span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
 
@@ -1199,11 +1200,11 @@ prototypes.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/ipykernel_89049/1427222291.py:96: UserWarning: This figure was using a layout engine that is incompatible with subplots_adjust and/or tight_layout; not calling subplots_adjust.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/ipykernel_22522/3891900132.py:82: UserWarning: This figure was using a layout engine that is incompatible with subplots_adjust and/or tight_layout; not calling subplots_adjust.
   fig.subplots_adjust(bottom=0.22)
 </pre></div>
 </div>
-<img alt="../_images/0e58ba604cef1c84182020ab94eada28ab1e29f7957e759b584f8d03354760c2.png" src="../_images/0e58ba604cef1c84182020ab94eada28ab1e29f7957e759b584f8d03354760c2.png" />
+<img alt="../_images/11d2a1b7bcffa94507cb6567324f6a97b0a47ccbe8bbc94fecf394f136ade584.png" src="../_images/11d2a1b7bcffa94507cb6567324f6a97b0a47ccbe8bbc94fecf394f136ade584.png" />
 </div>
 </div>
 </section>
@@ -1316,15 +1317,15 @@ distance to Riemannian means.</p>
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">BBCJ12</a><span class="fn-bracket">]</span></span>
 <p>Alexandre Barachant, Stéphane Bonnet, Marco Congedo, and Christian Jutten. Multiclass brain–computer interface classification by Riemannian geometry. <em>IEEE Transactions on Biomedical Engineering</em>, 59(4):920–928, 2012. <a class="reference external" href="https://doi.org/10.1109/TBME.2011.2172210">doi:10.1109/TBME.2011.2172210</a>.</p>
 </div>
-<div class="citation" id="id26" role="doc-biblioentry">
+<div class="citation" id="id34" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">HVG17</a><span class="fn-bracket">]</span></span>
 <p>Zhiwu Huang and Luc Van Gool. A Riemannian network for SPD matrix learning. In <em>Proceedings of the AAAI Conference on Artificial Intelligence</em>, volume 31, 2036–2042. 2017. <a class="reference external" href="https://doi.org/10.1609/aaai.v31i1.10866">doi:10.1609/aaai.v31i1.10866</a>.</p>
 </div>
-<div class="citation" id="id50" role="doc-biblioentry">
+<div class="citation" id="id58" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">Sch09</a><span class="fn-bracket">]</span></span>
 <p>Gerwin Schalk. EEG motor movement/imagery dataset. 2009. URL: <a class="reference external" href="https://physionet.org/content/eegmmidb/1.0.0/">https://physionet.org/content/eegmmidb/1.0.0/</a>, <a class="reference external" href="https://doi.org/10.13026/C28G6P">doi:10.13026/C28G6P</a>.</p>
 </div>
-<div class="citation" id="id49" role="doc-biblioentry">
+<div class="citation" id="id57" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">SMH+04</a><span class="fn-bracket">]</span></span>
 <p>Gerwin Schalk, Dennis J. McFarland, Thilo Hinterberger, Niels Birbaumer, and Jonathan R. Wolpaw. BCI2000: a general-purpose brain–computer interface (BCI) system. <em>IEEE Transactions on Biomedical Engineering</em>, 51(6):1034–1043, 2004. <a class="reference external" href="https://doi.org/10.1109/TBME.2004.827072">doi:10.1109/TBME.2004.827072</a>.</p>
 </div>

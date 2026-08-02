@@ -54,7 +54,7 @@
     <link rel="icon" href="../_static/geojax-gj-favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Comparing Fréchet Means of SPD Matrices" href="spd_frechet_mean.html" />
+    <link rel="next" title="Classification with Manifold-Valued Predictors" href="manifold_classification.html" />
     <link rel="prev" title="Principal component as a Grassmann point" href="grassmann_pca.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -388,8 +388,21 @@
 <li class="toctree-l1"><a class="reference internal" href="spd_eeg_classifier.html">SPD prototype networks for motor-imagery EEG</a></li>
 <li class="toctree-l1"><a class="reference internal" href="grassmann_pca.html">Principal component as a Grassmann point</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Intrinsic k-means on the circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manifold_classification.html">Classification with Manifold-Valued Predictors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manifold_response_regression.html">Regression with Circular Responses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="barycentric_dictionary.html">Barycentric Dictionary Learning on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="robust_scalable_learning.html">Robust and Scalable Circular Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="semi_supervised_circle.html">Semi-Supervised Learning on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="robust_spherical_summaries.html">Robust Location Summaries on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering_comparison.html">Comparing Clustering Methods on the Circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spd_frechet_mean.html">Comparing Fréchet Means of SPD Matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="kendall_hand_shapes.html">Hand Poses in Kendall Shape Space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="two_sample_inference.html">Two-Sample Inference on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spd_pga_regression.html">PGA and Regression with SPD Predictors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="product_adapter.html">Adapting Nested Product Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_transport.html">Exact Transport on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dimension_reduction.html">Comparing Manifold Embeddings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spherical_metric_learning.html">Supervised Metric Learning on the Sphere</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sphere_eigenvector.html">Dominant eigenvector on the circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rigid_registration.html">Rigid landmark registration in SE(2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="solver_comparison.html">Comparing solvers in a curved valley</a></li>
@@ -457,8 +470,8 @@
 <h1>Intrinsic k-means on the circle<a class="headerlink" href="#intrinsic-k-means-on-the-circle" title="Link to this heading">#</a></h1>
 <p>Euclidean k-means alternates between assigning each observation to its nearest
 center and replacing every center by an arithmetic mean
-<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id35" title="Stuart P. Lloyd. Least squares quantization in PCM. IEEE Transactions on Information Theory, 28(2):129–137, 1982. doi:10.1109/TIT.1982.1056489.">Lloyd, 1982</a>]</span>. On a manifold, the same idea uses geodesic distance
-and a Fréchet mean <span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id20" title="Maurice Fréchet. Les éléments aléatoires de nature quelconque dans un espace distancié. Annales de l'Institut Henri Poincaré, 10(4):215–310, 1948. URL: https://www.numdam.org/item/AIHP_1948__10_4_215_0/.">Fréchet, 1948</a>, <a class="reference internal" href="#id27" title="Hermann Karcher. Riemannian center of mass and mollifier smoothing. Communications on Pure and Applied Mathematics, 30(5):509–541, 1977. doi:10.1002/cpa.3160300502.">Karcher, 1977</a>]</span>. For clusters
+<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id43" title="Stuart P. Lloyd. Least squares quantization in PCM. IEEE Transactions on Information Theory, 28(2):129–137, 1982. doi:10.1109/TIT.1982.1056489.">Lloyd, 1982</a>]</span>. On a manifold, the same idea uses geodesic distance
+and a Fréchet mean <span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id28" title="Maurice Fréchet. Les éléments aléatoires de nature quelconque dans un espace distancié. Annales de l'Institut Henri Poincaré, 10(4):215–310, 1948. URL: https://www.numdam.org/item/AIHP_1948__10_4_215_0/.">Fréchet, 1948</a>, <a class="reference internal" href="#id35" title="Hermann Karcher. Riemannian center of mass and mollifier smoothing. Communications on Pure and Applied Mathematics, 30(5):509–541, 1977. doi:10.1002/cpa.3160300502.">Karcher, 1977</a>]</span>. For clusters
 <span class="math notranslate nohighlight">\(G_1,\ldots,G_K\)</span> on a geometry <span class="math notranslate nohighlight">\(M\)</span>, the objective is</p>
 <div class="math notranslate nohighlight">
 \[
@@ -476,6 +489,7 @@ history can all be seen directly while keeping the complete algorithm visible.</
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">geojax.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sphere</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">geojax.learning</span><span class="w"> </span><span class="kn">import</span> <span class="n">kmeans</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
     <span class="s2">&quot;figure.dpi&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
@@ -514,11 +528,11 @@ all points lie on S^1: True
 </div>
 </div>
 </div>
-<section id="lloyd-updates-with-manifold-primitives">
-<h2>Lloyd updates with manifold primitives<a class="headerlink" href="#lloyd-updates-with-manifold-primitives" title="Link to this heading">#</a></h2>
-<p>The assignment step needs only <code class="docutils literal notranslate"><span class="pre">dist</span></code>. For the center update, a few Karcher
-steps average logarithm vectors in the current tangent space and return to the
-circle with the exponential map:</p>
+<section id="lloyd-updates-through-the-learning-api">
+<h2>Lloyd updates through the learning API<a class="headerlink" href="#lloyd-updates-through-the-learning-api" title="Link to this heading">#</a></h2>
+<p>The assignment step uses exact geodesic distance. The center update minimizes
+the within-cluster Fréchet objective, averaging logarithm vectors in the
+current tangent space and returning to the circle with the exponential map:</p>
 <div class="math notranslate nohighlight">
 \[
 \mu \leftarrow \operatorname{Exp}_{\mu}
@@ -526,47 +540,34 @@ circle with the exponential map:</p>
 \]</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">frechet_mean</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">initial</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
-    <span class="n">center</span> <span class="o">=</span> <span class="n">initial</span>
-    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
-        <span class="n">logs</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">point</span><span class="p">:</span> <span class="n">M</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">point</span><span class="p">))(</span><span class="n">points</span><span class="p">)</span>
-        <span class="n">center</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">logs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">center</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">kmeans</span><span class="p">(</span>
+    <span class="n">M</span><span class="p">,</span>
+    <span class="n">data</span><span class="p">,</span>
+    <span class="n">n_clusters</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">key</span><span class="o">=</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">29</span><span class="p">),</span>
+    <span class="n">init</span><span class="o">=</span><span class="s2">&quot;kmeans++&quot;</span><span class="p">,</span>
+    <span class="n">n_init</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+    <span class="n">maxiter</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">tol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
+<span class="p">)</span>
 
-
-<span class="k">def</span><span class="w"> </span><span class="nf">distances_to_centers</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">centers</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span>
-        <span class="k">lambda</span> <span class="n">point</span><span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">center</span><span class="p">:</span> <span class="n">M</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">center</span><span class="p">))(</span><span class="n">centers</span><span class="p">)</span>
-    <span class="p">)(</span><span class="n">points</span><span class="p">)</span>
-
-
-<span class="n">centers</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">8</span><span class="p">,</span> <span class="mi">68</span><span class="p">,</span> <span class="mi">128</span><span class="p">])]</span>
-<span class="n">objective_history</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
-    <span class="n">distances</span> <span class="o">=</span> <span class="n">distances_to_centers</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">centers</span><span class="p">)</span>
-    <span class="n">labels</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">objective_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)))</span>
-    <span class="n">centers</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span>
-        <span class="n">frechet_mean</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">labels</span> <span class="o">==</span> <span class="n">cluster</span><span class="p">],</span> <span class="n">centers</span><span class="p">[</span><span class="n">cluster</span><span class="p">])</span>
-        <span class="k">for</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-    <span class="p">])</span>
-
-<span class="n">distances</span> <span class="o">=</span> <span class="n">distances_to_centers</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">centers</span><span class="p">)</span>
-<span class="n">labels</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">objective_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)))</span>
+<span class="n">centers</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">centers</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">labels</span>
+<span class="n">objective_history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">diagnostics</span><span class="p">[</span><span class="s2">&quot;objective_history&quot;</span><span class="p">])</span>
 
 <span class="n">estimated_angles</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">centers</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">centers</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;estimated center angles:&quot;</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">estimated_angles</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;final mean squared distance:&quot;</span><span class="p">,</span> <span class="n">objective_history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;final mean squared distance:&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">objective</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;cluster sizes:&quot;</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;termination:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">reason</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>estimated center angles: [-2.24023426  0.15438317  2.06168575]
-final mean squared distance: 0.05340870541780488
+final mean squared distance: 0.053408705417804896
 cluster sizes: [55 55 55]
+termination: objective tolerance reached
 </pre></div>
 </div>
 </div>
@@ -620,7 +621,7 @@ the unit circle.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/afe770bd8ae6956b862eb1c21d30af8f707025b78b87e8bc2a11731336efd41f.png" src="../_images/afe770bd8ae6956b862eb1c21d30af8f707025b78b87e8bc2a11731336efd41f.png" />
+<img alt="../_images/228a638efdd4609f8ddd494b2948f89da115f78a2d51abfdee1d4e945b0a2d3e.png" src="../_images/228a638efdd4609f8ddd494b2948f89da115f78a2d51abfdee1d4e945b0a2d3e.png" />
 </div>
 </div>
 <p>The centers lie on the manifold by construction, including when a cluster
@@ -632,22 +633,22 @@ ordinary arithmetic mean of angles would not have that invariance.</p>
 <ul class="simple">
 <li><p>Increase the cluster spread until points approach the cut locus.</p></li>
 <li><p>Replace <code class="docutils literal notranslate"><span class="pre">Sphere(size=2)</span></code> with <code class="docutils literal notranslate"><span class="pre">Sphere(size=3)</span></code> and draw clusters on <span class="math notranslate nohighlight">\(S^2\)</span>.</p></li>
-<li><p>Use several random initializations and retain the smallest final objective.</p></li>
+<li><p>Compare <code class="docutils literal notranslate"><span class="pre">kmeans</span></code> with <code class="docutils literal notranslate"><span class="pre">kmedoids</span></code> and <code class="docutils literal notranslate"><span class="pre">spectral_clustering</span></code> on the same data.</p></li>
 </ul>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id3">
 <div role="list" class="citation-list">
-<div class="citation" id="id20" role="doc-biblioentry">
+<div class="citation" id="id28" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">Frechet48</a><span class="fn-bracket">]</span></span>
 <p>Maurice Fréchet. Les éléments aléatoires de nature quelconque dans un espace distancié. <em>Annales de l'Institut Henri Poincaré</em>, 10(4):215–310, 1948. URL: <a class="reference external" href="https://www.numdam.org/item/AIHP_1948__10_4_215_0/">https://www.numdam.org/item/AIHP_1948__10_4_215_0/</a>.</p>
 </div>
-<div class="citation" id="id27" role="doc-biblioentry">
+<div class="citation" id="id35" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">Kar77</a><span class="fn-bracket">]</span></span>
 <p>Hermann Karcher. Riemannian center of mass and mollifier smoothing. <em>Communications on Pure and Applied Mathematics</em>, 30(5):509–541, 1977. <a class="reference external" href="https://doi.org/10.1002/cpa.3160300502">doi:10.1002/cpa.3160300502</a>.</p>
 </div>
-<div class="citation" id="id35" role="doc-biblioentry">
+<div class="citation" id="id43" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Llo82</a><span class="fn-bracket">]</span></span>
 <p>Stuart P. Lloyd. Least squares quantization in PCM. <em>IEEE Transactions on Information Theory</em>, 28(2):129–137, 1982. <a class="reference external" href="https://doi.org/10.1109/TIT.1982.1056489">doi:10.1109/TIT.1982.1056489</a>.</p>
 </div>
@@ -676,11 +677,11 @@ ordinary arithmetic mean of angles would not have that invariance.</p>
       </div>
     </a>
     <a class="right-next"
-       href="spd_frechet_mean.html"
+       href="manifold_classification.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Comparing Fréchet Means of SPD Matrices</p>
+        <p class="prev-next-title">Classification with Manifold-Valued Predictors</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -703,7 +704,7 @@ ordinary arithmetic mean of angles would not have that invariance.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lloyd-updates-with-manifold-primitives">Lloyd updates with manifold primitives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lloyd-updates-through-the-learning-api">Lloyd updates through the learning API</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visual-report">Visual report</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-to-try-next">What to try next</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>

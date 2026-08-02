@@ -54,7 +54,7 @@
     <link rel="icon" href="../_static/geojax-gj-favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Dominant eigenvector on the circle" href="sphere_eigenvector.html" />
+    <link rel="next" title="Two-Sample Inference on the Circle" href="two_sample_inference.html" />
     <link rel="prev" title="Comparing Fréchet Means of SPD Matrices" href="spd_frechet_mean.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -388,8 +388,21 @@
 <li class="toctree-l1"><a class="reference internal" href="spd_eeg_classifier.html">SPD prototype networks for motor-imagery EEG</a></li>
 <li class="toctree-l1"><a class="reference internal" href="grassmann_pca.html">Principal component as a Grassmann point</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sphere_kmeans.html">Intrinsic k-means on the circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manifold_classification.html">Classification with Manifold-Valued Predictors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manifold_response_regression.html">Regression with Circular Responses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="barycentric_dictionary.html">Barycentric Dictionary Learning on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="robust_scalable_learning.html">Robust and Scalable Circular Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="semi_supervised_circle.html">Semi-Supervised Learning on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="robust_spherical_summaries.html">Robust Location Summaries on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering_comparison.html">Comparing Clustering Methods on the Circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spd_frechet_mean.html">Comparing Fréchet Means of SPD Matrices</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Hand Poses in Kendall Shape Space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="two_sample_inference.html">Two-Sample Inference on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spd_pga_regression.html">PGA and Regression with SPD Predictors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="product_adapter.html">Adapting Nested Product Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_transport.html">Exact Transport on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dimension_reduction.html">Comparing Manifold Embeddings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spherical_metric_learning.html">Supervised Metric Learning on the Sphere</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sphere_eigenvector.html">Dominant eigenvector on the circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rigid_registration.html">Rigid landmark registration in SE(2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="solver_comparison.html">Comparing solvers in a curved valley</a></li>
@@ -459,13 +472,13 @@
 hand is represented by <span class="math notranslate nohighlight">\(22\)</span> joints in <span class="math notranslate nohighlight">\(\mathbb R^3\)</span>. We want to compare the
 shape of a pose without letting its location, physical scale, or global
 orientation dominate the result. Kendall’s quotient construction supplies the
-statistical shape space used here <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id28" title="David G. Kendall. Shape manifolds, procrustean metrics, and complex projective spaces. Bulletin of the London Mathematical Society, 16(2):81–121, 1984. doi:10.1112/blms/16.2.81.">Kendall, 1984</a>]</span>.</p>
+statistical shape space used here <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id37" title="David G. Kendall. Shape manifolds, procrustean metrics, and complex projective spaces. Bulletin of the London Mathematical Society, 16(2):81–121, 1984. doi:10.1112/blms/16.2.81.">Kendall, 1984</a>]</span>.</p>
 <p>The data are a 52-pose subset of the SHREC’17 3D hand-gesture dataset,
 distributed by the <a class="reference external" href="https://github.com/geomstats/geomstats/tree/master/geomstats/datasets/data/hands">Geomstats dataset
 module</a>.
 There are 25 <strong>Grab</strong> poses and 27 <strong>Expand</strong> poses. The source study is De
 Smedt et al.’s SHREC’17 hand-gesture track
-<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id34" title="Quentin De Smedt, Hazem Wannous, Jean-Philippe Vandeborre, Joris Guerry, Bertrand Le Saux, and David Filliat. SHREC'17 track: 3d hand gesture recognition using a depth and skeletal dataset. In Eurographics Workshop on 3D Object Retrieval, 33–38. The Eurographics Association, 2017. doi:10.2312/3dor.20171049.">De Smedt <em>et al.</em>, 2017</a>]</span>.</p>
+<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id43" title="Quentin De Smedt, Hazem Wannous, Jean-Philippe Vandeborre, Joris Guerry, Bertrand Le Saux, and David Filliat. SHREC'17 track: 3d hand gesture recognition using a depth and skeletal dataset. In Eurographics Workshop on 3D Object Retrieval, 33–38. The Eurographics Association, 2017. doi:10.2312/3dor.20171049.">De Smedt <em>et al.</em>, 2017</a>]</span>.</p>
 <p>GeoJAX vendors the two small source text files with this page, so the
 documentation remains executable without downloading data at build time. See
 the accompanying <a class="reference download internal" download="" href="../_downloads/b0243b3de80a6336f6c80c681630d5a1/NOTICE.txt"><span class="xref download myst">license and provenance
@@ -504,6 +517,11 @@ by their nearest intrinsic mean.</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">geojax.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">KendallShape</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">geojax.learning</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">frechet_anova</span><span class="p">,</span>
+    <span class="n">nearest_centroid_classifier</span><span class="p">,</span>
+    <span class="n">pairwise_distances</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
     <span class="s2">&quot;figure.dpi&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
@@ -597,68 +615,53 @@ Intrinsic dimension: 59
 </section>
 <section id="compute-intrinsic-group-means">
 <h2>Compute intrinsic group means<a class="headerlink" href="#compute-intrinsic-group-means" title="Link to this heading">#</a></h2>
-<p>At a current estimate <span class="math notranslate nohighlight">\(\mu_t\)</span>, the average logarithm</p>
+<p>At a current estimate <span class="math notranslate nohighlight">\(\mu\)</span>, the Fréchet objective and its gradient are</p>
 <div class="math notranslate nohighlight">
 \[
-v_t=\frac1N\sum_{i=1}^N\operatorname{Log}_{\mu_t}(X_i)
+F(\mu)=\frac1N\sum_{i=1}^N d(\mu,X_i)^2,
+\qquad
+\operatorname{grad}F(\mu)
+=-\frac{2}{N}\sum_{i=1}^N\operatorname{Log}_{\mu}(X_i).
 \]</div>
-<p>is the negative Riemannian gradient of the Fréchet objective. The Karcher
-iteration</p>
-<div class="math notranslate nohighlight">
-\[
-\mu_{t+1}=\operatorname{Exp}_{\mu_t}(v_t)
-\]</div>
-<p>therefore moves along the intrinsic average displacement. We initialize by
-Procrustes-aligning the group to one observation and projecting its ambient
-average.</p>
+<p>GeoJAX’s public <code class="docutils literal notranslate"><span class="pre">nearest_centroid_classifier</span></code> computes one weighted Fréchet
+mean per class with deterministic medoid initialization. This avoids giving
+the tutorial a second, subtly different implementation of a core learning
+routine.</p>
 <p>Every fourth observation is held out before estimating the two means. This is
 a deterministic illustrative split, not a claim of benchmark performance.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">initial_shape_mean</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
-    <span class="n">reference</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">aligned</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">point</span><span class="p">:</span> <span class="n">M</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">reference</span><span class="p">)[</span><span class="mi">0</span><span class="p">])(</span><span class="n">points</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">M</span><span class="o">.</span><span class="n">project</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">aligned</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">frechet_mean</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">):</span>
-    <span class="n">mean</span> <span class="o">=</span> <span class="n">initial_shape_mean</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
-    <span class="n">update_norms</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">maxiter</span><span class="p">):</span>
-        <span class="n">logarithms</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">point</span><span class="p">:</span> <span class="n">M</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">point</span><span class="p">))(</span><span class="n">points</span><span class="p">)</span>
-        <span class="n">update</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">logarithms</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">update_norm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">update</span><span class="p">))</span>
-        <span class="n">update_norms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">update_norm</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">update_norm</span> <span class="o">&lt;</span> <span class="n">tolerance</span><span class="p">:</span>
-            <span class="k">break</span>
-        <span class="n">mean</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">update</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">mean</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">update_norms</span><span class="p">)</span>
-
-
-<span class="n">sample_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sample_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span>
 <span class="n">train_mask</span> <span class="o">=</span> <span class="n">sample_ids</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">!=</span> <span class="mi">0</span>
 <span class="n">test_mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">train_mask</span>
 
-<span class="n">means</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">classifier</span> <span class="o">=</span> <span class="n">nearest_centroid_classifier</span><span class="p">(</span>
+    <span class="n">M</span><span class="p">,</span>
+    <span class="n">hands</span><span class="p">[</span><span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">train_mask</span><span class="p">)],</span>
+    <span class="n">labels</span><span class="p">[</span><span class="n">train_mask</span><span class="p">],</span>
+    <span class="n">maxiter</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+    <span class="n">tol</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">means</span> <span class="o">=</span> <span class="n">classifier</span><span class="o">.</span><span class="n">centers</span>
 <span class="n">mean_histories</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
-    <span class="n">group</span> <span class="o">=</span> <span class="n">hands</span><span class="p">[</span><span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">train_mask</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">labels</span> <span class="o">==</span> <span class="n">label</span><span class="p">))]</span>
-    <span class="n">mean</span><span class="p">,</span> <span class="n">history</span> <span class="o">=</span> <span class="n">frechet_mean</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
-    <span class="n">means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mean</span><span class="p">)</span>
-    <span class="n">mean_histories</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">history</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">result</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">classifier</span><span class="o">.</span><span class="n">diagnostics</span><span class="p">[</span><span class="s2">&quot;class_fits&quot;</span><span class="p">]):</span>
+    <span class="n">group_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">train_mask</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">labels</span> <span class="o">==</span> <span class="n">label</span><span class="p">)))</span>
+    <span class="n">mean_histories</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span>
+        <span class="n">entry</span><span class="o">.</span><span class="n">gradnorm</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">diagnostics</span><span class="p">[</span><span class="s2">&quot;history&quot;</span><span class="p">]</span>
+    <span class="p">]))</span>
     <span class="nb">print</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label_names</span><span class="p">[</span><span class="n">label</span><span class="p">]</span><span class="si">:</span><span class="s2">6s</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">group</span><span class="p">)</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2"> training poses, &quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">history</span><span class="p">)</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2"> updates, final norm </span><span class="si">{</span><span class="n">history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label_names</span><span class="p">[</span><span class="n">label</span><span class="p">]</span><span class="si">:</span><span class="s2">6s</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">group_size</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2"> training poses, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">iterations</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2"> iterations, final norm &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">gradient_norm</span><span class="p">)</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">reason</span><span class="si">}</span><span class="s2">)&quot;</span>
     <span class="p">)</span>
 
-<span class="n">means</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">means</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Distance between group means:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">means</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Grab  : 18 training poses,  9 updates, final norm 1.804e-09
-Expand: 21 training poses,  5 updates, final norm 6.849e-10
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Grab  : 18 training poses, 60 iterations, final norm 1.140e-06 (Maximum iteration count reached: options.maxiter = 60.)
+Expand: 21 training poses, 48 iterations, final norm 4.872e-08 (gradient tolerance reached)
 Distance between group means: 0.2602
 </pre></div>
 </div>
@@ -672,10 +675,8 @@ Distance between group means: 0.2602
 determines the predicted pose.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">distances</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span>
-    <span class="k">lambda</span> <span class="n">hand</span><span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">mean</span><span class="p">:</span> <span class="n">M</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">hand</span><span class="p">,</span> <span class="n">mean</span><span class="p">))(</span><span class="n">means</span><span class="p">)</span>
-<span class="p">)(</span><span class="n">hands</span><span class="p">)</span>
-<span class="n">predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">distances</span> <span class="o">=</span> <span class="n">pairwise_distances</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">hands</span><span class="p">,</span> <span class="n">means</span><span class="p">)</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">classifier</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">hands</span><span class="p">))</span>
 <span class="n">test_accuracy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">predictions</span><span class="p">[</span><span class="n">test_mask</span><span class="p">]</span> <span class="o">==</span> <span class="n">labels</span><span class="p">[</span><span class="n">test_mask</span><span class="p">])</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Held-out poses: </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">test_mask</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -699,6 +700,42 @@ Held-out accuracy: 84.6%
 Held-out confusion counts (truth -&gt; prediction)
 Grab  : Grab= 5, Expand= 2
 Expand: Grab= 0, Expand= 6
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="test-the-two-pose-populations">
+<h2>Test the two pose populations<a class="headerlink" href="#test-the-two-pose-populations" title="Link to this heading">#</a></h2>
+<p>Classification asks whether a rule predicts held-out labels. Fréchet ANOVA asks
+a different question: whether the two object-valued populations have equal
+location and variation in the metric space. The test combines between-group
+mean separation with differences in within-group Fréchet variance
+<span class="bibtex-citation" id="id3">[<a class="reference internal" href="#id66" title="Paromita Dubey and Hans-Georg Müller. Fréchet analysis of variance for random objects. Biometrika, 106(4):803–821, 2019. doi:10.1093/biomet/asz052.">Dubey and Müller, 2019</a>]</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fanova</span> <span class="o">=</span> <span class="n">frechet_anova</span><span class="p">(</span>
+    <span class="n">M</span><span class="p">,</span>
+    <span class="n">hands</span><span class="p">,</span>
+    <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">labels</span><span class="p">),</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;asymptotic&quot;</span><span class="p">,</span>
+    <span class="n">maxiter</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+    <span class="n">tol</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fréchet ANOVA statistic:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">fanova</span><span class="o">.</span><span class="n">statistic</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;asymptotic p-value:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">fanova</span><span class="o">.</span><span class="n">pvalue</span><span class="p">)</span><span class="si">:</span><span class="s2">.4g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;group Fréchet variances:&quot;</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">fanova</span><span class="o">.</span><span class="n">diagnostics</span><span class="p">[</span><span class="s2">&quot;group_variances&quot;</span><span class="p">]),</span> <span class="mi">5</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Fréchet ANOVA statistic: 0.6178
+asymptotic p-value: 0.4319
+group Fréchet variances: [0.15582 0.03582]
 </pre></div>
 </div>
 </div>
@@ -801,8 +838,8 @@ Expand. Stars mark the held-out observations.</p>
         <span class="n">label</span><span class="o">=</span><span class="n">label_names</span><span class="p">[</span><span class="n">label</span><span class="p">],</span>
     <span class="p">)</span>
 <span class="n">convergence_axis</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Karcher update&quot;</span><span class="p">,</span>
-    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;average-log norm&quot;</span><span class="p">,</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;solver iteration&quot;</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Riemannian gradient norm&quot;</span><span class="p">,</span>
     <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Fréchet-mean convergence&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">convergence_axis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
@@ -813,7 +850,7 @@ Expand. Stars mark the held-out observations.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/50ae732d5a29cf11c7ff53ba83177ab105fe4314d8bb7cf158851704756353d5.png" src="../_images/50ae732d5a29cf11c7ff53ba83177ab105fe4314d8bb7cf158851704756353d5.png" />
+<img alt="../_images/04de73f3fe337269ce81ec4c23a28763d3147faac5815600ccc6150280d234fd.png" src="../_images/04de73f3fe337269ce81ec4c23a28763d3147faac5815600ccc6150280d234fd.png" />
 </div>
 </div>
 <p>The group means summarize the characteristic joint configuration after
@@ -824,13 +861,17 @@ uncertainty estimates, and comparisons with tangent-space or skeletal models.</p
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
-<div class="docutils container" id="id3">
+<div class="docutils container" id="id4">
 <div role="list" class="citation-list">
-<div class="citation" id="id34" role="doc-biblioentry">
+<div class="citation" id="id43" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">DSWV+17</a><span class="fn-bracket">]</span></span>
 <p>Quentin De Smedt, Hazem Wannous, Jean-Philippe Vandeborre, Joris Guerry, Bertrand Le Saux, and David Filliat. SHREC'17 track: 3d hand gesture recognition using a depth and skeletal dataset. In <em>Eurographics Workshop on 3D Object Retrieval</em>, 33–38. The Eurographics Association, 2017. <a class="reference external" href="https://doi.org/10.2312/3dor.20171049">doi:10.2312/3dor.20171049</a>.</p>
 </div>
-<div class="citation" id="id28" role="doc-biblioentry">
+<div class="citation" id="id66" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">DMuller19</a><span class="fn-bracket">]</span></span>
+<p>Paromita Dubey and Hans-Georg Müller. Fréchet analysis of variance for random objects. <em>Biometrika</em>, 106(4):803–821, 2019. <a class="reference external" href="https://doi.org/10.1093/biomet/asz052">doi:10.1093/biomet/asz052</a>.</p>
+</div>
+<div class="citation" id="id37" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Ken84</a><span class="fn-bracket">]</span></span>
 <p>David G. Kendall. Shape manifolds, procrustean metrics, and complex projective spaces. <em>Bulletin of the London Mathematical Society</em>, 16(2):81–121, 1984. <a class="reference external" href="https://doi.org/10.1112/blms/16.2.81">doi:10.1112/blms/16.2.81</a>.</p>
 </div>
@@ -859,11 +900,11 @@ uncertainty estimates, and comparisons with tangent-space or skeletal models.</p
       </div>
     </a>
     <a class="right-next"
-       href="sphere_eigenvector.html"
+       href="two_sample_inference.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Dominant eigenvector on the circle</p>
+        <p class="prev-next-title">Two-Sample Inference on the Circle</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -891,6 +932,7 @@ uncertainty estimates, and comparisons with tangent-space or skeletal models.</p
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#remove-translation-and-scale">Remove translation and scale</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compute-intrinsic-group-means">Compute intrinsic group means</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#classify-by-the-nearest-mean">Classify by the nearest mean</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-the-two-pose-populations">Test the two pose populations</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-poses-means-and-separation">Visualize poses, means, and separation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
 </ul>

@@ -383,26 +383,22 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="geojax">
 <h1>GeoJAX<a class="headerlink" href="#geojax" title="Link to this heading">#</a></h1>
-<p>GeoJAX is a JAX-native toolkit for computations on Riemannian manifolds. It
-keeps the model simple: geometries provide exact primitives where available
-and clearly labeled retraction proxies otherwise, while optimization algorithms
-consume the common manifold protocol and learning utilities compose those
-primitives inside compiled models.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
+<p>GeoJAX is a JAX-native toolkit for Riemannian geometry, manifold optimization,
+and statistical and machine learning with manifold-valued data. Geometries
+define representations and exact primitives where available; optimization and
+learning methods consume that common protocol without flattening every
+scientific object into an ordinary vector.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">geojax.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sphere</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">geojax.optimization</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConjugateGradient</span><span class="p">,</span> <span class="n">Minimize</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">geojax.learning</span><span class="w"> </span><span class="kn">import</span> <span class="n">as_manifold_data</span><span class="p">,</span> <span class="n">frechet_mean</span><span class="p">,</span> <span class="n">pairwise_distances</span>
 
 <span class="n">M</span> <span class="o">=</span> <span class="n">Sphere</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="n">A</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]])</span>
+<span class="n">observations</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">random_point</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">sample_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">32</span><span class="p">,))</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">as_manifold_data</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">observations</span><span class="p">)</span>
 
-<span class="n">problem</span> <span class="o">=</span> <span class="n">Minimize</span><span class="p">(</span>
-    <span class="n">M</span><span class="o">=</span><span class="n">M</span><span class="p">,</span>
-    <span class="n">cost</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="n">x</span> <span class="o">@</span> <span class="n">A</span> <span class="o">@</span> <span class="n">x</span><span class="p">,</span>
-    <span class="n">solver</span><span class="o">=</span><span class="n">ConjugateGradient</span><span class="p">(</span><span class="n">verbosity</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
-    <span class="n">key</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">eigenvector</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="n">center</span> <span class="o">=</span> <span class="n">frechet_mean</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">point</span>
+<span class="n">distances</span> <span class="o">=</span> <span class="n">pairwise_distances</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="landing-grid">
@@ -411,7 +407,7 @@ primitives inside compiled models.</p>
       <i class="fa-solid fa-rocket"></i>
     </div>
     <h2>Getting started</h2>
-    <p>Install GeoJAX and solve a first optimization problem on a manifold.</p>
+    <p>Install GeoJAX, validate manifold data, and solve a first geometric learning problem.</p>
   </a>
   <a class="landing-card" href="tutorials/index.html">
     <div class="landing-card-icon" aria-hidden="true">
@@ -425,21 +421,21 @@ primitives inside compiled models.</p>
       <i class="fa-solid fa-book-open"></i>
     </div>
     <h2>User guide</h2>
-    <p>Understand geometry conventions, representations, and solver choices.</p>
+    <p>Understand geometry conventions, learning workflows, and solver choices.</p>
   </a>
   <a class="landing-card" href="api/index.html">
     <div class="landing-card-icon" aria-hidden="true">
       <i class="fa-solid fa-code"></i>
     </div>
     <h2>API reference</h2>
-    <p>Look up public geometries, learning primitives, optimization problems, and solvers.</p>
+    <p>Look up public geometries, manifold-learning methods, optimization problems, and solvers.</p>
   </a>
 </div>
 <div class="note admonition">
 <p class="admonition-title">Scope</p>
-<p>GeoJAX is alpha software. The API favors explicit geometry and derivative
-contracts while its expanding solver set is validated on small scientific
-problems and executable tutorials.</p>
+<p>GeoJAX is alpha software. Geometry capabilities, derivative contracts, and
+learning-data validation are explicit. Optimization and learning methods are
+tested on analytic cases, representative manifolds, and executable tutorials.</p>
 </div>
 <div class="toctree-wrapper compound">
 </div>

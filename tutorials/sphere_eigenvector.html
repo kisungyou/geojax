@@ -55,7 +55,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Rigid landmark registration in SE(2)" href="rigid_registration.html" />
-    <link rel="prev" title="Hand Poses in Kendall Shape Space" href="kendall_hand_shapes.html" />
+    <link rel="prev" title="Supervised Metric Learning on the Sphere" href="spherical_metric_learning.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -388,8 +388,21 @@
 <li class="toctree-l1"><a class="reference internal" href="spd_eeg_classifier.html">SPD prototype networks for motor-imagery EEG</a></li>
 <li class="toctree-l1"><a class="reference internal" href="grassmann_pca.html">Principal component as a Grassmann point</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sphere_kmeans.html">Intrinsic k-means on the circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manifold_classification.html">Classification with Manifold-Valued Predictors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manifold_response_regression.html">Regression with Circular Responses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="barycentric_dictionary.html">Barycentric Dictionary Learning on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="robust_scalable_learning.html">Robust and Scalable Circular Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="semi_supervised_circle.html">Semi-Supervised Learning on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="robust_spherical_summaries.html">Robust Location Summaries on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering_comparison.html">Comparing Clustering Methods on the Circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spd_frechet_mean.html">Comparing Fréchet Means of SPD Matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="kendall_hand_shapes.html">Hand Poses in Kendall Shape Space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="two_sample_inference.html">Two-Sample Inference on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spd_pga_regression.html">PGA and Regression with SPD Predictors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="product_adapter.html">Adapting Nested Product Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_transport.html">Exact Transport on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dimension_reduction.html">Comparing Manifold Embeddings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spherical_metric_learning.html">Supervised Metric Learning on the Sphere</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Dominant eigenvector on the circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rigid_registration.html">Rigid landmark registration in SE(2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="solver_comparison.html">Comparing solvers in a curved valley</a></li>
@@ -457,7 +470,7 @@
 <h1>Dominant eigenvector on the circle<a class="headerlink" href="#dominant-eigenvector-on-the-circle" title="Link to this heading">#</a></h1>
 <p>This first problem is the classical Rayleigh-quotient example for optimization
 on a sphere and appears throughout the matrix-manifold optimization literature
-<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id3" title="P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. Optimization Algorithms on Matrix Manifolds. Princeton University Press, 2008. doi:10.1515/9781400830244.">Absil <em>et al.</em>, 2008</a>, <a class="reference internal" href="#id12" title="Nicolas Boumal, Bamdev Mishra, P.-A. Absil, and Rodolphe Sepulchre. Manopt, a Matlab toolbox for optimization on manifolds. Journal of Machine Learning Research, 15(42):1455–1459, 2014. URL: https://jmlr.org/papers/v15/boumal14a.html.">Boumal <em>et al.</em>, 2014</a>, <a class="reference internal" href="#id18" title="Alan Edelman, Tomás A. Arias, and Steven T. Smith. The geometry of algorithms with orthogonality constraints. SIAM Journal on Matrix Analysis and Applications, 20(2):303–353, 1998. doi:10.1137/S0895479895290954.">Edelman <em>et al.</em>, 1998</a>]</span>. We use
+<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id3" title="P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. Optimization Algorithms on Matrix Manifolds. Princeton University Press, 2008. doi:10.1515/9781400830244.">Absil <em>et al.</em>, 2008</a>, <a class="reference internal" href="#id20" title="Nicolas Boumal, Bamdev Mishra, P.-A. Absil, and Rodolphe Sepulchre. Manopt, a Matlab toolbox for optimization on manifolds. Journal of Machine Learning Research, 15(42):1455–1459, 2014. URL: https://jmlr.org/papers/v15/boumal14a.html.">Boumal <em>et al.</em>, 2014</a>, <a class="reference internal" href="#id26" title="Alan Edelman, Tomás A. Arias, and Steven T. Smith. The geometry of algorithms with orthogonality constraints. SIAM Journal on Matrix Analysis and Applications, 20(2):303–353, 1998. doi:10.1137/S0895479895290954.">Edelman <em>et al.</em>, 1998</a>]</span>. We use
 <span class="math notranslate nohighlight">\(S^1\subset\mathbb{R}^2\)</span> so that the optimizer and objective can be seen
 directly.</p>
 <p>For a symmetric matrix <span class="math notranslate nohighlight">\(A\)</span>, a dominant eigenvector maximizes the Rayleigh
@@ -614,11 +627,11 @@ penalty or post-hoc normalization is needed in the optimization model.</p>
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">AMS08</a><span class="fn-bracket">]</span></span>
 <p>P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. <em>Optimization Algorithms on Matrix Manifolds</em>. Princeton University Press, 2008. <a class="reference external" href="https://doi.org/10.1515/9781400830244">doi:10.1515/9781400830244</a>.</p>
 </div>
-<div class="citation" id="id12" role="doc-biblioentry">
+<div class="citation" id="id20" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">BMAS14</a><span class="fn-bracket">]</span></span>
 <p>Nicolas Boumal, Bamdev Mishra, P.-A. Absil, and Rodolphe Sepulchre. Manopt, a Matlab toolbox for optimization on manifolds. <em>Journal of Machine Learning Research</em>, 15(42):1455–1459, 2014. URL: <a class="reference external" href="https://jmlr.org/papers/v15/boumal14a.html">https://jmlr.org/papers/v15/boumal14a.html</a>.</p>
 </div>
-<div class="citation" id="id18" role="doc-biblioentry">
+<div class="citation" id="id26" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">EAS98</a><span class="fn-bracket">]</span></span>
 <p>Alan Edelman, Tomás A. Arias, and Steven T. Smith. The geometry of algorithms with orthogonality constraints. <em>SIAM Journal on Matrix Analysis and Applications</em>, 20(2):303–353, 1998. <a class="reference external" href="https://doi.org/10.1137/S0895479895290954">doi:10.1137/S0895479895290954</a>.</p>
 </div>
@@ -638,12 +651,12 @@ penalty or post-hoc normalization is needed in the optimization model.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="kendall_hand_shapes.html"
+       href="spherical_metric_learning.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Hand Poses in Kendall Shape Space</p>
+        <p class="prev-next-title">Supervised Metric Learning on the Sphere</p>
       </div>
     </a>
     <a class="right-next"
