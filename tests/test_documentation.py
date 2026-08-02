@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import inspect
 from pathlib import Path
 import re
 
 import numpy as np
 
+import geojax.learning as learning
 from docs.audit_html import audit_site, tex_syntax_errors
 
 
@@ -19,6 +21,27 @@ SCIENTIFIC_GUIDES = {
     Path("development/learning_protocol.md"),
     Path("development/optimization_protocol.md"),
 }
+
+
+def test_learning_api_documents_every_public_symbol_once():
+    text = (DOCS / "api" / "learning.md").read_text(encoding="utf-8")
+    documented_functions = re.findall(
+        r"\.\. autofunction::\s+([A-Za-z_][A-Za-z0-9_]*)", text
+    )
+    documented_classes = re.findall(
+        r"\.\. (?:autoclass|autoexception)::\s+([A-Za-z_][A-Za-z0-9_]*)", text
+    )
+    public_functions = {
+        name for name in learning.__all__ if inspect.isfunction(getattr(learning, name))
+    }
+    public_classes = {
+        name for name in learning.__all__ if inspect.isclass(getattr(learning, name))
+    }
+
+    assert set(documented_functions) == public_functions
+    assert set(documented_classes) == public_classes
+    assert len(documented_functions) == len(set(documented_functions))
+    assert len(documented_classes) == len(set(documented_classes))
 
 
 def markdown_prose_blocks(path: Path):
@@ -204,3 +227,11 @@ def test_all_documentation_citations_resolve_to_unique_bibtex_entries():
     missing_keys = sorted(cited_keys - set(keys))
     assert not duplicate_keys, f"Duplicate BibTeX keys: {duplicate_keys}"
     assert not missing_keys, f"Missing BibTeX entries: {missing_keys}"
+
+
+def test_bibliography_does_not_leak_math_delimiters_into_prose():
+    bibliography = (DOCS / "references.bib").read_text(encoding="utf-8")
+    assert "$" not in bibliography, (
+        "BibTeX math delimiters render literally in citation titles; use plain "
+        "bibliographic text instead."
+    )

@@ -50,7 +50,7 @@ import numpy as np
 from matplotlib.lines import Line2D
 
 from geojax.geometry import Euclidean, Hyperboloid, Sphere
-from geojax.learning import geodesic_interpolate, pairwise_squared_dist
+from geojax.learning import geodesic_interpolation, pairwise_distances
 
 plt.rcParams.update({
     "figure.dpi": 210,
@@ -344,10 +344,11 @@ def make_model(geometry):
             tangent_coordinates(radial_cap(parameters["prototypes"])),
         )
         temperature = jax.nn.softplus(parameters["raw_temperature"]) + 1.0
-        logits = -temperature * pairwise_squared_dist(
+        logits = -temperature * pairwise_distances(
             geometry,
             points,
             prototypes,
+            squared=True,
         )
         return logits, points, prototypes, learned_step, temperature
 
@@ -540,7 +541,7 @@ plt.show()
 
 The same abstract operation can be visualized in three coordinate models.
 Edges below are shortest-geodesic interpolations computed by
-{func}`geojax.learning.geodesic_interpolate`; they are not straight chords
+{func}`geojax.learning.geodesic_interpolation`; they are not straight chords
 drawn through the ambient space.
 
 ```{code-cell} python
@@ -551,7 +552,7 @@ edge_pairs = list(graph.edges())
 def edge_geodesics(geometry, points):
     return [
         np.asarray(
-            geodesic_interpolate(
+            geodesic_interpolation(
                 geometry,
                 points[source],
                 points[target],
@@ -858,7 +859,9 @@ for ax, (name, geometry) in zip(axes, geometries.items()):
     points = results[name]["points"]
     latent_distances = np.sqrt(
         np.maximum(
-            np.asarray(pairwise_squared_dist(geometry, points, points)),
+            np.asarray(
+                pairwise_distances(geometry, points, points, squared=True)
+            ),
             0.0,
         )
     )

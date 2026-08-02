@@ -72,6 +72,61 @@ through an executable GeoJAX solution and a visual report of the result.
 
 <div class="tutorial-gallery">
 
+  <a class="tutorial-card" href="manifold_classification.html">
+    <div class="tutorial-card-media">
+      <img src="../_static/tutorials/manifold-classification.png" alt="Four intrinsic and tangent-space classifiers compared on circular data">
+    </div>
+    <div class="tutorial-card-body">
+      <p class="tutorial-card-meta">Sphere / Classification</p>
+      <h2>Classification with manifold-valued predictors</h2>
+      <p>Compare Fréchet centroids, geodesic k-NN, tangent logistic regression, and intrinsic-coordinate LDA.</p>
+    </div>
+  </a>
+
+  <a class="tutorial-card" href="manifold_response_regression.html">
+    <div class="tutorial-card-media">
+      <img src="../_static/tutorials/manifold-response-regression.png" alt="Geodesic and local-linear regression curves with circular responses and bootstrap uncertainty">
+    </div>
+    <div class="tutorial-card-body">
+      <p class="tutorial-card-meta">Sphere / Manifold response</p>
+      <h2>Regression with circular responses</h2>
+      <p>Fit parametric geodesic and local Fréchet regressions, then bootstrap a central circular response.</p>
+    </div>
+  </a>
+
+  <a class="tutorial-card" href="barycentric_dictionary.html">
+    <div class="tutorial-card-media">
+      <img src="../_static/tutorials/barycentric-dictionary.png" alt="Circular dictionary atoms, barycentric code matrix, and reconstruction errors">
+    </div>
+    <div class="tutorial-card-body">
+      <p class="tutorial-card-meta">Sphere / Representation learning</p>
+      <h2>Barycentric dictionary learning</h2>
+      <p>Replace linear combinations with intrinsic Karcher equations and learn atoms directly on the circle.</p>
+    </div>
+  </a>
+
+  <a class="tutorial-card" href="robust_scalable_learning.html">
+    <div class="tutorial-card-media">
+      <img src="../_static/tutorials/robust-scalable-learning.png" alt="Robust circular locations, spatial depth, and mini-batch clustering">
+    </div>
+    <div class="tutorial-card-body">
+      <p class="tutorial-card-meta">Sphere / Robust and scalable</p>
+      <h2>Robust and scalable summaries</h2>
+      <p>Contrast full, streaming, mini-batch, trimmed, and geodesic M-estimates on contaminated circular data.</p>
+    </div>
+  </a>
+
+  <a class="tutorial-card" href="semi_supervised_circle.html">
+    <div class="tutorial-card-media">
+      <img src="../_static/tutorials/semi-supervised-circle.png" alt="Circular label propagation and graph-regularized response prediction">
+    </div>
+    <div class="tutorial-card-body">
+      <p class="tutorial-card-meta">Sphere / Semi-supervised learning</p>
+      <h2>Semi-supervised learning on the circle</h2>
+      <p>Propagate sparse labels and smooth scalar responses over a geodesic-distance graph.</p>
+    </div>
+  </a>
+
   <a class="tutorial-card" href="grassmann_pca.html">
     <div class="tutorial-card-media">
       <img src="../_static/tutorials/grassmann-pca.png" alt="Three-dimensional point cloud, principal subspace, and optimization history">
@@ -94,6 +149,28 @@ through an executable GeoJAX solution and a visual report of the result.
     </div>
   </a>
 
+  <a class="tutorial-card" href="robust_spherical_summaries.html">
+    <div class="tutorial-card-media">
+      <img src="../_static/tutorials/robust-spherical-summaries.png" alt="Circular observations with intrinsic mean, median, enclosing ball, neighbors, and loss profiles">
+    </div>
+    <div class="tutorial-card-body">
+      <p class="tutorial-card-meta">Sphere / Robust statistics</p>
+      <h2>Robust location summaries on the circle</h2>
+      <p>Compare the Fréchet mean, geometric median, enclosing ball, nearest neighbors, and a geodesic interpolation.</p>
+    </div>
+  </a>
+
+  <a class="tutorial-card" href="clustering_comparison.html">
+    <div class="tutorial-card-media">
+      <img src="../_static/tutorials/clustering-comparison.png" alt="Seven clustering and quantization methods compared on circular data">
+    </div>
+    <div class="tutorial-card-body">
+      <p class="tutorial-card-meta">Sphere / Clustering</p>
+      <h2>Comparing clustering methods</h2>
+      <p>Contrast k-means, medoids, hierarchy, spectral clustering, mean shift, quantization, and a lightweight coreset.</p>
+    </div>
+  </a>
+
   <a class="tutorial-card" href="spd_frechet_mean.html">
     <div class="tutorial-card-media">
       <img src="../_static/tutorials/spd-frechet-mean.png" alt="Covariance ellipses, Fréchet means, and solver convergence">
@@ -111,8 +188,74 @@ through an executable GeoJAX solution and a visual report of the result.
     </div>
     <div class="tutorial-card-body">
       <p class="tutorial-card-meta">Kendall shape / Real data</p>
-      <h2>Hand poses in Kendall shape space</h2>
-      <p>Compute intrinsic means and classify SHREC'17 hand poses using rotation-, scale-, and translation-invariant distances.</p>
+      <h2>Shape-space inference for hand poses</h2>
+      <p>Compute intrinsic means, classify SHREC'17 hand poses, and test the two pose populations with Fréchet ANOVA.</p>
+    </div>
+  </a>
+
+  <a class="tutorial-card" href="two_sample_inference.html">
+    <div class="tutorial-card-media">
+      <img src="../_static/tutorials/two-sample-inference.png" alt="Two circular samples, their distance matrix, and permutation null distributions">
+    </div>
+    <div class="tutorial-card-body">
+      <p class="tutorial-card-meta">Sphere / Inference</p>
+      <h2>Two-sample inference on the circle</h2>
+      <p>Compare Fréchet ANOVA, distance, energy, PSD-kernel MMD, and exact-Wasserstein permutation tests.</p>
+    </div>
+  </a>
+
+  <a class="tutorial-card" href="spd_pga_regression.html">
+    <div class="tutorial-card-media">
+      <img src="../_static/tutorials/spd-pga-regression.png" alt="Covariance ellipses, principal geodesic coordinates, and a fitted response curve">
+    </div>
+    <div class="tutorial-card-body">
+      <p class="tutorial-card-meta">SPD / Regression</p>
+      <h2>PGA and regression with SPD predictors</h2>
+      <p>Recover a covariance trajectory with PGA and fit a scalar response directly from manifold distances.</p>
+    </div>
+  </a>
+
+  <a class="tutorial-card" href="product_adapter.html">
+    <div class="tutorial-card-media">
+      <img src="../_static/tutorials/product-adapter.png" alt="Spherical directions, periodic states, and a Product distance matrix">
+    </div>
+    <div class="tutorial-card-body">
+      <p class="tutorial-card-meta">Product / Data adaptation</p>
+      <h2>Adapting nested Product data</h2>
+      <p>Convert mixed scientific representations into one validated pytree and reuse it across learning methods.</p>
+    </div>
+  </a>
+
+  <a class="tutorial-card" href="optimal_transport.html">
+    <div class="tutorial-card-media">
+      <img src="../_static/tutorials/optimal-transport.png" alt="Two empirical measures on a circle and their exact optimal coupling">
+    </div>
+    <div class="tutorial-card-body">
+      <p class="tutorial-card-meta">Sphere / Optimal transport</p>
+      <h2>Exact transport on the circle</h2>
+      <p>Solve a weighted transportation problem with geodesic costs and inspect feasibility and duality diagnostics.</p>
+    </div>
+  </a>
+
+  <a class="tutorial-card" href="dimension_reduction.html">
+    <div class="tutorial-card-media">
+      <img src="../_static/tutorials/dimension-reduction.png" alt="A spherical trajectory embedded by six dimension-reduction methods">
+    </div>
+    <div class="tutorial-card-body">
+      <p class="tutorial-card-meta">Sphere / Dimension reduction</p>
+      <h2>Comparing manifold embeddings</h2>
+      <p>Compare MDS, kernel PCA, Isomap, Sammon mapping, t-SNE, and PHATE on the same curved dataset.</p>
+    </div>
+  </a>
+
+  <a class="tutorial-card" href="spherical_metric_learning.html">
+    <div class="tutorial-card-media">
+      <img src="../_static/tutorials/spherical-metric-learning.png" alt="Spherical labeled data before and after equivariant-embedding metric learning">
+    </div>
+    <div class="tutorial-card-body">
+      <p class="tutorial-card-meta">Sphere / Supervised learning</p>
+      <h2>Supervised metric learning on the sphere</h2>
+      <p>Learn a task-specific embedded metric and compare it with the sphere's intrinsic geodesic distance.</p>
     </div>
   </a>
 </div>
@@ -166,8 +309,21 @@ graph_curvature
 spd_eeg_classifier
 grassmann_pca
 sphere_kmeans
+manifold_classification
+manifold_response_regression
+barycentric_dictionary
+robust_scalable_learning
+semi_supervised_circle
+robust_spherical_summaries
+clustering_comparison
 spd_frechet_mean
 kendall_hand_shapes
+two_sample_inference
+spd_pga_regression
+product_adapter
+optimal_transport
+dimension_reduction
+spherical_metric_learning
 sphere_eigenvector
 rigid_registration
 solver_comparison

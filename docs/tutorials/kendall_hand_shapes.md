@@ -66,6 +66,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from geojax.geometry import KendallShape
+from geojax.learning import (
+    frechet_anova,
+    nearest_centroid_classifier,
+    pairwise_distances,
+)
 
 plt.rcParams.update({
     "figure.dpi": 200,
@@ -135,64 +140,48 @@ print("Intrinsic dimension:", M.dim)
 
 ## Compute intrinsic group means
 
-At a current estimate $\mu_t$, the average logarithm
+At a current estimate $\mu$, the Fréchet objective and its gradient are
 
 $$
-v_t=\frac1N\sum_{i=1}^N\operatorname{Log}_{\mu_t}(X_i)
+F(\mu)=\frac1N\sum_{i=1}^N d(\mu,X_i)^2,
+\qquad
+\operatorname{grad}F(\mu)
+=-\frac{2}{N}\sum_{i=1}^N\operatorname{Log}_{\mu}(X_i).
 $$
 
-is the negative Riemannian gradient of the Fréchet objective. The Karcher
-iteration
-
-$$
-\mu_{t+1}=\operatorname{Exp}_{\mu_t}(v_t)
-$$
-
-therefore moves along the intrinsic average displacement. We initialize by
-Procrustes-aligning the group to one observation and projecting its ambient
-average.
+GeoJAX's public `nearest_centroid_classifier` computes one weighted Fréchet
+mean per class with deterministic medoid initialization. This avoids giving
+the tutorial a second, subtly different implementation of a core learning
+routine.
 
 Every fourth observation is held out before estimating the two means. This is
 a deterministic illustrative split, not a claim of benchmark performance.
 
 ```{code-cell} python
-def initial_shape_mean(points):
-    reference = points[0]
-    aligned = jax.vmap(lambda point: M.align(point, reference)[0])(points)
-    return M.project(jnp.mean(aligned, axis=0))
-
-
-def frechet_mean(points, maxiter=40, tolerance=1e-8):
-    mean = initial_shape_mean(points)
-    update_norms = []
-    for _ in range(maxiter):
-        logarithms = jax.vmap(lambda point: M.log(mean, point))(points)
-        update = jnp.mean(logarithms, axis=0)
-        update_norm = float(M.norm(mean, update))
-        update_norms.append(update_norm)
-        if update_norm < tolerance:
-            break
-        mean = M.exp(mean, update)
-    return mean, np.asarray(update_norms)
-
-
 sample_ids = np.arange(len(labels))
 train_mask = sample_ids % 4 != 0
 test_mask = ~train_mask
 
-means = []
+classifier = nearest_centroid_classifier(
+    M,
+    hands[jnp.asarray(train_mask)],
+    labels[train_mask],
+    maxiter=60,
+    tol=1e-7,
+)
+means = classifier.centers
 mean_histories = []
-for label in (0, 1):
-    group = hands[jnp.asarray(train_mask & (labels == label))]
-    mean, history = frechet_mean(group)
-    means.append(mean)
-    mean_histories.append(history)
+for label, result in enumerate(classifier.diagnostics["class_fits"]):
+    group_size = int(np.sum(train_mask & (labels == label)))
+    mean_histories.append(np.asarray([
+        entry.gradnorm for entry in result.diagnostics["history"]
+    ]))
     print(
-        f"{label_names[label]:6s}: {len(group):2d} training poses, "
-        f"{len(history):2d} updates, final norm {history[-1]:.3e}"
+        f"{label_names[label]:6s}: {group_size:2d} training poses, "
+        f"{result.iterations:2d} iterations, final norm "
+        f"{float(result.gradient_norm):.3e} ({result.reason})"
     )
 
-means = jnp.stack(means)
 print("Distance between group means:", f"{float(M.dist(means[0], means[1])):.4f}")
 ```
 
@@ -203,10 +192,8 @@ $d(X,\mu_{\mathrm{Grab}})$ and $d(X,\mu_{\mathrm{Expand}})$. The smaller one
 determines the predicted pose.
 
 ```{code-cell} python
-distances = jax.vmap(
-    lambda hand: jax.vmap(lambda mean: M.dist(hand, mean))(means)
-)(hands)
-predictions = np.asarray(jnp.argmin(distances, axis=1))
+distances = pairwise_distances(M, hands, means)
+predictions = np.asarray(classifier.predict(hands))
 test_accuracy = np.mean(predictions[test_mask] == labels[test_mask])
 
 print(f"Held-out poses: {int(np.sum(test_mask))}")
@@ -219,6 +206,32 @@ for truth in (0, 1):
         for prediction in (0, 1)
     ]
     print(f"{label_names[truth]:6s}: Grab={counts[0]:2d}, Expand={counts[1]:2d}")
+```
+
+## Test the two pose populations
+
+Classification asks whether a rule predicts held-out labels. Fréchet ANOVA asks
+a different question: whether the two object-valued populations have equal
+location and variation in the metric space. The test combines between-group
+mean separation with differences in within-group Fréchet variance
+{cite:p}`dubey2019frechet`.
+
+```{code-cell} python
+fanova = frechet_anova(
+    M,
+    hands,
+    jnp.asarray(labels),
+    method="asymptotic",
+    maxiter=60,
+    tol=1e-7,
+)
+
+print("Fréchet ANOVA statistic:", f"{float(fanova.statistic):.4f}")
+print("asymptotic p-value:", f"{float(fanova.pvalue):.4g}")
+print(
+    "group Fréchet variances:",
+    np.round(np.asarray(fanova.diagnostics["group_variances"]), 5),
+)
 ```
 
 ## Visualize poses, means, and separation
@@ -318,8 +331,8 @@ for label, history in enumerate(mean_histories):
         label=label_names[label],
     )
 convergence_axis.set(
-    xlabel="Karcher update",
-    ylabel="average-log norm",
+    xlabel="solver iteration",
+    ylabel="Riemannian gradient norm",
     title="Fréchet-mean convergence",
 )
 convergence_axis.grid(alpha=0.2)

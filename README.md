@@ -24,8 +24,9 @@ compose the two.
   models, and arbitrary pytree products.
 - JAX autodifferentiation, JIT-compatible geometry primitives, native batches,
   stable squared distances, and pytree-safe optimization state.
-- Framework-neutral primitives for pairwise manifold distances, geodesic
-  interpolation, and tangent-space maps in compiled learning systems.
+- Adapter-first manifold learning with pairwise geometry, intrinsic summaries,
+  regression, inference, clustering, dimension reduction, optimal transport,
+  and metric learning across array and Product-pytree observations.
 - Executable tutorial pages that place mathematical discussion, code, output,
   and figures in one document.
 
@@ -57,7 +58,32 @@ For development, replace the final command with
 The website built from `main` documents 0.2.0. Until that version is published,
 features under `geojax.learning` require the GitHub installation.
 
-## Quick Start
+## Quick Starts
+
+### Manifold-valued learning
+
+One validated collection can be reused across intrinsic statistics, clustering,
+inference, dimension reduction, transport, and metric learning.
+
+```python
+import jax
+
+from geojax.geometry import Sphere
+from geojax.learning import as_manifold_data, frechet_mean, pairwise_distances
+
+M = Sphere(size=3)
+observations = M.random_point(jax.random.key(0), sample_shape=(32,))
+data = as_manifold_data(M, observations)
+
+center = frechet_mean(M, data).point
+distances = pairwise_distances(M, data)
+```
+
+`as_manifold_data` validates point membership and records the sample layout.
+The same adapter supports matrices and nested Product pytrees without forcing
+them into a single ambient vector representation.
+
+### Manifold optimization
 
 The following problem minimizes a Rayleigh quotient on the unit sphere. Its
 solution is a dominant eigenvector of `A`.
@@ -105,7 +131,7 @@ line-search control flow, and conversion of diagnostics to Python scalars.
 Costs, derivative callbacks, and geometry operations used inside those drivers
 may still be independently JIT compiled.
 
-## Scientific Scope
+## Geometry, Optimization, and Learning
 
 The public geometry namespace includes Euclidean, sphere, oblique, simplex,
 hyperbolic, torus, Grassmann, Stiefel, generalized orthogonality, Lie-group,
@@ -129,6 +155,16 @@ The public solver set is:
 
 Gradient solvers share public fixed-step, Armijo, adaptive Armijo, and
 strong-Wolfe line-search strategies.
+
+The public learning layer includes validated representation adapters, pairwise
+geometry and nearest neighbors, supervised classifiers, scalar and
+manifold-response regression, Fréchet and robust summaries, scalable means and
+clustering, bootstrap and permutation inference, intrinsic barycentric
+dictionaries, semi-supervised graph learning, manifold dimension reduction,
+empirical optimal transport, and equivariant-embedding metric learning.
+Methods state whether they require exact distances, exact geodesic maps, a PSD
+kernel, or an embedding, and reject inputs that do not satisfy the required
+contract.
 
 See the
 [geometry guide](https://www.kisungyou.com/geojax/guide/geometry.html),

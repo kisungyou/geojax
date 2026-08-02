@@ -1,4 +1,4 @@
-"""GeoJAX: JAX-native Riemannian geometry and optimization utilities."""
+"""GeoJAX: Riemannian geometry, optimization, and manifold-valued learning in JAX."""
 
 __version__ = "0.2.0"
 

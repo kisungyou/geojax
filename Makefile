@@ -18,7 +18,7 @@ SITE_DIR ?= site
 JUPYTER_EXECUTE_DIR ?= jupyter_execute
 JUPYTER_CACHE_DIR ?= .jupyter_cache
 SPHINXOPTS ?= -E -a
-PYTESTOPTS ?= --cov=geojax --cov-report=term-missing
+PYTESTOPTS ?= --cov --cov-report=term-missing
 TOX_PARALLEL ?= 2
 
 .PHONY: help install test test-float32 test-matrix test-matrix-parallel website serve release-check clean
@@ -54,9 +54,11 @@ install:
 
 test:
 	GEOJAX_TEST_X64=1 $(PYTHON) -m pytest $(PYTESTOPTS)
+	$(PYTHON) -m coverage report --include='geojax/learning/*' --fail-under=95
 
 test-float32:
 	GEOJAX_TEST_X64=0 $(PYTHON) -m pytest $(PYTESTOPTS)
+	$(PYTHON) -m coverage report --include='geojax/learning/*' --fail-under=95
 
 test-matrix:
 	$(PYTHON) -m tox run

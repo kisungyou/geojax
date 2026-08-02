@@ -22,7 +22,7 @@ For observations $P_1,\ldots,P_N$ and a distance $d_g$ induced by geometry
 $g$, the Fréchet objective is
 
 $$
-F_g(P)=\frac{1}{2N}\sum_{i=1}^N d_g(P,P_i)^2.
+F_g(P)=\frac{1}{N}\sum_{i=1}^N d_g(P,P_i)^2.
 $$
 
 We compare three common choices:
@@ -64,7 +64,8 @@ from geojax.geometry import (
     SPDBuresWasserstein,
     SPDLogEuclidean,
 )
-from geojax.optimization import BarzilaiBorwein, Minimize
+from geojax.learning import frechet_mean
+from geojax.optimization import BarzilaiBorwein
 
 plt.rcParams.update({
     "figure.dpi": 200,
@@ -127,45 +128,40 @@ for name, geometry in geometries.items():
 
 ## Solve one Fréchet problem per geometry
 
-The code below is intentionally geometry-agnostic. Only the object passed as
-`M` changes; `dist_batch` and the optimizer consume the common GeoJAX
-interface. All three runs start from the arithmetic mean and use the same
-solver settings.
+The code below is intentionally geometry-agnostic. Only the geometry passed to
+{func}`geojax.learning.frechet_mean` changes. The learning function validates
+the observations, constructs the weighted squared-distance objective, and
+delegates its minimization to the supplied GeoJAX solver. All three runs start
+from the arithmetic mean and use the same solver settings.
 
 The objective values should not be compared directly across rows because the
 three metrics use different units. The estimates, eigenvalues, determinants,
 and convergence histories are directly informative.
 
 ```{code-cell} python
-def make_frechet_cost(geometry, observations):
-    def cost(P):
-        squared_distances = geometry.dist_batch(P, observations) ** 2
-        return 0.5 * jnp.mean(squared_distances)
-
-    return cost
-
-
 initial = jnp.mean(samples, axis=0)
 estimates = {}
 histories = {}
 final_costs = {}
+mean_results = {}
 
 for name, geometry in geometries.items():
-    problem = Minimize(
-        M=geometry,
-        cost=make_frechet_cost(geometry, samples),
-        x0=initial,
+    result = frechet_mean(
+        geometry,
+        samples,
+        initial_point=initial,
         solver=BarzilaiBorwein(
             initial_stepsize=0.5,
             maxiter=120,
             tolgradnorm=1e-9,
             verbosity=0,
         ),
+        tol=1e-9,
     )
-    estimate, final_cost, history = problem.solve()
-    estimates[name] = estimate
-    histories[name] = history
-    final_costs[name] = final_cost
+    mean_results[name] = result
+    estimates[name] = result.point
+    histories[name] = result.diagnostics["history"]
+    final_costs[name] = result.objective
 
 print(
     f"{'geometry':20s} {'iter':>5s} {'cost':>12s} "
@@ -192,7 +188,7 @@ closed_form = log_geometry.expm(jnp.mean(log_samples, axis=0))
 closed_form_error = jnp.linalg.norm(estimates["Log-Euclidean"] - closed_form)
 
 print("Closed-form log-Euclidean mean:\n", closed_form)
-print(f"Optimization error: {float(closed_form_error):.3e}")
+print(f"GeoJAX learning error: {float(closed_form_error):.3e}")
 ```
 
 ## Visual comparison

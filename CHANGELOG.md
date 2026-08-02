@@ -23,9 +23,40 @@
 - Stabilized zero-tangent exponentials, coincident logarithms, repeated SPD
   spectra, matrix divided differences, and numerical Stiefel batching while
   preserving each geometry's documented cut-locus branch policy.
-- Added the pure-JAX `geojax.learning` namespace with pairwise squared
-  distances, geodesic interpolation, and framework-neutral tangent maps,
-  including exact-capability guards and combined time/endpoint batching.
+- Expanded `geojax.learning` into an adapter-first, manifold-independent layer
+  with canonical `ManifoldData`, alternate representation conversion, exact
+  capability guards, structured immutable results, geometric primitives,
+  intrinsic summaries, kernel regression, inference, clustering, dimension
+  reduction, exact empirical transport, optional OTT-JAX Sinkhorn divergence,
+  and equivariant-embedding metric learning.
+- Added manifold-independent nearest-centroid, k-nearest-neighbor, tangent
+  logistic, LDA, and QDA classifiers using metric-orthonormal tangent
+  coordinates.
+- Added geodesic and local polynomial Fréchet regression for manifold-valued
+  responses, bootstrap mean regions, energy and PSD-checked MMD tests, and a
+  paired tangent-displacement test.
+- Added streaming and mini-batch Fréchet means, mini-batch intrinsic k-means,
+  geodesic barycentric coding, and Product-manifold dictionary optimization.
+- Added trimmed Fréchet means, Huber/Cauchy/Tukey geodesic M-estimators,
+  intrinsic spatial depth, metric midranks, graph label propagation, and
+  transductive manifold-regularized regression.
+- Made tangent-rank and kernel-PSD certification dtype-aware, kept weighted
+  dictionary and trimmed objectives internally consistent, and guarded
+  zero-mass cluster updates and duplicate-point graph neighborhoods.
+- Replaced `pairwise_squared_dist`, `geodesic_interpolate`, and `tangent_map`
+  with the coherent public names `pairwise_distances`,
+  `geodesic_interpolation`, and `tangent_space_map`, without compatibility
+  aliases.
+- Migrated the SPD Fréchet-mean, Kendall-shape, and EEG tutorials from local
+  helper implementations to the public learning API.
+- Added executable visual tutorials for Product data adaptation, robust
+  spherical summaries, broad clustering comparisons, SPD PGA and
+  cross-validated regression, two-sample inference, exact circular optimal
+  transport, six manifold dimension-reduction methods, and supervised
+  equivariant-embedding metric learning.
+- Reframed project metadata and first-use documentation around three equal
+  scientific layers: Riemannian geometry, manifold optimization, and learning
+  with manifold-valued observations.
 - Classified Stiefel logarithms and distances as numerical-local endpoint
   solutions rather than globally certified shortest geodesics.
 - Added exact Hessian capability metadata, the sphere shape-operator

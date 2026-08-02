@@ -2,8 +2,8 @@
 
 The API reference is generated from the package docstrings. Geometry pages
 describe representations and primitives; optimization pages document solvers
-and history records; learning pages document framework-neutral geometric
-building blocks.
+and history records; learning pages document data adapters, differentiable
+primitives, statistics, clustering, inference, embeddings, and transport.
 
 ```{toctree}
 :maxdepth: 1

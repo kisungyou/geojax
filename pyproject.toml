@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "geojax"
 version = "0.2.0"
-description = "Riemannian geometry and manifold optimization in JAX."
+description = "Riemannian geometry, manifold optimization, and manifold-valued learning in JAX."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
@@ -17,6 +17,8 @@ keywords = [
   "jax",
   "riemannian-geometry",
   "manifold-optimization",
+  "manifold-learning",
+  "geometric-machine-learning",
   "matrix-manifolds"
 ]
 classifiers = [
@@ -43,6 +45,9 @@ Repository = "https://github.com/kisungyou/geojax"
 Issues = "https://github.com/kisungyou/geojax/issues"
 
 [project.optional-dependencies]
+ot = [
+  "ott-jax>=0.6,<0.7",
+]
 dev = [
   "pytest>=8",
   "pytest-cov>=5",

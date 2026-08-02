@@ -68,7 +68,7 @@ from geojax.geometry import (
     SPDBuresWasserstein,
     SPDLogEuclidean,
 )
-from geojax.learning import pairwise_squared_dist
+from geojax.learning import classical_mds, pairwise_distances
 
 plt.rcParams.update({
     "figure.dpi": 210,
@@ -332,10 +332,11 @@ def make_model(geometry):
         prototypes = latent_chart.expm(prototype_tangent)
 
         temperature = jax.nn.softplus(parameters["raw_temperature"]) + 0.5
-        logits = -temperature * pairwise_squared_dist(
+        logits = -temperature * pairwise_distances(
             geometry,
             latent_points,
             prototypes,
+            squared=True,
         )
         return logits, latent_points, prototypes, temperature
 
@@ -602,29 +603,16 @@ plt.show()
 ## Geometry-aware views of the latent SPD matrices
 
 An SPD matrix does not have canonical two-dimensional coordinates. For each
-geometry, we therefore compute all squared geodesic distances among the 75
-test activations and the two learned prototypes, then apply classical metric
-multidimensional scaling solely for display. The classifier still uses the
-full $3\times3$ matrices and exact GeoJAX distances.
+geometry, we therefore call {func}`geojax.learning.classical_mds` on the 75
+test activations and the two learned prototypes. The routine computes exact
+geodesic distances and applies classical metric scaling solely for display.
+The classifier still uses the full $3\times3$ matrices and exact GeoJAX
+distances.
 
 Crosses mark incorrectly classified test trials. Stars are the learned class
 prototypes.
 
 ```{code-cell} python
-def classical_mds(squared_distances, output_dimension=2):
-    squared_distances = np.asarray(squared_distances)
-    squared_distances = 0.5 * (
-        squared_distances + squared_distances.T
-    )
-    count = len(squared_distances)
-    centering = np.eye(count) - np.ones((count, count)) / count
-    gram = -0.5 * centering @ squared_distances @ centering
-    eigenvalues, eigenvectors = np.linalg.eigh(gram)
-    order = np.argsort(eigenvalues)[::-1][:output_dimension]
-    positive = np.maximum(eigenvalues[order], 0.0)
-    return eigenvectors[:, order] * np.sqrt(positive)
-
-
 test_indices = np.flatnonzero(test_mask)
 fig, axes = plt.subplots(1, 3, figsize=(13.1, 4.15), constrained_layout=True)
 
@@ -632,8 +620,8 @@ for axis, (name, geometry) in zip(axes, geometries.items()):
     result = results[name]
     test_points = result["latent_points"][jnp.asarray(test_indices)]
     combined = jnp.concatenate([test_points, result["prototypes"]], axis=0)
-    squared_distances = pairwise_squared_dist(geometry, combined, combined)
-    coordinates = classical_mds(squared_distances)
+    embedding = classical_mds(geometry, combined, n_components=2)
+    coordinates = np.asarray(embedding.coordinates)
     point_coordinates = coordinates[:-2]
     prototype_coordinates = coordinates[-2:]
 

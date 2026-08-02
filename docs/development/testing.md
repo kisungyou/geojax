@@ -52,6 +52,11 @@ training. Learning-helper tests also combine vector-valued interpolation times
 with batched endpoints and reject proxy distances or logarithms where the
 public helper promises an exact geodesic operation.
 
+The release suite enforces two branch-aware coverage thresholds: at least 85%
+repository-wide and at least 95% for `geojax.learning`. Both reports come from
+the same complete run, so adapter failures, statistical edge cases, and
+optional-integration boundaries remain part of the release contract.
+
 ## Supported matrix
 
 Install the development dependencies and run:

@@ -30,6 +30,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from geojax.geometry import Sphere
+from geojax.learning import kmeans
 
 plt.rcParams.update({
     "figure.dpi": 200,
@@ -60,11 +61,11 @@ print("number of observations:", data.shape[0])
 print("all points lie on S^1:", bool(jnp.all(M.belongs(data))))
 ```
 
-## Lloyd updates with manifold primitives
+## Lloyd updates through the learning API
 
-The assignment step needs only `dist`. For the center update, a few Karcher
-steps average logarithm vectors in the current tangent space and return to the
-circle with the exponential map:
+The assignment step uses exact geodesic distance. The center update minimizes
+the within-cluster Fréchet objective, averaging logarithm vectors in the
+current tangent space and returning to the circle with the exponential map:
 
 $$
 \mu \leftarrow \operatorname{Exp}_{\mu}
@@ -72,40 +73,26 @@ $$
 $$
 
 ```{code-cell} ipython3
-def frechet_mean(points, initial, steps=8):
-    center = initial
-    for _ in range(steps):
-        logs = jax.vmap(lambda point: M.log(center, point))(points)
-        center = M.exp(center, jnp.mean(logs, axis=0))
-    return center
+result = kmeans(
+    M,
+    data,
+    n_clusters=3,
+    key=jax.random.key(29),
+    init="kmeans++",
+    n_init=8,
+    maxiter=30,
+    tol=1e-8,
+)
 
-
-def distances_to_centers(points, centers):
-    return jax.vmap(
-        lambda point: jax.vmap(lambda center: M.dist(point, center))(centers)
-    )(points)
-
-
-centers = data[jnp.array([8, 68, 128])]
-objective_history = []
-
-for _ in range(12):
-    distances = distances_to_centers(data, centers)
-    labels = jnp.argmin(distances, axis=1)
-    objective_history.append(float(jnp.mean(jnp.min(distances, axis=1) ** 2)))
-    centers = jnp.stack([
-        frechet_mean(data[labels == cluster], centers[cluster])
-        for cluster in range(3)
-    ])
-
-distances = distances_to_centers(data, centers)
-labels = jnp.argmin(distances, axis=1)
-objective_history.append(float(jnp.mean(jnp.min(distances, axis=1) ** 2)))
+centers = result.centers
+labels = result.labels
+objective_history = np.asarray(result.diagnostics["objective_history"])
 
 estimated_angles = jnp.arctan2(centers[:, 1], centers[:, 0])
 print("estimated center angles:", jnp.sort(estimated_angles))
-print("final mean squared distance:", objective_history[-1])
+print("final mean squared distance:", float(result.objective))
 print("cluster sizes:", jnp.bincount(labels, length=3))
+print("termination:", result.reason)
 ```
 
 ## Visual report
@@ -162,7 +149,7 @@ ordinary arithmetic mean of angles would not have that invariance.
 
 - Increase the cluster spread until points approach the cut locus.
 - Replace `Sphere(size=2)` with `Sphere(size=3)` and draw clusters on $S^2$.
-- Use several random initializations and retain the smallest final objective.
+- Compare `kmeans` with `kmedoids` and `spectral_clustering` on the same data.
 
 ## References
 

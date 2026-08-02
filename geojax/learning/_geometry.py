@@ -1,4 +1,4 @@
-"""Geometry-aware building blocks for JAX learning systems."""
+"""Differentiable geometry-aware learning primitives."""
 
 from __future__ import annotations
 
@@ -9,34 +9,19 @@ import jax.numpy as jnp
 
 from geojax.geometry import Product
 
+from ._capabilities import require_exact_operations
+from ._data import ManifoldData, as_manifold_data
+from ._results import NeighborsResult
+from ._utils import event_shapes, scale_tangent, take_samples
+
 Array = Any
 
 
-def _require_exact_operations(manifold: Any, helper: str, *operations: str) -> None:
-    unavailable = []
-    for operation in operations:
-        if hasattr(manifold, "operation_kind"):
-            try:
-                kind = manifold.operation_kind(operation)
-            except ValueError:
-                kind = "unknown"
-        else:
-            kind = "exact" if bool(getattr(manifold, f"{operation}_is_exact", False)) else "unknown"
-        if kind != "exact":
-            unavailable.append(f"{operation}={kind}")
-    if unavailable:
-        details = ", ".join(unavailable)
-        raise ValueError(
-            f"{helper} requires exact geodesic operations; received {details}. "
-            "Call the manifold's retraction operations directly when proxy or "
-            "numerical-local behavior is intended."
-        )
-
-
-def _event_shapes(manifold: Any) -> Any:
-    if isinstance(manifold, Product):
-        return jax.tree_util.tree_map(lambda factor: tuple(factor.shape), manifold.factors)
-    return tuple(manifold.shape)
+def _values(manifold: Any, data: Any, *, name: str) -> tuple[Any, int]:
+    if isinstance(data, ManifoldData):
+        return data.values, data.n_samples
+    adapted = as_manifold_data(manifold, data, check="shape")
+    return adapted.values, adapted.n_samples
 
 
 def _map_points(
@@ -46,95 +31,73 @@ def _map_points(
     *,
     name: str,
 ) -> Any:
-    shapes = _event_shapes(manifold)
     if isinstance(manifold, Product):
         point_leaves, point_tree = jax.tree_util.tree_flatten(points)
-        shape_leaves, shape_tree = jax.tree_util.tree_flatten(
-            shapes,
-            is_leaf=lambda value: isinstance(value, tuple),
-        )
-        if point_tree != shape_tree:
+        factors, factor_tree = jax.tree_util.tree_flatten(manifold.factors)
+        if point_tree != factor_tree:
             raise ValueError(f"{name} must match the Product factor pytree.")
         return jax.tree_util.tree_unflatten(
             point_tree,
             [
-                transform(jnp.asarray(point), tuple(shape))
-                for point, shape in zip(point_leaves, shape_leaves)
+                transform(jnp.asarray(point), tuple(factor.shape))
+                for point, factor in zip(point_leaves, factors)
             ],
         )
-    return transform(jnp.asarray(points), shapes)
+    return transform(jnp.asarray(points), tuple(event_shapes(manifold)))
 
 
-def _validate_event_shape(point: Array, event_shape: tuple[int, ...], name: str) -> None:
-    event_ndim = len(event_shape)
-    if point.ndim <= event_ndim:
-        raise ValueError(f"{name} must include a collection axis before {event_shape}.")
-    if tuple(point.shape[-event_ndim:]) != event_shape:
-        raise ValueError(
-            f"{name} must end in manifold shape {event_shape}; received {point.shape}."
-        )
+def pairwise_distances(
+    manifold: Any,
+    x: Any,
+    y: Any | None = None,
+    *,
+    squared: bool = False,
+    block_size: int | None = None,
+) -> Array:
+    """Return all pairwise exact distances between two point collections.
 
-
-def pairwise_squared_dist(manifold: Any, x: Any, y: Any) -> Array:
-    """Return all squared distances between two collections of points.
-
-    ``x`` and ``y`` have shapes ``batch_x + (n,) + manifold.shape`` and
-    ``batch_y + (m,) + manifold.shape``. Their leading batch shapes follow
-    standard NumPy broadcasting and the result has shape
-    ``broadcast(batch_x, batch_y) + (n, m)``.
-
-    Product-manifold collections use the same pytree as ``manifold.factors``;
-    every leaf has its own factor event shape and shares the collection axes.
-    The helper rejects geometries whose distance is a retraction proxy or only
-    a numerical-local candidate.
+    Collections use ``batch_shape + (n_samples,) + event_shape``. Product
+    collections use the factor pytree and share their sample and batch axes.
+    ``block_size`` limits the number of right-hand samples materialized in one
+    geometry call while retaining a dense result.
     """
-    _require_exact_operations(manifold, "pairwise_squared_dist", "dist")
+    require_exact_operations(manifold, "pairwise_distances", "dist")
+    left, _ = _values(manifold, x, name="x")
+    right, n_right = _values(manifold, x if y is None else y, name="y")
 
-    def expand_x(point: Array, event_shape: tuple[int, ...]) -> Array:
-        _validate_event_shape(point, event_shape, "x")
+    def expand_left(point: Array, event_shape: tuple[int, ...]) -> Array:
         return jnp.expand_dims(point, axis=-(len(event_shape) + 1))
 
-    def expand_y(point: Array, event_shape: tuple[int, ...]) -> Array:
-        _validate_event_shape(point, event_shape, "y")
+    def expand_right(point: Array, event_shape: tuple[int, ...]) -> Array:
         return jnp.expand_dims(point, axis=-(len(event_shape) + 2))
 
-    paired_x = _map_points(manifold, x, expand_x, name="x")
-    paired_y = _map_points(manifold, y, expand_y, name="y")
-    return manifold.squared_dist(paired_x, paired_y)
+    paired_left = _map_points(manifold, left, expand_left, name="x")
+
+    def evaluate(right_values: Any) -> Array:
+        paired_right = _map_points(manifold, right_values, expand_right, name="y")
+        values = manifold.squared_dist(paired_left, paired_right)
+        return values if squared else jnp.sqrt(jnp.maximum(values, 0.0))
+
+    if block_size is None:
+        return evaluate(right)
+    block_size = int(block_size)
+    if block_size < 1:
+        raise ValueError("block_size must be positive.")
+    blocks = [
+        evaluate(take_samples(manifold, right, jnp.arange(start, min(start + block_size, n_right))))
+        for start in range(0, n_right, block_size)
+    ]
+    return jnp.concatenate(blocks, axis=-1)
 
 
-def _scale_tangent(manifold: Any, tangent: Any, coefficient: Array) -> Any:
-    coefficient = jnp.asarray(coefficient)
-
-    def scale(leaf: Array, event_shape: tuple[int, ...]) -> Array:
-        del event_shape
-        coefficient_shape = coefficient.shape + (1,) * leaf.ndim
-        leaf_shape = (1,) * coefficient.ndim + leaf.shape
-        return coefficient.reshape(coefficient_shape) * leaf.reshape(leaf_shape)
-
-    return _map_points(
-        manifold,
-        tangent,
-        scale,
-        name="tangent vector",
-    )
-
-
-def geodesic_interpolate(manifold: Any, x: Any, y: Any, t: Array) -> Any:
-    """Interpolate along the selected shortest geodesic from ``x`` to ``y``.
-
-    Scalar ``t`` preserves the broadcast endpoint batch shape. An array of
-    interpolation parameters adds its shape before all endpoint batch and
-    manifold event dimensions. Values in ``[0, 1]`` trace the segment, while
-    values outside that interval extrapolate where the exponential map is
-    defined. Proxy and numerical-local logarithms are rejected.
-    """
-    _require_exact_operations(manifold, "geodesic_interpolate", "log", "exp")
+def geodesic_interpolation(manifold: Any, x: Any, y: Any, t: Array) -> Any:
+    """Evaluate ``Exp_x(t Log_x(y))`` on the selected exact geodesic."""
+    require_exact_operations(manifold, "geodesic_interpolation", "log", "exp")
     tangent = manifold.log(x, y)
-    return manifold.exp(x, _scale_tangent(manifold, tangent, t))
+    return manifold.exp(x, scale_tangent(manifold, tangent, t))
 
 
-def tangent_map(
+def tangent_space_map(
     source: Any,
     target: Any,
     x: Any,
@@ -143,22 +106,50 @@ def tangent_map(
     target_base: Any,
     transform: Callable[[Any], Any],
 ) -> Any:
-    """Map points through user-defined tangent-space computation.
-
-    The operation is
-
-    ``x -> Log_source_base(x) -> transform -> tangent projection -> Exp_target_base``.
-
-    ``transform`` owns any trainable parameters through its closure, keeping
-    this primitive independent of Flax, Equinox, and other neural frameworks.
-    Both manifolds must advertise the corresponding geodesic operation as
-    exact.
-    """
-    _require_exact_operations(source, "tangent_map source", "log")
-    _require_exact_operations(target, "tangent_map target", "exp")
+    """Apply a user transform between exact source and target tangent spaces."""
+    require_exact_operations(source, "tangent_space_map source", "log")
+    require_exact_operations(target, "tangent_space_map target", "exp")
     source_tangent = source.log(source_base, x)
-    target_tangent = target.tangent_project(target_base, transform(source_tangent))
+    transformed = transform(source_tangent)
+    target_tangent = target.tangent_project(target_base, transformed)
     return target.exp(target_base, target_tangent)
 
 
-__all__ = ["geodesic_interpolate", "pairwise_squared_dist", "tangent_map"]
+def nearest_neighbors(
+    manifold: Any,
+    data: Any,
+    queries: Any | None = None,
+    *,
+    n_neighbors: int = 5,
+    exclude_self: bool = True,
+    block_size: int | None = None,
+) -> NeighborsResult:
+    """Find exact-distance nearest neighbors in a dense manifold dataset."""
+    adapted = data if isinstance(data, ManifoldData) else as_manifold_data(manifold, data)
+    query_data = adapted if queries is None else (
+        queries if isinstance(queries, ManifoldData) else as_manifold_data(manifold, queries)
+    )
+    if adapted.batch_shape or query_data.batch_shape:
+        raise ValueError("nearest_neighbors currently expects unbatched datasets.")
+    maximum = adapted.n_samples - (1 if queries is None and exclude_self else 0)
+    if not 1 <= int(n_neighbors) <= maximum:
+        raise ValueError(f"n_neighbors must be between 1 and {maximum}.")
+    distances = pairwise_distances(
+        manifold,
+        query_data,
+        adapted,
+        block_size=block_size,
+    )
+    if queries is None and exclude_self:
+        distances = distances.at[jnp.diag_indices(adapted.n_samples)].set(jnp.inf)
+    indices = jnp.argsort(distances, axis=-1)[..., : int(n_neighbors)]
+    selected = jnp.take_along_axis(distances, indices, axis=-1)
+    return NeighborsResult(selected, indices)
+
+
+__all__ = [
+    "geodesic_interpolation",
+    "nearest_neighbors",
+    "pairwise_distances",
+    "tangent_space_map",
+]

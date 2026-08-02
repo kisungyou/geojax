@@ -1,63 +1,97 @@
 # Learning protocol
 
-The `geojax.learning` namespace contains small geometry-aware functions, not a
-neural-network framework. New functions must remain pure JAX and may not make
-Flax, Equinox, Haiku, Optax, or scikit-learn runtime dependencies. This narrow
-boundary keeps the package focused on reusable geometric ingredients rather
-than prescribing one geometric-deep-learning architecture
+The `geojax.learning` namespace is a manifold-independent statistical layer,
+not a neural-network framework. It may depend at runtime on JAX and NumPy only;
+OTT-JAX is isolated in the optional `ot` extra. SciPy, scikit-learn, POT, and
+PHATE may be test or documentation oracles but cannot be imported by the
+runtime package. This boundary follows the separation between geometric
+primitives and model-level learning used throughout geometric machine learning
 {cite:p}`bronstein2021geometric`.
 
-## Functional boundary
+## Data boundary
 
-A learning primitive receives geometry objects as static configuration and
-arrays or pytrees as dynamic values. Trainable parameters belong to the
-user-supplied callable:
+Every high-level method starts with `(manifold, data, ...)`. Raw canonical data
+are converted through `as_manifold_data`; callers can adapt once and reuse the
+immutable result. New methods must not implement private shape conventions or
+silently normalize points.
 
-```python
-mapped = tangent_map(
-    source,
-    target,
-    x,
-    source_base=source_base,
-    target_base=target_base,
-    transform=lambda tangent: network(parameters, tangent),
-)
-```
+An adapter must:
 
-This boundary lets the same operation compose with plain JAX or any compatible
-neural library. GeoJAX should not introduce a second parameter container,
-module abstraction, random-state convention, or graph representation.
+- preserve the mathematical point represented by an alternate coordinate;
+- place the sample axis immediately before event dimensions;
+- preserve the Product factor pytree and shared batch/sample axes;
+- reject nonfinite values before numerical kernels; and
+- distinguish representation conversion from explicit `repair=True`.
 
-## Numerical contract
+External representations register through
+`register_manifold_data_adapter(geometry_type, name, converter)`. Names are
+explicit; automatic representation inference is prohibited.
 
-Learning losses should use `squared_dist` rather than `dist(...) ** 2`.
-Every new operation must:
+## Capability boundary
 
-- preserve each geometry's event shape and arbitrary leading batch axes;
-- support `Product` pytrees when the operation is geometrically meaningful;
-- compile under `jax.jit`;
-- have finite first derivatives at zero tangents and coincident points;
-- require exact capabilities when its public name promises a distance or
-  geodesic, and reject proxy or numerical-local operations;
-- preserve or explicitly document each geometry's cut-locus branch policy; and
-- avoid Python data-dependent control flow over traced values.
+Algorithms declare their required exact operations at entry. A distance-based
+method asks for exact `dist`; intrinsic center updates ask for exact `dist`,
+`log`, and `exp`; RMML asks for an equivariant embedding. Proxy or
+numerical-local operations raise `LearningCapabilityError` and are never
+enabled through an undocumented fallback.
 
-Pairwise operations interpret the axis immediately before the manifold event
-as the collection axis. Leading batch axes use NumPy broadcasting.
-Interpolation parameters add axes before all endpoint batch and event axes, so
-tests must include both batched endpoints and vector-valued interpolation
-times.
+Methods that introduce an additional analytic object must validate that object
+separately. In particular, a kernel method cannot infer positive
+semidefiniteness from the existence of a geodesic distance, a tangent model
+must construct coordinates with `M.inner`, and a graph method must distinguish
+transductive vertex predictions from an out-of-sample model.
 
-## Release contract
+## Transformation boundary
 
-A manifold-learning feature is incomplete until it participates in a compiled
-end-to-end test. The deterministic autoencoder test compiles one training step
-for spherical and hyperbolic latent spaces, verifies decreasing loss and finite
-encoder gradients, and checks manifold membership of every resulting latent.
+Differentiable primitives such as `pairwise_distances`,
+`geodesic_interpolation`, and `tangent_space_map` must compile under `jax.jit`
+and retain finite documented derivatives away from cut loci. Statistical
+algorithms may use Python orchestration around compiled JAX kernels. Exact
+transport pivots, cluster assignments, graph topology, eigenspace selection,
+and permutation tests carry no end-to-end gradient guarantee.
 
-Tutorial-only dependencies belong in the `docs` or `examples` optional extras.
-Executable tutorials must be self-contained Markdown documents and may not
-import hidden training scripts or retain generated notebooks in the repository.
+Randomized methods receive an explicit JAX key. Public parameter names follow
+`n_clusters`, `n_neighbors`, `n_components`, `sample_weight`, `maxiter`, and
+`tol`. Iterative immutable results expose `objective`, `iterations`,
+`converged`, `reason`, and family-specific diagnostics.
+
+Fitted predictors own the geometry and validated training representation they
+need for prediction. A classifier must preserve the user's class labels while
+keeping encoded labels inside numerical kernels. A manifold-response model
+returns canonical manifold points, not flattened coordinates. Barycentric
+codes use explicit simplex constraints, and any routine described as sparse
+must have a penalty whose value is not constant on its feasible set.
+
+## Numerical and testing contract
+
+Dense distance algorithms must state their $O(n^2)$ memory use; graph methods
+with cubic work must say so. Implementations should use `squared_dist` in
+smooth squared-distance objectives and preserve each geometry's cut-locus
+branch policy.
+
+A new method is incomplete until tests cover:
+
+- analytic Euclidean behavior and at least one curved geometry;
+- nested Product points when its operations support Product;
+- deterministic fixed-key results;
+- malformed data and missing-capability failures;
+- float32 and float64 execution; and
+- independent reference outputs or invariant checks.
+
+Inference tests additionally need fixed-seed null checks and explicit
+assumptions: negative type for distribution-characterizing energy distances,
+PSD kernels for MMD, and exchangeability for sign or label permutations.
+Scalable estimates must be compared with their full-batch counterparts on an
+analytic Euclidean fixture and identify order dependence on curved spaces.
+
+Runtime dependency tests must demonstrate that importing `geojax.learning`
+does not import SciPy, scikit-learn, POT, or PHATE. Executable tutorials remain
+self-contained Markdown and may not retain generated notebooks.
+
+The implementation literature is part of the protocol: algorithm docstrings
+and scientific tutorials must identify the objective actually computed. For
+example, entropically regularized transport must not be presented as the exact
+linear program {cite:p}`cuturi2013sinkhorn`.
 
 ## References
 

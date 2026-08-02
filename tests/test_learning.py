@@ -13,15 +13,17 @@ from geojax.geometry import (
     Stiefel,
     Torus,
 )
-from geojax.learning import geodesic_interpolate, pairwise_squared_dist, tangent_map
+from geojax.learning import geodesic_interpolation, pairwise_distances, tangent_space_map
 
 
-def test_pairwise_squared_dist_matches_explicit_sphere_computation():
+def test_pairwise_distances_squared_matches_explicit_sphere_computation():
     M = Sphere(size=3)
     x = M.random_point(jax.random.key(700), sample_shape=(2, 4))
     y = M.random_point(jax.random.key(701), sample_shape=(1, 5))
 
-    actual = jax.jit(lambda left, right: pairwise_squared_dist(M, left, right))(x, y)
+    actual = jax.jit(
+        lambda left, right: pairwise_distances(M, left, right, squared=True)
+    )(x, y)
     expected = jax.vmap(
         lambda batch: jax.vmap(
             lambda left: jax.vmap(lambda right: M.squared_dist(left, right))(y[0])
@@ -30,22 +32,53 @@ def test_pairwise_squared_dist_matches_explicit_sphere_computation():
 
     assert actual.shape == (2, 4, 5)
     assert jnp.allclose(actual, expected, atol=1e-6, rtol=1e-6)
-    gradient = jax.grad(lambda left: jnp.sum(pairwise_squared_dist(M, left, y)))(x)
+    gradient = jax.grad(
+        lambda left: jnp.sum(pairwise_distances(M, left, y, squared=True))
+    )(x)
     assert bool(jnp.all(jnp.isfinite(gradient)))
 
 
-def test_pairwise_squared_dist_supports_product_pytrees():
+def test_pairwise_distances_supports_product_pytrees():
     M = Product({"direction": Sphere(size=3), "phase": Torus(size=2)})
     x = M.random_point(jax.random.key(710), sample_shape=(4,))
     y = M.random_point(jax.random.key(711), sample_shape=(3,))
 
-    distances = pairwise_squared_dist(M, x, y)
-    expected = pairwise_squared_dist(
-        M.factors["direction"], x["direction"], y["direction"]
-    ) + pairwise_squared_dist(M.factors["phase"], x["phase"], y["phase"])
+    distances = pairwise_distances(M, x, y, squared=True)
+    expected = pairwise_distances(
+        M.factors["direction"], x["direction"], y["direction"], squared=True
+    ) + pairwise_distances(
+        M.factors["phase"], x["phase"], y["phase"], squared=True
+    )
 
     assert distances.shape == (4, 3)
     assert jnp.allclose(distances, expected, atol=1e-6, rtol=1e-6)
+
+
+def test_pairwise_distances_supports_nested_product_containers():
+    M = Product(
+        {
+            "direction": Sphere(3),
+            "state": (Torus(1), {"location": Euclidean(2)}),
+        }
+    )
+    values = M.random_point(jax.random.key(712), sample_shape=(5,))
+    distances = pairwise_distances(M, values)
+
+    expected_squared = (
+        pairwise_distances(
+            M.factors["direction"], values["direction"], squared=True
+        )
+        + pairwise_distances(
+            M.factors["state"][0], values["state"][0], squared=True
+        )
+        + pairwise_distances(
+            M.factors["state"][1]["location"],
+            values["state"][1]["location"],
+            squared=True,
+        )
+    )
+    assert distances.shape == (5, 5)
+    assert jnp.allclose(distances**2, expected_squared, atol=2e-6, rtol=2e-6)
 
 
 @pytest.mark.parametrize("M", [Sphere(size=3), Hyperboloid(size=3)])
@@ -55,7 +88,7 @@ def test_geodesic_interpolation_is_batched_jittable_and_has_correct_endpoints(M)
     y = M.exp(x, tangent)
     times = jnp.linspace(0.0, 1.0, 9)
 
-    path = jax.jit(lambda values: geodesic_interpolate(M, x, y, values))(times)
+    path = jax.jit(lambda values: geodesic_interpolation(M, x, y, values))(times)
 
     assert path.shape == (9,) + M.shape
     assert bool(jnp.all(M.belongs(path)))
@@ -72,7 +105,7 @@ def test_geodesic_interpolation_combines_time_and_endpoint_batch_axes():
     y = M.exp(x, tangent)
     times = jnp.linspace(0.0, 1.0, 7)
 
-    path = jax.jit(geodesic_interpolate, static_argnums=0)(M, x, y, times)
+    path = jax.jit(geodesic_interpolation, static_argnums=0)(M, x, y, times)
 
     assert path.shape == (7, 2, 3)
     assert bool(jnp.all(M.belongs(path)))
@@ -85,10 +118,10 @@ def test_learning_helpers_reject_retraction_proxy_geometry():
     x = M.random_point(jax.random.key(724), sample_shape=(2,))
     y = M.random_point(jax.random.key(725), sample_shape=(2,))
 
-    with pytest.raises(ValueError, match="requires exact geodesic operations"):
-        pairwise_squared_dist(M, x, y)
-    with pytest.raises(ValueError, match="requires exact geodesic operations"):
-        geodesic_interpolate(M, x[0], y[0], jnp.linspace(0.0, 1.0, 3))
+    with pytest.raises(ValueError, match="requires exact manifold operations"):
+        pairwise_distances(M, x, y)
+    with pytest.raises(ValueError, match="requires exact manifold operations"):
+        geodesic_interpolation(M, x[0], y[0], jnp.linspace(0.0, 1.0, 3))
 
 
 def test_geodesic_interpolation_rejects_numerical_local_logarithm():
@@ -97,10 +130,10 @@ def test_geodesic_interpolation_rejects_numerical_local_logarithm():
     y = M.exp(x, M.random_tangent(jax.random.key(727), x, scale=0.05))
 
     with pytest.raises(ValueError, match="log=numerical-local"):
-        geodesic_interpolate(M, x, y, jnp.linspace(0.0, 1.0, 3))
+        geodesic_interpolation(M, x, y, jnp.linspace(0.0, 1.0, 3))
 
 
-def test_tangent_map_keeps_framework_parameters_outside_geojax():
+def test_tangent_space_map_keeps_framework_parameters_outside_geojax():
     source = Euclidean(size=2)
     target = Sphere(size=3)
     source_base = jnp.zeros(2)
@@ -108,7 +141,7 @@ def test_tangent_map_keeps_framework_parameters_outside_geojax():
     matrix = jnp.array([[0.0, 0.0], [0.8, -0.2], [0.1, 0.7]])
     points = jnp.array([[0.1, 0.2], [-0.3, 0.4], [0.2, -0.1]])
 
-    mapped = tangent_map(
+    mapped = tangent_space_map(
         source,
         target,
         points,
@@ -120,7 +153,7 @@ def test_tangent_map_keeps_framework_parameters_outside_geojax():
     assert mapped.shape == (3, 3)
     assert bool(jnp.all(target.belongs(mapped)))
     jacobian = jax.jacrev(
-        lambda value: tangent_map(
+        lambda value: tangent_space_map(
             source,
             target,
             value,

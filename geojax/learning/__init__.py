@@ -1,5 +1,182 @@
-"""Pure-JAX primitives for manifold-valued learning."""
+"""Manifold-independent statistical learning in JAX."""
 
-from ._geometry import geodesic_interpolate, pairwise_squared_dist, tangent_map
+from ._capabilities import (
+    EquivariantEmbeddingProtocol,
+    LearningCapabilityError,
+)
+from ._data import (
+    DataValidationReport,
+    ManifoldData,
+    ManifoldDataAdapterProtocol,
+    as_manifold_data,
+    check_manifold_data,
+    register_manifold_data_adapter,
+)
+from ._geometry import (
+    geodesic_interpolation,
+    nearest_neighbors,
+    pairwise_distances,
+    tangent_space_map,
+)
+from ._statistics import frechet_mean, frechet_median, minimum_enclosing_ball
+from ._regression import kernel_regression, select_kernel_bandwidth
+from ._classification import (
+    knn_classifier,
+    nearest_centroid_classifier,
+    tangent_space_discriminant_analysis,
+    tangent_space_logistic_regression,
+)
+from ._response import geodesic_regression, local_polynomial_regression
+from ._clustering import (
+    agglomerative_clustering,
+    competitive_quantization,
+    kmeans,
+    kmedoids,
+    lightweight_coreset,
+    mean_shift,
+    spectral_clustering,
+)
+from ._embedding import (
+    classical_mds,
+    isomap,
+    kernel_pca,
+    phate,
+    principal_geodesic_analysis,
+    sammon_mapping,
+    tsne,
+)
+from ._inference import (
+    biswas_ghosh_two_sample_test,
+    frechet_anova,
+    wasserstein_two_sample_test,
+)
+from ._uncertainty import (
+    bootstrap_frechet_mean,
+    energy_two_sample_test,
+    kernel_mmd_two_sample_test,
+    paired_frechet_test,
+)
+from ._scalable import minibatch_frechet_mean, minibatch_kmeans, streaming_frechet_mean
+from ._dictionary import geodesic_barycentric_coding, manifold_dictionary_learning
+from ._robust import (
+    geodesic_m_estimator,
+    geodesic_spatial_depth,
+    metric_distance_ranks,
+    trimmed_frechet_mean,
+)
+from ._semisupervised import label_propagation, manifold_regularized_regression
+from ._metric import riemannian_metric_learning
+from ._transport import empirical_wasserstein_distance, sinkhorn_divergence
+from ._results import (
+    BootstrapResult,
+    BarycentricCodingResult,
+    ClusteringResult,
+    CoresetResult,
+    DictionaryLearningResult,
+    EmbeddingResult,
+    EnclosingBallResult,
+    FrechetMeanResult,
+    FrechetMedianResult,
+    GeodesicRegressionModel,
+    HierarchicalClusteringResult,
+    HypothesisTestResult,
+    KNearestNeighborsModel,
+    KernelCVResult,
+    KernelRegressionModel,
+    LocalPolynomialRegressionModel,
+    MetricLearningModel,
+    MetricRanksResult,
+    NearestCentroidModel,
+    NeighborsResult,
+    RobustLocationResult,
+    SemiSupervisedResult,
+    TangentFeatureMap,
+    TangentSpaceClassifierModel,
+    TransportResult,
+)
 
-__all__ = ["geodesic_interpolate", "pairwise_squared_dist", "tangent_map"]
+__all__ = [
+    "BarycentricCodingResult",
+    "BootstrapResult",
+    "DataValidationReport",
+    "agglomerative_clustering",
+    "biswas_ghosh_two_sample_test",
+    "bootstrap_frechet_mean",
+    "classical_mds",
+    "ClusteringResult",
+    "CoresetResult",
+    "DictionaryLearningResult",
+    "EmbeddingResult",
+    "EnclosingBallResult",
+    "EquivariantEmbeddingProtocol",
+    "empirical_wasserstein_distance",
+    "energy_two_sample_test",
+    "LearningCapabilityError",
+    "FrechetMeanResult",
+    "FrechetMedianResult",
+    "frechet_anova",
+    "frechet_mean",
+    "frechet_median",
+    "geodesic_barycentric_coding",
+    "geodesic_m_estimator",
+    "geodesic_spatial_depth",
+    "GeodesicRegressionModel",
+    "geodesic_regression",
+    "HierarchicalClusteringResult",
+    "HypothesisTestResult",
+    "isomap",
+    "kernel_pca",
+    "kernel_regression",
+    "kernel_mmd_two_sample_test",
+    "knn_classifier",
+    "kmeans",
+    "kmedoids",
+    "KernelCVResult",
+    "KernelRegressionModel",
+    "KNearestNeighborsModel",
+    "label_propagation",
+    "local_polynomial_regression",
+    "LocalPolynomialRegressionModel",
+    "ManifoldData",
+    "ManifoldDataAdapterProtocol",
+    "manifold_dictionary_learning",
+    "manifold_regularized_regression",
+    "MetricLearningModel",
+    "MetricRanksResult",
+    "metric_distance_ranks",
+    "lightweight_coreset",
+    "mean_shift",
+    "minibatch_frechet_mean",
+    "minibatch_kmeans",
+    "minimum_enclosing_ball",
+    "nearest_centroid_classifier",
+    "NearestCentroidModel",
+    "NeighborsResult",
+    "as_manifold_data",
+    "check_manifold_data",
+    "geodesic_interpolation",
+    "nearest_neighbors",
+    "pairwise_distances",
+    "paired_frechet_test",
+    "phate",
+    "principal_geodesic_analysis",
+    "register_manifold_data_adapter",
+    "RobustLocationResult",
+    "riemannian_metric_learning",
+    "sammon_mapping",
+    "select_kernel_bandwidth",
+    "sinkhorn_divergence",
+    "spectral_clustering",
+    "streaming_frechet_mean",
+    "SemiSupervisedResult",
+    "TangentFeatureMap",
+    "TangentSpaceClassifierModel",
+    "tangent_space_discriminant_analysis",
+    "tangent_space_logistic_regression",
+    "tangent_space_map",
+    "trimmed_frechet_mean",
+    "TransportResult",
+    "tsne",
+    "wasserstein_two_sample_test",
+    "competitive_quantization",
+]
