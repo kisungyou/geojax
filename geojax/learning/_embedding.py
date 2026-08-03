@@ -27,7 +27,7 @@ from ._utils import (
 
 
 def _prepare(manifold: Any, data: Any, method: str) -> ManifoldData:
-    adapted = data if isinstance(data, ManifoldData) else as_manifold_data(manifold, data)
+    adapted = as_manifold_data(manifold, data)
     require_unbatched(adapted, method)
     return adapted
 
@@ -38,18 +38,24 @@ def _descending_eigh(matrix: Any) -> tuple[Any, Any]:
     return values[order], vectors[:, order]
 
 
+def _validate_n_components(n_components: int, n_samples: int) -> int:
+    count = int(n_components)
+    if not 1 <= count <= n_samples:
+        raise ValueError("n_components must be between 1 and n_samples.")
+    return count
+
+
 def _mds_from_distances(distances: Any, n_components: int) -> tuple[Any, dict[str, Any]]:
     distances = jnp.asarray(distances)
     n_samples = distances.shape[0]
     if distances.shape != (n_samples, n_samples):
         raise ValueError("distances must be square.")
-    if not 1 <= int(n_components) <= n_samples:
-        raise ValueError("n_components must be between 1 and n_samples.")
+    n_components = _validate_n_components(n_components, n_samples)
     centering = jnp.eye(n_samples) - jnp.ones((n_samples, n_samples)) / n_samples
     gram = -0.5 * centering @ (distances**2) @ centering
     eigenvalues, eigenvectors = _descending_eigh(gram)
-    positive = jnp.maximum(eigenvalues[: int(n_components)], 0.0)
-    coordinates = eigenvectors[:, : int(n_components)] * jnp.sqrt(positive)[None, :]
+    positive = jnp.maximum(eigenvalues[:n_components], 0.0)
+    coordinates = eigenvectors[:, :n_components] * jnp.sqrt(positive)[None, :]
     reconstructed = jnp.linalg.norm(coordinates[:, None, :] - coordinates[None, :, :], axis=-1)
     denominator = jnp.sum(distances**2)
     stress = jnp.sqrt(jnp.sum((distances - reconstructed) ** 2) / jnp.maximum(denominator, 1e-15))
@@ -101,7 +107,7 @@ class _PGAModel:
     eigenvalues: Any
 
     def transform(self, data: Any) -> Any:
-        adapted = data if isinstance(data, ManifoldData) else as_manifold_data(self.manifold, data)
+        adapted = as_manifold_data(self.manifold, data)
         logs = self.manifold.log(self.mean, adapted.values)
         left = _expand_tangent_samples(self.manifold, logs, left=True)
         right = _expand_tangent_samples(self.manifold, self.components, left=False)
@@ -183,9 +189,15 @@ class _KernelPCAModel:
     kernel: Callable[[Any, float], Any] | None
 
     def transform(self, data: Any) -> Any:
-        queries = data if isinstance(data, ManifoldData) else as_manifold_data(self.manifold, data)
+        queries = as_manifold_data(self.manifold, data)
         distances = pairwise_distances(self.manifold, queries, self.training_data)
         matrix = _distance_kernel(distances, self.bandwidth, self.kernel)
+        expected = (queries.n_samples, self.training_data.n_samples)
+        if matrix.shape != expected or not bool(jnp.all(jnp.isfinite(matrix))):
+            raise ValueError(
+                "kernel must return a finite query-by-training matrix with shape "
+                f"{expected}."
+            )
         centered = (
             matrix
             - self.training_column_mean[None, :]
@@ -214,6 +226,9 @@ def kernel_pca(
     """Kernel PCA using an RBF manifold-distance kernel or user callable."""
     require_exact_operations(manifold, "kernel_pca", "dist")
     adapted = _prepare(manifold, data, "kernel_pca")
+    n_components = _validate_n_components(n_components, adapted.n_samples)
+    if kernel is not None and not callable(kernel):
+        raise TypeError("kernel must be callable when supplied.")
     distances = pairwise_distances(manifold, adapted)
     positive = distances[distances > 0.0]
     scale = float(jnp.median(positive)) if bandwidth is None and positive.size else 1.0
@@ -223,12 +238,19 @@ def kernel_pca(
     matrix = _distance_kernel(distances, scale, kernel)
     if matrix.shape != distances.shape:
         raise ValueError("kernel must return a square sample kernel matrix.")
+    if not bool(jnp.all(jnp.isfinite(matrix))):
+        raise ValueError("kernel must return only finite values.")
+    asymmetry = jnp.linalg.norm(matrix - matrix.T)
+    symmetry_scale = jnp.maximum(jnp.linalg.norm(matrix), 1.0)
+    symmetry_tolerance = 100.0 * jnp.finfo(matrix.dtype).eps * symmetry_scale
+    if float(asymmetry) > float(symmetry_tolerance):
+        raise ValueError("kernel must return a symmetric sample kernel matrix.")
+    matrix = 0.5 * (matrix + matrix.T)
     row_mean = jnp.mean(matrix, axis=1, keepdims=True)
     column_mean = jnp.mean(matrix, axis=0)
     global_mean = jnp.mean(matrix)
     centered = matrix - row_mean - column_mean[None, :] + global_mean
     eigenvalues, eigenvectors = _descending_eigh(centered)
-    n_components = int(n_components)
     selected_values = jnp.maximum(eigenvalues[:n_components], 0.0)
     selected_vectors = eigenvectors[:, :n_components]
     coordinates = selected_vectors * jnp.sqrt(selected_values)[None, :]
@@ -304,7 +326,8 @@ def isomap(
             geodesic = geodesic[selected_indices[:, None], selected_indices[None, :]]
         else:
             maximum = jnp.max(jnp.where(finite, geodesic, 0.0))
-            geodesic = jnp.where(finite, geodesic, 2.0 * maximum)
+            replacement = 2.0 * jnp.maximum(maximum, jnp.asarray(1.0, dtype=maximum.dtype))
+            geodesic = jnp.where(finite, geodesic, replacement)
     coordinates, diagnostics = _mds_from_distances(geodesic, int(n_components))
     diagnostics.update(
         {
@@ -386,7 +409,11 @@ def _tsne_probabilities(distances: Any, perplexity: float, tolerance: float = 1e
                 beta = 0.5 * beta if lower == 0.0 else 0.5 * (beta + lower)
         probabilities.append(weights / total)
     conditional = jnp.stack(probabilities)
-    return jnp.maximum((conditional + conditional.T) / (2.0 * n_samples), 1e-15)
+    joint = conditional + conditional.T
+    off_diagonal = ~jnp.eye(n_samples, dtype=bool)
+    floor = jnp.finfo(joint.dtype).tiny
+    joint = jnp.where(off_diagonal, jnp.maximum(joint, floor), 0.0)
+    return joint / jnp.sum(joint)
 
 
 def tsne(
@@ -404,13 +431,22 @@ def tsne(
     """Dense t-SNE from exact manifold distances with explicit random state."""
     require_exact_operations(manifold, "tsne", "dist")
     adapted = _prepare(manifold, data, "tsne")
+    n_components = _validate_n_components(n_components, adapted.n_samples)
     if not 1.0 <= perplexity < adapted.n_samples:
         raise ValueError("perplexity must be at least 1 and smaller than n_samples.")
+    if int(maxiter) < 1:
+        raise ValueError("maxiter must be positive.")
+    if learning_rate is not None and float(learning_rate) <= 0.0:
+        raise ValueError("learning_rate must be positive when supplied.")
+    if float(early_exaggeration) <= 0.0:
+        raise ValueError("early_exaggeration must be positive.")
+    if not 0 <= int(exaggeration_iterations) <= int(maxiter):
+        raise ValueError("exaggeration_iterations must lie between 0 and maxiter.")
     distances = pairwise_distances(manifold, adapted)
     probabilities = _tsne_probabilities(distances, float(perplexity))
     rate = float(learning_rate) if learning_rate is not None else max(200.0, adapted.n_samples / 12.0)
     coordinates = 1e-4 * jax.random.normal(
-        as_key(key, "tsne"), (adapted.n_samples, int(n_components))
+        as_key(key, "tsne"), (adapted.n_samples, n_components)
     )
     velocity = jnp.zeros_like(coordinates)
     history = []
@@ -418,7 +454,13 @@ def tsne(
         delta = coordinates[:, None, :] - coordinates[None, :, :]
         numerator = 1.0 / (1.0 + jnp.sum(delta * delta, axis=-1))
         numerator = numerator.at[jnp.diag_indices(adapted.n_samples)].set(0.0)
-        q = jnp.maximum(numerator / jnp.sum(numerator), 1e-15)
+        q = numerator / jnp.sum(numerator)
+        q = jnp.where(
+            jnp.eye(adapted.n_samples, dtype=bool),
+            0.0,
+            jnp.maximum(q, jnp.finfo(q.dtype).tiny),
+        )
+        q = q / jnp.sum(q)
         p = probabilities * (early_exaggeration if iteration < exaggeration_iterations else 1.0)
         gradient = 4.0 * jnp.sum(((p - q) * numerator)[..., None] * delta, axis=1)
         momentum = 0.5 if iteration < exaggeration_iterations else 0.8
@@ -426,7 +468,16 @@ def tsne(
         coordinates = coordinates + velocity
         coordinates = coordinates - jnp.mean(coordinates, axis=0, keepdims=True)
         if iteration % 10 == 0 or iteration == int(maxiter) - 1:
-            history.append(jnp.sum(probabilities * jnp.log(probabilities / q)))
+            positive = probabilities > 0.0
+            history.append(
+                jnp.sum(
+                    jnp.where(
+                        positive,
+                        probabilities * jnp.log(probabilities / jnp.maximum(q, 1e-30)),
+                        0.0,
+                    )
+                )
+            )
     objective = history[-1]
     return EmbeddingResult(
         coordinates=coordinates,
@@ -456,8 +507,13 @@ def phate(
     """Dense PHATE using adaptive manifold-distance diffusion affinities."""
     require_exact_operations(manifold, "phate", "dist")
     adapted = _prepare(manifold, data, "phate")
+    n_components = _validate_n_components(n_components, adapted.n_samples)
     if not 1 <= int(n_neighbors) < adapted.n_samples:
         raise ValueError("n_neighbors must be between 1 and n_samples - 1.")
+    if float(decay) <= 0.0:
+        raise ValueError("decay must be positive.")
+    if int(max_diffusion_time) < 1:
+        raise ValueError("max_diffusion_time must be positive.")
     if potential not in {"log", "sqrt"}:
         raise ValueError("potential must be 'log' or 'sqrt'.")
     distances = pairwise_distances(manifold, adapted)
@@ -466,8 +522,14 @@ def phate(
     local = jnp.exp(-((distances / jnp.maximum(scales[:, None], 1e-15)) ** decay))
     affinity = 0.5 * (local + local.T)
     transition = affinity / jnp.maximum(jnp.sum(affinity, axis=1, keepdims=True), 1e-15)
-    symmetric = 0.5 * (transition + transition.T)
-    eigenvalues = jnp.linalg.eigvalsh(symmetric)
+    degrees = jnp.sum(affinity, axis=1)
+    inverse_sqrt_degrees = 1.0 / jnp.sqrt(jnp.maximum(degrees, 1e-15))
+    symmetric_diffusion = (
+        inverse_sqrt_degrees[:, None]
+        * affinity
+        * inverse_sqrt_degrees[None, :]
+    )
+    eigenvalues = jnp.linalg.eigvalsh(symmetric_diffusion)
     eigenvalues = jnp.sort(jnp.abs(eigenvalues))[::-1]
     entropies = []
     for time in range(1, int(max_diffusion_time) + 1):
@@ -497,6 +559,7 @@ def phate(
             "pairwise_distances": distances,
             "affinity": affinity,
             "transition": transition,
+            "symmetric_diffusion": symmetric_diffusion,
             "diffusion_time": selected_time,
             "von_neumann_entropy": entropy_array,
             "potential_distances": potential_distances,

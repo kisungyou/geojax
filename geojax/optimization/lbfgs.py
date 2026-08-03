@@ -45,6 +45,8 @@ class LBFGS:
     stopfun: Optional[StopFn] = None
 
     def solve(self, problem: Any) -> tuple[Array, float, List[InfoEntry]]:
+        if int(self.memory) < 1:
+            raise ValueError("memory must be positive.")
         M = require(problem, "M")
         x = require(problem, "x0")
         start_time = time.perf_counter()

@@ -181,6 +181,7 @@ def _truncated_cg(
         rnorm_next = as_float(M.norm(x, r_next))
         if rnorm_next <= tol:
             r = r_next
+            rnorm = rnorm_next
             break
         z_next = precondition(problem, x, r_next)
         rz_next = as_float(inner(M, x, r_next, z_next))

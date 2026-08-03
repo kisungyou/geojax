@@ -10,7 +10,7 @@ import jax.numpy as jnp
 from geojax.geometry import Euclidean, Product
 
 from ._capabilities import LearningCapabilityError
-from ._data import ManifoldData, as_manifold_data
+from ._data import as_manifold_data
 from ._results import MetricLearningModel
 from ._utils import flatten_embedding, require_unbatched
 
@@ -63,7 +63,7 @@ def riemannian_metric_learning(
     eigenvalue_floor: float = 1e-10,
 ) -> MetricLearningModel:
     """Fit regularized log-Euclidean RMML from embedded labeled pairs."""
-    adapted = data if isinstance(data, ManifoldData) else as_manifold_data(manifold, data)
+    adapted = as_manifold_data(manifold, data)
     require_unbatched(adapted, "riemannian_metric_learning")
     label_values = jnp.asarray(labels)
     if label_values.shape != (adapted.n_samples,):

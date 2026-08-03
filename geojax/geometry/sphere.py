@@ -176,7 +176,9 @@ class Sphere(ExactGeometryMixin):
         tangent = y - dot * x
         tangent_squared = squared_norm(tangent, axis=-1, keepdims=True)
         v = acos_over_sin(dot, tangent_squared) * tangent
-        antipodal = dot < (-1.0 + 10.0 * self.atol)
+        dtype = jnp.result_type(x, float)
+        sine_cutoff = 64.0 * jnp.finfo(dtype).eps
+        antipodal = (dot < 0.0) & (tangent_squared <= sine_cutoff**2)
         return jnp.where(antipodal, jnp.nan, self.tangent_project(x, v))
 
     def squared_dist(self, x: Array, y: Array) -> Array:
@@ -202,13 +204,19 @@ class Sphere(ExactGeometryMixin):
         x = self.project(x)
         y = self.project(y)
         u = self.tangent_project(x, u)
-        dot_xy = self._dot(x, y, keepdims=True)
-        denom = 1.0 + dot_xy
-        denom_safe = jnp.where(denom > self.eps, denom, 1.0)
-        coef = self._dot(u, y, keepdims=True) / denom_safe
-        transported = u - coef * (x + y)
+        dot_xy = jnp.clip(self._dot(x, y, keepdims=True), -1.0, 1.0)
+        direction = y - dot_xy * x
+        sine_squared = squared_norm(direction, axis=-1, keepdims=True)
+        sine = jnp.sqrt(sine_squared)
+        dtype = jnp.result_type(x, float)
+        sine_cutoff = 64.0 * jnp.finfo(dtype).eps
+        safe_sine = jnp.where(sine > sine_cutoff, sine, 1.0)
+        unit_direction = direction / safe_sine
+        component = self._dot(u, unit_direction, keepdims=True)
+        terminal_direction = -sine * x + dot_xy * unit_direction
+        transported = u + component * (terminal_direction - unit_direction)
         transported = self.tangent_project(y, transported)
-        antipodal = denom < 10.0 * self.atol
+        antipodal = (dot_xy < 0.0) & (sine <= sine_cutoff)
         return jnp.where(antipodal, jnp.nan, transported)
 
     def geodesic_flow(self, x: Array, v: Array, t: float | Array = 1.0) -> tuple[Array, Array]:

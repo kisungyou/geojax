@@ -51,8 +51,8 @@ def biswas_ghosh_two_sample_test(
 ) -> HypothesisTestResult:
     """Run the metric-space modification of the Biswas-Ghosh two-sample test."""
     require_exact_operations(manifold, "biswas_ghosh_two_sample_test", "dist")
-    left = x if isinstance(x, ManifoldData) else as_manifold_data(manifold, x)
-    right = y if isinstance(y, ManifoldData) else as_manifold_data(manifold, y)
+    left = as_manifold_data(manifold, x)
+    right = as_manifold_data(manifold, y)
     require_unbatched(left, "biswas_ghosh_two_sample_test")
     require_unbatched(right, "biswas_ghosh_two_sample_test")
     if left.n_samples < 2 or right.n_samples < 2:
@@ -125,8 +125,18 @@ def _fanova_statistic(
                 / (sigma_array[left] * sigma_array[right])
                 * (variances_array[left] - variances_array[right]) ** 2
             )
-    term_variance = n_samples * variance_component / jnp.sum(sizes_array / sigma_array)
-    term_mean = n_samples * mean_component**2 / jnp.sum(sizes_array**2 * sigma_array)
+    # Dubey--Mueller's statistic is
+    # n U / sum_j(gamma_j / sigma_j^2)
+    #   + n F^2 / sum_j(gamma_j^2 sigma_j^2).
+    # Keep the proportions explicit: using raw group sizes in either
+    # denominator silently removes powers of n and destroys the chi-square
+    # calibration of the asymptotic test.
+    term_variance = n_samples * variance_component / jnp.sum(
+        proportions / sigma_array
+    )
+    term_mean = n_samples * mean_component**2 / jnp.sum(
+        proportions**2 * sigma_array
+    )
     statistic = term_variance + term_mean
     return statistic, {
         "labels": labels,
@@ -154,7 +164,7 @@ def frechet_anova(
 ) -> HypothesisTestResult:
     """Test equality of metric-space populations using Dubey-Mueller FANOVA."""
     require_exact_operations(manifold, "frechet_anova", "dist", "log", "exp")
-    adapted = data if isinstance(data, ManifoldData) else as_manifold_data(manifold, data)
+    adapted = as_manifold_data(manifold, data)
     require_unbatched(adapted, "frechet_anova")
     group_values = jnp.asarray(groups)
     if group_values.shape != (adapted.n_samples,):
@@ -164,6 +174,8 @@ def frechet_anova(
         raise ValueError("FANOVA requires at least two groups with at least two observations each.")
     if method not in {"asymptotic", "permutation"}:
         raise ValueError("method must be 'asymptotic' or 'permutation'.")
+    if float(variance_floor) <= 0.0:
+        raise ValueError("variance_floor must be positive.")
     observed, diagnostics = _fanova_statistic(
         manifold,
         adapted,
@@ -214,8 +226,8 @@ def wasserstein_two_sample_test(
 ) -> HypothesisTestResult:
     """Permutation test using exact empirical Wasserstein distance."""
     require_exact_operations(manifold, "wasserstein_two_sample_test", "dist")
-    left = x if isinstance(x, ManifoldData) else as_manifold_data(manifold, x)
-    right = y if isinstance(y, ManifoldData) else as_manifold_data(manifold, y)
+    left = as_manifold_data(manifold, x)
+    right = as_manifold_data(manifold, y)
     require_unbatched(left, "wasserstein_two_sample_test")
     require_unbatched(right, "wasserstein_two_sample_test")
     count = _validate_permutations(n_permutations)

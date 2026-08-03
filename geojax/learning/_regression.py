@@ -8,7 +8,7 @@ import jax
 import jax.numpy as jnp
 
 from ._capabilities import require_exact_operations
-from ._data import ManifoldData, as_manifold_data
+from ._data import as_manifold_data
 from ._geometry import pairwise_distances
 from ._results import KernelCVResult, KernelRegressionModel
 from ._utils import as_key, require_unbatched, take_samples
@@ -50,7 +50,7 @@ def kernel_regression(
 ) -> KernelRegressionModel:
     """Fit Nadaraya-Watson regression with manifold-valued predictors."""
     require_exact_operations(manifold, "kernel_regression", "dist")
-    adapted = data if isinstance(data, ManifoldData) else as_manifold_data(manifold, data)
+    adapted = as_manifold_data(manifold, data)
     require_unbatched(adapted, "kernel_regression")
     target_values = _validate_targets(targets, adapted.n_samples)
     if float(bandwidth) <= 0.0:
@@ -65,7 +65,7 @@ def kernel_regression(
 
 
 def _predict_kernel_regression(model: KernelRegressionModel, data: Any) -> Any:
-    queries = data if isinstance(data, ManifoldData) else as_manifold_data(model.manifold, data)
+    queries = as_manifold_data(model.manifold, data)
     require_unbatched(queries, "KernelRegressionModel.predict")
     distances = pairwise_distances(
         model.manifold,
@@ -91,7 +91,7 @@ def select_kernel_bandwidth(
 ) -> KernelCVResult:
     """Select a kernel bandwidth by deterministic-key K-fold mean squared error."""
     require_exact_operations(manifold, "select_kernel_bandwidth", "dist")
-    adapted = data if isinstance(data, ManifoldData) else as_manifold_data(manifold, data)
+    adapted = as_manifold_data(manifold, data)
     require_unbatched(adapted, "select_kernel_bandwidth")
     target_values = _validate_targets(targets, adapted.n_samples)
     candidates = jnp.asarray(bandwidths, dtype=float)

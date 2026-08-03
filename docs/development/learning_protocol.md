@@ -15,6 +15,11 @@ are converted through `as_manifold_data`; callers can adapt once and reuse the
 immutable result. New methods must not implement private shape conventions or
 silently normalize points.
 
+`ManifoldData` is bound by identity to the geometry instance that performed
+validation. A method must pass an adapted object through `as_manifold_data`
+again so the binding and requested validation level are enforced. It must not
+short-circuit merely because the input already has type `ManifoldData`.
+
 An adapter must:
 
 - preserve the mathematical point represented by an alternate coordinate;

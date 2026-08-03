@@ -109,6 +109,28 @@ def test_frechet_anova_asymptotic_and_permutation_paths_are_finite():
     assert permutation.null_distribution.shape == (9,)
 
 
+def test_frechet_anova_matches_dubey_mueller_scaling():
+    manifold = Euclidean(1)
+    values = jnp.array([[-2.0], [-1.0], [0.0], [1.0], [3.0], [5.0], [7.0]])
+    groups = jnp.array([0, 0, 0, 1, 1, 1, 1])
+    result = frechet_anova(manifold, values, groups, maxiter=50)
+    diagnostics = result.diagnostics
+    proportions = diagnostics["sizes"] / values.shape[0]
+    sigma2 = diagnostics["variance_estimators"]
+    expected = (
+        values.shape[0]
+        * diagnostics["variance_component"]
+        / jnp.sum(proportions / sigma2)
+        + values.shape[0]
+        * diagnostics["mean_component"] ** 2
+        / jnp.sum(proportions**2 * sigma2)
+    )
+    assert jnp.allclose(result.statistic, expected, rtol=1e-6, atol=1e-8)
+
+    with pytest.raises(ValueError, match="variance_floor"):
+        frechet_anova(manifold, values, groups, variance_floor=0.0)
+
+
 def test_wasserstein_permutation_test_uses_exact_transport_statistic():
     manifold = Euclidean(1)
     left = jnp.array([[0.0], [0.2], [0.4]])

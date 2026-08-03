@@ -24,6 +24,7 @@ from geojax.optimization import (
 )
 from geojax.optimization.lbfgs import _transport_memory
 from geojax.optimization.neldermead import _diameter
+from geojax.optimization.trustregions import _truncated_cg
 
 
 def test_only_class_style_solvers_are_public():
@@ -265,6 +266,32 @@ def test_lbfgs_recomputes_curvature_after_nonisometric_transport():
     assert jnp.allclose(new_y, 2.0 * y)
     assert jnp.allclose(new_rho, 1.0 / jnp.vdot(new_s, new_y))
     assert not jnp.allclose(new_rho, memory[0][2])
+
+
+def test_lbfgs_rejects_nonpositive_memory():
+    problem = Minimize(
+        M=Euclidean(1),
+        cost=lambda point: jnp.sum(point**2),
+        x0=jnp.ones(1),
+        solver=LBFGS(memory=0, verbosity=0),
+    )
+    with pytest.raises(ValueError, match="memory must be positive"):
+        problem.solve()
+
+
+def test_truncated_cg_reports_the_final_residual():
+    manifold = Euclidean(2)
+    problem = Minimize(M=manifold, cost=lambda point: 0.5 * jnp.sum(point**2))
+    eta, hit_boundary, diagnostics = _truncated_cg(
+        problem,
+        jnp.zeros(2),
+        jnp.array([1.0, 0.0]),
+        10.0,
+        TrustRegions(maxinner=5, verbosity=0),
+    )
+    assert not hit_boundary
+    assert jnp.allclose(eta, jnp.array([-1.0, 0.0]))
+    assert diagnostics["tcg_residual_norm"] == pytest.approx(0.0)
 
 
 def test_lbfgs_smoke_with_nonisometric_rank_stratum_transport():

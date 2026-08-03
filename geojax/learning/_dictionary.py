@@ -88,8 +88,8 @@ def geodesic_barycentric_coding(
         "log",
         "exp",
     )
-    adapted = data if isinstance(data, ManifoldData) else as_manifold_data(manifold, data)
-    atom_data = atoms if isinstance(atoms, ManifoldData) else as_manifold_data(manifold, atoms)
+    adapted = as_manifold_data(manifold, data)
+    atom_data = as_manifold_data(manifold, atoms)
     require_unbatched(adapted, "geodesic_barycentric_coding")
     require_unbatched(atom_data, "geodesic_barycentric_coding")
     if atom_data.n_samples < 1:
@@ -230,7 +230,7 @@ def manifold_dictionary_learning(
         "log",
         "exp",
     )
-    adapted = data if isinstance(data, ManifoldData) else as_manifold_data(manifold, data)
+    adapted = as_manifold_data(manifold, data)
     require_unbatched(adapted, "manifold_dictionary_learning")
     n_atoms = int(n_atoms)
     if not 1 <= n_atoms <= adapted.n_samples:

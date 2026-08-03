@@ -278,25 +278,35 @@ def test_genuine_sphere_cut_locus_remains_explicit():
 def test_sphere_log_remains_accurate_near_but_off_the_cut_locus():
     M = Sphere(size=3)
     x = jnp.array([1.0, 0.0, 0.0])
-    angle = jnp.asarray(jnp.pi - 0.015, dtype=x.dtype)
+    angle = jnp.asarray(jnp.pi - 0.001, dtype=x.dtype)
     y = jnp.array([jnp.cos(angle), jnp.sin(angle), 0.0])
+    direction = jnp.array([0.0, 0.0, 1.0])
 
     tangent = M.log(x, y)
+    transported = M.transport(x, y, direction)
 
-    _assert_finite(tangent)
+    _assert_finite((tangent, transported))
     assert jnp.allclose(M.norm(x, tangent), angle, atol=2e-5, rtol=2e-5)
     assert jnp.allclose(M.exp(x, tangent), y, atol=2e-5, rtol=2e-5)
+    assert jnp.allclose(M.norm(x, direction), M.norm(y, transported), atol=2e-5)
 
     oblique = Oblique(size=(3, 1))
     frame_x = x[:, None]
     frame_y = y[:, None]
+    frame_direction = direction[:, None]
     frame_tangent = oblique.log(frame_x, frame_y)
-    _assert_finite(frame_tangent)
+    frame_transported = oblique.transport(frame_x, frame_y, frame_direction)
+    _assert_finite((frame_tangent, frame_transported))
     assert jnp.allclose(
         oblique.norm(frame_x, frame_tangent),
         angle,
         atol=2e-5,
         rtol=2e-5,
+    )
+    assert jnp.allclose(
+        oblique.norm(frame_x, frame_direction),
+        oblique.norm(frame_y, frame_transported),
+        atol=2e-5,
     )
 
 

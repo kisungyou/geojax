@@ -22,7 +22,7 @@ def _prepare_graph(
     bandwidth: float | None,
     n_neighbors: int | None,
 ) -> tuple[ManifoldData, Any, Any, float]:
-    adapted = data if isinstance(data, ManifoldData) else as_manifold_data(manifold, data)
+    adapted = as_manifold_data(manifold, data)
     require_unbatched(adapted, method)
     distances = pairwise_distances(manifold, adapted)
     positive = distances[distances > 0.0]

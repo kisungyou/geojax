@@ -22,7 +22,7 @@ from ._utils import (
 
 
 def _prepare(manifold: Any, data: Any, method: str) -> ManifoldData:
-    adapted = data if isinstance(data, ManifoldData) else as_manifold_data(manifold, data)
+    adapted = as_manifold_data(manifold, data)
     require_unbatched(adapted, method)
     return adapted
 

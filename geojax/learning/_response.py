@@ -10,7 +10,7 @@ import jax.numpy as jnp
 from geojax.optimization import ConjugateGradient, Minimize
 
 from ._capabilities import require_exact_operations
-from ._data import ManifoldData, as_manifold_data
+from ._data import as_manifold_data
 from ._regression import _kernel_weights
 from ._results import GeodesicRegressionModel, LocalPolynomialRegressionModel
 from ._statistics import frechet_mean
@@ -60,7 +60,7 @@ def geodesic_regression(
 ) -> GeodesicRegressionModel:
     r"""Fit ``Y(t) = Exp_p((t - t_bar) v)`` by intrinsic least squares."""
     require_exact_operations(manifold, "geodesic_regression", "dist", "log", "exp")
-    adapted = responses if isinstance(responses, ManifoldData) else as_manifold_data(manifold, responses)
+    adapted = as_manifold_data(manifold, responses)
     require_unbatched(adapted, "geodesic_regression")
     predictor_values = _validate_predictors(predictors, adapted.n_samples)
     weights = normalize_weights(adapted.n_samples, sample_weight)
@@ -135,7 +135,7 @@ def local_polynomial_regression(
 ) -> LocalPolynomialRegressionModel:
     """Fit local-constant or local-linear Fréchet regression."""
     require_exact_operations(manifold, "local_polynomial_regression", "dist", "log", "exp")
-    adapted = responses if isinstance(responses, ManifoldData) else as_manifold_data(manifold, responses)
+    adapted = as_manifold_data(manifold, responses)
     require_unbatched(adapted, "local_polynomial_regression")
     predictor_values = _validate_predictors(predictors, adapted.n_samples)
     if float(bandwidth) <= 0.0:

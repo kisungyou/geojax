@@ -10,7 +10,7 @@ import jax.numpy as jnp
 from geojax.geometry import Product
 
 from ._capabilities import require_exact_operations
-from ._data import ManifoldData, as_manifold_data
+from ._data import as_manifold_data
 from ._results import NeighborsResult
 from ._utils import event_shapes, scale_tangent, take_samples
 
@@ -18,8 +18,6 @@ Array = Any
 
 
 def _values(manifold: Any, data: Any, *, name: str) -> tuple[Any, int]:
-    if isinstance(data, ManifoldData):
-        return data.values, data.n_samples
     adapted = as_manifold_data(manifold, data, check="shape")
     return adapted.values, adapted.n_samples
 
@@ -125,10 +123,8 @@ def nearest_neighbors(
     block_size: int | None = None,
 ) -> NeighborsResult:
     """Find exact-distance nearest neighbors in a dense manifold dataset."""
-    adapted = data if isinstance(data, ManifoldData) else as_manifold_data(manifold, data)
-    query_data = adapted if queries is None else (
-        queries if isinstance(queries, ManifoldData) else as_manifold_data(manifold, queries)
-    )
+    adapted = as_manifold_data(manifold, data)
+    query_data = adapted if queries is None else as_manifold_data(manifold, queries)
     if adapted.batch_shape or query_data.batch_shape:
         raise ValueError("nearest_neighbors currently expects unbatched datasets.")
     maximum = adapted.n_samples - (1 if queries is None and exclude_self else 0)

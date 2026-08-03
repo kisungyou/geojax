@@ -56,8 +56,15 @@ class DataValidationReport:
 
 @dataclass(frozen=True)
 class ManifoldData:
-    """Canonical manifold-valued observations and their static layout metadata."""
+    """Canonical observations bound to the geometry that validated them.
 
+    Binding prevents a validated dataset from being silently reused under a
+    different metric or representation with the same event shape. Reusing the
+    object with its original geometry skips checks that are already at least as
+    strong as the requested validation level.
+    """
+
+    manifold: Any
     values: Any
     n_samples: int
     batch_shape: tuple[int, ...]
@@ -383,9 +390,19 @@ def as_manifold_data(
     ``representation='point_sequence'`` so their interpretation is explicit.
     """
     if isinstance(values, ManifoldData):
+        if values.manifold is not manifold:
+            raise ValueError(
+                "ManifoldData is bound to a different geometry instance; "
+                "adapt values.values explicitly for the new geometry."
+            )
         if representation != "canonical" or sample_axis is not None or repair:
             raise ValueError("Already-adapted ManifoldData cannot be converted again.")
-        return values
+        validation_order = {"shape": 0, "finite": 1, "belongs": 2}
+        if check not in validation_order:
+            raise ValueError("check must be 'shape', 'finite', or 'belongs'.")
+        if validation_order[values.report.check] >= validation_order[check]:
+            return values
+        return as_manifold_data(manifold, values.values, check=check)
     if check not in {"shape", "finite", "belongs"}:
         raise ValueError("check must be 'shape', 'finite', or 'belongs'.")
     if representation == "point_sequence":
@@ -431,7 +448,14 @@ def as_manifold_data(
         repaired_count=repaired_count,
         messages=tuple(messages),
     )
-    return ManifoldData(canonical, n_samples, batch_shape, event_shapes(manifold), report)
+    return ManifoldData(
+        manifold,
+        canonical,
+        n_samples,
+        batch_shape,
+        event_shapes(manifold),
+        report,
+    )
 
 
 def check_manifold_data(

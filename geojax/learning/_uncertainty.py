@@ -8,7 +8,7 @@ import jax
 import jax.numpy as jnp
 
 from ._capabilities import require_exact_operations
-from ._data import ManifoldData, as_manifold_data
+from ._data import as_manifold_data
 from ._geometry import pairwise_distances
 from ._inference import _combine, _validate_permutations
 from ._results import BootstrapResult, HypothesisTestResult
@@ -36,7 +36,7 @@ def bootstrap_frechet_mean(
 ) -> BootstrapResult:
     """Bootstrap an intrinsic mean and return a geodesic confidence ball."""
     require_exact_operations(manifold, "bootstrap_frechet_mean", "dist", "log", "exp")
-    adapted = data if isinstance(data, ManifoldData) else as_manifold_data(manifold, data)
+    adapted = as_manifold_data(manifold, data)
     require_unbatched(adapted, "bootstrap_frechet_mean")
     count = int(n_bootstrap)
     if count < 1:
@@ -111,8 +111,8 @@ def energy_two_sample_test(
 ) -> HypothesisTestResult:
     """Run the metric energy-distance two-sample permutation test."""
     require_exact_operations(manifold, "energy_two_sample_test", "dist")
-    left = x if isinstance(x, ManifoldData) else as_manifold_data(manifold, x)
-    right = y if isinstance(y, ManifoldData) else as_manifold_data(manifold, y)
+    left = as_manifold_data(manifold, x)
+    right = as_manifold_data(manifold, y)
     require_unbatched(left, "energy_two_sample_test")
     require_unbatched(right, "energy_two_sample_test")
     if left.n_samples < 2 or right.n_samples < 2:
@@ -169,8 +169,8 @@ def kernel_mmd_two_sample_test(
 ) -> HypothesisTestResult:
     """Run a finite-sample PSD-kernel maximum mean discrepancy test."""
     require_exact_operations(manifold, "kernel_mmd_two_sample_test", "dist")
-    left = x if isinstance(x, ManifoldData) else as_manifold_data(manifold, x)
-    right = y if isinstance(y, ManifoldData) else as_manifold_data(manifold, y)
+    left = as_manifold_data(manifold, x)
+    right = as_manifold_data(manifold, y)
     require_unbatched(left, "kernel_mmd_two_sample_test")
     require_unbatched(right, "kernel_mmd_two_sample_test")
     if left.n_samples < 2 or right.n_samples < 2:
@@ -250,8 +250,8 @@ def paired_frechet_test(
 ) -> HypothesisTestResult:
     """Test a zero mean paired displacement by within-pair random sign flips."""
     require_exact_operations(manifold, "paired_frechet_test", "dist", "log", "exp")
-    left = x if isinstance(x, ManifoldData) else as_manifold_data(manifold, x)
-    right = y if isinstance(y, ManifoldData) else as_manifold_data(manifold, y)
+    left = as_manifold_data(manifold, x)
+    right = as_manifold_data(manifold, y)
     require_unbatched(left, "paired_frechet_test")
     require_unbatched(right, "paired_frechet_test")
     if left.n_samples != right.n_samples or left.n_samples < 2:

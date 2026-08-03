@@ -16,6 +16,14 @@
   structural geometry protocol, and shipped the `py.typed` marker.
 - Corrected L-BFGS curvature reciprocals after non-isometric transport and
   corrected Nelder-Mead simplex scaling and full pairwise diameter reporting.
+- Corrected Fisher--Rao simplex tangent projection, stabilized sphere and
+  Oblique logarithms and parallel transport near but outside the cut locus,
+  and made trust-region residual diagnostics report the terminal inner state.
+- Corrected Dubey--Müller Fréchet-ANOVA scaling, weighted trimming by retained
+  probability mass, and streaming means so prior mass is always explicit.
+- Bound validated learning datasets to their geometry instance, upgraded weak
+  validation before stronger reuse, and tightened kernel-PCA, t-SNE, PHATE,
+  and disconnected-Isomap numerical contracts.
 - Distinguished the stable PyPI package from the unreleased documentation and
   expanded the method-level geometry API contract.
 - Standardized native leading-batch semantics across every public geometry and
@@ -54,6 +62,8 @@
   cross-validated regression, two-sample inference, exact circular optimal
   transport, six manifold dimension-reduction methods, and supervised
   equivariant-embedding metric learning.
+- Rebalanced visualization tutorials across hyperbolic, toroidal, SPD, and
+  Grassmann geometries instead of relying predominantly on spheres.
 - Reframed project metadata and first-use documentation around three equal
   scientific layers: Riemannian geometry, manifold optimization, and learning
   with manifold-valued observations.

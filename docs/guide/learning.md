@@ -42,6 +42,13 @@ nonfinite, or off-manifold observations. Passing `repair=True` explicitly calls
 input does not already use the canonical layout, so an adapter never guesses
 which axis represents observations.
 
+Each `ManifoldData` object is bound to the exact geometry instance that
+validated it. This matters when two geometries share an event shape but use
+different metrics or parameters. Reusing the object with that instance skips
+validation already performed; requesting a stronger level upgrades the check
+in the order `shape`, `finite`, `belongs`. To use the same canonical values
+with another geometry, adapt `data.values` explicitly under that geometry.
+
 ## Alternate representations
 
 The adapter accepts named representations only when their conversion has a
@@ -129,6 +136,29 @@ Inference separates three null hypotheses. Fréchet ANOVA compares object-valued
 populations through their means and variances, the Biswas--Ghosh statistic uses
 only interpoint distances, and the Wasserstein test compares empirical measures
 {cite:p}`dubey2019frechet,biswas2014nonparametric`.
+
+For group proportions $\gamma_j$, Fréchet variances $V_j$, variance estimators
+$\sigma_j^2$, and
+
+$$
+F=V_{\mathrm{pooled}}-\sum_j\gamma_jV_j,
+\qquad
+U=\sum_{j<k}
+\frac{\gamma_j\gamma_k(V_j-V_k)^2}{\sigma_j^2\sigma_k^2},
+$$
+
+`frechet_anova` reports the Dubey--Müller statistic
+
+$$
+T_n=
+\frac{nU}{\sum_j\gamma_j/\sigma_j^2}
++
+\frac{nF^2}{\sum_j\gamma_j^2\sigma_j^2}.
+$$
+
+The asymptotic calibration requires the regularity conditions of the cited
+result; the permutation option instead calibrates the same statistic under
+exchangeable group labels.
 
 `riemannian_metric_learning` forms similar- and dissimilar-pair scatter
 matrices after an equivariant embedding, regularizes both matrices, and uses
@@ -226,7 +256,10 @@ $$
 $$
 
 It is exact for a weighted Euclidean mean and order-dependent on a curved
-manifold. `minibatch_frechet_mean` and `minibatch_kmeans` use shuffled batches
+manifold. By default the first positive-weight observation initializes the
+recursion. A user-provided `initial_point` contributes only when accompanied by
+an explicit positive `initial_weight`, so no undocumented pseudo-observation is
+introduced. `minibatch_frechet_mean` and `minibatch_kmeans` use shuffled batches
 and decaying log-map steps, following the stochastic Riemannian optimization
 view {cite:p}`bonnabel2013stochastic`. They require an explicit key and return
 objective and update histories; they are approximations to the corresponding
@@ -256,7 +289,10 @@ the returned objective all use the same normalized weighted criterion.
 
 ## Robust and graph learning
 
-The trimmed mean repeatedly retains the smallest squared geodesic residuals.
+The trimmed mean repeatedly retains the smallest squared geodesic residuals
+until the requested fraction of total sample-weight mass remains. If the trim
+boundary crosses an observation's weight, that boundary weight is included
+partially. This reduces to ordinary count trimming under equal weights.
 `geodesic_m_estimator` uses Huber, Cauchy, or Tukey residual weights in guarded
 iteratively reweighted Fréchet updates. `geodesic_spatial_depth` evaluates
 
@@ -269,7 +305,7 @@ $$
 
 with the coincident contribution set to zero; distance ranks use midranks
 around an intrinsic median {cite:p}`fletcher2009median`. A weighted trimmed
-fit reports its objective with weights renormalized over the retained sample.
+fit reports its objective with weights renormalized over the retained measure.
 
 For partially labeled data, `label_propagation` diffuses class scores over a
 geodesic-distance affinity graph while clamping known labels

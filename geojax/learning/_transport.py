@@ -8,7 +8,7 @@ from typing import Any
 import jax.numpy as jnp
 
 from ._capabilities import require_exact_operations
-from ._data import ManifoldData, as_manifold_data
+from ._data import as_manifold_data
 from ._geometry import pairwise_distances
 from ._results import TransportResult
 from ._utils import normalize_weights, require_unbatched
@@ -218,8 +218,8 @@ def empirical_wasserstein_distance(
 ) -> TransportResult:
     """Compute exact weighted empirical Wasserstein distance by transportation simplex."""
     require_exact_operations(manifold, "empirical_wasserstein_distance", "dist")
-    left = x if isinstance(x, ManifoldData) else as_manifold_data(manifold, x)
-    right = y if isinstance(y, ManifoldData) else as_manifold_data(manifold, y)
+    left = as_manifold_data(manifold, x)
+    right = as_manifold_data(manifold, y)
     require_unbatched(left, "empirical_wasserstein_distance")
     require_unbatched(right, "empirical_wasserstein_distance")
     if float(p) < 1.0:
@@ -274,8 +274,8 @@ def sinkhorn_divergence(
 ) -> Any:
     """Return debiased entropic transport divergence through optional OTT-JAX."""
     require_exact_operations(manifold, "sinkhorn_divergence", "dist")
-    left = x if isinstance(x, ManifoldData) else as_manifold_data(manifold, x, check="shape")
-    right = y if isinstance(y, ManifoldData) else as_manifold_data(manifold, y, check="shape")
+    left = as_manifold_data(manifold, x, check="shape")
+    right = as_manifold_data(manifold, y, check="shape")
     require_unbatched(left, "sinkhorn_divergence")
     require_unbatched(right, "sinkhorn_divergence")
     if epsilon <= 0.0 or p < 1.0:

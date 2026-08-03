@@ -9,7 +9,7 @@ import jax.numpy as jnp
 import numpy as np
 
 from ._capabilities import require_exact_operations
-from ._data import ManifoldData, as_manifold_data
+from ._data import as_manifold_data
 from ._features import fit_tangent_feature_map
 from ._geometry import pairwise_distances
 from ._results import (
@@ -50,7 +50,7 @@ def nearest_centroid_classifier(
 ) -> NearestCentroidModel:
     """Fit one intrinsic Fréchet centroid per class."""
     require_exact_operations(manifold, "nearest_centroid_classifier", "dist", "log", "exp")
-    adapted = data if isinstance(data, ManifoldData) else as_manifold_data(manifold, data)
+    adapted = as_manifold_data(manifold, data)
     require_unbatched(adapted, "nearest_centroid_classifier")
     classes, encoded = _encode_labels(labels, adapted.n_samples)
     if sample_weight is None:
@@ -81,7 +81,7 @@ def nearest_centroid_classifier(
 
 
 def _nearest_centroid_distances(model: NearestCentroidModel, data: Any) -> Any:
-    queries = data if isinstance(data, ManifoldData) else as_manifold_data(model.manifold, data)
+    queries = as_manifold_data(model.manifold, data)
     require_unbatched(queries, "NearestCentroidModel.predict")
     centers = as_manifold_data(model.manifold, model.centers)
     return pairwise_distances(model.manifold, queries, centers, squared=True)
@@ -109,7 +109,7 @@ def knn_classifier(
 ) -> KNearestNeighborsModel:
     """Fit a geodesic-distance k-nearest-neighbors classifier."""
     require_exact_operations(manifold, "knn_classifier", "dist")
-    adapted = data if isinstance(data, ManifoldData) else as_manifold_data(manifold, data)
+    adapted = as_manifold_data(manifold, data)
     require_unbatched(adapted, "knn_classifier")
     classes, encoded = _encode_labels(labels, adapted.n_samples)
     if not 1 <= int(n_neighbors) <= adapted.n_samples:
@@ -127,7 +127,7 @@ def knn_classifier(
 
 
 def _knn_probabilities(model: KNearestNeighborsModel, data: Any) -> Any:
-    queries = data if isinstance(data, ManifoldData) else as_manifold_data(model.manifold, data)
+    queries = as_manifold_data(model.manifold, data)
     require_unbatched(queries, "KNearestNeighborsModel.predict")
     distances = pairwise_distances(model.manifold, queries, model.training_data)
     order = jnp.argsort(distances, axis=-1)[:, : model.n_neighbors]
@@ -165,7 +165,7 @@ def tangent_space_logistic_regression(
     learning_rate: float = 1.0,
 ) -> TangentSpaceClassifierModel:
     """Fit multinomial logistic regression in intrinsic tangent coordinates."""
-    adapted = data if isinstance(data, ManifoldData) else as_manifold_data(manifold, data)
+    adapted = as_manifold_data(manifold, data)
     require_unbatched(adapted, "tangent_space_logistic_regression")
     classes, encoded = _encode_labels(labels, adapted.n_samples)
     if regularization < 0.0 or maxiter < 1 or tol < 0.0 or learning_rate <= 0.0:
@@ -253,7 +253,7 @@ def tangent_space_discriminant_analysis(
     priors: Any | None = None,
 ) -> TangentSpaceClassifierModel:
     """Fit LDA or QDA in intrinsic metric-orthonormal tangent coordinates."""
-    adapted = data if isinstance(data, ManifoldData) else as_manifold_data(manifold, data)
+    adapted = as_manifold_data(manifold, data)
     require_unbatched(adapted, "tangent_space_discriminant_analysis")
     classes, encoded = _encode_labels(labels, adapted.n_samples)
     if method not in {"lda", "qda"}:

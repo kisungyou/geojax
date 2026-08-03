@@ -17,7 +17,7 @@ from geojax.learning import (
     sammon_mapping,
     tsne,
 )
-from geojax.learning._embedding import _mds_from_distances
+from geojax.learning._embedding import _mds_from_distances, _tsne_probabilities
 
 
 def curved_planar_data():
@@ -94,6 +94,17 @@ def test_sammon_tsne_and_phate_return_finite_dense_embeddings():
         assert result.coordinates.shape == (12, 2)
         assert bool(jnp.all(jnp.isfinite(result.coordinates)))
         assert bool(jnp.isfinite(result.objective))
+    probabilities = stochastic.diagnostics["joint_probabilities"]
+    assert jnp.allclose(jnp.diag(probabilities), 0.0)
+    assert jnp.allclose(jnp.sum(probabilities), 1.0)
+
+    transition_spectrum = jnp.sort(
+        jnp.linalg.eigvals(diffusion.diagnostics["transition"]).real
+    )
+    symmetric_spectrum = jnp.sort(
+        jnp.linalg.eigvalsh(diffusion.diagnostics["symmetric_diffusion"])
+    )
+    assert jnp.allclose(transition_spectrum, symmetric_spectrum, atol=2e-5)
 
 
 def test_rmml_uses_explicit_or_geometry_embedding_and_separates_classes():
@@ -183,8 +194,31 @@ def test_embedding_input_contracts_and_alternate_graph_policies():
 
     with pytest.raises(ValueError, match="perplexity"):
         tsne(manifold, values, perplexity=len(values), key=303, maxiter=1)
+    with pytest.raises(ValueError, match="n_components"):
+        tsne(manifold, values, n_components=0, perplexity=3.0, key=303)
+    with pytest.raises(ValueError, match="maxiter"):
+        tsne(manifold, values, perplexity=3.0, key=303, maxiter=0)
+    with pytest.raises(ValueError, match="learning_rate"):
+        tsne(manifold, values, perplexity=3.0, key=303, learning_rate=0.0)
+    with pytest.raises(ValueError, match="early_exaggeration"):
+        tsne(manifold, values, perplexity=3.0, key=303, early_exaggeration=0.0)
+    with pytest.raises(ValueError, match="exaggeration_iterations"):
+        tsne(
+            manifold,
+            values,
+            perplexity=3.0,
+            key=303,
+            maxiter=2,
+            exaggeration_iterations=3,
+        )
     with pytest.raises(ValueError, match="n_neighbors"):
         phate(manifold, values, n_neighbors=0)
+    with pytest.raises(ValueError, match="n_components"):
+        phate(manifold, values, n_components=0, n_neighbors=3)
+    with pytest.raises(ValueError, match="decay"):
+        phate(manifold, values, n_neighbors=3, decay=0.0)
+    with pytest.raises(ValueError, match="max_diffusion_time"):
+        phate(manifold, values, n_neighbors=3, max_diffusion_time=0)
     with pytest.raises(ValueError, match="potential"):
         phate(manifold, values, potential="linear")
     with pytest.raises(ValueError, match="diffusion_time"):
@@ -199,6 +233,16 @@ def test_embedding_input_contracts_and_alternate_graph_policies():
         potential="sqrt",
     )
     assert square_root.iterations == 2
+
+
+def test_tsne_joint_probabilities_are_symmetric_and_normalized():
+    distances = jnp.array(
+        [[0.0, 1.0, 2.0], [1.0, 0.0, 1.5], [2.0, 1.5, 0.0]]
+    )
+    probabilities = _tsne_probabilities(distances, perplexity=2.0)
+    assert jnp.allclose(probabilities, probabilities.T)
+    assert jnp.allclose(jnp.diag(probabilities), 0.0)
+    assert jnp.allclose(jnp.sum(probabilities), 1.0)
 
 
 def test_rmml_validates_labels_embeddings_and_pair_structure():

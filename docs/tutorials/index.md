@@ -96,12 +96,12 @@ through an executable GeoJAX solution and a visual report of the result.
 
   <a class="tutorial-card" href="barycentric_dictionary.html">
     <div class="tutorial-card-media">
-      <img src="../_static/tutorials/barycentric-dictionary.png" alt="Circular dictionary atoms, barycentric code matrix, and reconstruction errors">
+      <img src="../_static/tutorials/barycentric-dictionary.png" alt="SPD covariance atoms, barycentric code matrix, and reconstruction errors">
     </div>
     <div class="tutorial-card-body">
-      <p class="tutorial-card-meta">Sphere / Representation learning</p>
-      <h2>Barycentric dictionary learning</h2>
-      <p>Replace linear combinations with intrinsic Karcher equations and learn atoms directly on the circle.</p>
+      <p class="tutorial-card-meta">SPD / Representation learning</p>
+      <h2>Barycentric covariance dictionaries</h2>
+      <p>Replace linear combinations with intrinsic Karcher equations and learn positive-definite covariance atoms.</p>
     </div>
   </a>
 
@@ -138,14 +138,14 @@ through an executable GeoJAX solution and a visual report of the result.
     </div>
   </a>
 
-  <a class="tutorial-card" href="sphere_kmeans.html">
+  <a class="tutorial-card" href="hyperbolic_kmeans.html">
     <div class="tutorial-card-media">
-      <img src="../_static/tutorials/sphere-kmeans.png" alt="Circular observations, intrinsic clusters, and k-means objective">
+      <img src="../_static/tutorials/hyperbolic-kmeans.png" alt="Hyperbolic observations in the Poincare disk, intrinsic clusters, and k-means objective">
     </div>
     <div class="tutorial-card-body">
-      <p class="tutorial-card-meta">Sphere / Clustering</p>
-      <h2>Intrinsic k-means on the circle</h2>
-      <p>Cluster circular data with geodesic assignments and Fréchet-mean center updates.</p>
+      <p class="tutorial-card-meta">Hyperbolic / Clustering</p>
+      <h2>Intrinsic k-means in hyperbolic space</h2>
+      <p>Cluster points on the hyperboloid and inspect geodesic assignments through the Poincare disk.</p>
     </div>
   </a>
 
@@ -162,12 +162,12 @@ through an executable GeoJAX solution and a visual report of the result.
 
   <a class="tutorial-card" href="clustering_comparison.html">
     <div class="tutorial-card-media">
-      <img src="../_static/tutorials/clustering-comparison.png" alt="Seven clustering and quantization methods compared on circular data">
+      <img src="../_static/tutorials/clustering-comparison.png" alt="Seven clustering and quantization methods compared on a wrapped two-torus chart">
     </div>
     <div class="tutorial-card-body">
-      <p class="tutorial-card-meta">Sphere / Clustering</p>
+      <p class="tutorial-card-meta">Torus / Clustering</p>
       <h2>Comparing clustering methods</h2>
-      <p>Contrast k-means, medoids, hierarchy, spectral clustering, mean shift, quantization, and a lightweight coreset.</p>
+      <p>Contrast seven methods on periodic data whose clusters cross the boundaries of an angular chart.</p>
     </div>
   </a>
 
@@ -239,23 +239,23 @@ through an executable GeoJAX solution and a visual report of the result.
 
   <a class="tutorial-card" href="dimension_reduction.html">
     <div class="tutorial-card-media">
-      <img src="../_static/tutorials/dimension-reduction.png" alt="A spherical trajectory embedded by six dimension-reduction methods">
+      <img src="../_static/tutorials/dimension-reduction.png" alt="A winding torus trajectory embedded by six dimension-reduction methods">
     </div>
     <div class="tutorial-card-body">
-      <p class="tutorial-card-meta">Sphere / Dimension reduction</p>
-      <h2>Comparing manifold embeddings</h2>
-      <p>Compare MDS, kernel PCA, Isomap, Sammon mapping, t-SNE, and PHATE on the same curved dataset.</p>
+      <p class="tutorial-card-meta">Torus / Dimension reduction</p>
+      <h2>Embedding a torus trajectory</h2>
+      <p>Compare MDS, kernel PCA, Isomap, Sammon mapping, t-SNE, and PHATE on one closed winding.</p>
     </div>
   </a>
 
-  <a class="tutorial-card" href="spherical_metric_learning.html">
+  <a class="tutorial-card" href="grassmann_metric_learning.html">
     <div class="tutorial-card-media">
-      <img src="../_static/tutorials/spherical-metric-learning.png" alt="Spherical labeled data before and after equivariant-embedding metric learning">
+      <img src="../_static/tutorials/grassmann-metric-learning.png" alt="Grassmann lines before and after projector-embedding metric learning">
     </div>
     <div class="tutorial-card-body">
-      <p class="tutorial-card-meta">Sphere / Supervised learning</p>
-      <h2>Supervised metric learning on the sphere</h2>
-      <p>Learn a task-specific embedded metric and compare it with the sphere's intrinsic geodesic distance.</p>
+      <p class="tutorial-card-meta">Grassmann / Supervised learning</p>
+      <h2>Supervised metric learning on subspaces</h2>
+      <p>Learn a task-specific metric on projector embeddings and compare it with intrinsic principal-angle distance.</p>
     </div>
   </a>
 </div>
@@ -308,7 +308,7 @@ manifold_autoencoder
 graph_curvature
 spd_eeg_classifier
 grassmann_pca
-sphere_kmeans
+hyperbolic_kmeans
 manifold_classification
 manifold_response_regression
 barycentric_dictionary
@@ -323,7 +323,7 @@ spd_pga_regression
 product_adapter
 optimal_transport
 dimension_reduction
-spherical_metric_learning
+grassmann_metric_learning
 sphere_eigenvector
 rigid_registration
 solver_comparison

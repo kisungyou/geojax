@@ -24,7 +24,7 @@ from ._utils import (
 
 
 def _prepare(manifold: Any, data: Any, method: str) -> ManifoldData:
-    adapted = data if isinstance(data, ManifoldData) else as_manifold_data(manifold, data)
+    adapted = as_manifold_data(manifold, data)
     require_unbatched(adapted, method)
     return adapted
 
@@ -41,25 +41,36 @@ def streaming_frechet_mean(
     *,
     sample_weight: Any | None = None,
     initial_point: Any | None = None,
+    initial_weight: float = 0.0,
 ) -> FrechetMeanResult:
-    """Compute the one-pass inductive Fréchet mean in observation order."""
+    """Compute the one-pass inductive Fréchet mean in observation order.
+
+    ``initial_point`` influences the estimate only when ``initial_weight`` is
+    positive, making any prior mass explicit rather than silently counting the
+    starting point as an extra observation.
+    """
     require_exact_operations(manifold, "streaming_frechet_mean", "dist", "log", "exp")
     adapted = _prepare(manifold, data, "streaming_frechet_mean")
     weights = normalize_weights(adapted.n_samples, sample_weight)
     positive = [index for index in range(adapted.n_samples) if float(weights[index]) > 0.0]
     if not positive:
         raise ValueError("sample_weight must contain positive mass.")
+    if float(initial_weight) < 0.0:
+        raise ValueError("initial_weight must be nonnegative.")
+    if float(initial_weight) > 0.0 and initial_point is None:
+        raise ValueError("initial_point is required when initial_weight is positive.")
     first = positive[0]
     point = (
         take_point(manifold, adapted.values, first)
         if initial_point is None
         else manifold.project(initial_point)
     )
-    cumulative = 0.0 if initial_point is None else 1.0
+    cumulative = float(initial_weight)
     updates = []
     for index in positive:
         weight = float(weights[index])
-        if initial_point is None and index == first:
+        if cumulative == 0.0:
+            point = take_point(manifold, adapted.values, index)
             cumulative = weight
             updates.append(0.0)
             continue
@@ -77,7 +88,11 @@ def streaming_frechet_mean(
         iterations=len(positive),
         converged=True,
         reason="single pass completed",
-        diagnostics={"weights": weights, "step_sizes": jnp.asarray(updates)},
+        diagnostics={
+            "weights": weights,
+            "step_sizes": jnp.asarray(updates),
+            "initial_weight": float(initial_weight),
+        },
     )
 
 

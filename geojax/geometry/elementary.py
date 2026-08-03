@@ -121,7 +121,9 @@ class Oblique(ExactGeometryMixin):
         direction = Y - dots * X
         sine_squared = squared_norm(direction, axis=-2, keepdims=True)
         result = acos_over_sin(dots, sine_squared) * direction
-        at_cut = (1.0 + dots) <= self.atol
+        dtype = jnp.result_type(X, float)
+        sine_cutoff = 64.0 * jnp.finfo(dtype).eps
+        at_cut = (dots < 0.0) & (sine_squared <= sine_cutoff**2)
         return jnp.where(at_cut, jnp.full_like(result, jnp.nan), result)
 
     def squared_dist(self, X: Array, Y: Array) -> Array:
@@ -135,10 +137,19 @@ class Oblique(ExactGeometryMixin):
         X = jnp.asarray(X)
         Y = jnp.asarray(Y)
         U = self.tangent_project(X, U)
-        dots = jnp.sum(X * Y, axis=-2, keepdims=True)
-        coefficients = jnp.sum(U * Y, axis=-2, keepdims=True) / (1.0 + dots)
-        result = U - coefficients * (X + Y)
-        return jnp.where((1.0 + dots) <= self.atol, jnp.full_like(result, jnp.nan), result)
+        dots = jnp.clip(jnp.sum(X * Y, axis=-2, keepdims=True), -1.0, 1.0)
+        direction = Y - dots * X
+        sine_squared = squared_norm(direction, axis=-2, keepdims=True)
+        sine = jnp.sqrt(sine_squared)
+        dtype = jnp.result_type(X, float)
+        sine_cutoff = 64.0 * jnp.finfo(dtype).eps
+        safe_sine = jnp.where(sine > sine_cutoff, sine, 1.0)
+        unit_direction = direction / safe_sine
+        component = jnp.sum(U * unit_direction, axis=-2, keepdims=True)
+        terminal_direction = -sine * X + dots * unit_direction
+        result = U + component * (terminal_direction - unit_direction)
+        at_cut = (dots < 0.0) & (sine <= sine_cutoff)
+        return jnp.where(at_cut, jnp.full_like(result, jnp.nan), result)
 
     transp = transport
 
@@ -213,8 +224,11 @@ class ProbabilitySimplex(ExactGeometryMixin):
         return jnp.abs(jnp.sum(u, axis=-1)) <= tol
 
     def tangent_project(self, p: Array, u: Array) -> Array:
-        _, u = self._check_shapes(("p", p), ("u", u))
-        return u - jnp.mean(u, axis=-1, keepdims=True)
+        p, u = self._check_shapes(("p", p), ("u", u))
+        p = self.project(p)
+        # The Fisher--Rao normal is span{p}, since
+        # g_p(p, v) = sum_i v_i for every ambient vector v.
+        return u - p * jnp.sum(u, axis=-1, keepdims=True)
 
     projection = tangent_project
     proj = tangent_project

@@ -193,7 +193,17 @@ def test_scalable_methods_cover_initialization_zero_weights_and_convergence():
         sample_weight=jnp.array([1.0, 0.0, 0.0, 0.0]),
         initial_point=jnp.array([2.0]),
     )
-    assert jnp.allclose(streaming.point, jnp.array([1.0]))
+    assert jnp.allclose(streaming.point, jnp.array([0.0]))
+    assert jnp.allclose(streaming.diagnostics["step_sizes"], jnp.array([0.0]))
+
+    with_prior = streaming_frechet_mean(
+        manifold,
+        values,
+        sample_weight=jnp.array([1.0, 0.0, 0.0, 0.0]),
+        initial_point=jnp.array([2.0]),
+        initial_weight=1.0,
+    )
+    assert jnp.allclose(with_prior.point, jnp.array([1.0]))
 
     minibatch = minibatch_frechet_mean(
         manifold,
@@ -219,6 +229,10 @@ def test_scalable_methods_cover_initialization_zero_weights_and_convergence():
 
     with pytest.raises(ValueError, match="positive total mass"):
         streaming_frechet_mean(manifold, values, sample_weight=jnp.zeros((4,)))
+    with pytest.raises(ValueError, match="initial_weight"):
+        streaming_frechet_mean(manifold, values, initial_weight=-1.0)
+    with pytest.raises(ValueError, match="initial_point"):
+        streaming_frechet_mean(manifold, values, initial_weight=1.0)
     with pytest.raises(ValueError, match="epochs"):
         minibatch_frechet_mean(
             manifold, values, batch_size=2, epochs=0, key=402
@@ -257,6 +271,17 @@ def test_robust_location_explicit_initialization_scale_and_center():
     assert bool(jnp.isfinite(trimmed.objective))
     assert bool(jnp.isfinite(robust.objective))
     assert ranks.diagnostics["center_fit"] is None
+
+    weighted = trimmed_frechet_mean(
+        manifold,
+        jnp.array([[0.0], [1.0], [10.0]]),
+        trim_fraction=0.25,
+        sample_weight=jnp.array([0.0, 0.0, 1.0]),
+        initial_point=jnp.array([0.0]),
+        maxiter=3,
+    )
+    assert jnp.allclose(weighted.point, jnp.array([10.0]))
+    assert bool(jnp.isfinite(weighted.objective))
 
     with pytest.raises(ValueError, match="iteration limits"):
         trimmed_frechet_mean(manifold, values, maxiter=0)

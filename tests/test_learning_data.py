@@ -384,10 +384,23 @@ def test_adapter_contract_rejects_invalid_registration_and_reconversion_options(
             Sphere(2), jnp.ones((2, 2)), representation="point_sequence"
         )
 
-    adapted = learning.as_manifold_data(Euclidean(2), jnp.ones((2, 2)))
-    assert learning.as_manifold_data(Euclidean(2), adapted) is adapted
+    manifold = Euclidean(2)
+    adapted = learning.as_manifold_data(manifold, jnp.ones((2, 2)))
+    assert learning.as_manifold_data(manifold, adapted) is adapted
+    with pytest.raises(ValueError, match="different geometry instance"):
+        learning.as_manifold_data(Euclidean(2), adapted)
     with pytest.raises(ValueError, match="cannot be converted again"):
-        learning.as_manifold_data(Euclidean(2), adapted, repair=True)
+        learning.as_manifold_data(manifold, adapted, repair=True)
+
+
+def test_adapted_data_upgrades_validation_before_stronger_reuse():
+    manifold = Sphere(2)
+    invalid = jnp.array([[2.0, 0.0], [0.0, 3.0]])
+    shape_only = learning.as_manifold_data(manifold, invalid, check="shape")
+
+    assert shape_only.report.check == "shape"
+    with pytest.raises(ValueError, match="do not belong"):
+        learning.as_manifold_data(manifold, shape_only, check="belongs")
 
 
 def test_validation_reports_structural_failures_without_raising():

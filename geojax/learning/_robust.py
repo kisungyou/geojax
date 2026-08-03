@@ -21,7 +21,7 @@ from ._utils import (
 
 
 def _prepare(manifold: Any, data: Any, method: str) -> ManifoldData:
-    adapted = data if isinstance(data, ManifoldData) else as_manifold_data(manifold, data)
+    adapted = as_manifold_data(manifold, data)
     require_unbatched(adapted, method)
     return adapted
 
@@ -44,8 +44,23 @@ def trimmed_frechet_mean(
         raise ValueError("trim_fraction must lie in [0, 1).")
     if int(maxiter) < 1 or int(center_maxiter) < 1 or tol < 0.0:
         raise ValueError("iteration limits must be positive and tol nonnegative.")
-    retained_count = max(1, int(jnp.ceil((1.0 - float(trim_fraction)) * adapted.n_samples)))
     weights = normalize_weights(adapted.n_samples, sample_weight)
+    target_mass = 1.0 - float(trim_fraction)
+
+    def retained_measure(distances_sq: Any) -> tuple[Any, Any]:
+        order = jnp.argsort(distances_sq)
+        ordered_weights = weights[order]
+        mass_before = jnp.cumsum(ordered_weights) - ordered_weights
+        allocated = jnp.clip(target_mass - mass_before, 0.0, ordered_weights)
+        allocation_tolerance = 64.0 * jnp.finfo(allocated.dtype).eps * max(
+            target_mass, 1.0
+        )
+        retained_mask = allocated > allocation_tolerance
+        retained_indices = order[retained_mask]
+        retained_weights = allocated[retained_mask]
+        retained_weights = retained_weights / jnp.sum(retained_weights)
+        return retained_indices, retained_weights
+
     point = (
         frechet_mean(
             manifold,
@@ -60,20 +75,19 @@ def trimmed_frechet_mean(
     retained_history = []
     objective_history = []
     converged = False
-    retained = jnp.arange(retained_count)
+    retained = jnp.arange(adapted.n_samples)
+    retained_weights = weights
     for iteration in range(1, int(maxiter) + 1):
         distances_sq = manifold.squared_dist(point, adapted.values)
-        retained = jnp.argsort(distances_sq)[:retained_count]
+        retained, retained_weights = retained_measure(distances_sq)
         retained_history.append(retained)
-        objective = jnp.sum(weights[retained] * distances_sq[retained]) / jnp.sum(
-            weights[retained]
-        )
+        objective = jnp.sum(retained_weights * distances_sq[retained])
         objective_history.append(objective)
         subset = as_manifold_data(manifold, take_samples(manifold, adapted.values, retained))
         candidate = frechet_mean(
             manifold,
             subset,
-            sample_weight=weights[retained],
+            sample_weight=retained_weights,
             initial_point=point,
             maxiter=int(center_maxiter),
             tol=float(tol),
@@ -84,7 +98,7 @@ def trimmed_frechet_mean(
             converged = True
             break
     final_distances = manifold.dist(point, adapted.values)
-    retained_weights = weights[retained] / jnp.sum(weights[retained])
+    retained, retained_weights = retained_measure(final_distances**2)
     gradient = weighted_tangent_sum(
         manifold,
         manifold.log(point, take_samples(manifold, adapted.values, retained)),

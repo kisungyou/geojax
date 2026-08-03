@@ -18,7 +18,7 @@ def test_oblique_is_a_product_of_column_spheres(dtype_atol):
     assert jnp.all(M.is_tangent(X, U))
 
 
-def test_simplex_fisher_rao_distance_and_gradient_duality():
+def test_simplex_fisher_rao_distance_and_gradient_duality(dtype_atol):
     M = ProbabilitySimplex(size=3)
     p = jnp.array([0.2, 0.3, 0.5])
     q = jnp.array([0.1, 0.6, 0.3])
@@ -29,6 +29,14 @@ def test_simplex_fisher_rao_distance_and_gradient_duality():
     expected = 2.0 * jnp.arccos(jnp.sum(jnp.sqrt(p * q)))
     assert jnp.allclose(M.dist(p, q), expected, atol=1e-12)
     assert jnp.allclose(M.inner(p, gradient, U), jnp.sum(ambient_gradient * U), atol=1e-12)
+
+    raw = jnp.array([0.7, -0.4, 0.2])
+    projected = M.tangent_project(p, raw)
+    residual = raw - projected
+    test_tangent = jnp.array([0.3, -0.1, -0.2])
+    tolerance = max(1e-12, dtype_atol)
+    assert jnp.allclose(jnp.sum(projected), 0.0, atol=tolerance)
+    assert jnp.allclose(M.inner(p, residual, test_tangent), 0.0, atol=tolerance)
 
 
 def test_poincare_origin_formulas_and_isometric_transport():

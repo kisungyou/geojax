@@ -7,7 +7,7 @@ from typing import Any
 import jax.numpy as jnp
 
 from ._capabilities import require_exact_operations
-from ._data import ManifoldData, as_manifold_data
+from ._data import as_manifold_data
 from ._results import TangentFeatureMap
 from ._statistics import frechet_mean
 from ._utils import require_unbatched, stack_points, take_point, weighted_tangent_sum
@@ -32,7 +32,7 @@ def fit_tangent_feature_map(
 ) -> tuple[TangentFeatureMap, Any]:
     """Fit intrinsic, metric-orthonormal coordinates at one reference point."""
     require_exact_operations(manifold, "fit_tangent_feature_map", "log")
-    adapted = data if isinstance(data, ManifoldData) else as_manifold_data(manifold, data)
+    adapted = as_manifold_data(manifold, data)
     require_unbatched(adapted, "fit_tangent_feature_map")
     if float(rank_tolerance) < 0.0:
         raise ValueError("rank_tolerance must be nonnegative.")
@@ -94,7 +94,7 @@ def fit_tangent_feature_map(
 def transform_tangent_features(feature_map: TangentFeatureMap, data: Any) -> Any:
     """Map manifold observations to metric-orthonormal tangent coordinates."""
     manifold = feature_map.manifold
-    adapted = data if isinstance(data, ManifoldData) else as_manifold_data(manifold, data)
+    adapted = as_manifold_data(manifold, data)
     require_unbatched(adapted, "TangentFeatureMap.transform")
     if not feature_map.basis:
         return jnp.zeros((adapted.n_samples, 0))
