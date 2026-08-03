@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Comparing Manifold Embeddings &#8212; GeoJAX</title>
+    <title>Comparing embeddings of a torus trajectory &#8212; GeoJAX</title>
   
   
   
@@ -54,7 +54,7 @@
     <link rel="icon" href="../_static/geojax-gj-favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Supervised Metric Learning on the Sphere" href="spherical_metric_learning.html" />
+    <link rel="next" title="Supervised metric learning on the Grassmann manifold" href="grassmann_metric_learning.html" />
     <link rel="prev" title="Exact Transport on the Circle" href="optimal_transport.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -387,22 +387,22 @@
 <li class="toctree-l1"><a class="reference internal" href="graph_curvature.html">Curvature-aware graph learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spd_eeg_classifier.html">SPD prototype networks for motor-imagery EEG</a></li>
 <li class="toctree-l1"><a class="reference internal" href="grassmann_pca.html">Principal component as a Grassmann point</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sphere_kmeans.html">Intrinsic k-means on the circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hyperbolic_kmeans.html">Intrinsic k-means in the hyperbolic plane</a></li>
 <li class="toctree-l1"><a class="reference internal" href="manifold_classification.html">Classification with Manifold-Valued Predictors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="manifold_response_regression.html">Regression with Circular Responses</a></li>
-<li class="toctree-l1"><a class="reference internal" href="barycentric_dictionary.html">Barycentric Dictionary Learning on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="barycentric_dictionary.html">Barycentric dictionary learning for covariance matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="robust_scalable_learning.html">Robust and Scalable Circular Summaries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="semi_supervised_circle.html">Semi-Supervised Learning on the Circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="robust_spherical_summaries.html">Robust Location Summaries on the Circle</a></li>
-<li class="toctree-l1"><a class="reference internal" href="clustering_comparison.html">Comparing Clustering Methods on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering_comparison.html">Comparing clustering methods on a flat torus</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spd_frechet_mean.html">Comparing Fréchet Means of SPD Matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="kendall_hand_shapes.html">Hand Poses in Kendall Shape Space</a></li>
 <li class="toctree-l1"><a class="reference internal" href="two_sample_inference.html">Two-Sample Inference on the Circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spd_pga_regression.html">PGA and Regression with SPD Predictors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="product_adapter.html">Adapting Nested Product Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimal_transport.html">Exact Transport on the Circle</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Comparing Manifold Embeddings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="spherical_metric_learning.html">Supervised Metric Learning on the Sphere</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Comparing embeddings of a torus trajectory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grassmann_metric_learning.html">Supervised metric learning on the Grassmann manifold</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sphere_eigenvector.html">Dominant eigenvector on the circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rigid_registration.html">Rigid landmark registration in SE(2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="solver_comparison.html">Comparing solvers in a curved valley</a></li>
@@ -449,7 +449,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">Tutorials</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Comparing Manifold Embeddings</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Comparing embeddings of a torus trajectory</span></li>
   </ul>
 </nav>
 </div>
@@ -466,19 +466,26 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="comparing-manifold-embeddings">
-<h1>Comparing Manifold Embeddings<a class="headerlink" href="#comparing-manifold-embeddings" title="Link to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="comparing-embeddings-of-a-torus-trajectory">
+<h1>Comparing embeddings of a torus trajectory<a class="headerlink" href="#comparing-embeddings-of-a-torus-trajectory" title="Link to this heading">#</a></h1>
 <p>Dimension-reduction methods preserve different structures. Classical MDS and
 Sammon mapping target pairwise distances with different stress functions;
 kernel PCA diagonalizes a distance kernel; Isomap replaces direct distances by
 shortest paths in a neighbor graph; t-SNE emphasizes local probability
 neighborhoods; and PHATE embeds diffusion-potential distances. GeoJAX builds
 all six from the same validated manifold dataset.</p>
-<p>We use a winding trajectory on <span class="math notranslate nohighlight">\(S^2\)</span>. MDS is the global metric baseline,
-Sammon reweights stress toward nearby pairs <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id70" title="John W. Sammon. A nonlinear mapping for data structure analysis. IEEE Transactions on Computers, C-18(5):401–409, 1969. doi:10.1109/T-C.1969.222678.">Sammon, 1969</a>]</span>,
-Isomap follows the sampled one-dimensional path <span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id71" title="Joshua B. Tenenbaum, Vin de Silva, and John C. Langford. A global geometric framework for nonlinear dimensionality reduction. Science, 290(5500):2319–2323, 2000. doi:10.1126/science.290.5500.2319.">Tenenbaum <em>et al.</em>, 2000</a>]</span>,
-t-SNE emphasizes probabilistic neighborhoods
-<span class="bibtex-citation" id="id3">[<a class="reference internal" href="#id72" title="Laurens van der Maaten and Geoffrey Hinton. Visualizing data using t-SNE. Journal of Machine Learning Research, 9:2579–2605, 2008.">van der Maaten and Hinton, 2008</a>]</span>, and PHATE emphasizes multiscale
+<p>We use the closed winding</p>
+<div class="math notranslate nohighlight">
+\[
+\gamma(t)=\bigl(2t\bmod 2\pi,\;3t\bmod 2\pi\bigr),
+\qquad 0\leq t&lt;2\pi,
+\]</div>
+<p>on the flat torus <span class="math notranslate nohighlight">\(T^2\)</span>. The path repeatedly crosses the edges of its angular
+chart, but it is continuous on the manifold. MDS is the global metric
+baseline; Sammon reweights stress toward nearby pairs
+<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id70" title="John W. Sammon. A nonlinear mapping for data structure analysis. IEEE Transactions on Computers, C-18(5):401–409, 1969. doi:10.1109/T-C.1969.222678.">Sammon, 1969</a>]</span>; Isomap follows a neighborhood graph
+<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id71" title="Joshua B. Tenenbaum, Vin de Silva, and John C. Langford. A global geometric framework for nonlinear dimensionality reduction. Science, 290(5500):2319–2323, 2000. doi:10.1126/science.290.5500.2319.">Tenenbaum <em>et al.</em>, 2000</a>]</span>; t-SNE emphasizes probabilistic neighborhoods
+<span class="bibtex-citation" id="id3">[<a class="reference internal" href="#id72" title="Laurens van der Maaten and Geoffrey Hinton. Visualizing data using t-SNE. Journal of Machine Learning Research, 9:2579–2605, 2008.">van der Maaten and Hinton, 2008</a>]</span>; and PHATE emphasizes multiscale
 transitions <span class="bibtex-citation" id="id4">[<a class="reference internal" href="#id69" title="Kevin R. Moon, David van Dijk, Zheng Wang, Scott Gigante, Daniel B. Burkhardt, William S. Chen, Kristina Yim, Antonia van den Elzen, Matthew J. Hirn, Ronald R. Coifman, Natalia B. Ivanova, Guy Wolf, and Smita Krishnaswamy. Visualizing structure and transitions in high-dimensional biological data. Nature Biotechnology, 37:1482–1492, 2019. doi:10.1038/s41587-019-0336-3.">Moon <em>et al.</em>, 2019</a>]</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -490,7 +497,7 @@ transitions <span class="bibtex-citation" id="id4">[<a class="reference internal
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">geojax.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sphere</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">geojax.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Torus</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">geojax.learning</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">classical_mds</span><span class="p">,</span>
     <span class="n">isomap</span><span class="p">,</span>
@@ -509,34 +516,33 @@ transitions <span class="bibtex-citation" id="id4">[<a class="reference internal
     <span class="s2">&quot;axes.spines.right&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">})</span>
 
-<span class="n">M</span> <span class="o">=</span> <span class="n">Sphere</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-<span class="n">parameter</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">46</span><span class="p">)</span>
-<span class="n">longitude</span> <span class="o">=</span> <span class="mf">2.35</span> <span class="o">*</span> <span class="n">parameter</span>
-<span class="n">latitude</span> <span class="o">=</span> <span class="mf">0.58</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mf">2.2</span> <span class="o">*</span> <span class="n">parameter</span><span class="p">)</span>
-<span class="n">points</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span>
-    <span class="n">jnp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">latitude</span><span class="p">)</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">longitude</span><span class="p">),</span>
-    <span class="n">jnp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">latitude</span><span class="p">)</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">longitude</span><span class="p">),</span>
-    <span class="n">jnp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">latitude</span><span class="p">),</span>
-<span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">M</span> <span class="o">=</span> <span class="n">Torus</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">phase</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">points</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">project</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">phase</span><span class="p">,</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">phase</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">path_position</span> <span class="o">=</span> <span class="n">phase</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
 
 <span class="n">mds</span> <span class="o">=</span> <span class="n">classical_mds</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">kpca</span> <span class="o">=</span> <span class="n">kernel_pca</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">iso</span> <span class="o">=</span> <span class="n">isomap</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">n_neighbors</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">mutual</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">sammon</span> <span class="o">=</span> <span class="n">sammon_mapping</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">140</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+<span class="n">sammon</span> <span class="o">=</span> <span class="n">sammon_mapping</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
 <span class="n">stochastic</span> <span class="o">=</span> <span class="n">tsne</span><span class="p">(</span>
     <span class="n">M</span><span class="p">,</span>
     <span class="n">points</span><span class="p">,</span>
     <span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">perplexity</span><span class="o">=</span><span class="mf">8.0</span><span class="p">,</span>
+    <span class="n">perplexity</span><span class="o">=</span><span class="mf">7.0</span><span class="p">,</span>
     <span class="n">key</span><span class="o">=</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">72</span><span class="p">),</span>
-    <span class="n">maxiter</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
-    <span class="n">learning_rate</span><span class="o">=</span><span class="mf">35.0</span><span class="p">,</span>
+    <span class="n">maxiter</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span>
+    <span class="n">learning_rate</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span>
     <span class="n">early_exaggeration</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span>
-    <span class="n">exaggeration_iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">exaggeration_iterations</span><span class="o">=</span><span class="mi">75</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">diffusion</span> <span class="o">=</span> <span class="n">phate</span><span class="p">(</span>
-    <span class="n">M</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">n_neighbors</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-    <span class="n">diffusion_time</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">max_diffusion_time</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">M</span><span class="p">,</span>
+    <span class="n">points</span><span class="p">,</span>
+    <span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">n_neighbors</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">diffusion_time</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">max_diffusion_time</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">results</span> <span class="o">=</span> <span class="p">{</span>
@@ -554,52 +560,81 @@ transitions <span class="bibtex-citation" id="id4">[<a class="reference internal
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Classical MDS    objective=0.14338  reason=eigendecomposition completed
-Kernel PCA       objective=-18.58146  reason=centered-kernel eigendecomposition completed
-Isomap           objective=0.00000  reason=all-pairs graph distances computed
-Sammon mapping   objective=0.04844  reason=Last stepsize smaller than options.minstepsize = 1e-10.
-t-SNE            objective=0.12009  reason=requested iterations completed
-PHATE            objective=0.07411  reason=diffusion potential embedded
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Classical MDS    objective=0.36379  reason=eigendecomposition completed
+Kernel PCA       objective=-8.89371  reason=centered-kernel eigendecomposition completed
+Isomap           objective=0.16379  reason=all-pairs graph distances computed
+Sammon mapping   objective=0.14073  reason=Last stepsize smaller than options.minstepsize = 1e-10.
+t-SNE            objective=0.37587  reason=requested iterations completed
+PHATE            objective=0.14245  reason=diffusion potential embedded
 </pre></div>
 </div>
 </div>
 </div>
 <section id="visual-report">
 <h2>Visual report<a class="headerlink" href="#visual-report" title="Link to this heading">#</a></h2>
-<p>Coordinates can rotate, reflect, or rescale without changing the scientific
-content. We therefore compare continuity and ordering visually rather than
-matching raw axes. Color records the hidden trajectory parameter.</p>
+<p>The first panel uses the familiar embedding of a flat torus in <span class="math notranslate nohighlight">\(\mathbb R^3\)</span>
+only for display. Its induced surface metric is not the flat product metric
+used in the computation. Coordinates returned by the six methods can rotate,
+reflect, or rescale without changing their scientific content, so we compare
+continuity and neighborhood organization rather than raw axes. The cyclic
+color records position on the closed path.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">14.8</span><span class="p">,</span> <span class="mf">7.2</span><span class="p">),</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">axis3d</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
-<span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">36</span><span class="p">)</span>
-<span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
-<span class="n">sx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
-<span class="n">sy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
-<span class="n">sz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
-<span class="n">axis3d</span><span class="o">.</span><span class="n">plot_wireframe</span><span class="p">(</span><span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">sz</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;0.82&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span> <span class="n">rstride</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">cstride</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="n">axis3d</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">parameter</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span> <span class="n">depthshade</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">axis3d</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Data on $S^2$&quot;</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;$x_1$&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;$x_2$&quot;</span><span class="p">,</span> <span class="n">zlabel</span><span class="o">=</span><span class="s2">&quot;$x_3$&quot;</span><span class="p">)</span>
-<span class="n">axis3d</span><span class="o">.</span><span class="n">set_box_aspect</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-<span class="n">axis3d</span><span class="o">.</span><span class="n">view_init</span><span class="p">(</span><span class="n">elev</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">azim</span><span class="o">=</span><span class="mi">35</span><span class="p">)</span>
+
+<span class="n">major_radius</span> <span class="o">=</span> <span class="mf">2.0</span>
+<span class="n">minor_radius</span> <span class="o">=</span> <span class="mf">0.64</span>
+<span class="n">theta_grid</span><span class="p">,</span> <span class="n">phi_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">44</span><span class="p">),</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">28</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">surface_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">major_radius</span> <span class="o">+</span> <span class="n">minor_radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_grid</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta_grid</span><span class="p">)</span>
+<span class="n">surface_y</span> <span class="o">=</span> <span class="p">(</span><span class="n">major_radius</span> <span class="o">+</span> <span class="n">minor_radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_grid</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta_grid</span><span class="p">)</span>
+<span class="n">surface_z</span> <span class="o">=</span> <span class="n">minor_radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_grid</span><span class="p">)</span>
+<span class="n">axis3d</span><span class="o">.</span><span class="n">plot_wireframe</span><span class="p">(</span>
+    <span class="n">surface_x</span><span class="p">,</span> <span class="n">surface_y</span><span class="p">,</span> <span class="n">surface_z</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;0.80&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.32</span><span class="p">,</span> <span class="n">rstride</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">cstride</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">display_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">major_radius</span> <span class="o">+</span> <span class="n">minor_radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+<span class="n">display_y</span> <span class="o">=</span> <span class="p">(</span><span class="n">major_radius</span> <span class="o">+</span> <span class="n">minor_radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+<span class="n">display_z</span> <span class="o">=</span> <span class="n">minor_radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+<span class="n">axis3d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">display_x</span><span class="p">,</span> <span class="n">display_y</span><span class="p">,</span> <span class="n">display_z</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#64748B&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">axis3d</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+    <span class="n">display_x</span><span class="p">,</span> <span class="n">display_y</span><span class="p">,</span> <span class="n">display_z</span><span class="p">,</span>
+    <span class="n">c</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">path_position</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;twilight_shifted&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">26</span><span class="p">,</span> <span class="n">depthshade</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">axis3d</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;A $(2,3)$ winding on $T^2$&quot;</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;$x_1$&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;$x_2$&quot;</span><span class="p">,</span> <span class="n">zlabel</span><span class="o">=</span><span class="s2">&quot;$x_3$&quot;</span><span class="p">)</span>
+<span class="n">axis3d</span><span class="o">.</span><span class="n">set_box_aspect</span><span class="p">((</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.55</span><span class="p">))</span>
+<span class="n">axis3d</span><span class="o">.</span><span class="n">view_init</span><span class="p">(</span><span class="n">elev</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span> <span class="n">azim</span><span class="o">=</span><span class="mi">36</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">position</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">start</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
     <span class="n">axis</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">position</span><span class="p">)</span>
     <span class="n">coordinates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">coordinates</span><span class="p">)</span>
-    <span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">coordinates</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">coordinates</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;0.80&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">axis</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">coordinates</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">coordinates</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">parameter</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">27</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+    <span class="n">closed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">[:</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">closed</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">closed</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;0.78&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+        <span class="n">coordinates</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">coordinates</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">c</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">path_position</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;twilight_shifted&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">28</span><span class="p">,</span>
+        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="n">axis</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;coordinate 1&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;coordinate 2&quot;</span><span class="p">)</span>
     <span class="n">axis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.17</span><span class="p">)</span>
 
 <span class="n">legend_axis</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
 <span class="n">legend_axis</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
-<span class="n">gradient</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="nb">float</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span> <span class="mi">256</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
-<span class="n">legend_axis</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">gradient</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="p">(</span><span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-<span class="n">legend_axis</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.42</span><span class="p">,</span> <span class="mf">0.96</span><span class="p">,</span> <span class="s2">&quot;trajectory parameter&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
-<span class="n">legend_axis</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.42</span><span class="p">,</span> <span class="mf">0.70</span><span class="p">,</span> <span class="s2">&quot;yellow: path end&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#374151&quot;</span><span class="p">)</span>
-<span class="n">legend_axis</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.42</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.70</span><span class="p">,</span> <span class="s2">&quot;purple: path start&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#374151&quot;</span><span class="p">)</span>
-<span class="n">legend_axis</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">))</span>
+<span class="n">gradient</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">256</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
+<span class="n">legend_axis</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+    <span class="n">gradient</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;twilight_shifted&quot;</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+    <span class="n">extent</span><span class="o">=</span><span class="p">(</span><span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">legend_axis</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.42</span><span class="p">,</span> <span class="mf">0.98</span><span class="p">,</span> <span class="s2">&quot;position on the closed path&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+<span class="n">legend_axis</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.42</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$t/(2\pi)=1$&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#374151&quot;</span><span class="p">)</span>
+<span class="n">legend_axis</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.42</span><span class="p">,</span> <span class="mf">0.08</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$t/(2\pi)=0$&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#374151&quot;</span><span class="p">)</span>
+<span class="n">legend_axis</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">0.04</span><span class="p">,</span> <span class="mf">1.04</span><span class="p">))</span>
 
 <span class="n">output</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
     <span class="n">path</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="p">(</span>
@@ -616,15 +651,15 @@ matching raw axes. Color records the hidden trajectory parameter.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/ae99bb41b69b797bff9215d344e9ba17c1b5b6239127d347d90e952b771a59d3.png" src="../_images/ae99bb41b69b797bff9215d344e9ba17c1b5b6239127d347d90e952b771a59d3.png" />
+<img alt="../_images/923929cd0b3fe34c29fa2f70f540331c02df909315d85f2420c8355a6bcd84c9.png" src="../_images/923929cd0b3fe34c29fa2f70f540331c02df909315d85f2420c8355a6bcd84c9.png" />
 </div>
 </div>
 <p>The implementations are dense: storing pairwise distances costs <span class="math notranslate nohighlight">\(O(n^2)\)</span> and
 Floyd–Warshall Isomap costs <span class="math notranslate nohighlight">\(O(n^3)\)</span> work. Sammon and t-SNE add iterative
 optimization, while the eigendecomposition and diffusion methods are
-deterministic for fixed input. Raw axes are not compared across panels because
-all embeddings are identifiable only up to transformations appropriate to
-their objective.</p>
+deterministic for fixed input. The torus example also shows why a chart-based
+Euclidean preprocessing step is unsafe: chart jumps would create artificial
+long edges before any reduction method begins.</p>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
@@ -671,11 +706,11 @@ their objective.</p>
       </div>
     </a>
     <a class="right-next"
-       href="spherical_metric_learning.html"
+       href="grassmann_metric_learning.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Supervised Metric Learning on the Sphere</p>
+        <p class="prev-next-title">Supervised metric learning on the Grassmann manifold</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

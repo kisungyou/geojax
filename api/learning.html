@@ -453,12 +453,17 @@ dense distance matrices unless their documentation says otherwise.</p>
 <h2>Data and capability contracts<a class="headerlink" href="#data-and-capability-contracts" title="Link to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="geojax.learning.ManifoldData">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.learning.</span></span><span class="sig-name descname"><span class="pre">ManifoldData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_shapes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.learning.ManifoldData" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geojax.learning.</span></span><span class="sig-name descname"><span class="pre">ManifoldData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manifold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_shapes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.learning.ManifoldData" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Canonical manifold-valued observations and their static layout metadata.</p>
+<p>Canonical observations bound to the geometry that validated them.</p>
+<p>Binding prevents a validated dataset from being silently reused under a
+different metric or representation with the same event shape. Reusing the
+object with its original geometry skips checks that are already at least as
+strong as the requested validation level.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>manifold</strong> (<em>Any</em>)</p></li>
 <li><p><strong>values</strong> (<em>Any</em>)</p></li>
 <li><p><strong>n_samples</strong> (<em>int</em>)</p></li>
 <li><p><strong>batch_shape</strong> (<em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em>)</p></li>
@@ -1558,8 +1563,11 @@ geometry call while retaining a dense result.</p>
 <h2>Scalable summaries<a class="headerlink" href="#scalable-summaries" title="Link to this heading">#</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="geojax.learning.streaming_frechet_mean">
-<span class="sig-prename descclassname"><span class="pre">geojax.learning.</span></span><span class="sig-name descname"><span class="pre">streaming_frechet_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manifold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_point</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.learning.streaming_frechet_mean" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">geojax.learning.</span></span><span class="sig-name descname"><span class="pre">streaming_frechet_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manifold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_point</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geojax.learning.streaming_frechet_mean" title="Link to this definition">#</a></dt>
 <dd><p>Compute the one-pass inductive Fréchet mean in observation order.</p>
+<p><code class="docutils literal notranslate"><span class="pre">initial_point</span></code> influences the estimate only when <code class="docutils literal notranslate"><span class="pre">initial_weight</span></code> is
+positive, making any prior mass explicit rather than silently counting the
+starting point as an extra observation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1567,6 +1575,7 @@ geometry call while retaining a dense result.</p>
 <li><p><strong>data</strong> (<em>Any</em>)</p></li>
 <li><p><strong>sample_weight</strong> (<em>Any</em><em> | </em><em>None</em>)</p></li>
 <li><p><strong>initial_point</strong> (<em>Any</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>initial_weight</strong> (<em>float</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>

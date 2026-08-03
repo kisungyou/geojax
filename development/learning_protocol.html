@@ -461,6 +461,10 @@ primitives and model-level learning used throughout geometric machine learning
 are converted through <code class="docutils literal notranslate"><span class="pre">as_manifold_data</span></code>; callers can adapt once and reuse the
 immutable result. New methods must not implement private shape conventions or
 silently normalize points.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ManifoldData</span></code> is bound by identity to the geometry instance that performed
+validation. A method must pass an adapted object through <code class="docutils literal notranslate"><span class="pre">as_manifold_data</span></code>
+again so the binding and requested validation level are enforced. It must not
+short-circuit merely because the input already has type <code class="docutils literal notranslate"><span class="pre">ManifoldData</span></code>.</p>
 <p>An adapter must:</p>
 <ul class="simple">
 <li><p>preserve the mathematical point represented by an alternate coordinate;</p></li>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Barycentric Dictionary Learning on the Circle &#8212; GeoJAX</title>
+    <title>Barycentric dictionary learning for covariance matrices &#8212; GeoJAX</title>
   
   
   
@@ -387,22 +387,22 @@
 <li class="toctree-l1"><a class="reference internal" href="graph_curvature.html">Curvature-aware graph learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spd_eeg_classifier.html">SPD prototype networks for motor-imagery EEG</a></li>
 <li class="toctree-l1"><a class="reference internal" href="grassmann_pca.html">Principal component as a Grassmann point</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sphere_kmeans.html">Intrinsic k-means on the circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hyperbolic_kmeans.html">Intrinsic k-means in the hyperbolic plane</a></li>
 <li class="toctree-l1"><a class="reference internal" href="manifold_classification.html">Classification with Manifold-Valued Predictors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="manifold_response_regression.html">Regression with Circular Responses</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Barycentric Dictionary Learning on the Circle</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Barycentric dictionary learning for covariance matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="robust_scalable_learning.html">Robust and Scalable Circular Summaries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="semi_supervised_circle.html">Semi-Supervised Learning on the Circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="robust_spherical_summaries.html">Robust Location Summaries on the Circle</a></li>
-<li class="toctree-l1"><a class="reference internal" href="clustering_comparison.html">Comparing Clustering Methods on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering_comparison.html">Comparing clustering methods on a flat torus</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spd_frechet_mean.html">Comparing Fréchet Means of SPD Matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="kendall_hand_shapes.html">Hand Poses in Kendall Shape Space</a></li>
 <li class="toctree-l1"><a class="reference internal" href="two_sample_inference.html">Two-Sample Inference on the Circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spd_pga_regression.html">PGA and Regression with SPD Predictors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="product_adapter.html">Adapting Nested Product Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimal_transport.html">Exact Transport on the Circle</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dimension_reduction.html">Comparing Manifold Embeddings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="spherical_metric_learning.html">Supervised Metric Learning on the Sphere</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dimension_reduction.html">Comparing embeddings of a torus trajectory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grassmann_metric_learning.html">Supervised metric learning on the Grassmann manifold</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sphere_eigenvector.html">Dominant eigenvector on the circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rigid_registration.html">Rigid landmark registration in SE(2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="solver_comparison.html">Comparing solvers in a curved valley</a></li>
@@ -449,7 +449,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">Tutorials</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Barycentric Dictionary Learning on the Circle</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Barycentric dictionary learning for covariance matrices</span></li>
   </ul>
 </nav>
 </div>
@@ -466,20 +466,30 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="barycentric-dictionary-learning-on-the-circle">
-<h1>Barycentric Dictionary Learning on the Circle<a class="headerlink" href="#barycentric-dictionary-learning-on-the-circle" title="Link to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="barycentric-dictionary-learning-for-covariance-matrices">
+<h1>Barycentric dictionary learning for covariance matrices<a class="headerlink" href="#barycentric-dictionary-learning-for-covariance-matrices" title="Link to this heading">#</a></h1>
 <p>A Euclidean dictionary reconstructs data by linear combinations of atoms.
-There is no global addition operation on a curved manifold. Intrinsic
-barycentric coding instead asks for simplex weights <span class="math notranslate nohighlight">\(w\in\Delta^{m-1}\)</span> that
-approximately satisfy the Karcher equation at an observation <span class="math notranslate nohighlight">\(x\)</span>:</p>
+Positive-definite covariance matrices do not form a vector space under those
+operations. Intrinsic barycentric coding instead asks for simplex weights
+<span class="math notranslate nohighlight">\(w\in\Delta^{m-1}\)</span> that approximately satisfy the Karcher equation at an
+observation <span class="math notranslate nohighlight">\(P\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[
-\sum_{j=1}^m w_j\operatorname{Log}_x(D_j)\approx 0.
+\sum_{j=1}^m w_j\operatorname{Log}_P(D_j)\approx 0.
 \]</div>
-<p>GeoJAX minimizes the squared norm of this residual plus an <span class="math notranslate nohighlight">\(\ell_2\)</span> ridge
-term, then reconstructs <span class="math notranslate nohighlight">\(x\)</span> as the weighted Fréchet mean of the atoms.
-Dictionary learning alternates code estimation and a Product-manifold atom
-optimization <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id15" title="Jeffrey Ho, Yuchen Xie, and Baba Vemuri. On a nonlinear generalization of sparse coding and dictionary learning. In Proceedings of the 30th International Conference on Machine Learning, volume 28 of Proceedings of Machine Learning Research, 1480–1488. 2013. URL: https://proceedings.mlr.press/v28/ho13a.html.">Ho <em>et al.</em>, 2013</a>]</span>.</p>
+<p>We use the log-Euclidean geometry of <span class="bibtex-citation" id="id1">Arsigny <em>et al.</em> [<a class="reference internal" href="#id7" title="Vincent Arsigny, Pierre Fillard, Xavier Pennec, and Nicholas Ayache. Geometric means in a novel vector space structure on symmetric positive-definite matrices. SIAM Journal on Matrix Analysis and Applications, 29(1):328–347, 2007. doi:10.1137/050637996.">2007</a>]</span>, for which</p>
+<div class="math notranslate nohighlight">
+\[
+d_{\mathrm{LE}}(P,Q)
+=\left\|\log P-\log Q\right\|_F,
+\qquad
+\operatorname{bar}(D_1,\ldots,D_m;w)
+=\exp\left(\sum_{j=1}^m w_j\log D_j\right).
+\]</div>
+<p>GeoJAX minimizes the squared Karcher residual plus an <span class="math notranslate nohighlight">\(\ell_2\)</span> ridge term and
+alternates code estimation with Product-manifold atom optimization
+<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id16" title="Jeffrey Ho, Yuchen Xie, and Baba Vemuri. On a nonlinear generalization of sparse coding and dictionary learning. In Proceedings of the 30th International Conference on Machine Learning, volume 28 of Proceedings of Machine Learning Research, 1480–1488. 2013. URL: https://proceedings.mlr.press/v28/ho13a.html.">Ho <em>et al.</em>, 2013</a>]</span>. The atoms therefore remain SPD matrices throughout
+learning.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
@@ -490,7 +500,7 @@ optimization <span class="bibtex-citation" id="id1">[<a class="reference interna
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">geojax.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sphere</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">geojax.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">SPDLogEuclidean</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">geojax.learning</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">geodesic_barycentric_coding</span><span class="p">,</span>
     <span class="n">manifold_dictionary_learning</span><span class="p">,</span>
@@ -505,92 +515,147 @@ optimization <span class="bibtex-citation" id="id1">[<a class="reference interna
     <span class="s2">&quot;axes.spines.right&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">})</span>
 
-<span class="n">M</span> <span class="o">=</span> <span class="n">Sphere</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">latent</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">1.15</span><span class="p">,</span> <span class="mf">1.15</span><span class="p">,</span> <span class="mi">21</span><span class="p">)</span>
-<span class="n">angles</span> <span class="o">=</span> <span class="n">latent</span> <span class="o">+</span> <span class="mf">0.045</span> <span class="o">*</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">530</span><span class="p">),</span> <span class="n">latent</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">M</span> <span class="o">=</span> <span class="n">SPDLogEuclidean</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">latent</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">on_circle</span><span class="p">(</span><span class="n">theta</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">jnp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="n">data</span> <span class="o">=</span> <span class="n">on_circle</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
-<span class="n">initial_atoms</span> <span class="o">=</span> <span class="n">on_circle</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.12</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">]))</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">log_covariance</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">0.48</span> <span class="o">*</span> <span class="n">t</span><span class="p">,</span> <span class="mf">0.34</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mf">1.45</span> <span class="o">*</span> <span class="n">t</span><span class="p">)],</span>
+        <span class="p">[</span><span class="mf">0.34</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mf">1.45</span> <span class="o">*</span> <span class="n">t</span><span class="p">),</span> <span class="o">-</span><span class="mf">0.24</span> <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">0.13</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mf">1.1</span> <span class="o">*</span> <span class="n">t</span><span class="p">)],</span>
+    <span class="p">])</span>
 
-<span class="n">initial_codes</span> <span class="o">=</span> <span class="n">geodesic_barycentric_coding</span><span class="p">(</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">expm</span><span class="p">)(</span><span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">log_covariance</span><span class="p">)(</span><span class="n">latent</span><span class="p">))</span>
+<span class="n">initial_positions</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.72</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">,</span> <span class="mf">0.72</span><span class="p">])</span>
+<span class="n">initial_atoms</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">expm</span><span class="p">)(</span>
+    <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">log_covariance</span><span class="p">)(</span><span class="n">initial_positions</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;data shape:&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;all observations are SPD:&quot;</span><span class="p">,</span> <span class="nb">bool</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">belongs</span><span class="p">(</span><span class="n">data</span><span class="p">))))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>data shape: (7, 2, 2)
+all observations are SPD: True
+</pre></div>
+</div>
+</div>
+</div>
+<p>The curve is nonlinear in matrix-log coordinates, so three fixed atoms do not
+reconstruct every observation exactly. A ridge of <span class="math notranslate nohighlight">\(0.1\)</span> makes the simplex code
+unique and numerically well conditioned; these are dense barycentric codes,
+not lasso-sparse codes.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">initial_codes</span> <span class="o">=</span> <span class="n">geodesic_barycentric_coding</span><span class="p">(</span>
     <span class="n">M</span><span class="p">,</span>
     <span class="n">data</span><span class="p">,</span>
     <span class="n">initial_atoms</span><span class="p">,</span>
-    <span class="n">ridge</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span>
-    <span class="n">maxiter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-    <span class="n">reconstruction_maxiter</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
+    <span class="n">ridge</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">maxiter</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>
+    <span class="n">tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span>
+    <span class="n">reconstruction_maxiter</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">learned</span> <span class="o">=</span> <span class="n">manifold_dictionary_learning</span><span class="p">(</span>
     <span class="n">M</span><span class="p">,</span>
     <span class="n">data</span><span class="p">,</span>
     <span class="n">n_atoms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
     <span class="n">initial_atoms</span><span class="o">=</span><span class="n">initial_atoms</span><span class="p">,</span>
-    <span class="n">ridge</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span>
-    <span class="n">maxiter</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">ridge</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">maxiter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="n">coding_maxiter</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>
-    <span class="n">center_maxiter</span><span class="o">=</span><span class="mi">35</span><span class="p">,</span>
-    <span class="n">tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span>
+    <span class="n">center_maxiter</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">tol</span><span class="o">=</span><span class="mf">2e-4</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;initial reconstruction objective: </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">initial_codes</span><span class="o">.</span><span class="n">objective</span><span class="p">)</span><span class="si">:</span><span class="s2">.7f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;learned reconstruction objective: </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">learned</span><span class="o">.</span><span class="n">objective</span><span class="p">)</span><span class="si">:</span><span class="s2">.7f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;maximum simplex-sum error:&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">learned</span><span class="o">.</span><span class="n">codes</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">))))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;initial coding objective: </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">initial_codes</span><span class="o">.</span><span class="n">objective</span><span class="p">)</span><span class="si">:</span><span class="s2">.7f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;learned dictionary objective: </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">learned</span><span class="o">.</span><span class="n">objective</span><span class="p">)</span><span class="si">:</span><span class="s2">.7f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;simplex sums:&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">learned</span><span class="o">.</span><span class="n">codes</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)),</span> <span class="mi">7</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;outer dictionary updates:&quot;</span><span class="p">,</span> <span class="n">learned</span><span class="o">.</span><span class="n">iterations</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>initial reconstruction objective: 0.0051396
-learned reconstruction objective: 0.0006802
-maximum simplex-sum error: 2.220446049250313e-16
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>initial coding objective: 0.1221743
+learned dictionary objective: 0.0612784
+simplex sums: [1. 1. 1. 1. 1. 1. 1.]
+outer dictionary updates: 1
 </pre></div>
 </div>
 </div>
 </div>
-<section id="inspect-the-representation">
-<h2>Inspect the representation<a class="headerlink" href="#inspect-the-representation" title="Link to this heading">#</a></h2>
-<p>The codes are nonnegative and sum to one. They are barycentric, not lasso-
-sparse: the <span class="math notranslate nohighlight">\(\ell_1\)</span> norm is constant over the simplex. A row can nevertheless
-concentrate on one or two atoms when that best satisfies the intrinsic
-residual equation.</p>
+<p>One outer update keeps this executable documentation compact while still
+performing a genuine manifold atom optimization. For a scientific fit, raise
+<code class="docutils literal notranslate"><span class="pre">maxiter</span></code> and monitor <code class="docutils literal notranslate"><span class="pre">diagnostics[&quot;objective_history&quot;]</span></code> until the requested
+tolerance is reached.</p>
+<section id="visual-report">
+<h2>Visual report<a class="headerlink" href="#visual-report" title="Link to this heading">#</a></h2>
+<p>Each ellipse is a contour of the associated <span class="math notranslate nohighlight">\(2\times2\)</span> covariance matrix. The
+top and bottom rows compare the initial and learned atoms; the observations
+occupy the middle row. The second panel shows how barycentric weight moves
+between atoms along the covariance trajectory.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">initial_errors</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">initial_codes</span><span class="o">.</span><span class="n">reconstructions</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 <span class="n">learned_errors</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">learned</span><span class="o">.</span><span class="n">reconstructions</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-<span class="n">history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">learned</span><span class="o">.</span><span class="n">diagnostics</span><span class="p">[</span><span class="s2">&quot;objective_history&quot;</span><span class="p">])</span>
 
-<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">13.3</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">),</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">circle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">600</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">circle</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">circle</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;0.82&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.1</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]),</span>
-    <span class="n">c</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">latent</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">34</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span>
-    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;observations&quot;</span><span class="p">,</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">draw_covariance</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">covariance</span><span class="p">,</span> <span class="n">center</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+    <span class="n">eigenvalues</span><span class="p">,</span> <span class="n">eigenvectors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">covariance</span><span class="p">))</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span>
+    <span class="n">unit_circle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">)])</span>
+    <span class="n">offsets</span> <span class="o">=</span> <span class="n">eigenvectors</span> <span class="o">@</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">eigenvalues</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">unit_circle</span><span class="p">)</span>
+    <span class="n">curve</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">center</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">offsets</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">curve</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">curve</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
+
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">13.5</span><span class="p">,</span> <span class="mf">4.2</span><span class="p">),</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">color_map</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s2">&quot;viridis&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">covariance</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="n">color_map</span><span class="p">(</span><span class="n">index</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">draw_covariance</span><span class="p">(</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">covariance</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">latent</span><span class="p">[</span><span class="n">index</span><span class="p">]),</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="n">color</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.16</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.25</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">covariance</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">initial_atoms</span><span class="p">)):</span>
+    <span class="n">draw_covariance</span><span class="p">(</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">covariance</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">initial_positions</span><span class="p">[</span><span class="n">index</span><span class="p">]),</span> <span class="mf">1.0</span><span class="p">),</span>
+        <span class="s2">&quot;#E45756&quot;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.21</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.8</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<span class="n">learned_logs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">logm</span><span class="p">)(</span><span class="n">learned</span><span class="o">.</span><span class="n">atoms</span><span class="p">))</span>
+<span class="n">learned_order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">learned_logs</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">learned_positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.78</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.78</span><span class="p">])</span>
+<span class="k">for</span> <span class="n">position</span><span class="p">,</span> <span class="n">atom_index</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">learned_positions</span><span class="p">,</span> <span class="n">learned_order</span><span class="p">):</span>
+    <span class="n">draw_covariance</span><span class="p">(</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">learned</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">atom_index</span><span class="p">]),</span> <span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">),</span>
+        <span class="s2">&quot;#009E8E&quot;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.21</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Covariance observations and atoms&quot;</span><span class="p">,</span>
+    <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">1.55</span><span class="p">,</span> <span class="mf">1.55</span><span class="p">),</span>
+    <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">1.48</span><span class="p">,</span> <span class="mf">1.48</span><span class="p">),</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;trajectory position&quot;</span><span class="p">,</span>
+    <span class="n">yticks</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+    <span class="n">yticklabels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;learned&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;initial&quot;</span><span class="p">],</span>
 <span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">initial_atoms</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">initial_atoms</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]),</span>
-    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#E45756&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">75</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;initial atoms&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">learned</span><span class="o">.</span><span class="n">atoms</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">learned</span><span class="o">.</span><span class="n">atoms</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]),</span>
-    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#009E8E&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-    <span class="n">s</span><span class="o">=</span><span class="mi">210</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;learned atoms&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">aspect</span><span class="o">=</span><span class="s2">&quot;equal&quot;</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">),</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Intrinsic dictionary atoms&quot;</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.15</span><span class="p">)</span>
 
 <span class="n">image</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
     <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">learned</span><span class="o">.</span><span class="n">codes</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
-    <span class="n">aspect</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;magma&quot;</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span>
+    <span class="n">aspect</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+    <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;magma&quot;</span><span class="p">,</span>
+    <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span>
     <span class="n">extent</span><span class="o">=</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">latent</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">latent</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">),</span>
 <span class="p">)</span>
 <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
     <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Barycentric code matrix&quot;</span><span class="p">,</span>
-    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;latent position of observation&quot;</span><span class="p">,</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;trajectory position&quot;</span><span class="p">,</span>
     <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;atom&quot;</span><span class="p">,</span>
     <span class="n">yticks</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
 <span class="p">)</span>
@@ -598,20 +663,17 @@ residual equation.</p>
 
 <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
     <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">latent</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">initial_errors</span><span class="p">),</span>
-    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#E45756&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.8</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;initial dictionary&quot;</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#E45756&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.7</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;initial dictionary&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
     <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">latent</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">learned_errors</span><span class="p">),</span>
-    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#009E8E&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;learned dictionary&quot;</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#009E8E&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;learned dictionary&quot;</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="k">if</span> <span class="n">history</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-    <span class="n">inset</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">inset_axes</span><span class="p">([</span><span class="mf">0.56</span><span class="p">,</span> <span class="mf">0.53</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">])</span>
-    <span class="n">inset</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">history</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">history</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#7C3AED&quot;</span><span class="p">)</span>
-    <span class="n">inset</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;objective&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
-    <span class="n">inset</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
 <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Geodesic reconstruction errors&quot;</span><span class="p">,</span>
-    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;latent position&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Log-Euclidean reconstruction errors&quot;</span><span class="p">,</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;trajectory position&quot;</span><span class="p">,</span>
     <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;distance&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.18</span><span class="p">)</span>
@@ -632,20 +694,24 @@ residual equation.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/af4c3c0d62b4520220ae5bc0a10e81f3802b65f6b791618f63e3580c39fe09d3.png" src="../_images/af4c3c0d62b4520220ae5bc0a10e81f3802b65f6b791618f63e3580c39fe09d3.png" />
+<img alt="../_images/dedd184490ef34894cc0e0adab8efdabd58d90b2936ae002790020e0dae014a6.png" src="../_images/dedd184490ef34894cc0e0adab8efdabd58d90b2936ae002790020e0dae014a6.png" />
 </div>
 </div>
-<p>The coding equation is local to each observation and is undefined where the
-selected logarithm is undefined. Dictionary learning is therefore most
-reliable when observations and atoms remain in a common regular geodesic
-region.</p>
+<p>The Karcher equation is local to each observation and depends on the selected
+geometry. Under the log-Euclidean metric it has a global linearizing chart;
+under other SPD metrics the same public learning routine uses their own
+logarithms, exponentials, and inner products instead.</p>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
-<div class="docutils container" id="id2">
+<div class="docutils container" id="id3">
 <div role="list" class="citation-list">
-<div class="citation" id="id15" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">HXV13</a><span class="fn-bracket">]</span></span>
+<div class="citation" id="id7" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">AFPA07</a><span class="fn-bracket">]</span></span>
+<p>Vincent Arsigny, Pierre Fillard, Xavier Pennec, and Nicholas Ayache. Geometric means in a novel vector space structure on symmetric positive-definite matrices. <em>SIAM Journal on Matrix Analysis and Applications</em>, 29(1):328–347, 2007. <a class="reference external" href="https://doi.org/10.1137/050637996">doi:10.1137/050637996</a>.</p>
+</div>
+<div class="citation" id="id16" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">HXV13</a><span class="fn-bracket">]</span></span>
 <p>Jeffrey Ho, Yuchen Xie, and Baba Vemuri. On a nonlinear generalization of sparse coding and dictionary learning. In <em>Proceedings of the 30th International Conference on Machine Learning</em>, volume 28 of Proceedings of Machine Learning Research, 1480–1488. 2013. URL: <a class="reference external" href="https://proceedings.mlr.press/v28/ho13a.html">https://proceedings.mlr.press/v28/ho13a.html</a>.</p>
 </div>
 </div>
@@ -700,7 +766,7 @@ region.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspect-the-representation">Inspect the representation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visual-report">Visual report</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
 </ul>
   </nav></div>

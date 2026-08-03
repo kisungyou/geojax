@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Comparing Clustering Methods on the Circle &#8212; GeoJAX</title>
+    <title>Comparing clustering methods on a flat torus &#8212; GeoJAX</title>
   
   
   
@@ -387,22 +387,22 @@
 <li class="toctree-l1"><a class="reference internal" href="graph_curvature.html">Curvature-aware graph learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spd_eeg_classifier.html">SPD prototype networks for motor-imagery EEG</a></li>
 <li class="toctree-l1"><a class="reference internal" href="grassmann_pca.html">Principal component as a Grassmann point</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sphere_kmeans.html">Intrinsic k-means on the circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hyperbolic_kmeans.html">Intrinsic k-means in the hyperbolic plane</a></li>
 <li class="toctree-l1"><a class="reference internal" href="manifold_classification.html">Classification with Manifold-Valued Predictors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="manifold_response_regression.html">Regression with Circular Responses</a></li>
-<li class="toctree-l1"><a class="reference internal" href="barycentric_dictionary.html">Barycentric Dictionary Learning on the Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="barycentric_dictionary.html">Barycentric dictionary learning for covariance matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="robust_scalable_learning.html">Robust and Scalable Circular Summaries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="semi_supervised_circle.html">Semi-Supervised Learning on the Circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="robust_spherical_summaries.html">Robust Location Summaries on the Circle</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Comparing Clustering Methods on the Circle</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Comparing clustering methods on a flat torus</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spd_frechet_mean.html">Comparing Fréchet Means of SPD Matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="kendall_hand_shapes.html">Hand Poses in Kendall Shape Space</a></li>
 <li class="toctree-l1"><a class="reference internal" href="two_sample_inference.html">Two-Sample Inference on the Circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spd_pga_regression.html">PGA and Regression with SPD Predictors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="product_adapter.html">Adapting Nested Product Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimal_transport.html">Exact Transport on the Circle</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dimension_reduction.html">Comparing Manifold Embeddings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="spherical_metric_learning.html">Supervised Metric Learning on the Sphere</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dimension_reduction.html">Comparing embeddings of a torus trajectory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grassmann_metric_learning.html">Supervised metric learning on the Grassmann manifold</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sphere_eigenvector.html">Dominant eigenvector on the circle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rigid_registration.html">Rigid landmark registration in SE(2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="solver_comparison.html">Comparing solvers in a curved valley</a></li>
@@ -449,7 +449,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">Tutorials</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Comparing Clustering Methods on the Circle</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Comparing clustering methods on a flat torus</span></li>
   </ul>
 </nav>
 </div>
@@ -466,21 +466,32 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="comparing-clustering-methods-on-the-circle">
-<h1>Comparing Clustering Methods on the Circle<a class="headerlink" href="#comparing-clustering-methods-on-the-circle" title="Link to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="comparing-clustering-methods-on-a-flat-torus">
+<h1>Comparing clustering methods on a flat torus<a class="headerlink" href="#comparing-clustering-methods-on-a-flat-torus" title="Link to this heading">#</a></h1>
 <p>Clustering manifold-valued data is not one algorithm with interchangeable
-names. Intrinsic k-means minimizes squared distances to Fréchet centers;
+names. Intrinsic k-means minimizes squared distances to Frechet centers;
 k-medoids restricts representatives to observed points; hierarchical and
 spectral methods use only the distance matrix; mean shift searches for density
 modes; and competitive quantization updates prototypes online. Their outputs
 can differ even when every method uses the same geodesic distance.</p>
-<p>We compare these objectives on three noisy arcs of <span class="math notranslate nohighlight">\(S^1\)</span>. The experiment also
-constructs a lightweight coreset, a weighted sample intended to approximate
-the full k-means objective. The methods follow the classical constructions of
-<span class="bibtex-citation" id="id1">Lloyd [<a class="reference internal" href="#id47" title="Stuart P. Lloyd. Least squares quantization in PCM. IEEE Transactions on Information Theory, 28(2):129–137, 1982. doi:10.1109/TIT.1982.1056489.">1982</a>]</span>, <span class="bibtex-citation" id="id2">Kaufman and Rousseeuw [<a class="reference internal" href="#id79" title="Leonard Kaufman and Peter J. Rousseeuw. Finding Groups in Data: An Introduction to Cluster Analysis. John Wiley and Sons, New York, 1990. doi:10.1002/9780470316801.">1990</a>]</span>,
-<span class="bibtex-citation" id="id3">Zelnik-Manor and Perona [<a class="reference internal" href="#id75" title="Lihi Zelnik-Manor and Pietro Perona. Self-tuning spectral clustering. In Advances in Neural Information Processing Systems, volume 17, 1601–1608. 2005.">2005</a>]</span>, <span class="bibtex-citation" id="id4">Comaniciu and Meer [<a class="reference internal" href="#id78" title="Dorin Comaniciu and Peter Meer. Mean shift: a robust approach toward feature space analysis. IEEE Transactions on Pattern Analysis and Machine Intelligence, 24(5):603–619, 2002. doi:10.1109/34.1000236.">2002</a>]</span>, and the Riemannian
-quantization method of <span class="bibtex-citation" id="id5">Le Brigant and Puechmorel [<a class="reference internal" href="#id80" title="Alice Le Brigant and Stéphane Puechmorel. Quantization and clustering on Riemannian manifolds with an application to air traffic analysis. Journal of Multivariate Analysis, 173:685–703, 2019. doi:10.1016/j.jmva.2019.05.008.">2019</a>]</span>. The coreset
-sampling heuristic is adapted from <span class="bibtex-citation" id="id6">Bachem <em>et al.</em> [<a class="reference internal" href="#id77" title="Olivier Bachem, Mario Lucic, and Andreas Krause. Scalable k-Means clustering via lightweight coresets. In Proceedings of the 24th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining, 1119–1127. 2018. doi:10.1145/3219819.3219973.">2018</a>]</span>.</p>
+<p>We compare these objectives on the flat two-torus
+<span class="math notranslate nohighlight">\(T^2=(\mathbb R/2\pi\mathbb Z)^2\)</span>. GeoJAX represents a point by wrapped angles
+<span class="math notranslate nohighlight">\(\theta=(\theta_1,\theta_2)\in[-\pi,\pi)^2\)</span>, with</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{Log}_{\theta}(\varphi)
+=\operatorname{wrap}(\varphi-\theta),
+\qquad
+d(\theta,\varphi)
+=\left\|\operatorname{wrap}(\varphi-\theta)\right\|_2.
+\]</div>
+<p>Thus opposite edges of the displayed square are identified. Several groups
+below cross those edges, making ordinary Euclidean clustering of the angle
+table inappropriate. The methods follow <span class="bibtex-citation" id="id1">Lloyd [<a class="reference internal" href="#id47" title="Stuart P. Lloyd. Least squares quantization in PCM. IEEE Transactions on Information Theory, 28(2):129–137, 1982. doi:10.1109/TIT.1982.1056489.">1982</a>]</span>,
+<span class="bibtex-citation" id="id2">Kaufman and Rousseeuw [<a class="reference internal" href="#id79" title="Leonard Kaufman and Peter J. Rousseeuw. Finding Groups in Data: An Introduction to Cluster Analysis. John Wiley and Sons, New York, 1990. doi:10.1002/9780470316801.">1990</a>]</span>, <span class="bibtex-citation" id="id3">Zelnik-Manor and Perona [<a class="reference internal" href="#id75" title="Lihi Zelnik-Manor and Pietro Perona. Self-tuning spectral clustering. In Advances in Neural Information Processing Systems, volume 17, 1601–1608. 2005.">2005</a>]</span>,
+<span class="bibtex-citation" id="id4">Comaniciu and Meer [<a class="reference internal" href="#id78" title="Dorin Comaniciu and Peter Meer. Mean shift: a robust approach toward feature space analysis. IEEE Transactions on Pattern Analysis and Machine Intelligence, 24(5):603–619, 2002. doi:10.1109/34.1000236.">2002</a>]</span>, and the Riemannian quantization method of
+<span class="bibtex-citation" id="id5">Le Brigant and Puechmorel [<a class="reference internal" href="#id80" title="Alice Le Brigant and Stéphane Puechmorel. Quantization and clustering on Riemannian manifolds with an application to air traffic analysis. Journal of Multivariate Analysis, 173:685–703, 2019. doi:10.1016/j.jmva.2019.05.008.">2019</a>]</span>. The coreset heuristic is adapted from
+<span class="bibtex-citation" id="id6">Bachem <em>et al.</em> [<a class="reference internal" href="#id77" title="Olivier Bachem, Mario Lucic, and Andreas Krause. Scalable k-Means clustering via lightweight coresets. In Proceedings of the 24th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining, 1119–1127. 2018. doi:10.1145/3219819.3219973.">2018</a>]</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">replace</span>
@@ -492,7 +503,7 @@ sampling heuristic is adapted from <span class="bibtex-citation" id="id6">Bachem
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">geojax.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sphere</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">geojax.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Torus</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">geojax.learning</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">agglomerative_clustering</span><span class="p">,</span>
     <span class="n">competitive_quantization</span><span class="p">,</span>
@@ -513,25 +524,32 @@ sampling heuristic is adapted from <span class="bibtex-citation" id="id6">Bachem
     <span class="s2">&quot;axes.spines.right&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">})</span>
 
-<span class="n">M</span> <span class="o">=</span> <span class="n">Sphere</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">cluster_angles</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">2.10</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">2.08</span><span class="p">])</span>
-<span class="n">cluster_scales</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.16</span><span class="p">,</span> <span class="mf">0.24</span><span class="p">,</span> <span class="mf">0.18</span><span class="p">])</span>
-<span class="n">keys</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">831</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
-<span class="n">angles</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span>
-    <span class="n">center</span> <span class="o">+</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="mi">12</span><span class="p">,))</span>
-    <span class="k">for</span> <span class="n">center</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cluster_angles</span><span class="p">,</span> <span class="n">cluster_scales</span><span class="p">,</span> <span class="n">keys</span><span class="p">)</span>
+<span class="n">M</span> <span class="o">=</span> <span class="n">Torus</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">cluster_centers</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="o">-</span><span class="mf">3.05</span><span class="p">,</span> <span class="mf">1.80</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.05</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.18</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">1.80</span><span class="p">,</span> <span class="mf">3.02</span><span class="p">],</span>
 <span class="p">])</span>
-<span class="n">points</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">jnp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angles</span><span class="p">),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angles</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">cluster_scales</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mf">0.18</span><span class="p">,</span> <span class="mf">0.16</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.23</span><span class="p">,</span> <span class="mf">0.18</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.16</span><span class="p">,</span> <span class="mf">0.19</span><span class="p">],</span>
+<span class="p">])</span>
+<span class="n">keys</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">831</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">points</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">project</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span>
+    <span class="n">center</span> <span class="o">+</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">center</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cluster_centers</span><span class="p">,</span> <span class="n">cluster_scales</span><span class="p">,</span> <span class="n">keys</span><span class="p">)</span>
+<span class="p">]))</span>
 
 <span class="n">full_kmeans</span> <span class="o">=</span> <span class="n">kmeans</span><span class="p">(</span>
-    <span class="n">M</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">n_clusters</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">n_init</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">M</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">n_clusters</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">n_init</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
     <span class="n">maxiter</span><span class="o">=</span><span class="mi">35</span><span class="p">,</span> <span class="n">center_maxiter</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">medoids</span> <span class="o">=</span> <span class="n">kmedoids</span><span class="p">(</span>
-    <span class="n">M</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">n_clusters</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">35</span>
+    <span class="n">M</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">n_clusters</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">35</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">hierarchy</span> <span class="o">=</span> <span class="n">agglomerative_clustering</span><span class="p">(</span>
-    <span class="n">M</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">n_clusters</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">linkage</span><span class="o">=</span><span class="s2">&quot;average&quot;</span>
+    <span class="n">M</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">n_clusters</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">linkage</span><span class="o">=</span><span class="s2">&quot;average&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">spectral</span> <span class="o">=</span> <span class="n">spectral_clustering</span><span class="p">(</span>
     <span class="n">M</span><span class="p">,</span>
@@ -539,23 +557,23 @@ sampling heuristic is adapted from <span class="bibtex-citation" id="id6">Bachem
     <span class="n">n_clusters</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
     <span class="n">key</span><span class="o">=</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
     <span class="n">affinity</span><span class="o">=</span><span class="s2">&quot;self_tuning&quot;</span><span class="p">,</span>
-    <span class="n">n_neighbors</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">n_neighbors</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
     <span class="n">maxiter</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">modes</span> <span class="o">=</span> <span class="n">mean_shift</span><span class="p">(</span>
-    <span class="n">M</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">bandwidth</span><span class="o">=</span><span class="mf">0.34</span><span class="p">,</span> <span class="n">merge_tol</span><span class="o">=</span><span class="mf">0.42</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">40</span>
+    <span class="n">M</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">bandwidth</span><span class="o">=</span><span class="mf">0.42</span><span class="p">,</span> <span class="n">merge_tol</span><span class="o">=</span><span class="mf">0.50</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">quantized</span> <span class="o">=</span> <span class="n">competitive_quantization</span><span class="p">(</span>
     <span class="n">M</span><span class="p">,</span>
     <span class="n">points</span><span class="p">,</span>
     <span class="n">n_clusters</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
     <span class="n">key</span><span class="o">=</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span>
-    <span class="n">epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">epochs</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
     <span class="n">initial_gain</span><span class="o">=</span><span class="mf">0.45</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">coreset</span> <span class="o">=</span> <span class="n">lightweight_coreset</span><span class="p">(</span>
-    <span class="n">M</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">M</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span>
 <span class="p">)</span>
 <span class="n">coreset_kmeans</span> <span class="o">=</span> <span class="n">kmeans</span><span class="p">(</span>
     <span class="n">M</span><span class="p">,</span>
@@ -568,7 +586,7 @@ sampling heuristic is adapted from <span class="bibtex-citation" id="id6">Bachem
     <span class="n">center_maxiter</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">coreset_labels</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span>
-    <span class="n">pairwise_distances</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">coreset_kmeans</span><span class="o">.</span><span class="n">centers</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+    <span class="n">pairwise_distances</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">coreset_kmeans</span><span class="o">.</span><span class="n">centers</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">coreset_kmeans</span> <span class="o">=</span> <span class="n">replace</span><span class="p">(</span><span class="n">coreset_kmeans</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">coreset_labels</span><span class="p">)</span>
 
@@ -592,13 +610,13 @@ sampling heuristic is adapted from <span class="bibtex-citation" id="id6">Bachem
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Intrinsic k-means         clusters= 3  iterations=  3  objective=0.02448
-k-medoids                 clusters= 3  iterations=  2  objective=0.12325
-Average linkage           clusters= 3  iterations= 35  objective=6.99139
-Spectral                  clusters= 3  iterations=  2  objective=0.02448
-Mean shift                clusters= 3  iterations= 10  objective=0.02464
-Competitive quantization  clusters= 3  iterations= 10  objective=0.02769
-Coreset k-means           clusters= 3  iterations=  3  objective=0.01111
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Intrinsic k-means         clusters= 3  iterations=  3  objective=0.05035
+k-medoids                 clusters= 3  iterations=  2  objective=0.20311
+Average linkage           clusters= 3  iterations= 41  objective=11.88972
+Spectral                  clusters= 3  iterations=  2  objective=0.05035
+Mean shift                clusters= 3  iterations= 11  objective=0.05044
+Competitive quantization  clusters= 3  iterations= 12  objective=0.05405
+Coreset k-means           clusters= 3  iterations=  3  objective=0.05492
 </pre></div>
 </div>
 </div>
@@ -608,29 +626,46 @@ comparable with squared quantization error or a medoid distance. The visual
 partitions and representative points are the meaningful comparison here.</p>
 <section id="visual-report">
 <h2>Visual report<a class="headerlink" href="#visual-report" title="Link to this heading">#</a></h2>
-<p>The first panel shows which observations were sampled by the coreset; larger
-rings indicate repeated selections. Each remaining panel displays one fitted
-partition. Stars mark representatives when the method returns intrinsic
-centers or medoids.</p>
+<p>The dashed boundary is a coordinate cut, not a geometric boundary. A cluster
+split between the top and bottom or left and right edges remains contiguous on
+<span class="math notranslate nohighlight">\(T^2\)</span>. The first panel shows the coreset; larger rings indicate repeated
+selections. Stars mark representatives when a method returns centers or
+medoids.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">palette</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s2">&quot;#E45756&quot;</span><span class="p">,</span> <span class="s2">&quot;#009E8E&quot;</span><span class="p">,</span> <span class="s2">&quot;#7C3AED&quot;</span><span class="p">,</span> <span class="s2">&quot;#F59E0B&quot;</span><span class="p">,</span> <span class="s2">&quot;#2563EB&quot;</span><span class="p">])</span>
-<span class="n">circle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">setup_circle</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
-    <span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">circle</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">circle</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;0.82&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-    <span class="n">axis</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">aspect</span><span class="o">=</span><span class="s2">&quot;equal&quot;</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">1.12</span><span class="p">,</span> <span class="mf">1.12</span><span class="p">),</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">1.12</span><span class="p">,</span> <span class="mf">1.12</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
-    <span class="n">axis</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
-    <span class="n">axis</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_torus_chart</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+        <span class="n">aspect</span><span class="o">=</span><span class="s2">&quot;equal&quot;</span><span class="p">,</span>
+        <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="mf">0.18</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">+</span> <span class="mf">0.18</span><span class="p">),</span>
+        <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="mf">0.18</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">+</span> <span class="mf">0.18</span><span class="p">),</span>
+        <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
+        <span class="n">xlabel</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\theta_1$&quot;</span><span class="p">,</span>
+        <span class="n">ylabel</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\theta_2$&quot;</span><span class="p">,</span>
+        <span class="n">xticks</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">],</span>
+        <span class="n">yticks</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">],</span>
+        <span class="n">xticklabels</span><span class="o">=</span><span class="p">[</span><span class="sa">r</span><span class="s2">&quot;$-\pi$&quot;</span><span class="p">,</span> <span class="s2">&quot;$0$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$\pi$&quot;</span><span class="p">],</span>
+        <span class="n">yticklabels</span><span class="o">=</span><span class="p">[</span><span class="sa">r</span><span class="s2">&quot;$-\pi$&quot;</span><span class="p">,</span> <span class="s2">&quot;$0$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$\pi$&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">],</span>
+        <span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">],</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#475569&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.14</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">draw_partition</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
-    <span class="n">setup_circle</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="se">\n</span><span class="s2">$k=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">labels</span><span class="p">)))</span><span class="si">}</span><span class="s2">$&quot;</span><span class="p">)</span>
     <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
+    <span class="n">setup_torus_chart</span><span class="p">(</span>
+        <span class="n">axis</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="se">\n</span><span class="s2">$k=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span><span class="si">}</span><span class="s2">$&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="n">axis</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
         <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]),</span>
-        <span class="n">c</span><span class="o">=</span><span class="n">palette</span><span class="p">[</span><span class="n">labels</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">palette</span><span class="p">)],</span> <span class="n">s</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span>
+        <span class="n">c</span><span class="o">=</span><span class="n">palette</span><span class="p">[</span><span class="n">labels</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">palette</span><span class="p">)],</span> <span class="n">s</span><span class="o">=</span><span class="mi">31</span><span class="p">,</span>
+        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">centers</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">&quot;centers&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">centers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -641,19 +676,20 @@ centers or medoids.</p>
         <span class="p">)</span>
 
 
-<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">12.8</span><span class="p">,</span> <span class="mf">6.5</span><span class="p">),</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">13.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">),</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
 
-<span class="n">setup_circle</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;Lightweight coreset&quot;</span><span class="p">)</span>
+<span class="n">setup_torus_chart</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;Lightweight coreset&quot;</span><span class="p">)</span>
 <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
     <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]),</span>
     <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#94A3B8&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.55</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">unique_indices</span><span class="p">,</span> <span class="n">selection_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">coreset</span><span class="o">.</span><span class="n">indices</span><span class="p">),</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">coreset</span><span class="o">.</span><span class="n">indices</span><span class="p">),</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="n">unique_indices</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="n">unique_indices</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="n">unique_indices</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="n">unique_indices</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
     <span class="n">facecolors</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s2">&quot;#E45756&quot;</span><span class="p">,</span>
     <span class="n">s</span><span class="o">=</span><span class="mi">45</span> <span class="o">+</span> <span class="mi">30</span> <span class="o">*</span> <span class="n">selection_counts</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.3</span><span class="p">,</span>
 <span class="p">)</span>
@@ -676,14 +712,14 @@ centers or medoids.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/46ebbc6bb4212e8c3d86213e5d1aa8a681f7c509c9b541688ae3227c44822e89.png" src="../_images/46ebbc6bb4212e8c3d86213e5d1aa8a681f7c509c9b541688ae3227c44822e89.png" />
+<img alt="../_images/6e5654aa92caeb8f7e6ad626a80949009128ec55482469f22423c6d62f4ca43e.png" src="../_images/6e5654aa92caeb8f7e6ad626a80949009128ec55482469f22423c6d62f4ca43e.png" />
 </div>
 </div>
-<p>K-means and competitive quantization require exact logarithmic and exponential
-maps because they update manifold centers. Medoids, hierarchy, and spectral
-clustering can operate with exact distances alone. This capability difference
-matters when the chosen geometry exposes only a retraction or a numerical-local
-logarithm: GeoJAX rejects unsupported combinations explicitly.</p>
+<p>K-means, mean shift, and competitive quantization require logarithmic and
+exponential maps because they update manifold representatives. Medoids,
+hierarchy, and spectral clustering need only exact distances. The torus makes
+the distinction visible: methods must respect edge identification either
+through the intrinsic updates or through their distance matrix.</p>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>

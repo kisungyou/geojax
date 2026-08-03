@@ -484,6 +484,12 @@ nonfinite, or off-manifold observations. Passing <code class="docutils literal n
 <code class="docutils literal notranslate"><span class="pre">M.project</span></code>; projection is never silent. <code class="docutils literal notranslate"><span class="pre">sample_axis</span></code> must be provided when an
 input does not already use the canonical layout, so an adapter never guesses
 which axis represents observations.</p>
+<p>Each <code class="docutils literal notranslate"><span class="pre">ManifoldData</span></code> object is bound to the exact geometry instance that
+validated it. This matters when two geometries share an event shape but use
+different metrics or parameters. Reusing the object with that instance skips
+validation already performed; requesting a stronger level upgrades the check
+in the order <code class="docutils literal notranslate"><span class="pre">shape</span></code>, <code class="docutils literal notranslate"><span class="pre">finite</span></code>, <code class="docutils literal notranslate"><span class="pre">belongs</span></code>. To use the same canonical values
+with another geometry, adapt <code class="docutils literal notranslate"><span class="pre">data.values</span></code> explicitly under that geometry.</p>
 </section>
 <section id="alternate-representations">
 <h2>Alternate representations<a class="headerlink" href="#alternate-representations" title="Link to this heading">#</a></h2>
@@ -573,6 +579,26 @@ regularization is never labeled exact <span class="bibtex-citation" id="id4">[<a
 populations through their means and variances, the Biswas–Ghosh statistic uses
 only interpoint distances, and the Wasserstein test compares empirical measures
 <span class="bibtex-citation" id="id5">[<a class="reference internal" href="#id76" title="Munmun Biswas and Anil K. Ghosh. A nonparametric two-sample test applicable to high dimensional data. Journal of Multivariate Analysis, 123:160–171, 2014. doi:10.1016/j.jmva.2013.09.004.">Biswas and Ghosh, 2014</a>, <a class="reference internal" href="#id78" title="Paromita Dubey and Hans-Georg Müller. Fréchet analysis of variance for random objects. Biometrika, 106(4):803–821, 2019. doi:10.1093/biomet/asz052.">Dubey and Müller, 2019</a>]</span>.</p>
+<p>For group proportions <span class="math notranslate nohighlight">\(\gamma_j\)</span>, Fréchet variances <span class="math notranslate nohighlight">\(V_j\)</span>, variance estimators
+<span class="math notranslate nohighlight">\(\sigma_j^2\)</span>, and</p>
+<div class="math notranslate nohighlight">
+\[
+F=V_{\mathrm{pooled}}-\sum_j\gamma_jV_j,
+\qquad
+U=\sum_{j&lt;k}
+\frac{\gamma_j\gamma_k(V_j-V_k)^2}{\sigma_j^2\sigma_k^2},
+\]</div>
+<p><code class="docutils literal notranslate"><span class="pre">frechet_anova</span></code> reports the Dubey–Müller statistic</p>
+<div class="math notranslate nohighlight">
+\[
+T_n=
+\frac{nU}{\sum_j\gamma_j/\sigma_j^2}
++
+\frac{nF^2}{\sum_j\gamma_j^2\sigma_j^2}.
+\]</div>
+<p>The asymptotic calibration requires the regularity conditions of the cited
+result; the permutation option instead calibrates the same statistic under
+exchangeable group labels.</p>
 <p><code class="docutils literal notranslate"><span class="pre">riemannian_metric_learning</span></code> forms similar- and dissimilar-pair scatter
 matrices after an equivariant embedding, regularizes both matrices, and uses
 their weighted log-Euclidean closed form. The <code class="docutils literal notranslate"><span class="pre">balance</span></code> parameter controls the
@@ -661,7 +687,10 @@ therefore assumes exchangeability under those flips.</p>
 \operatorname{Log}_{\mu_{t-1}}(x_t)\right).
 \]</div>
 <p>It is exact for a weighted Euclidean mean and order-dependent on a curved
-manifold. <code class="docutils literal notranslate"><span class="pre">minibatch_frechet_mean</span></code> and <code class="docutils literal notranslate"><span class="pre">minibatch_kmeans</span></code> use shuffled batches
+manifold. By default the first positive-weight observation initializes the
+recursion. A user-provided <code class="docutils literal notranslate"><span class="pre">initial_point</span></code> contributes only when accompanied by
+an explicit positive <code class="docutils literal notranslate"><span class="pre">initial_weight</span></code>, so no undocumented pseudo-observation is
+introduced. <code class="docutils literal notranslate"><span class="pre">minibatch_frechet_mean</span></code> and <code class="docutils literal notranslate"><span class="pre">minibatch_kmeans</span></code> use shuffled batches
 and decaying log-map steps, following the stochastic Riemannian optimization
 view <span class="bibtex-citation" id="id11">[<a class="reference internal" href="#id24" title="Silvère Bonnabel. Stochastic gradient descent on Riemannian manifolds. IEEE Transactions on Automatic Control, 58(9):2217–2229, 2013. doi:10.1109/TAC.2013.2254619.">Bonnabel, 2013</a>]</span>. They require an explicit key and return
 objective and update histories; they are approximations to the corresponding
@@ -690,7 +719,10 @@ the returned objective all use the same normalized weighted criterion.</p>
 </section>
 <section id="robust-and-graph-learning">
 <h2>Robust and graph learning<a class="headerlink" href="#robust-and-graph-learning" title="Link to this heading">#</a></h2>
-<p>The trimmed mean repeatedly retains the smallest squared geodesic residuals.
+<p>The trimmed mean repeatedly retains the smallest squared geodesic residuals
+until the requested fraction of total sample-weight mass remains. If the trim
+boundary crosses an observation’s weight, that boundary weight is included
+partially. This reduces to ordinary count trimming under equal weights.
 <code class="docutils literal notranslate"><span class="pre">geodesic_m_estimator</span></code> uses Huber, Cauchy, or Tukey residual weights in guarded
 iteratively reweighted Fréchet updates. <code class="docutils literal notranslate"><span class="pre">geodesic_spatial_depth</span></code> evaluates</p>
 <div class="math notranslate nohighlight">
@@ -702,7 +734,7 @@ D(x)=1-\left\|
 \]</div>
 <p>with the coincident contribution set to zero; distance ranks use midranks
 around an intrinsic median <span class="bibtex-citation" id="id13">[<a class="reference internal" href="#id26" title="P. Thomas Fletcher, Suresh Venkatasubramanian, and Sarang Joshi. The geometric median on Riemannian manifolds with application to robust atlas estimation. NeuroImage, 45(1, Supplement 1):S143–S152, 2009. doi:10.1016/j.neuroimage.2008.10.052.">Fletcher <em>et al.</em>, 2009</a>]</span>. A weighted trimmed
-fit reports its objective with weights renormalized over the retained sample.</p>
+fit reports its objective with weights renormalized over the retained measure.</p>
 <p>For partially labeled data, <code class="docutils literal notranslate"><span class="pre">label_propagation</span></code> diffuses class scores over a
 geodesic-distance affinity graph while clamping known labels
 <span class="bibtex-citation" id="id14">[<a class="reference internal" href="#id32" title="Dengyong Zhou, Olivier Bousquet, Thomas Navin Lal, Jason Weston, and Bernhard Schölkopf. Learning with local and global consistency. In Advances in Neural Information Processing Systems, volume 16. 2003. URL: https://proceedings.neurips.cc/paper/2003/hash/87682805257e619d49b8e0dfdc14affa-Abstract.html.">Zhou <em>et al.</em>, 2003</a>]</span>. <code class="docutils literal notranslate"><span class="pre">manifold_regularized_regression</span></code> solves the
