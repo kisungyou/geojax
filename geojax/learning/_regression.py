@@ -11,15 +11,26 @@ from ._capabilities import require_exact_operations
 from ._data import as_manifold_data
 from ._geometry import pairwise_distances
 from ._results import KernelCVResult, KernelRegressionModel
-from ._utils import as_key, require_unbatched, take_samples
+from ._utils import (
+    as_key,
+    as_real_array,
+    integer_control,
+    positive_control,
+    require_unbatched,
+    take_samples,
+)
 
 
 def _validate_targets(targets: Any, n_samples: int) -> Any:
     values = jnp.asarray(targets)
     if values.ndim < 1 or values.shape[0] != n_samples:
-        raise ValueError(f"targets must have leading sample dimension {n_samples}; received {values.shape}.")
+        raise ValueError(
+            f"targets must have leading sample dimension {n_samples}; received {values.shape}."
+        )
     if not bool(jnp.all(jnp.isfinite(values))):
         raise ValueError("targets must contain only finite values.")
+    if jnp.iscomplexobj(values):
+        raise ValueError("targets must be real-valued.")
     return values
 
 
@@ -28,16 +39,21 @@ def _kernel_weights(
     bandwidth: float,
     kernel: Callable[[Any, float], Any] | None,
 ) -> Any:
-    if bandwidth <= 0.0:
-        raise ValueError("bandwidth must be positive.")
+    bandwidth = positive_control(bandwidth, name="bandwidth")
     weights = (
         jnp.exp(-0.5 * (distances / bandwidth) ** 2)
         if kernel is None
         else jnp.asarray(kernel(distances, bandwidth))
     )
+    if jnp.iscomplexobj(weights):
+        raise ValueError("kernel weights must be real-valued.")
     if weights.shape != distances.shape:
         raise ValueError("kernel must return one weight per supplied distance.")
-    return jnp.maximum(weights, 0.0)
+    if not bool(jnp.all(jnp.isfinite(weights))):
+        raise ValueError("kernel weights must be finite.")
+    if not bool(jnp.all(weights >= 0.0)):
+        raise ValueError("kernel weights must be nonnegative.")
+    return weights
 
 
 def kernel_regression(
@@ -53,13 +69,14 @@ def kernel_regression(
     adapted = as_manifold_data(manifold, data)
     require_unbatched(adapted, "kernel_regression")
     target_values = _validate_targets(targets, adapted.n_samples)
-    if float(bandwidth) <= 0.0:
-        raise ValueError("bandwidth must be positive.")
+    bandwidth = positive_control(bandwidth, name="bandwidth")
+    if kernel is not None and not callable(kernel):
+        raise TypeError("kernel must be callable or None.")
     return KernelRegressionModel(
         manifold=manifold,
         training_data=adapted,
         targets=target_values,
-        bandwidth=float(bandwidth),
+        bandwidth=bandwidth,
         kernel=kernel,
     )
 
@@ -75,7 +92,8 @@ def _predict_kernel_regression(model: KernelRegressionModel, data: Any) -> Any:
     weights = _kernel_weights(distances, model.bandwidth, model.kernel)
     denominator = jnp.sum(weights, axis=-1, keepdims=True)
     nearest = jax.nn.one_hot(jnp.argmin(distances, axis=-1), distances.shape[-1])
-    normalized = jnp.where(denominator > 1e-15, weights / denominator, nearest)
+    safe_denominator = jnp.where(denominator > 0.0, denominator, 1.0)
+    normalized = jnp.where(denominator > 0.0, weights / safe_denominator, nearest)
     return jnp.tensordot(normalized, model.targets, axes=((-1,), (0,)))
 
 
@@ -94,25 +112,37 @@ def select_kernel_bandwidth(
     adapted = as_manifold_data(manifold, data)
     require_unbatched(adapted, "select_kernel_bandwidth")
     target_values = _validate_targets(targets, adapted.n_samples)
-    candidates = jnp.asarray(bandwidths, dtype=float)
-    if candidates.ndim != 1 or candidates.size == 0 or not bool(jnp.all(candidates > 0.0)):
-        raise ValueError("bandwidths must be a nonempty vector of positive values.")
-    if not 2 <= int(n_folds) <= adapted.n_samples:
+    candidates = as_real_array(bandwidths, name="bandwidths")
+    if (
+        candidates.ndim != 1
+        or candidates.size == 0
+        or not bool(jnp.all(jnp.isfinite(candidates)))
+        or not bool(jnp.all(candidates > 0.0))
+    ):
+        raise ValueError("bandwidths must be a nonempty vector of finite positive values.")
+    n_folds = integer_control(n_folds, name="n_folds", minimum=2)
+    if n_folds > adapted.n_samples:
         raise ValueError("n_folds must be between 2 and n_samples.")
+    if kernel is not None and not callable(kernel):
+        raise TypeError("kernel must be callable or None.")
     permutation = jax.random.permutation(as_key(key, "select_kernel_bandwidth"), adapted.n_samples)
-    fold_ids = jnp.arange(adapted.n_samples) % int(n_folds)
+    fold_ids = jnp.arange(adapted.n_samples) % n_folds
     scores: list[Any] = []
     for bandwidth in candidates.tolist():
         losses = []
-        for fold in range(int(n_folds)):
+        for fold in range(n_folds):
             test_positions = jnp.where(fold_ids == fold, size=adapted.n_samples, fill_value=-1)[0]
             test_positions = test_positions[test_positions >= 0]
             test_indices = permutation[test_positions]
             train_positions = jnp.where(fold_ids != fold, size=adapted.n_samples, fill_value=-1)[0]
             train_positions = train_positions[train_positions >= 0]
             train_indices = permutation[train_positions]
-            train_data = as_manifold_data(manifold, take_samples(manifold, adapted.values, train_indices))
-            test_data = as_manifold_data(manifold, take_samples(manifold, adapted.values, test_indices))
+            train_data = as_manifold_data(
+                manifold, take_samples(manifold, adapted.values, train_indices)
+            )
+            test_data = as_manifold_data(
+                manifold, take_samples(manifold, adapted.values, test_indices)
+            )
             model = kernel_regression(
                 manifold,
                 train_data,

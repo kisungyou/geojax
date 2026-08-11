@@ -7,6 +7,9 @@ from typing import Any, List, Optional, Sequence
 import math
 import time
 
+
+from geojax.geometry.base import validate_integer
+
 from .linesearch import AdaptiveArmijo, LineSearchProtocol, LineSearchState
 from .minimize import (
     Array,
@@ -24,6 +27,7 @@ from .minimize import (
     stopping_reason,
     tree_neg,
     tree_zeros_like,
+    validate_line_search_result,
 )
 
 
@@ -57,7 +61,18 @@ class AlternatingGradient:
             raise ValueError("AlternatingGradient requires a Product geometry.")
 
         num_blocks = len(factor_leaves)
-        order = tuple(range(num_blocks)) if self.block_order is None else tuple(self.block_order)
+        if self.block_order is None:
+            order = tuple(range(num_blocks))
+        else:
+            if isinstance(self.block_order, (str, bytes)):
+                raise TypeError("block_order must be a sequence of integer block indices.")
+            try:
+                supplied_order = tuple(self.block_order)
+            except TypeError as exc:
+                raise TypeError("block_order must be a sequence of integer block indices.") from exc
+            order = tuple(
+                validate_integer(value, name="block_order entry") for value in supplied_order
+            )
         if sorted(order) != list(range(num_blocks)):
             raise ValueError("block_order must contain each flattened Product block exactly once.")
 
@@ -91,8 +106,8 @@ class AlternatingGradient:
                     print(reason)
                 break
 
-            x_cycle_start = x
             block_costs: list[float] = []
+            block_steps: list[float] = []
             costevals = 0
             gradevals = 0
             accepted_blocks = 0
@@ -105,13 +120,16 @@ class AlternatingGradient:
                 block_gradient = unflatten(zero_leaves)
                 direction = tree_neg(block_gradient)
                 directional_derivative = inner(M, x, g, direction)
-                result = self.line_search.search(
+                result = validate_line_search_result(
                     problem,
-                    x,
-                    direction,
-                    f,
-                    directional_derivative,
-                    state=search_states[block],
+                    self.line_search.search(
+                        problem,
+                        x,
+                        direction,
+                        f,
+                        directional_derivative,
+                        state=search_states[block],
+                    ),
                 )
                 search_states[block] = result.state
                 x = result.point
@@ -122,9 +140,10 @@ class AlternatingGradient:
                 accepted_blocks += int(result.stats.accepted)
                 last_alpha = result.alpha
                 block_costs.append(float(result.cost))
+                block_steps.append(float(result.stepsize))
 
             gradnorm = M.norm(x, g)
-            cycle_stepsize = float(M.dist(x_cycle_start, x))
+            cycle_stepsize = math.sqrt(sum(step * step for step in block_steps))
             line_stats = LineSearchStats(
                 costevals=costevals,
                 gradevals=gradevals,
@@ -147,6 +166,7 @@ class AlternatingGradient:
                     solver=self,
                     block_order=order,
                     block_costs=tuple(block_costs),
+                    block_steps=tuple(block_steps),
                     accepted_blocks=accepted_blocks,
                 )
             )

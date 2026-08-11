@@ -9,7 +9,15 @@ from geojax.benchmarks.common import print_rows, run_suite
 from geojax.geometry import Grassmann
 
 
-def run(n: int = 6, rank: int = 2, maxiter: int = 50, seed: int = 1) -> list[dict[str, object]]:
+def run(
+    n: int = 6,
+    rank: int = 2,
+    maxiter: int = 50,
+    seed: int = 1,
+    *,
+    warmup: int = 1,
+    repeats: int = 5,
+) -> list[dict[str, object]]:
     key = jax.random.key(seed)
     key_A, key_x = jax.random.split(key)
     B = jax.random.normal(key_A, shape=(n, n))
@@ -20,7 +28,7 @@ def run(n: int = 6, rank: int = 2, maxiter: int = 50, seed: int = 1) -> list[dic
     def cost(X):
         return -jnp.trace(X.T @ A @ X)
 
-    return run_suite(M, cost, x0, maxiter=maxiter)
+    return run_suite(M, cost, x0, maxiter=maxiter, warmup=warmup, repeats=repeats)
 
 
 def main() -> None:

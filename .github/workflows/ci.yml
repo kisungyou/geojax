@@ -1,0 +1,134 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e ".[dev]"
+      - run: make quality
+
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - python: "3.11"
+            precision: float32
+            x64: "0"
+            jax: "0.6.0"
+            numpy: "1.26.4"
+            suite: full
+          - python: "3.11"
+            precision: float64
+            x64: "1"
+            jax: "0.6.0"
+            numpy: "1.26.4"
+            suite: full
+          - python: "3.12"
+            precision: float32
+            x64: "0"
+            jax: "0.11.0"
+            numpy: "2.4.4"
+            suite: smoke
+          - python: "3.13"
+            precision: float64
+            x64: "1"
+            jax: "0.11.0"
+            numpy: "2.4.4"
+            suite: smoke
+          - python: "3.14"
+            precision: float32
+            x64: "0"
+            jax: latest
+            numpy: latest
+            suite: full
+          - python: "3.14"
+            precision: float64
+            x64: "1"
+            jax: latest
+            numpy: latest
+            suite: full
+    name: tests-py${{ matrix.python }}-${{ matrix.precision }}-${{ matrix.jax }}-${{ matrix.suite }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e ".[dev,examples]"
+      - if: matrix.jax != 'latest'
+        run: python -m pip install "jax==${{ matrix.jax }}" "jaxlib==${{ matrix.jax }}" "numpy==${{ matrix.numpy }}"
+      - if: matrix.jax == 'latest'
+        run: python -m pip install --upgrade jax jaxlib numpy
+      - run: python -m pip check
+      - if: matrix.suite == 'full'
+        env:
+          GEOJAX_TEST_X64: ${{ matrix.x64 }}
+        run: python -m pytest --cov=geojax --cov-report=term-missing
+      - if: matrix.suite == 'full'
+        run: python -m coverage report --include='*/geojax/learning/*' --fail-under=95
+      - if: matrix.suite == 'smoke'
+        env:
+          GEOJAX_TEST_X64: ${{ matrix.x64 }}
+        run: >-
+          python -m pytest -q
+          tests/test_release_contract.py
+          tests/test_geometry_interface.py
+          tests/test_jax_transformations.py
+          tests/test_optimization_extended.py
+          tests/test_learning.py
+
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e ".[dev]"
+      - run: python -m build --sdist --wheel --outdir dist
+      - run: python -m twine check --strict dist/*
+      - run: python scripts/smoke_package.py dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: geojax-distributions
+          path: dist/*
+          if-no-files-found: error
+
+  documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e ".[docs,examples]"
+      - run: make website
+      - uses: actions/upload-artifact@v4
+        with:
+          name: geojax-documentation
+          path: site
+          if-no-files-found: error

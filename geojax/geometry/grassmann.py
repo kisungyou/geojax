@@ -25,8 +25,15 @@ from typing import Any, Sequence, Tuple, Union
 import jax
 import jax.numpy as jnp
 
-from .base import ExactGeometryMixin, as_sample_shape, check_event_shape
-from ._numerics import matrix_expm
+from .base import (
+    ExactGeometryMixin,
+    as_sample_shape,
+    check_event_shape,
+    validate_integer,
+    validate_nonnegative,
+    validate_positive,
+)
+from ._numerics import matrix_expm, stable_metric_norm, sqrt_nonnegative
 
 Array = Any
 Shape = Union[int, Sequence[int], Tuple[int, ...]]
@@ -55,7 +62,7 @@ def _orthonormalize(Y: Array, eps: float) -> Array:
 def _parse_grassmann_size(size: int | Sequence[int]) -> tuple[int, int]:
     if isinstance(size, int):
         raise ValueError("Grassmann size must be a pair (ambient_dim, rank).")
-    shape = tuple(int(v) for v in size)
+    shape = tuple(validate_integer(v, name="Grassmann size entry", minimum=1) for v in size)
     if len(shape) != 2:
         raise ValueError("Grassmann size must be a pair (ambient_dim, rank).")
     n, k = shape
@@ -104,6 +111,9 @@ class Grassmann(ExactGeometryMixin):
         Pair ``(ambient_dim, rank)``.
     """
 
+    hessian_conversion_is_exact = True
+    riemannian_gradient_jvp_is_exact = True
+
     size: tuple[int, int]
     rank: int
     atol: float
@@ -115,8 +125,8 @@ class Grassmann(ExactGeometryMixin):
         parsed = _parse_grassmann_size(size)
         object.__setattr__(self, "size", parsed)
         object.__setattr__(self, "rank", parsed[1])
-        object.__setattr__(self, "atol", float(atol))
-        object.__setattr__(self, "eps", float(eps))
+        object.__setattr__(self, "atol", validate_nonnegative(atol, name="Grassmann atol"))
+        object.__setattr__(self, "eps", validate_positive(eps, name="Grassmann eps"))
 
     @property
     def ambient_dim(self) -> int:
@@ -151,30 +161,28 @@ class Grassmann(ExactGeometryMixin):
         X = self._check_shape(X, name="X")
         return _orthonormalize(X, self.eps)
 
-    normalize = project
-
     def tangent_project(self, X: Array, U: Array) -> Array:
         X = self.project(X)
         _, U = self._check_shapes(("X", X), ("U", U))
         return U - X @ (jnp.swapaxes(X, -1, -2) @ U)
-
-    projection = tangent_project
-    proj = tangent_project
-    to_tangent = tangent_project
 
     def inner(self, X: Array, U: Array, V: Array) -> Array:
         _, U, V = self._check_shapes(("X", X), ("U", U), ("V", V))
         return _trace_inner(U, V)
 
     def norm(self, X: Array, U: Array) -> Array:
-        return jnp.sqrt(jnp.maximum(self.inner(X, U, U), 0.0))
+        return stable_metric_norm(
+            U,
+            lambda normalized: self.inner(X, normalized, normalized),
+            axis=(-2, -1),
+        )
 
     def lincomb(self, X: Array, *terms: Any) -> Array:
         if len(terms) % 2 != 0:
             raise ValueError("lincomb expects coefficient/vector pairs.")
         out = None
         for coeff, vec in zip(terms[0::2], terms[1::2]):
-            term = coeff * vec
+            term = self._scale_tangent(vec, coeff)
             out = term if out is None else out + term
         if out is None:
             raise ValueError("lincomb requires at least one coefficient/vector pair.")
@@ -197,7 +205,7 @@ class Grassmann(ExactGeometryMixin):
         return matrix_expm(generator) @ X
 
     def retr(self, X: Array, U: Array, t: float | Array = 1.0) -> Array:
-        return self.exp(X, t * U)
+        return self.exp(X, self._scale_tangent(U, t))
 
     def log(self, X: Array, Y: Array) -> Array:
         """Grassmann logarithm map.
@@ -209,10 +217,8 @@ class Grassmann(ExactGeometryMixin):
         Y = self.project(Y)
         XtY = jnp.swapaxes(X, -1, -2) @ Y
         singular_values = jnp.linalg.svd(jax.lax.stop_gradient(XtY), compute_uv=False)
-        cutoff = jnp.maximum(
-            jnp.asarray(self.atol, dtype=X.dtype),
-            32.0 * jnp.finfo(X.dtype).eps,
-        )
+        dtype = jnp.result_type(X, Y, float)
+        cutoff = 32.0 * self.ambient_dim * jnp.finfo(dtype).eps
         at_cut_locus = jnp.min(singular_values, axis=-1) <= cutoff
         Z = self.tangent_project(X, Y)
         # M = (I - X X^T) Y (X^T Y)^{-1} without forming an inverse.
@@ -268,7 +274,7 @@ class Grassmann(ExactGeometryMixin):
         return values.reshape(batch_shape)
 
     def dist(self, X: Array, Y: Array) -> Array:
-        return jnp.sqrt(self.squared_dist(X, Y))
+        return sqrt_nonnegative(self.squared_dist(X, Y))
 
     def transport(self, X: Array, Y: Array, Z: Array) -> Array:
         """Parallel transport along the shortest geodesic from X to Y.
@@ -283,21 +289,31 @@ class Grassmann(ExactGeometryMixin):
         eta = self.log(X, Y)
         U, s, Vt = jnp.linalg.svd(eta, full_matrices=False)
         V = jnp.swapaxes(Vt, -1, -2)
-        del V  # V is not needed in this transport expression.
-        X_part = -((X @ jnp.swapaxes(Vt, -1, -2)) * jnp.sin(s)[..., None, :])
+        X_times_V = X @ V
+        X_part = -(X_times_V * jnp.sin(s)[..., None, :])
         U_part = U * jnp.cos(s)[..., None, :]
         basis = X_part + U_part
         transported = basis @ (jnp.swapaxes(U, -1, -2) @ Z) + (
             Z - U @ (jnp.swapaxes(U, -1, -2) @ Z)
         )
-        return self.tangent_project(Y, transported)
-
-    transp = transport
+        # The formula above transports to the endpoint frame generated by
+        # ``eta``. The supplied ``Y`` can use another right-orthogonal frame
+        # for the same subspace, so express the result in that endpoint gauge.
+        endpoint = (
+            X + (X_times_V * (jnp.cos(s) - 1.0)[..., None, :] + U * jnp.sin(s)[..., None, :]) @ Vt
+        )
+        endpoint_gauge = jnp.swapaxes(endpoint, -1, -2) @ Y
+        return self.tangent_project(Y, transported @ endpoint_gauge)
 
     def egrad_to_rgrad(self, X: Array, egrad: Array) -> Array:
         return self.tangent_project(X, egrad)
 
-    egrad2rgrad = egrad_to_rgrad
+    def ehess_to_rhess(self, X: Array, egrad: Array, ehess_vec: Array, U: Array) -> Array:
+        """Convert an ambient Hessian product for a quotient-invariant cost."""
+        X = self.project(X)
+        U = self.tangent_project(X, U)
+        correction = U @ (jnp.swapaxes(X, -1, -2) @ jnp.asarray(egrad))
+        return self.tangent_project(X, jnp.asarray(ehess_vec) - correction)
 
     def random_point(self, key: Array, sample_shape: Shape = ()) -> Array:
         sample_shape = _as_sample_shape(sample_shape)
@@ -316,8 +332,9 @@ class Grassmann(ExactGeometryMixin):
         U = self.tangent_project(X, Z)
         if normalize:
             n = self.norm(X, U)[..., None, None]
-            U = jnp.where(n > self.eps, U / n, U)
-        return scale * U
+            safe_n = jnp.where(n > 0.0, n, jnp.ones_like(n))
+            U = jnp.where(n > 0.0, U / safe_n, U)
+        return self._scale_tangent(U, scale)
 
     def projector(self, X: Array) -> Array:
         """Return the rank-``rank`` orthogonal projector XX^T."""
@@ -361,6 +378,7 @@ class GrassmannProjection(ExactGeometryMixin):
     """
 
     hessian_conversion_is_exact = True
+    riemannian_gradient_jvp_is_exact = True
 
     size: tuple[int, int]
     rank: int
@@ -373,8 +391,10 @@ class GrassmannProjection(ExactGeometryMixin):
         parsed = _parse_grassmann_size(size)
         object.__setattr__(self, "size", parsed)
         object.__setattr__(self, "rank", parsed[1])
-        object.__setattr__(self, "atol", float(atol))
-        object.__setattr__(self, "eps", float(eps))
+        object.__setattr__(
+            self, "atol", validate_nonnegative(atol, name="GrassmannProjection atol")
+        )
+        object.__setattr__(self, "eps", validate_positive(eps, name="GrassmannProjection eps"))
 
     @property
     def ambient_dim(self) -> int:
@@ -401,8 +421,6 @@ class GrassmannProjection(ExactGeometryMixin):
         """Project an ambient ``(n, k)`` matrix to an orthonormal frame."""
         return self._canonical().project(A)
 
-    normalize = project
-
     def _projector_tangent_project(self, P: Array, A: Array) -> Array:
         embedding_shape = (self.ambient_dim, self.ambient_dim)
         P = _sym(check_event_shape(P, embedding_shape, name="P"))
@@ -421,17 +439,17 @@ class GrassmannProjection(ExactGeometryMixin):
         H = self._projector_tangent_project(P, ambient_projector_tangent)
         return H @ X
 
-    projection = tangent_project
-    proj = tangent_project
-    to_tangent = tangent_project
-
     def inner(self, X: Array, U: Array, V: Array) -> Array:
         H = self.embed_tangent(X, U)
         K = self.embed_tangent(X, V)
         return 0.5 * _trace_inner(H, K)
 
     def norm(self, X: Array, U: Array) -> Array:
-        return jnp.sqrt(jnp.maximum(self.inner(X, U, U), 0.0))
+        return stable_metric_norm(
+            U,
+            lambda normalized: self.inner(X, normalized, normalized),
+            axis=(-2, -1),
+        )
 
     def embed(self, X: Array) -> Array:
         """Map an orthonormal frame ``X`` to its projector ``X @ X.T``."""
@@ -505,7 +523,7 @@ class GrassmannProjection(ExactGeometryMixin):
         return rotation @ X
 
     def retr(self, X: Array, U: Array, t: float | Array = 1.0) -> Array:
-        return self.exp(X, t * U)
+        return self.exp(X, self._scale_tangent(U, t))
 
     def _projector_log(self, P: Array, Q: Array, reference: Array) -> Array:
         X = self.to_frame(P, reference=reference)
@@ -524,7 +542,7 @@ class GrassmannProjection(ExactGeometryMixin):
 
     def dist(self, X: Array, Y: Array) -> Array:
         """Intrinsic principal-angle geodesic distance."""
-        return jnp.sqrt(self.squared_dist(X, Y))
+        return sqrt_nonnegative(self.squared_dist(X, Y))
 
     geodesic_dist = dist
 
@@ -535,7 +553,7 @@ class GrassmannProjection(ExactGeometryMixin):
 
     def chordal_dist(self, X: Array, Y: Array) -> Array:
         """Extrinsic projection distance ``||j(X) - j(Y)||_F / sqrt(2)``."""
-        return jnp.sqrt(self.squared_chordal_dist(X, Y))
+        return sqrt_nonnegative(self.squared_chordal_dist(X, Y))
 
     projection_dist = chordal_dist
 
@@ -551,16 +569,12 @@ class GrassmannProjection(ExactGeometryMixin):
         transported = rotation @ H @ jnp.swapaxes(rotation, -1, -2)
         return self.from_projector_tangent(Y, _sym(transported))
 
-    transp = transport
-
     def egrad_to_rgrad(self, X: Array, egrad: Array) -> Array:
         X = self.project(X)
         egrad = jnp.asarray(egrad)
         projector_egrad = 0.5 * (egrad @ jnp.swapaxes(X, -1, -2) + X @ jnp.swapaxes(egrad, -1, -2))
         H = 2.0 * self._projector_tangent_project(self.embed(X), projector_egrad)
         return self.from_projector_tangent(X, H)
-
-    egrad2rgrad = egrad_to_rgrad
 
     def ehess_to_rhess(self, X: Array, egrad: Array, ehess_vec: Array, U: Array) -> Array:
         """Convert an ambient frame Hessian-vector product to Grassmann form."""
@@ -585,19 +599,53 @@ class GrassmannProjection(ExactGeometryMixin):
         U = self.tangent_project(X, ambient)
         if normalize:
             n = self.norm(X, U)[..., None, None]
-            U = jnp.where(n > self.eps, U / n, U)
-        return scale * U
+            safe_n = jnp.where(n > 0.0, n, jnp.ones_like(n))
+            U = jnp.where(n > 0.0, U / safe_n, U)
+        return self._scale_tangent(U, scale)
 
     def extrinsic_mean(self, points: Array, weights: Array | None = None) -> Array:
         """Project the weighted mean projector back to an orthonormal frame."""
+        points = jnp.asarray(points)
+        if jnp.iscomplexobj(points):
+            raise TypeError("points must be real-valued; complex arrays are unsupported.")
+        points = jnp.asarray(points, dtype=float)
+        if points.ndim != 3 or points.shape[1:] != self.shape:
+            raise ValueError(
+                "points must have shape "
+                f"(n_samples, {self.ambient_dim}, {self.rank}); received {points.shape}."
+            )
+        if points.shape[0] < 1:
+            raise ValueError("points must contain at least one observation.")
+        if not bool(jnp.all(jnp.isfinite(points))) or not bool(jnp.all(self.belongs(points))):
+            raise ValueError("points must contain only finite Grassmann frames.")
         projectors = jax.vmap(self.embed)(points)
         if weights is None:
             ambient_mean = jnp.mean(projectors, axis=0)
         else:
             weights = jnp.asarray(weights)
-            weights = weights / jnp.sum(weights)
+            if jnp.iscomplexobj(weights):
+                raise TypeError("weights must be real-valued; complex arrays are unsupported.")
+            weights = jnp.asarray(weights, dtype=points.dtype)
+            if weights.shape != (points.shape[0],):
+                raise ValueError(f"weights must have shape ({points.shape[0]},).")
+            if not bool(jnp.all(jnp.isfinite(weights))) or bool(jnp.any(weights < 0.0)):
+                raise ValueError("weights must be finite and nonnegative.")
+            total = jnp.sum(weights)
+            if float(total) <= 0.0:
+                raise ValueError("weights must contain positive total mass.")
+            weights = weights / total
             ambient_mean = jnp.sum(weights[..., None, None] * projectors, axis=0)
-        return self.to_frame(ambient_mean)
+        frame = self.to_frame(ambient_mean)
+        if self.rank == self.ambient_dim:
+            return frame
+        eigenvalues = jnp.linalg.eigvalsh(_sym(ambient_mean))
+        gap = eigenvalues[-self.rank] - eigenvalues[-self.rank - 1]
+        spectral_scale = jnp.maximum(
+            jnp.max(jnp.abs(eigenvalues)),
+            jnp.finfo(eigenvalues.dtype).tiny,
+        )
+        gap_tolerance = 100.0 * jnp.finfo(eigenvalues.dtype).eps * self.ambient_dim * spectral_scale
+        return jnp.where(gap > gap_tolerance, frame, jnp.full_like(frame, jnp.nan))
 
 
 __all__ = ["Grassmann", "GrassmannProjection"]

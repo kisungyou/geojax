@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import jax
 import jax.numpy as jnp
+import pytest
 
 from geojax.geometry import Sphere, SphereExtrinsic
 
@@ -23,6 +24,17 @@ def test_sphere_random_shapes():
     xs = M.random_point(jax.random.key(0), sample_shape=(4,))
     assert xs.shape == (4, 5)
     assert jnp.all(M.belongs(xs))
+
+
+def test_sphere_projection_preserves_direction_of_tiny_nonzero_vector(dtype_atol):
+    M = Sphere(size=3, eps=1e-3)
+    vector = jnp.array([1e-12, -2e-12, 2e-12])
+    expected = vector / jnp.linalg.norm(vector)
+
+    projected = M.project(vector)
+
+    assert bool(M.belongs(projected))
+    assert jnp.allclose(projected, expected, atol=max(1e-10, dtype_atol))
 
 
 def test_sphere_extrinsic_identity_embedding_and_chordal_distance():
@@ -51,3 +63,22 @@ def test_sphere_extrinsic_mean_is_undefined_for_zero_ambient_mean():
     points = jnp.array([[1.0, 0.0], [-1.0, 0.0]])
 
     assert jnp.all(jnp.isnan(M.extrinsic_mean(points)))
+
+
+def test_sphere_extrinsic_mean_validates_points_and_weights():
+    M = SphereExtrinsic(3)
+    points = jnp.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
+    with pytest.raises(ValueError, match="shape"):
+        M.extrinsic_mean(points[0])
+    with pytest.raises(ValueError, match="sphere points"):
+        M.extrinsic_mean(points.at[0, 0].set(2.0))
+    with pytest.raises(ValueError, match="shape"):
+        M.extrinsic_mean(points, jnp.ones(3))
+    with pytest.raises(ValueError, match="nonnegative"):
+        M.extrinsic_mean(points, jnp.array([1.0, -1.0]))
+    with pytest.raises(ValueError, match="positive total"):
+        M.extrinsic_mean(points, jnp.zeros(2))
+    with pytest.raises(TypeError, match="real-valued"):
+        M.extrinsic_mean(points.astype(jnp.complex64))
+    with pytest.raises(TypeError, match="real-valued"):
+        M.extrinsic_mean(points, jnp.ones(2, dtype=jnp.complex64))

@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+from dataclasses import replace
+
 import jax
 import jax.numpy as jnp
+import numpy as np
 import pytest
 
 from geojax.geometry import Euclidean, GrassmannProjection, Product, SphereExtrinsic
@@ -18,6 +21,8 @@ from geojax.learning import (
     tsne,
 )
 from geojax.learning._embedding import _mds_from_distances, _tsne_probabilities
+from geojax.learning._metric import _default_embedding
+import geojax.learning._metric as metric_module
 
 
 def curved_planar_data():
@@ -29,9 +34,7 @@ def test_classical_mds_recovers_euclidean_distances_and_reports_spectrum():
     manifold = Euclidean(2)
     values = curved_planar_data()
     result = classical_mds(manifold, values, n_components=2)
-    embedded = jnp.linalg.norm(
-        result.coordinates[:, None] - result.coordinates[None, :], axis=-1
-    )
+    embedded = jnp.linalg.norm(result.coordinates[:, None] - result.coordinates[None, :], axis=-1)
     expected = pairwise_distances(manifold, values)
     assert jnp.allclose(embedded, expected, atol=2e-4, rtol=2e-4)
     assert result.diagnostics["negative_eigenvalue_mass"] < 1e-4
@@ -45,11 +48,21 @@ def test_pga_uses_metric_components_and_supports_product_tangents():
     reconstructed = result.model.inverse_transform(transformed)
     assert jnp.allclose(transformed, result.coordinates, atol=2e-4)
     assert reconstructed.shape == values.shape
+    component_gram = manifold.inner(
+        result.diagnostics["mean"],
+        result.diagnostics["components"][:, None, :],
+        result.diagnostics["components"][None, :, :],
+    )
+    assert jnp.allclose(component_gram, jnp.eye(2), atol=2e-4)
 
     product = Product({"a": Euclidean(1), "b": Euclidean(1)})
     product_values = {"a": values[:, :1], "b": values[:, 1:]}
     product_result = principal_geodesic_analysis(product, product_values, n_components=2)
     assert product_result.coordinates.shape == (12, 2)
+    with pytest.raises(ValueError, match="trailing dimension"):
+        result.model.inverse_transform(jnp.ones((3, 1)))
+    with pytest.raises(ValueError, match="finite"):
+        result.model.inverse_transform(jnp.full((3, 2), jnp.nan))
 
 
 def test_kernel_pca_model_has_consistent_training_transform():
@@ -98,13 +111,45 @@ def test_sammon_tsne_and_phate_return_finite_dense_embeddings():
     assert jnp.allclose(jnp.diag(probabilities), 0.0)
     assert jnp.allclose(jnp.sum(probabilities), 1.0)
 
-    transition_spectrum = jnp.sort(
-        jnp.linalg.eigvals(diffusion.diagnostics["transition"]).real
-    )
-    symmetric_spectrum = jnp.sort(
-        jnp.linalg.eigvalsh(diffusion.diagnostics["symmetric_diffusion"])
-    )
+    transition_spectrum = jnp.sort(jnp.linalg.eigvals(diffusion.diagnostics["transition"]).real)
+    symmetric_spectrum = jnp.sort(jnp.linalg.eigvalsh(diffusion.diagnostics["symmetric_diffusion"]))
     assert jnp.allclose(transition_spectrum, symmetric_spectrum, atol=2e-5)
+
+
+def test_mds_rejects_invalid_distance_matrices_and_tsne_is_underflow_stable():
+    with pytest.raises(ValueError, match="finite"):
+        _mds_from_distances(jnp.array([[0.0, jnp.nan], [1.0, 0.0]]), 1)
+    with pytest.raises(ValueError, match="symmetric"):
+        _mds_from_distances(jnp.array([[0.0, 1.0], [2.0, 0.0]]), 1)
+    with pytest.raises(ValueError, match="nonnegative"):
+        _mds_from_distances(jnp.array([[0.0, -1.0], [-1.0, 0.0]]), 1)
+    with pytest.raises(ValueError, match="zero diagonal"):
+        _mds_from_distances(jnp.array([[1.0, 0.0], [0.0, 1.0]]), 1)
+
+    distances = jnp.array([[0.0, 1e4, 2e4], [1e4, 0.0, 3e4], [2e4, 3e4, 0.0]])
+    probabilities = _tsne_probabilities(distances, perplexity=1.5)
+    assert bool(jnp.all(jnp.isfinite(probabilities)))
+    assert jnp.allclose(jnp.sum(probabilities), 1.0)
+
+
+def test_mds_scale_normalization_is_finite_and_rejects_unrepresentable_squares():
+    dtype = jnp.asarray(1.0).dtype
+    limits = jnp.finfo(dtype)
+    small = 10.0 * jnp.sqrt(limits.tiny)
+    distances = jnp.asarray([[0.0, small], [small, 0.0]], dtype=dtype)
+    coordinates, diagnostics = _mds_from_distances(distances, 1)
+
+    assert bool(jnp.all(jnp.isfinite(coordinates)))
+    assert bool(jnp.all(jnp.isfinite(diagnostics["normalized_eigenvalues"])))
+    assert jnp.allclose(
+        diagnostics["normalized_gram_matrix"],
+        diagnostics["normalized_gram_matrix"].T,
+    )
+
+    huge = 2.0 * jnp.sqrt(limits.max)
+    huge_distances = jnp.asarray([[0.0, huge], [huge, 0.0]], dtype=dtype)
+    with pytest.raises(FloatingPointError, match="squared distance scale"):
+        _mds_from_distances(huge_distances, 1)
 
 
 def test_rmml_uses_explicit_or_geometry_embedding_and_separates_classes():
@@ -139,11 +184,32 @@ def test_rmml_matches_the_log_euclidean_closed_form_for_diagonal_scatter():
     )
     similar = model.diagnostics["similar_scatter"] + regularization * jnp.eye(2)
     dissimilar = model.diagnostics["dissimilar_scatter"] + regularization * jnp.eye(2)
-    expected = jnp.diag(jnp.sqrt(jnp.diag(dissimilar) / jnp.diag(similar)))
+    # Equation (21) of Zhu et al. has an outer factor of one half.  At equal
+    # balance and for commuting diagonal scatter matrices, this is the fourth
+    # root of their ratio rather than the square root.
+    expected = jnp.diag((jnp.diag(dissimilar) / jnp.diag(similar)) ** 0.25)
     assert jnp.allclose(model.metric, expected, atol=2e-5)
 
     with pytest.raises(ValueError, match="balance"):
         riemannian_metric_learning(manifold, values, labels, balance=1.1)
+
+
+@pytest.mark.parametrize("dtype", [jnp.float32, jnp.float64])
+def test_rmml_zero_regularization_repairs_degenerate_scatter(dtype):
+    if dtype == jnp.float64 and not jax.config.x64_enabled:
+        pytest.skip("float64 is disabled in this test matrix entry")
+    values = jnp.asarray([[0.0], [0.0], [1.0], [1.0]], dtype=dtype)
+    model = riemannian_metric_learning(
+        Euclidean(1),
+        values,
+        jnp.asarray([0, 0, 1, 1]),
+        regularization=0.0,
+    )
+
+    floor = model.diagnostics["effective_similar_eigenvalue_floor"]
+    assert floor >= jnp.finfo(dtype).tiny
+    assert bool(jnp.all(jnp.isfinite(model.metric)))
+    assert bool(jnp.all(jnp.linalg.eigvalsh(model.metric) > 0.0))
 
 
 def test_rmml_rejects_a_geometry_without_equivariant_embedding():
@@ -168,6 +234,8 @@ def test_embedding_input_contracts_and_alternate_graph_policies():
         _mds_from_distances(jnp.eye(3), 4)
     with pytest.raises(ValueError, match="intrinsic dimension"):
         principal_geodesic_analysis(manifold, values, n_components=3)
+    with pytest.raises(ValueError, match="numerical rank"):
+        principal_geodesic_analysis(manifold, jnp.ones((4, 2)), n_components=1)
     with pytest.raises(ValueError, match="bandwidth"):
         kernel_pca(manifold, values, bandwidth=0.0)
     with pytest.raises(ValueError, match="square"):
@@ -176,6 +244,17 @@ def test_embedding_input_contracts_and_alternate_graph_policies():
             values,
             kernel=lambda distances, bandwidth: jnp.ones((distances.shape[0],)),
         )
+    with pytest.raises(ValueError, match="numerical rank"):
+        kernel_pca(
+            manifold,
+            values,
+            n_components=1,
+            kernel=lambda distances, bandwidth: jnp.ones_like(distances),
+        )
+    with pytest.raises(ValueError, match="distinct observations"):
+        sammon_mapping(manifold, jnp.array([[0.0, 0.0], [0.0, 0.0], [1.0, 0.0]]))
+    with pytest.raises(ValueError, match="maxiter"):
+        sammon_mapping(manifold, values, maxiter=0)
     with pytest.raises(ValueError, match="n_neighbors"):
         isomap(manifold, values, n_neighbors=0)
     with pytest.raises(ValueError, match="disconnected"):
@@ -236,13 +315,22 @@ def test_embedding_input_contracts_and_alternate_graph_policies():
 
 
 def test_tsne_joint_probabilities_are_symmetric_and_normalized():
-    distances = jnp.array(
-        [[0.0, 1.0, 2.0], [1.0, 0.0, 1.5], [2.0, 1.5, 0.0]]
-    )
+    distances = jnp.array([[0.0, 1.0, 2.0], [1.0, 0.0, 1.5], [2.0, 1.5, 0.0]])
     probabilities = _tsne_probabilities(distances, perplexity=2.0)
     assert jnp.allclose(probabilities, probabilities.T)
     assert jnp.allclose(jnp.diag(probabilities), 0.0)
     assert jnp.allclose(jnp.sum(probabilities), 1.0)
+
+
+def test_tsne_rejects_invalid_or_unattainable_perplexity():
+    manifold = Euclidean(1)
+    values = jnp.arange(4.0)[:, None]
+    with pytest.raises(ValueError, match="perplexity"):
+        tsne(manifold, values, perplexity=0.5, key=304, maxiter=1)
+
+    tied = jnp.ones((4, 4)) - jnp.eye(4)
+    with pytest.raises(ValueError, match="attain"):
+        _tsne_probabilities(tied, perplexity=1.5)
 
 
 def test_rmml_validates_labels_embeddings_and_pair_structure():
@@ -264,6 +352,13 @@ def test_rmml_validates_labels_embeddings_and_pair_structure():
         )
     with pytest.raises(TypeError, match="callable"):
         riemannian_metric_learning(manifold, values, labels, embedding=3)
+    with pytest.raises(ValueError, match="finite coordinates"):
+        riemannian_metric_learning(
+            manifold,
+            values,
+            labels,
+            embedding=lambda points: points.at[0, 0].set(jnp.nan),
+        )
     with pytest.raises(ValueError, match="empty pytree"):
         riemannian_metric_learning(manifold, values, labels, embedding=lambda points: {})
     with pytest.raises(ValueError, match="share their leading"):
@@ -287,3 +382,260 @@ def test_rmml_validates_labels_embeddings_and_pair_structure():
         embedding=lambda points: {"a": points[:, :1], "b": points[:, 1:]},
     )
     assert embedded.metric.shape == (2, 2)
+
+
+@pytest.mark.parametrize(
+    ("distances", "message"),
+    [
+        (jnp.array([0.0, 1.0]), "two-dimensional"),
+        (jnp.empty((0, 0)), "square"),
+        (jnp.eye(2, dtype=jnp.complex64), "real-valued"),
+    ],
+)
+def test_mds_rejects_nonmatrix_empty_and_complex_distances(distances, message):
+    with pytest.raises(ValueError, match=message):
+        _mds_from_distances(distances, 1)
+
+
+@pytest.mark.parametrize(
+    ("distances", "message"),
+    [
+        (jnp.zeros((1, 1)), "at least two"),
+        (jnp.array([[0.0, -1.0], [-1.0, 0.0]]), "finite and nonnegative"),
+        (jnp.array([[0.0, jnp.nan], [jnp.nan, 0.0]]), "finite and nonnegative"),
+        (jnp.eye(2, dtype=jnp.complex64), "real-valued"),
+    ],
+)
+def test_tsne_probability_validation_rejects_degenerate_distances(distances, message):
+    with pytest.raises(ValueError, match=message):
+        _tsne_probabilities(distances, perplexity=1.0)
+
+
+@pytest.mark.parametrize(
+    ("kernel", "message"),
+    [
+        (
+            lambda distances, bandwidth: jnp.ones_like(distances, dtype=jnp.complex64),
+            "real-valued",
+        ),
+        (
+            lambda distances, bandwidth: jnp.ones_like(distances).at[0, 1].set(jnp.nan),
+            "finite",
+        ),
+        (lambda distances, bandwidth: jnp.triu(jnp.ones_like(distances)), "symmetric"),
+    ],
+)
+def test_kernel_pca_rejects_complex_nonfinite_and_asymmetric_kernels(kernel, message):
+    with pytest.raises(ValueError, match=message):
+        kernel_pca(Euclidean(1), jnp.arange(4.0)[:, None], n_components=1, kernel=kernel)
+
+
+@pytest.mark.parametrize(
+    ("keyword", "value", "exception", "message"),
+    [
+        ("kernel", 3, TypeError, "callable"),
+        ("allow_indefinite", 1, TypeError, "boolean"),
+        ("bandwidth", jnp.inf, ValueError, "positive and finite"),
+    ],
+)
+def test_kernel_pca_validates_callable_policy_and_finite_bandwidth(
+    keyword, value, exception, message
+):
+    with pytest.raises(exception, match=message):
+        kernel_pca(
+            Euclidean(1),
+            jnp.arange(4.0)[:, None],
+            n_components=1,
+            **{keyword: value},
+        )
+
+
+def test_kernel_pca_indefinite_policy_retains_only_the_positive_spectrum():
+    values = jnp.arange(4.0)[:, None]
+
+    def indefinite_kernel(distances, bandwidth):
+        del bandwidth
+        first = jnp.array([1.0, -1.0, 0.0, 0.0], dtype=distances.dtype)
+        second = jnp.array([0.0, 0.0, 1.0, -1.0], dtype=distances.dtype)
+        return jnp.outer(first, first) - jnp.outer(second, second)
+
+    with pytest.raises(ValueError, match="not positive semidefinite"):
+        kernel_pca(Euclidean(1), values, n_components=1, kernel=indefinite_kernel)
+
+    result = kernel_pca(
+        Euclidean(1),
+        values,
+        n_components=1,
+        kernel=indefinite_kernel,
+        allow_indefinite=True,
+    )
+    assert result.coordinates.shape == (4, 1)
+    assert result.diagnostics["negative_eigenvalue_mass"] > 0.0
+
+
+@pytest.mark.parametrize(
+    ("kernel", "message"),
+    [
+        (
+            lambda distances, bandwidth: jnp.ones_like(distances, dtype=jnp.complex64),
+            "real-valued query",
+        ),
+        (
+            lambda distances, bandwidth: jnp.ones((distances.shape[0], distances.shape[1] - 1)),
+            "finite query-by-training",
+        ),
+        (
+            lambda distances, bandwidth: jnp.full_like(distances, jnp.nan),
+            "finite query-by-training",
+        ),
+    ],
+)
+def test_kernel_pca_model_validates_query_kernel_contract(kernel, message):
+    values = jnp.arange(4.0)[:, None]
+    model = kernel_pca(Euclidean(1), values, n_components=1, bandwidth=1.0).model
+    invalid = replace(model, kernel=kernel)
+    with pytest.raises(ValueError, match=message):
+        invalid.transform(jnp.array([[0.25], [1.25]]))
+
+
+class _NonfiniteLogEuclidean(Euclidean):
+    def log(self, x, y):
+        return jnp.full_like(super().log(x, y), jnp.nan)
+
+
+class _NonfiniteInnerEuclidean(Euclidean):
+    def inner(self, x, u, v):
+        return jnp.full_like(super().inner(x, u, v), jnp.nan)
+
+
+class _NegativeInnerEuclidean(Euclidean):
+    def inner(self, x, u, v):
+        return -super().inner(x, u, v)
+
+
+class _NonfiniteExpEuclidean(Euclidean):
+    def exp(self, x, u):
+        return jnp.full_like(super().exp(x, u), jnp.nan)
+
+
+@pytest.mark.parametrize(
+    ("manifold", "exception", "message"),
+    [
+        (_NonfiniteLogEuclidean(2), ValueError, "undefined logarithm"),
+        (_NonfiniteInnerEuclidean(2), FloatingPointError, "nonfinite metric Gram"),
+        (_NegativeInnerEuclidean(2), FloatingPointError, "not positive semidefinite"),
+    ],
+)
+def test_pga_rejects_invalid_logarithms_and_metric_grams(manifold, exception, message):
+    with pytest.raises(exception, match=message):
+        principal_geodesic_analysis(
+            manifold,
+            curved_planar_data(),
+            n_components=1,
+            mean=jnp.zeros(2),
+        )
+
+
+def test_pga_model_guards_transform_logarithms_and_inverse_exponentials():
+    values = curved_planar_data()
+    fitted = principal_geodesic_analysis(
+        Euclidean(2), values, n_components=1, mean=jnp.mean(values, axis=0)
+    )
+
+    invalid_transform = replace(fitted.model, manifold=_NonfiniteLogEuclidean(2))
+    with pytest.raises(ValueError, match="undefined logarithm"):
+        invalid_transform.transform(values)
+
+    invalid_inverse = replace(fitted.model, manifold=_NonfiniteExpEuclidean(2))
+    with pytest.raises(FloatingPointError, match="exponential-map domain"):
+        invalid_inverse.inverse_transform(jnp.zeros((2, 1)))
+
+
+@pytest.mark.parametrize(
+    ("labels", "exception", "message"),
+    [
+        (np.array([0.0, 0.0, 1.0, np.nan]), ValueError, "NaN or infinite"),
+        (np.array([0, None, 1, 1], dtype=object), ValueError, "missing values"),
+        (
+            np.array([0, "right", 0, "right"], dtype=object),
+            TypeError,
+            "mutually comparable",
+        ),
+    ],
+)
+def test_rmml_rejects_nonfinite_missing_and_incomparable_labels(labels, exception, message):
+    values = curved_planar_data()[:4]
+    with pytest.raises(exception, match=message):
+        riemannian_metric_learning(Euclidean(2), values, labels)
+
+
+@pytest.mark.parametrize(
+    ("embedding", "message"),
+    [
+        (lambda points: jnp.asarray(0.0), "leading sample dimension"),
+        (lambda points: points.astype(jnp.complex64), "real-valued"),
+        (lambda points: jnp.zeros((points.shape[0], 0)), "at least one feature"),
+    ],
+)
+def test_rmml_rejects_scalar_complex_and_zero_feature_embeddings(embedding, message):
+    values = curved_planar_data()[:4]
+    with pytest.raises(ValueError, match=message):
+        riemannian_metric_learning(
+            Euclidean(2),
+            values,
+            jnp.array([0, 0, 1, 1]),
+            embedding=embedding,
+        )
+
+
+def test_rmml_default_product_embedding_validates_and_preserves_the_factor_tree():
+    manifold = Product({"left": SphereExtrinsic(2), "right": SphereExtrinsic(3)})
+    values = manifold.random_point(jax.random.key(305), sample_shape=(4,))
+    labels = jnp.array([0, 0, 1, 1])
+    model = riemannian_metric_learning(manifold, values, labels)
+    assert model.metric.shape == (5, 5)
+
+    embedding = _default_embedding(manifold)
+    with pytest.raises(ValueError, match="Product factor pytree"):
+        embedding((values["left"], values["right"]))
+    with pytest.raises(LearningCapabilityError, match="equivariant embedding"):
+        _default_embedding(object())
+
+
+def test_rmml_rejects_nonfinite_scatter_from_extreme_but_finite_features():
+    dtype = jnp.asarray(1.0).dtype
+    huge = 2.0 * jnp.sqrt(jnp.finfo(dtype).max)
+    values = jnp.asarray([[0.0], [huge], [1.0], [2.0]], dtype=dtype)
+    with pytest.raises(FloatingPointError, match="pair-scatter matrices"):
+        riemannian_metric_learning(Euclidean(1), values, jnp.array([0, 0, 1, 1]))
+
+
+@pytest.mark.parametrize("replacement", ["zeros", "nan"])
+def test_rmml_checks_the_finite_positive_definite_metric_certificate(monkeypatch, replacement):
+    def invalid_exponential(matrix):
+        if replacement == "zeros":
+            return jnp.zeros_like(matrix)
+        return jnp.full_like(matrix, jnp.nan)
+
+    monkeypatch.setattr(metric_module, "_spd_exp", invalid_exponential)
+    with pytest.raises(FloatingPointError, match="positive-definite metric"):
+        riemannian_metric_learning(
+            Euclidean(2),
+            curved_planar_data()[:4],
+            jnp.array([0, 0, 1, 1]),
+        )
+
+
+def test_metric_learning_model_validates_transforms_and_two_sample_distances():
+    values = curved_planar_data()[:4]
+    model = riemannian_metric_learning(Euclidean(2), values, jnp.array([0, 0, 1, 1]))
+
+    wrong_dimension = replace(model, embedding=lambda points: points[:, :1])
+    with pytest.raises(ValueError, match="feature dimension"):
+        wrong_dimension.transform(values)
+    with pytest.raises(ValueError, match="unbatched"):
+        model.transform(jnp.stack([values, values]))
+
+    cross_distances = model.pairwise_distances(values[:2], values[2:])
+    assert cross_distances.shape == (2, 2)
+    assert bool(jnp.all(jnp.isfinite(cross_distances)))

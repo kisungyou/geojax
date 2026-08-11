@@ -9,7 +9,13 @@ from geojax.benchmarks.common import print_rows, run_suite
 from geojax.geometry import Product, Sphere, Torus
 
 
-def run(maxiter: int = 50, seed: int = 4) -> list[dict[str, object]]:
+def run(
+    maxiter: int = 50,
+    seed: int = 4,
+    *,
+    warmup: int = 1,
+    repeats: int = 5,
+) -> list[dict[str, object]]:
     key = jax.random.key(seed)
     key_x, key_t1, key_t2 = jax.random.split(key, 3)
     M = Product({"direction": Sphere(size=3), "phase": Torus(size=2)})
@@ -22,7 +28,7 @@ def run(maxiter: int = 50, seed: int = 4) -> list[dict[str, object]]:
     def cost(x):
         return 0.5 * M.dist(x, target) ** 2 + 0.1 * jnp.sum(jnp.sin(x["phase"]))
 
-    return run_suite(M, cost, x0, maxiter=maxiter)
+    return run_suite(M, cost, x0, maxiter=maxiter, warmup=warmup, repeats=repeats)
 
 
 def main() -> None:

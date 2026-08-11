@@ -28,7 +28,17 @@ from typing import Any, Sequence, Tuple, Union
 import jax
 import jax.numpy as jnp
 
-from .base import ExactGeometryMixin, RetractionGeometryMixin, as_sample_shape, dtype_margin
+from ._numerics import stable_metric_norm, sqrt_nonnegative
+
+from .base import (
+    ExactGeometryMixin,
+    RetractionGeometryMixin,
+    as_sample_shape,
+    dtype_margin,
+    validate_integer,
+    validate_nonnegative,
+    validate_positive,
+)
 
 Array = Any
 Shape = Union[int, Sequence[int], Tuple[int, ...]]
@@ -41,7 +51,9 @@ def _as_sample_shape(sample_shape: Shape = ()) -> tuple[int, ...]:
 def _parse_corr_size(size: int | Sequence[int]) -> tuple[int, int]:
     if isinstance(size, int):
         raise ValueError("Correlation size must be square, e.g. size=(4, 4).")
-    shape = tuple(map(int, tuple(size)))
+    shape = tuple(
+        validate_integer(value, name="Correlation size entry", minimum=1) for value in size
+    )
     if len(shape) != 2 or shape[0] != shape[1]:
         raise ValueError("Correlation size must be square, e.g. size=(4, 4).")
     return shape
@@ -90,7 +102,8 @@ def _canonical_correlation(C: Array) -> Array:
 
 def _corr_normalize(P: Array, eps: float) -> Array:
     P = _sym(P)
-    d = jnp.sqrt(jnp.maximum(_diag(P), eps))
+    diagonal = _diag(P)
+    d = jnp.sqrt(jnp.where(diagonal > 0.0, diagonal, eps))
     C = P / (d[..., :, None] * d[..., None, :])
     return _set_unit_diag_symmetric(C, C.shape[-1])
 
@@ -201,10 +214,14 @@ class _CorrelationCholeskyBase(ExactGeometryMixin):
         C = self._check_shape(C, name="C")
         vals, Q = jnp.linalg.eigh(_sym(C))
         floor = dtype_margin(C, configured=self.eps)
-        P = (Q * jnp.maximum(vals, floor)[..., None, :]) @ jnp.swapaxes(Q, -1, -2)
+        # Projection repairs the closed boundary but is the identity on every
+        # representable positive-definite input, including ill-conditioned
+        # correlations near the open boundary.
+        scale = jnp.max(jnp.abs(vals), axis=-1, keepdims=True)
+        scale = jnp.where(scale > 0.0, scale, jnp.ones_like(scale))
+        repaired = jnp.where(vals > 0.0, vals, floor * scale)
+        P = (Q * repaired[..., None, :]) @ jnp.swapaxes(Q, -1, -2)
         return _corr_normalize(P, floor)
-
-    normalize = project
 
     def is_tangent(self, C: Array, U: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
@@ -221,24 +238,24 @@ class _CorrelationCholeskyBase(ExactGeometryMixin):
         eye = _eye_like(U, self.n)
         return U * (1.0 - eye)
 
-    projection = tangent_project
-    proj = tangent_project
-    to_tangent = tangent_project
-
     def inner(self, C: Array, U: Array, V: Array) -> Array:
         dU = self.chart_jvp(C, U)
         dV = self.chart_jvp(C, V)
         return _trace_inner(dU, dV)
 
     def norm(self, C: Array, U: Array) -> Array:
-        return jnp.sqrt(jnp.maximum(self.inner(C, U, U), 0.0))
+        return stable_metric_norm(
+            U,
+            lambda normalized: self.inner(C, normalized, normalized),
+            axis=(-2, -1),
+        )
 
     def lincomb(self, C: Array, *terms: Any) -> Array:
         if len(terms) % 2 != 0:
             raise ValueError("lincomb expects coefficient/vector pairs.")
         out = None
         for coeff, vec in zip(terms[0::2], terms[1::2]):
-            term = coeff * vec
+            term = self._scale_tangent(vec, coeff)
             out = term if out is None else out + term
         if out is None:
             raise ValueError("lincomb requires at least one coefficient/vector pair.")
@@ -251,7 +268,7 @@ class _CorrelationCholeskyBase(ExactGeometryMixin):
         return self.chart_inverse(Z + dZ)
 
     def retr(self, C: Array, U: Array, t: float | Array = 1.0) -> Array:
-        return self.exp(C, t * U)
+        return self.exp(C, self._scale_tangent(U, t))
 
     def log(self, C: Array, D: Array) -> Array:
         C = self.project(C)
@@ -260,7 +277,7 @@ class _CorrelationCholeskyBase(ExactGeometryMixin):
         return self.inverse_chart_jvp(Z, self.chart(D) - Z)
 
     def dist(self, C: Array, D: Array) -> Array:
-        return jnp.sqrt(self.squared_dist(C, D))
+        return sqrt_nonnegative(self.squared_dist(C, D))
 
     def squared_dist(self, C: Array, D: Array) -> Array:
         Delta = self.chart(self.project(D)) - self.chart(self.project(C))
@@ -271,8 +288,6 @@ class _CorrelationCholeskyBase(ExactGeometryMixin):
         D = self.project(D)
         return self.inverse_chart_jvp(self.chart(D), self.chart_jvp(C, U))
 
-    transp = transport
-
     def egrad_to_rgrad(self, C: Array, egrad: Array) -> Array:
         C = self.project(C)
         Z = self.chart(C)
@@ -282,13 +297,14 @@ class _CorrelationCholeskyBase(ExactGeometryMixin):
         grad_Z = _strict_lower(vjp_fun(self.tangent_project(C, egrad))[0])
         return self.inverse_chart_jvp(Z, grad_Z)
 
-    egrad2rgrad = egrad_to_rgrad
-
     def random_point(
         self, key: Array, sample_shape: Shape = (), *, scale: float | Array = 0.35
     ) -> Array:
         sample_shape = _as_sample_shape(sample_shape)
-        Z = scale * jax.random.normal(key, shape=sample_shape + self.shape)
+        Z = self._scale_tangent(
+            jax.random.normal(key, shape=sample_shape + self.shape),
+            scale,
+        )
         return self.chart_inverse(_strict_lower(Z))
 
     def random_tangent(
@@ -299,8 +315,10 @@ class _CorrelationCholeskyBase(ExactGeometryMixin):
         U = self.inverse_chart_jvp(self.chart(C), Z)
         if normalize:
             nrm = self.norm(C, U)
-            U = jnp.where(nrm[..., None, None] > self.eps, U / nrm[..., None, None], U)
-        return scale * U
+            denominator = nrm[..., None, None]
+            safe = jnp.where(denominator > 0.0, denominator, jnp.ones_like(denominator))
+            U = jnp.where(denominator > 0.0, U / safe, U)
+        return self._scale_tangent(U, scale)
 
     def frechet_mean_closed_form(self, Cs: Array) -> Array:
         """Closed-form mean in the flat Cholesky chart."""
@@ -322,8 +340,8 @@ class CorrelationECM(_CorrelationCholeskyBase):
         if shape[0] < 2:
             raise ValueError("Correlation matrix size must be at least 2.")
         object.__setattr__(self, "size", shape)
-        object.__setattr__(self, "atol", atol)
-        object.__setattr__(self, "eps", eps)
+        object.__setattr__(self, "atol", validate_nonnegative(atol, name="CorrelationECM atol"))
+        object.__setattr__(self, "eps", validate_positive(eps, name="CorrelationECM eps"))
 
     def chart(self, C: Array) -> Array:
         return _strict_lower(_theta(self._check_shape(C, name="C"), self.eps))
@@ -347,8 +365,8 @@ class CorrelationLEC(_CorrelationCholeskyBase):
         if shape[0] < 2:
             raise ValueError("Correlation matrix size must be at least 2.")
         object.__setattr__(self, "size", shape)
-        object.__setattr__(self, "atol", atol)
-        object.__setattr__(self, "eps", eps)
+        object.__setattr__(self, "atol", validate_nonnegative(atol, name="CorrelationLEC atol"))
+        object.__setattr__(self, "eps", validate_positive(eps, name="CorrelationLEC eps"))
 
     def chart(self, C: Array) -> Array:
         return _lower_log_unit(_theta(self._check_shape(C, name="C"), self.eps), self.n)
@@ -377,8 +395,16 @@ class CorrelationAffineQuotient(RetractionGeometryMixin):
         if shape[0] < 2:
             raise ValueError("Correlation matrix size must be at least 2.")
         object.__setattr__(self, "size", shape)
-        object.__setattr__(self, "atol", float(atol))
-        object.__setattr__(self, "eps", float(eps))
+        object.__setattr__(
+            self,
+            "atol",
+            validate_nonnegative(atol, name="CorrelationAffineQuotient atol"),
+        )
+        object.__setattr__(
+            self,
+            "eps",
+            validate_positive(eps, name="CorrelationAffineQuotient eps"),
+        )
 
     @property
     def n(self) -> int:
@@ -402,17 +428,11 @@ class CorrelationAffineQuotient(RetractionGeometryMixin):
     def project(self, C: Array) -> Array:
         return self._structural.project(C)
 
-    normalize = project
-
     def is_tangent(self, C: Array, U: Array, atol: float | None = None) -> Array:
         return self._structural.is_tangent(C, U, atol=atol)
 
     def tangent_project(self, C: Array, U: Array) -> Array:
         return self._structural.tangent_project(C, U)
-
-    projection = tangent_project
-    proj = tangent_project
-    to_tangent = tangent_project
 
     def horizontal_lift(self, C: Array, U: Array) -> Array:
         """Lift a correlation tangent horizontally to the SPD total space."""
@@ -433,10 +453,14 @@ class CorrelationAffineQuotient(RetractionGeometryMixin):
         return _trace_inner(inverse @ lift_u @ inverse, lift_v)
 
     def norm(self, C: Array, U: Array) -> Array:
-        return jnp.sqrt(jnp.maximum(self.inner(C, U, U), 0.0))
+        return stable_metric_norm(
+            U,
+            lambda normalized: self.inner(C, normalized, normalized),
+            axis=(-2, -1),
+        )
 
     def retr(self, C: Array, U: Array, t: float | Array = 1.0) -> Array:
-        return self.project(jnp.asarray(C) + t * self.tangent_project(C, U))
+        return self.project(jnp.asarray(C) + self._scale_tangent(self.tangent_project(C, U), t))
 
     def invretr(self, C: Array, D: Array) -> Array:
         return self.tangent_project(C, jnp.asarray(D) - jnp.asarray(C))
@@ -452,15 +476,26 @@ class CorrelationAffineQuotient(RetractionGeometryMixin):
         return jnp.stack(basis)
 
     def egrad_to_rgrad(self, C: Array, egrad: Array) -> Array:
-        basis = self._tangent_basis(C)
-        gram = jax.vmap(lambda left: jax.vmap(lambda right: self.inner(C, left, right))(basis))(
-            basis
-        )
-        covector = jax.vmap(lambda vector: _trace_inner(egrad, vector))(basis)
-        coefficients = jnp.linalg.solve(gram, covector)
-        return self.tangent_project(C, jnp.tensordot(coefficients, basis, axes=1))
+        C, egrad = self._check_shapes(("C", C), ("egrad", egrad))
+        batch_shape = jnp.broadcast_shapes(C.shape[:-2], egrad.shape[:-2])
+        C = jnp.broadcast_to(C, batch_shape + self.shape)
+        egrad = jnp.broadcast_to(egrad, batch_shape + self.shape)
 
-    egrad2rgrad = egrad_to_rgrad
+        def convert_single(point: Array, ambient_gradient: Array) -> Array:
+            basis = self._tangent_basis(point)
+            gram = jax.vmap(
+                lambda left: jax.vmap(lambda right: self.inner(point, left, right))(basis)
+            )(basis)
+            covector = jax.vmap(lambda vector: _trace_inner(ambient_gradient, vector))(basis)
+            coefficients = jnp.linalg.solve(gram, covector)
+            return self.tangent_project(point, jnp.tensordot(coefficients, basis, axes=1))
+
+        if not batch_shape:
+            return convert_single(C, egrad)
+        flat_C = C.reshape((-1,) + self.shape)
+        flat_egrad = egrad.reshape((-1,) + self.shape)
+        converted = jax.vmap(convert_single)(flat_C, flat_egrad)
+        return converted.reshape(batch_shape + self.shape)
 
     def random_point(
         self,
@@ -482,8 +517,9 @@ class CorrelationAffineQuotient(RetractionGeometryMixin):
         tangent = self.tangent_project(C, jax.random.normal(key, shape=jnp.shape(C)))
         if normalize:
             length = self.norm(C, tangent)[..., None, None]
-            tangent = jnp.where(length > self.eps, tangent / length, tangent)
-        return scale * tangent
+            safe_length = jnp.where(length > 0.0, length, jnp.ones_like(length))
+            tangent = jnp.where(length > 0.0, tangent / safe_length, tangent)
+        return self._scale_tangent(tangent, scale)
 
 
 __all__ = [

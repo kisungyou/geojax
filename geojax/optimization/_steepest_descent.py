@@ -22,6 +22,7 @@ from .minimize import (
     require,
     stopping_reason,
     tree_neg,
+    validate_line_search_result,
 )
 
 
@@ -88,13 +89,16 @@ def _solve_steepest_descent(
 
         direction = tree_neg(grad)
         directional_derivative = -(gradnorm * gradnorm)
-        result = options.line_search.search(
+        result = validate_line_search_result(
             problem,
-            x,
-            direction,
-            cost,
-            directional_derivative,
-            state=search_state,
+            options.line_search.search(
+                problem,
+                x,
+                direction,
+                cost,
+                directional_derivative,
+                state=search_state,
+            ),
         )
         search_state = result.state
         x = result.point

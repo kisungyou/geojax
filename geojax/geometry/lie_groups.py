@@ -8,8 +8,15 @@ from typing import Any, Sequence, Tuple, Union
 import jax
 import jax.numpy as jnp
 
-from .base import ExactGeometryMixin, as_sample_shape, check_event_shape
-from ._numerics import matrix_expm
+from .base import (
+    ExactGeometryMixin,
+    as_sample_shape,
+    check_event_shape,
+    validate_integer,
+    validate_nonnegative,
+    validate_positive,
+)
+from ._numerics import matrix_expm, stable_metric_norm, stable_norm, sqrt_nonnegative
 
 Array = Any
 Shape = Union[int, Sequence[int], Tuple[int, ...]]
@@ -43,7 +50,8 @@ def _principal_orthogonal_log(M: Array) -> Array:
     Mc = M.astype(_complex_dtype(M.dtype))
     eigvals, eigvecs = jnp.linalg.eig(Mc)
     log_eigvals = 1j * jnp.angle(eigvals)
-    result = (eigvecs * log_eigvals[..., None, :]) @ _transpose(jnp.conj(eigvecs))
+    eigvecs_inv = jnp.linalg.inv(eigvecs)
+    result = (eigvecs * log_eigvals[..., None, :]) @ eigvecs_inv
     return _skew(jnp.real(result)).astype(M.dtype)
 
 
@@ -71,9 +79,9 @@ def _principal_orthogonal_log_jvp(primals, tangents):
         1.0 / eig_i,
     )
 
-    eigvecs_h = _transpose(jnp.conj(eigvecs))
-    rotated_E = eigvecs_h @ Ec @ eigvecs
-    derivative = eigvecs @ (divided_difference * rotated_E) @ eigvecs_h
+    eigvecs_inv = jnp.linalg.inv(eigvecs)
+    rotated_E = eigvecs_inv @ Ec @ eigvecs
+    derivative = eigvecs @ (divided_difference * rotated_E) @ eigvecs_inv
     tangent_out = _skew(jnp.real(derivative)).astype(M.dtype)
     return _principal_orthogonal_log(M), tangent_out
 
@@ -95,12 +103,10 @@ class SpecialOrthogonal(ExactGeometryMixin):
     eps: float
 
     def __init__(self, size: int, *, atol: float = 1e-6, eps: float = 1e-12) -> None:
-        size = int(size)
-        if size < 2:
-            raise ValueError("SpecialOrthogonal size must be at least 2.")
+        size = validate_integer(size, name="SpecialOrthogonal size", minimum=2)
         object.__setattr__(self, "size", size)
-        object.__setattr__(self, "atol", float(atol))
-        object.__setattr__(self, "eps", float(eps))
+        object.__setattr__(self, "atol", validate_nonnegative(atol, name="SpecialOrthogonal atol"))
+        object.__setattr__(self, "eps", validate_positive(eps, name="SpecialOrthogonal eps"))
 
     @property
     def n(self) -> int:
@@ -130,10 +136,7 @@ class SpecialOrthogonal(ExactGeometryMixin):
             * jnp.finfo(jnp.result_type(R, float)).eps
             * jnp.maximum(jnp.linalg.norm(R, axis=(-2, -1)), 1.0)
         )
-        orthogonal = (
-            jnp.linalg.norm(_transpose(R) @ R - identity, axis=(-2, -1))
-            <= tol + roundoff
-        )
+        orthogonal = jnp.linalg.norm(_transpose(R) @ R - identity, axis=(-2, -1)) <= tol + roundoff
         orientation = jnp.abs(jnp.linalg.det(R) - 1.0) <= tol + roundoff
         return orthogonal & orientation
 
@@ -158,23 +161,23 @@ class SpecialOrthogonal(ExactGeometryMixin):
         R, A = self._check_shapes(("R", R), ("A", A))
         return R @ _skew(_transpose(R) @ A)
 
-    projection = tangent_project
-    proj = tangent_project
-    to_tangent = tangent_project
-
     def inner(self, R: Array, U: Array, V: Array) -> Array:
         _, U, V = self._check_shapes(("R", R), ("U", U), ("V", V))
         return jnp.sum(U * V, axis=(-2, -1))
 
     def norm(self, R: Array, U: Array) -> Array:
-        return jnp.sqrt(jnp.maximum(self.inner(R, U, U), 0.0))
+        return stable_metric_norm(
+            U,
+            lambda normalized: self.inner(R, normalized, normalized),
+            axis=(-2, -1),
+        )
 
     def _relative_log(self, relative: Array) -> Array:
         relative = jnp.asarray(relative)
         log_relative = _principal_orthogonal_log(relative)
         identity = jnp.eye(self.n, dtype=relative.dtype)
         distance_to_cut = jnp.min(jnp.linalg.svd(relative + identity, compute_uv=False), axis=-1)
-        at_cut = distance_to_cut <= self.atol
+        at_cut = distance_to_cut <= 32.0 * self.n * jnp.finfo(relative.dtype).eps
         return jnp.where(at_cut[..., None, None], jnp.nan, log_relative)
 
     def exp(self, R: Array, U: Array) -> Array:
@@ -184,7 +187,7 @@ class SpecialOrthogonal(ExactGeometryMixin):
         return R @ matrix_expm(omega)
 
     def retr(self, R: Array, U: Array, t: float | Array = 1.0) -> Array:
-        return self.exp(R, t * U)
+        return self.exp(R, self._scale_tangent(U, t))
 
     def log(self, R: Array, Q: Array) -> Array:
         # Do not insert an SVD projection here: its repeated singular values on
@@ -193,11 +196,24 @@ class SpecialOrthogonal(ExactGeometryMixin):
         return R @ self._relative_log(_transpose(R) @ Q)
 
     def dist(self, R: Array, Q: Array) -> Array:
-        return jnp.sqrt(self.squared_dist(R, Q))
+        return sqrt_nonnegative(self.squared_dist(R, Q))
 
     def squared_dist(self, R: Array, Q: Array) -> Array:
-        tangent = self.log(R, Q)
-        return jnp.maximum(self.inner(R, tangent, tangent), 0.0)
+        R, Q = self._check_shapes(("R", R), ("Q", Q))
+        relative = _transpose(R) @ Q
+        logarithm = _principal_orthogonal_log(relative)
+        local_value = jnp.sum(logarithm * logarithm, axis=(-2, -1))
+
+        # A relative eigenvalue -1 makes the minimizing logarithm nonunique,
+        # but not the distance. Every minimizing logarithm has squared
+        # Frobenius norm equal to the sum of squared principal eigenangles.
+        eigenvalues = jnp.linalg.eigvals(relative.astype(_complex_dtype(relative.dtype)))
+        cut_value = jnp.sum(jnp.angle(eigenvalues) ** 2, axis=-1).astype(relative.dtype)
+        identity = jnp.eye(self.n, dtype=relative.dtype)
+        distance_to_cut = jnp.min(jnp.linalg.svd(relative + identity, compute_uv=False), axis=-1)
+        at_cut = distance_to_cut <= 32.0 * self.n * jnp.finfo(relative.dtype).eps
+        value = jnp.where(at_cut, cut_value, local_value)
+        return jnp.maximum(value, 0.0)
 
     def transport(self, R: Array, Q: Array, U: Array) -> Array:
         """Parallel transport along the selected shortest geodesic."""
@@ -209,12 +225,8 @@ class SpecialOrthogonal(ExactGeometryMixin):
         transported = R @ half @ body @ half
         return self.tangent_project(Q, transported)
 
-    transp = transport
-
     def egrad_to_rgrad(self, R: Array, egrad: Array) -> Array:
         return self.tangent_project(R, egrad)
-
-    egrad2rgrad = egrad_to_rgrad
 
     def ehess_to_rhess(self, R: Array, egrad: Array, ehess_vec: Array, U: Array) -> Array:
         correction = jnp.asarray(U) @ _sym(_transpose(R) @ jnp.asarray(egrad))
@@ -264,8 +276,9 @@ class SpecialOrthogonal(ExactGeometryMixin):
         U = self.tangent_project(R, Z)
         if normalize:
             norm = self.norm(R, U)[..., None, None]
-            U = jnp.where(norm > self.eps, U / norm, U)
-        return scale * U
+            safe_norm = jnp.where(norm > 0.0, norm, jnp.ones_like(norm))
+            U = jnp.where(norm > 0.0, U / safe_norm, U)
+        return self._scale_tangent(U, scale)
 
 
 @dataclass(frozen=True, init=False)
@@ -286,12 +299,10 @@ class SpecialEuclidean(ExactGeometryMixin):
     eps: float
 
     def __init__(self, size: int, *, atol: float = 1e-6, eps: float = 1e-12) -> None:
-        size = int(size)
-        if size < 2:
-            raise ValueError("SpecialEuclidean size must be at least 2.")
+        size = validate_integer(size, name="SpecialEuclidean size", minimum=2)
         object.__setattr__(self, "size", size)
-        object.__setattr__(self, "atol", float(atol))
-        object.__setattr__(self, "eps", float(eps))
+        object.__setattr__(self, "atol", validate_nonnegative(atol, name="SpecialEuclidean atol"))
+        object.__setattr__(self, "eps", validate_positive(eps, name="SpecialEuclidean eps"))
 
     @property
     def n(self) -> int:
@@ -319,7 +330,10 @@ class SpecialEuclidean(ExactGeometryMixin):
         batch_shape = jnp.broadcast_shapes(rotation.shape[:-2], translation.shape[:-1])
         rotation = jnp.broadcast_to(rotation, batch_shape + (self.n, self.n))
         translation = jnp.broadcast_to(translation, batch_shape + (self.n,))
-        out = jnp.zeros(rotation.shape[:-2] + self.shape, dtype=rotation.dtype)
+        dtype = jnp.result_type(rotation, translation, float)
+        rotation = rotation.astype(dtype)
+        translation = translation.astype(dtype)
+        out = jnp.zeros(rotation.shape[:-2] + self.shape, dtype=dtype)
         out = out.at[..., : self.n, : self.n].set(rotation)
         out = out.at[..., : self.n, self.n].set(translation)
         return out.at[..., self.n, self.n].set(1.0)
@@ -330,7 +344,10 @@ class SpecialEuclidean(ExactGeometryMixin):
         batch_shape = jnp.broadcast_shapes(rotation.shape[:-2], translation.shape[:-1])
         rotation = jnp.broadcast_to(rotation, batch_shape + (self.n, self.n))
         translation = jnp.broadcast_to(translation, batch_shape + (self.n,))
-        out = jnp.zeros(rotation.shape[:-2] + self.shape, dtype=rotation.dtype)
+        dtype = jnp.result_type(rotation, translation, float)
+        rotation = rotation.astype(dtype)
+        translation = translation.astype(dtype)
+        out = jnp.zeros(rotation.shape[:-2] + self.shape, dtype=dtype)
         out = out.at[..., : self.n, : self.n].set(rotation)
         return out.at[..., : self.n, self.n].set(translation)
 
@@ -371,10 +388,6 @@ class SpecialEuclidean(ExactGeometryMixin):
             self.translation(A),
         )
 
-    projection = tangent_project
-    proj = tangent_project
-    to_tangent = tangent_project
-
     def inner(self, G: Array, U: Array, V: Array) -> Array:
         G, U, V = self._check_shapes(("G", G), ("U", U), ("V", V))
         rotation_inner = self._rotations.inner(self.rotation(G), self.rotation(U), self.rotation(V))
@@ -382,7 +395,11 @@ class SpecialEuclidean(ExactGeometryMixin):
         return rotation_inner + translation_inner
 
     def norm(self, G: Array, U: Array) -> Array:
-        return jnp.sqrt(jnp.maximum(self.inner(G, U, U), 0.0))
+        return stable_metric_norm(
+            U,
+            lambda normalized: self.inner(G, normalized, normalized),
+            axis=(-2, -1),
+        )
 
     def exp(self, G: Array, U: Array) -> Array:
         G = self._check_shape(G, name="G")
@@ -393,7 +410,7 @@ class SpecialEuclidean(ExactGeometryMixin):
         return self.from_components(next_R, next_t)
 
     def retr(self, G: Array, U: Array, t: float | Array = 1.0) -> Array:
-        return self.exp(G, t * U)
+        return self.exp(G, self._scale_tangent(U, t))
 
     def log(self, G: Array, H: Array) -> Array:
         G, H = self._check_shapes(("G", G), ("H", H))
@@ -403,7 +420,15 @@ class SpecialEuclidean(ExactGeometryMixin):
         )
 
     def dist(self, G: Array, H: Array) -> Array:
-        return jnp.sqrt(self.squared_dist(G, H))
+        rotation_distance = self._rotations.dist(self.rotation(G), self.rotation(H))
+        translation_distance = stable_norm(
+            self.translation(H) - self.translation(G),
+            axis=-1,
+        )
+        return stable_norm(
+            jnp.stack(jnp.broadcast_arrays(rotation_distance, translation_distance), axis=-1),
+            axis=-1,
+        )
 
     def squared_dist(self, G: Array, H: Array) -> Array:
         rotation_dist_sq = self._rotations.squared_dist(self.rotation(G), self.rotation(H))
@@ -419,12 +444,8 @@ class SpecialEuclidean(ExactGeometryMixin):
             self.translation(U),
         )
 
-    transp = transport
-
     def egrad_to_rgrad(self, G: Array, egrad: Array) -> Array:
         return self.tangent_project(G, egrad)
-
-    egrad2rgrad = egrad_to_rgrad
 
     def ehess_to_rhess(self, G: Array, egrad: Array, ehess_vec: Array, U: Array) -> Array:
         rotation_hess = self._rotations.ehess_to_rhess(
@@ -474,9 +495,8 @@ class SpecialEuclidean(ExactGeometryMixin):
         return self.tangent_from_components(omega, velocity)
 
     def apply(self, G: Array, points: Array) -> Array:
-        return jnp.einsum(
-            "...ij,...j->...i", self.rotation(G), jnp.asarray(points)
-        ) + self.translation(G)
+        points = check_event_shape(points, (self.n,), name="points")
+        return jnp.einsum("...ij,...j->...i", self.rotation(G), points) + self.translation(G)
 
     def random_point(self, key: Array, sample_shape: Shape = ()) -> Array:
         sample_shape = as_sample_shape(sample_shape)
@@ -497,8 +517,9 @@ class SpecialEuclidean(ExactGeometryMixin):
         U = self.tangent_project(G, Z)
         if normalize:
             norm = self.norm(G, U)[..., None, None]
-            U = jnp.where(norm > self.eps, U / norm, U)
-        return scale * U
+            safe_norm = jnp.where(norm > 0.0, norm, jnp.ones_like(norm))
+            U = jnp.where(norm > 0.0, U / safe_norm, U)
+        return self._scale_tangent(U, scale)
 
 
 __all__ = ["SpecialOrthogonal", "SpecialEuclidean"]

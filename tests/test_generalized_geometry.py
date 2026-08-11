@@ -49,3 +49,19 @@ def test_generalized_gradient_conversion_is_metric_dual(geometry, dtype_atol):
         jnp.sum(ambient_gradient * U),
         atol=max(1e-10, dtype_atol),
     )
+
+
+@pytest.mark.parametrize("geometry", [GeneralizedStiefel, GeneralizedGrassmann])
+def test_generalized_metric_validation_is_invariant_to_positive_rescaling(geometry):
+    metric = 1e-12 * jnp.diag(jnp.array([1.0, 1.5, 2.0]))
+    manifold = geometry(size=(3, 2), metric=metric)
+    point = manifold.random_point(jax.random.key(5))
+
+    assert bool(manifold.belongs(point))
+
+
+@pytest.mark.parametrize("geometry", [GeneralizedStiefel, GeneralizedGrassmann])
+def test_generalized_metric_rejects_complex_input_instead_of_discarding_it(geometry):
+    metric = jnp.eye(3, dtype=jnp.complex64)
+    with pytest.raises(TypeError, match="real-valued"):
+        geometry(size=(3, 2), metric=metric)

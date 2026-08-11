@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import configparser
+import importlib.util
 from pathlib import Path
 import re
 import tomllib
 
 import geojax
+import pytest
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -50,6 +52,12 @@ def test_release_guide_uses_current_version():
     assert f"dist/{version}" in release_guide
     assert f"geojax=={version}" in release_guide
     assert f"v{version}" in release_guide
+    assert release_guide.index("Commit the release metadata") < release_guide.index("## TestPyPI")
+    assert release_guide.index("make release-check") < release_guide.index(
+        "push the commit and tag"
+    )
+    assert "compare the uploaded file hashes" in release_guide
+    assert "pip install 'jax>=0.6' 'numpy>=1.26'" in release_guide
 
 
 def test_pep561_marker_is_packaged():
@@ -77,6 +85,7 @@ def test_supported_python_matrix_is_consistent():
     assert supported == ("3.11", "3.12", "3.13", "3.14")
     assert pyproject["project"]["requires-python"] == ">=3.11"
     assert "include .python-versions" in manifest
+    assert "recursive-include scripts *.py" in manifest
     for version in supported:
         assert f"Programming Language :: Python :: {version}" in classifiers
         factor = version.replace(".", "")
@@ -87,5 +96,52 @@ def test_supported_python_matrix_is_consistent():
     assert "py311-min-float64" in environments
     assert not any("-latest-" in environment for environment in environments)
     assert parser["testenv"]["uv_python_preference"] == "only-managed"
+    assert parser["testenv"]["change_dir"] == "{env_tmp_dir}"
     assert "COVERAGE_FILE={env_tmp_dir}/.coverage" in parser["testenv"]["set_env"]
     assert "PYTHONHASHSEED=0" in parser["testenv"]["set_env"]
+    commands = parser["testenv"]["commands"]
+    assert "scripts/assert_installed_package.py" in commands
+    assert "-o pythonpath=" in commands
+
+    workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    assert "jax: latest" in workflow
+    assert "scripts/smoke_package.py" in workflow
+    assert workflow.count("suite: full") == 4
+    assert workflow.count("suite: smoke") == 2
+    assert "python -m pip check" in workflow
+    for version in supported:
+        assert f'python: "{version}"' in workflow
+
+
+def test_release_gate_requires_tagged_source_and_installed_artifact_smoke():
+    makefile = (ROOT / "Makefile").read_text(encoding="utf-8")
+    source_check = (ROOT / "scripts" / "check_release_source.py").read_text(encoding="utf-8")
+    package_smoke = (ROOT / "scripts" / "smoke_package.py").read_text(encoding="utf-8")
+
+    release_recipe = makefile.split("release-check: release-source-check", maxsplit=1)[1]
+    assert release_recipe.index("$(MAKE) quality") < release_recipe.index("$(MAKE) package-check")
+    assert 'f"refs/tags/{expected_tag}"' in source_check
+    assert 'f"{expected_ref}^{{commit}}"' in source_check
+    assert '"cat-file", "-t"' in source_check
+    assert "prefix in package.parents" in package_smoke
+    assert 'package / "py.typed"' in package_smoke
+    assert '"pip", "check"' in package_smoke
+    assert '"--system-site-packages"' not in package_smoke
+    assert 'version("geojax") == sys.argv[2]' in package_smoke
+
+
+def test_installed_package_assertion_distinguishes_tox_from_source_tree(tmp_path):
+    script = ROOT / "scripts" / "assert_installed_package.py"
+    specification = importlib.util.spec_from_file_location("assert_installed_package", script)
+    assert specification is not None and specification.loader is not None
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+
+    repository = tmp_path / "repository"
+    purelib = repository / ".tox" / "env" / "site-packages"
+    installed = purelib / "geojax" / "__init__.py"
+    source = repository / "geojax"
+    module.assert_installed_package(installed, purelib, source)
+
+    with pytest.raises(RuntimeError, match="expected installed wheel"):
+        module.assert_installed_package(source / "__init__.py", purelib, source)

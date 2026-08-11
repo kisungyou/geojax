@@ -2,12 +2,27 @@ from __future__ import annotations
 
 import subprocess
 import sys
+from types import SimpleNamespace
 
 import jax
 import jax.numpy as jnp
 import pytest
 
 import geojax.learning as learning
+from geojax.learning._data import _rotation_from_axis_angle
+from geojax.learning._utils import (
+    as_key,
+    as_real_array,
+    flatten_embedding,
+    flatten_geometry_values,
+    interval_control,
+    normalize_weights,
+    require_unbatched,
+    scale_tangent_samples,
+    stack_points,
+    validate_manifold_point,
+    validate_tangent_vector,
+)
 from geojax.geometry import (
     CorrelationAffineQuotient,
     CorrelationECM,
@@ -97,7 +112,9 @@ def test_nested_product_adapter_preserves_factor_tree_and_shared_axes():
     data = learning.as_manifold_data(manifold, values)
 
     assert data.n_samples == 4
-    assert jax.tree_util.tree_structure(data.values) == jax.tree_util.tree_structure(manifold.factors)
+    assert jax.tree_util.tree_structure(data.values) == jax.tree_util.tree_structure(
+        manifold.factors
+    )
     assert bool(jnp.all(manifold.belongs(data.values)))
 
 
@@ -151,9 +168,7 @@ def test_point_sequence_requires_explicit_representation():
         (KendallShape((4, 2)), jnp.arange(16.0).reshape(2, 4, 2), "raw_landmarks"),
     ],
 )
-def test_broad_coordinate_adapters_return_valid_canonical_points(
-    manifold, values, representation
-):
+def test_broad_coordinate_adapters_return_valid_canonical_points(manifold, values, representation):
     data = learning.as_manifold_data(manifold, values, representation=representation)
     assert data.n_samples == 2
     assert bool(jnp.all(manifold.belongs(data.values)))
@@ -193,9 +208,7 @@ def test_remaining_unambiguous_coordinate_adapters_reconstruct_points():
     hyperboloid = Hyperboloid(3)
     hyperboloid_points = hyperboloid.random_point(jax.random.key(105), sample_shape=(3,))
     ball = PoincareBall(2)
-    ball_points = learning.as_manifold_data(
-        ball, hyperboloid_points, representation="hyperboloid"
-    )
+    ball_points = learning.as_manifold_data(ball, hyperboloid_points, representation="hyperboloid")
     assert bool(jnp.all(ball.belongs(ball_points.values)))
 
     spd = SPDLogEuclidean((2, 2))
@@ -219,6 +232,51 @@ def test_remaining_unambiguous_coordinate_adapters_reconstruct_points():
         representation="axis_angle",
     )
     assert bool(jnp.all(rotation.belongs(from_axis_angle.values)))
+
+
+def test_axis_angle_adapter_is_differentiable_at_the_identity():
+    vector = jnp.zeros(3)
+    rotation = _rotation_from_axis_angle(vector)
+    jacobian = jax.jacrev(_rotation_from_axis_angle)(vector)
+    assert jnp.allclose(rotation, jnp.eye(3))
+    assert bool(jnp.all(jnp.isfinite(jacobian)))
+
+
+def test_coordinate_adapters_reject_ambiguous_or_invalid_representations():
+    with pytest.raises(ValueError, match="nonzero"):
+        learning.as_manifold_data(Torus(1), jnp.zeros((2, 1, 2)), representation="unit_circle")
+    with pytest.raises(ValueError, match="open unit ball"):
+        learning.as_manifold_data(
+            Hyperboloid(3), jnp.array([[1.0, 0.0]]), representation="poincare"
+        )
+    with pytest.raises(ValueError, match="upper unit hyperboloid"):
+        learning.as_manifold_data(
+            PoincareBall(2), jnp.array([[1.0, 1.0, 0.0]]), representation="hyperboloid"
+        )
+    with pytest.raises(ValueError, match="full column rank"):
+        learning.as_manifold_data(
+            Grassmann((3, 2)),
+            jnp.array([[[1.0, 2.0], [0.0, 0.0], [0.0, 0.0]]]),
+            representation="basis",
+        )
+    with pytest.raises(ValueError, match="idempotent"):
+        learning.as_manifold_data(
+            Grassmann((3, 1)),
+            jnp.array([jnp.diag(jnp.array([0.8, 0.2, 0.0]))]),
+            representation="projector",
+        )
+    with pytest.raises(ValueError, match="lower triangular"):
+        learning.as_manifold_data(
+            SPDLogEuclidean((2, 2)),
+            jnp.array([[[1.0, 0.2], [0.0, 1.0]]]),
+            representation="cholesky",
+        )
+    with pytest.raises(ValueError, match="symmetric"):
+        learning.as_manifold_data(
+            SPDLogEuclidean((2, 2)),
+            jnp.array([[[0.0, 1.0], [0.0, 0.0]]]),
+            representation="log_matrix",
+        )
 
 
 def test_lie_group_component_and_matrix_factor_adapters_reconstruct_points():
@@ -254,8 +312,64 @@ def test_lie_group_component_and_matrix_factor_adapters_reconstruct_points():
 )
 def test_all_low_rank_psd_factor_adapters_return_members(manifold):
     factors = jax.random.normal(jax.random.key(111), (3, 4, 2))
+    if isinstance(manifold, Elliptope):
+        factors = factors / jnp.linalg.norm(factors, axis=-1, keepdims=True)
+    if isinstance(manifold, Spectrahedron):
+        factors = factors / jnp.linalg.norm(factors, axis=(-2, -1), keepdims=True)
     adapted = learning.as_manifold_data(manifold, factors, representation="factor")
     assert bool(jnp.all(manifold.belongs(adapted.values)))
+
+
+def test_constrained_low_rank_factors_are_not_silently_repaired():
+    factors = jax.random.normal(jax.random.key(112), (2, 4, 2))
+    with pytest.raises(ValueError, match="unit-norm rows"):
+        learning.as_manifold_data(Elliptope((4, 4), rank=2), factors, representation="factor")
+    with pytest.raises(ValueError, match="Frobenius norm one"):
+        learning.as_manifold_data(Spectrahedron((4, 4), rank=2), factors, representation="factor")
+
+
+def test_integer_covariance_representation_is_converted_in_float_arithmetic():
+    covariance = jnp.array([[[2, 1], [1, 2]]])
+    adapted = learning.as_manifold_data(
+        CorrelationECM((2, 2)), covariance, representation="covariance"
+    )
+    assert bool(jnp.all(CorrelationECM((2, 2)).belongs(adapted.values)))
+
+
+def test_adapter_rank_and_spd_checks_are_relative_to_input_scale():
+    tiny_basis = 1e-12 * jnp.array([[[1.0, 0.0], [0.0, 2.0], [0.0, 0.0]]])
+    grassmann = learning.as_manifold_data(
+        Grassmann((3, 2)),
+        tiny_basis,
+        representation="basis",
+    )
+    assert bool(jnp.all(Grassmann((3, 2)).belongs(grassmann.values)))
+
+    tiny_covariance = 1e-12 * jnp.array([[[2.0, 0.5], [0.5, 1.0]]])
+    correlation = learning.as_manifold_data(
+        CorrelationECM((2, 2)),
+        tiny_covariance,
+        representation="covariance",
+    )
+    assert bool(jnp.all(CorrelationECM((2, 2)).belongs(correlation.values)))
+
+
+def test_adapter_casts_integer_data_and_rejects_complex_data_without_loss():
+    integer_data = learning.as_manifold_data(Euclidean(2), jnp.array([[1, 2], [3, 4]]))
+    assert jnp.issubdtype(integer_data.values.dtype, jnp.floating)
+
+    with pytest.raises(ValueError, match="real-valued"):
+        learning.as_manifold_data(
+            Euclidean(2),
+            jnp.array([[1.0 + 1.0j, 2.0]]),
+        )
+    with pytest.raises(ValueError, match="requires check='belongs'"):
+        learning.as_manifold_data(
+            Euclidean(2),
+            jnp.ones((2, 2)),
+            check="shape",
+            repair=True,
+        )
 
 
 def test_invalid_data_are_rejected_or_explicitly_repaired():
@@ -313,25 +427,21 @@ def test_adapter_validation_levels_product_layouts_and_failed_repairs():
             return values
 
     with pytest.raises(ValueError, match="do not belong"):
-        learning.as_manifold_data(
-            NonRepairingGeometry(), jnp.ones((2, 2)), repair=True
-        )
+        learning.as_manifold_data(NonRepairingGeometry(), jnp.ones((2, 2)), repair=True)
 
 
 def test_adapter_rejects_ambiguous_and_malformed_alternate_representations():
     with pytest.raises(ValueError, match="hyperspherical"):
         learning.as_manifold_data(Sphere(3), jnp.ones((2, 3)), representation="angles")
     with pytest.raises(ValueError, match="unit-circle"):
-        learning.as_manifold_data(
-            Torus(2), jnp.ones((2, 2, 3)), representation="unit_circle"
-        )
+        learning.as_manifold_data(Torus(2), jnp.ones((2, 2, 3)), representation="unit_circle")
     with pytest.raises(ValueError, match="hyperboloid coordinates"):
         learning.as_manifold_data(PoincareBall(2), jnp.ones((2, 2)), representation="hyperboloid")
-    with pytest.raises(ValueError, match="nonnegative"):
+    with pytest.raises(ValueError, match="strictly positive"):
         learning.as_manifold_data(
             ProbabilitySimplex(3), jnp.array([[1.0, -1.0, 1.0]]), representation="positive"
         )
-    with pytest.raises(ValueError, match="positive row sums"):
+    with pytest.raises(ValueError, match="strictly positive"):
         learning.as_manifold_data(
             ProbabilitySimplex(3), jnp.zeros((1, 3)), representation="positive"
         )
@@ -352,9 +462,7 @@ def test_adapter_rejects_ambiguous_and_malformed_alternate_representations():
             SpecialEuclidean(2), jnp.ones((2, 3)), representation="components"
         )
     with pytest.raises(ValueError, match="twists must end"):
-        learning.as_manifold_data(
-            SpecialEuclidean(2), jnp.ones((2, 2)), representation="twist"
-        )
+        learning.as_manifold_data(SpecialEuclidean(2), jnp.ones((2, 2)), representation="twist")
     rigid_four = SpecialEuclidean(4)
     with pytest.raises(ValueError, match="only for SE"):
         learning.as_manifold_data(
@@ -374,15 +482,15 @@ def test_adapter_contract_rejects_invalid_registration_and_reconversion_options(
     with pytest.raises(TypeError, match="class"):
         learning.register_manifold_data_adapter(3, "scaled", lambda manifold, values: values)
     with pytest.raises(ValueError, match="non-canonical"):
-        learning.register_manifold_data_adapter(Euclidean, "canonical", lambda manifold, values: values)
+        learning.register_manifold_data_adapter(
+            Euclidean, "canonical", lambda manifold, values: values
+        )
     with pytest.raises(TypeError, match="callable"):
         learning.register_manifold_data_adapter(Euclidean, "invalid", 3)
     with pytest.raises(ValueError, match="check must"):
         learning.as_manifold_data(Euclidean(2), jnp.ones((2, 2)), check="all")
     with pytest.raises(TypeError, match="Python sequence"):
-        learning.as_manifold_data(
-            Sphere(2), jnp.ones((2, 2)), representation="point_sequence"
-        )
+        learning.as_manifold_data(Sphere(2), jnp.ones((2, 2)), representation="point_sequence")
 
     manifold = Euclidean(2)
     adapted = learning.as_manifold_data(manifold, jnp.ones((2, 2)))
@@ -429,6 +537,323 @@ def test_custom_adapter_registration_is_explicit_and_non_overwriting():
             "halved",
             lambda manifold, values: values,
         )
+
+
+@pytest.mark.parametrize("representation", [None, 1, ("scaled",)])
+def test_adapter_registration_requires_a_string_name(representation):
+    class RegisteredEuclidean(Euclidean):
+        pass
+
+    with pytest.raises(TypeError, match="representation must be a string"):
+        learning.register_manifold_data_adapter(
+            RegisteredEuclidean,
+            representation,
+            lambda manifold, values: values,
+        )
+
+
+def test_adapter_registration_validates_flags_and_supports_explicit_overwrite():
+    class RegisteredEuclidean(Euclidean):
+        pass
+
+    adapter = lambda manifold, values: jnp.asarray(values)  # noqa: E731
+    with pytest.raises(ValueError, match="nonempty"):
+        learning.register_manifold_data_adapter(RegisteredEuclidean, "", adapter)
+    with pytest.raises(TypeError, match="overwrite must be a boolean"):
+        learning.register_manifold_data_adapter(
+            RegisteredEuclidean,
+            "scaled",
+            adapter,
+            overwrite=1,
+        )
+
+    learning.register_manifold_data_adapter(RegisteredEuclidean, "scaled", adapter)
+    learning.register_manifold_data_adapter(
+        RegisteredEuclidean,
+        "scaled",
+        lambda manifold, values: 2.0 * jnp.asarray(values),
+        overwrite=True,
+    )
+    result = learning.as_manifold_data(
+        RegisteredEuclidean(1),
+        jnp.array([[1.0], [2.0]]),
+        representation="scaled",
+    )
+    assert jnp.array_equal(result.values, jnp.array([[2.0], [4.0]]))
+
+
+def test_adapter_rejects_invalid_flags_empty_data_and_product_leaf_options():
+    with pytest.raises(TypeError, match="repair must be a boolean"):
+        learning.as_manifold_data(Euclidean(1), jnp.ones((2, 1)), repair=1)
+    with pytest.raises(TypeError, match="representation must be a string"):
+        learning.as_manifold_data(Euclidean(1), jnp.ones((2, 1)), representation=1)
+    with pytest.raises(ValueError, match="at least one observation"):
+        learning.as_manifold_data(Euclidean(1), jnp.empty((0, 1)))
+
+    manifold = Product({"left": Euclidean(1), "right": Sphere(2)})
+    values = manifold.random_point(jax.random.key(812), sample_shape=(2,))
+    with pytest.raises(TypeError, match="Each Product representation must be a string"):
+        learning.as_manifold_data(
+            manifold,
+            values,
+            representation={"left": "canonical", "right": 1},
+        )
+    with pytest.raises(ValueError, match="factor pytree"):
+        flatten_geometry_values(manifold, (values["left"], values["right"]), name="values")
+
+
+def test_adapter_checks_membership_shape_and_failed_repair_contracts():
+    class WrongMembershipShape:
+        shape = (1,)
+
+        def belongs(self, values):
+            del values
+            return jnp.array(True)
+
+    with pytest.raises(ValueError, match="belongs returned shape"):
+        learning.as_manifold_data(WrongMembershipShape(), jnp.ones((2, 1)))
+
+    class NonfiniteRepair:
+        shape = (1,)
+
+        def belongs(self, values):
+            return jnp.zeros(values.shape[:-1], dtype=bool)
+
+        def project(self, values):
+            return jnp.full_like(values, jnp.nan)
+
+    with pytest.raises(ValueError, match="project.*NaN"):
+        learning.as_manifold_data(NonfiniteRepair(), jnp.ones((2, 1)), repair=True)
+
+    class WrongShapeAfterRepair:
+        shape = (1,)
+
+        def __init__(self):
+            self.calls = 0
+
+        def belongs(self, values):
+            self.calls += 1
+            if self.calls == 1:
+                return jnp.zeros(values.shape[:-1], dtype=bool)
+            return jnp.array(False)
+
+        def project(self, values):
+            return values
+
+    with pytest.raises(ValueError, match="after repair"):
+        learning.as_manifold_data(WrongShapeAfterRepair(), jnp.ones((2, 1)), repair=True)
+
+
+@pytest.mark.parametrize(
+    ("manifold", "values", "representation", "message"),
+    [
+        (Grassmann((3, 2)), jnp.ones((2, 2, 2)), "basis", "end in"),
+        (
+            Grassmann((3, 2)),
+            jnp.array([[[jnp.nan, 0.0], [0.0, 1.0], [1.0, 0.0]]]),
+            "basis",
+            "finite",
+        ),
+        (SPDLogEuclidean((2, 2)), jnp.ones((1, 2, 3)), "cholesky", "end in"),
+        (
+            SPDLogEuclidean((2, 2)),
+            jnp.array([[[jnp.nan, 0.0], [0.0, 1.0]]]),
+            "cholesky",
+            "finite",
+        ),
+        (
+            SPDLogEuclidean((2, 2)),
+            jnp.array([[[1.0, 0.0], [0.0, 0.0]]]),
+            "cholesky",
+            "positive diagonal",
+        ),
+        (SPDLogEuclidean((2, 2)), jnp.ones((1, 2, 3)), "log", "end in"),
+        (
+            SPDLogEuclidean((2, 2)),
+            jnp.array([[[jnp.nan, 0.0], [0.0, 1.0]]]),
+            "log",
+            "finite",
+        ),
+        (Hyperboloid(3), jnp.ones((2, 3)), "poincare", "must end in"),
+        (
+            CorrelationECM((2, 2)),
+            jnp.array([[[1.0, 0.0], [0.0, -1.0]]]),
+            "covariance",
+            "positive definite",
+        ),
+    ],
+)
+def test_coordinate_adapter_defensive_shape_and_domain_checks(
+    manifold,
+    values,
+    representation,
+    message,
+):
+    with pytest.raises(ValueError, match=message):
+        learning.as_manifold_data(manifold, values, representation=representation)
+
+
+def test_coordinate_adapter_covers_overflow_safe_simplex_and_se3_twists():
+    largest = jnp.finfo(jnp.asarray(1.0).dtype).max
+    probabilities = learning.as_manifold_data(
+        ProbabilitySimplex(3),
+        jnp.array([[largest, largest, largest]]),
+        representation="positive",
+    )
+    assert jnp.allclose(probabilities.values, jnp.full((1, 3), 1.0 / 3.0))
+
+    rigid = SpecialEuclidean(3)
+    twists = jnp.array([[0.1, -0.2, 0.05, 1.0, -0.5, 0.25]])
+    points = learning.as_manifold_data(rigid, twists, representation="twist")
+    assert bool(jnp.all(rigid.belongs(points.values)))
+
+
+@pytest.mark.parametrize(
+    ("mutator", "message"),
+    [
+        (lambda left, singular, right: (left[..., :-1, :], singular, right), "left factors"),
+        (lambda left, singular, right: (left, singular[..., :-1], right), "singular values"),
+        (lambda left, singular, right: (left, singular, right[..., :-1]), "right factors"),
+        (
+            lambda left, singular, right: (left, singular[0], right),
+            "identical leading batch",
+        ),
+        (
+            lambda left, singular, right: (left.at[0, 0, 0].set(jnp.nan), singular, right),
+            "finite",
+        ),
+        (
+            lambda left, singular, right: (left, singular.at[0, 0].set(0.0), right),
+            "strictly positive",
+        ),
+        (
+            lambda left, singular, right: (left.at[0, 0, 0].set(2.0), singular, right),
+            "orthonormal columns",
+        ),
+        (
+            lambda left, singular, right: (left, singular, right.at[0, 0, 0].set(2.0)),
+            "orthonormal rows",
+        ),
+    ],
+)
+def test_fixed_rank_svd_adapter_validates_every_factor_contract(mutator, message):
+    manifold = FixedRank((3, 2), rank=1)
+    matrices = manifold.random_point(jax.random.key(813), sample_shape=(2,))
+    left, singular, right = jnp.linalg.svd(matrices, full_matrices=False)
+    factors = mutator(left[..., :1], singular[..., :1], right[..., :1, :])
+
+    with pytest.raises(ValueError, match=message):
+        learning.as_manifold_data(manifold, factors, representation="svd")
+
+
+@pytest.mark.parametrize(
+    ("weights", "message"),
+    [
+        (jnp.ones(2), "shape"),
+        (jnp.array([1.0, jnp.nan, 1.0]), "finite"),
+        (jnp.array([1.0, -1.0, 1.0]), "nonnegative"),
+        (jnp.zeros(3), "positive total mass"),
+        (jnp.array([1.0 + 1.0j, 1.0, 1.0]), "real-valued"),
+    ],
+)
+def test_weight_normalization_rejects_invalid_public_weights(weights, message):
+    with pytest.raises(ValueError, match=message):
+        normalize_weights(3, weights)
+
+
+@pytest.mark.parametrize("key", [True, 1.5, "seed", object()])
+def test_random_key_adapter_rejects_nonkeys_and_noninteger_seeds(key):
+    with pytest.raises(TypeError, match="integer seed or JAX random key"):
+        as_key(key, "method")
+
+
+def test_random_key_adapter_accepts_seeds_and_rejects_key_batches():
+    assert jax.random.key_data(as_key(7, "method")).shape == (2,)
+    with pytest.raises(TypeError, match="not a key batch"):
+        as_key(jax.random.split(jax.random.key(0), 2), "method")
+
+
+@pytest.mark.parametrize(
+    ("value", "kwargs", "exception", "message"),
+    [
+        (True, {}, TypeError, "not a boolean"),
+        (jnp.inf, {}, ValueError, "finite"),
+        (-0.1, {}, ValueError, "must lie"),
+        (1.0, {"upper_closed": False}, ValueError, "must lie"),
+        (0.0, {"lower_closed": False}, ValueError, "must lie"),
+    ],
+)
+def test_interval_control_validates_real_scalar_domain(value, kwargs, exception, message):
+    with pytest.raises(exception, match=message):
+        interval_control(value, name="fraction", lower=0.0, upper=1.0, **kwargs)
+
+
+def test_tree_utilities_validate_shapes_real_values_and_embeddings():
+    with pytest.raises(ValueError, match="at least one"):
+        stack_points(Euclidean(1), [])
+    with pytest.raises(ValueError, match="coefficients must have shape"):
+        scale_tangent_samples(Euclidean(1), jnp.ones((3, 1)), jnp.ones(2))
+    with pytest.raises(TypeError, match="real numeric array"):
+        as_real_array(object(), name="values")
+    with pytest.raises(ValueError, match="real-valued"):
+        as_real_array(jnp.array([1.0 + 1.0j]), name="values")
+    with pytest.raises(ValueError, match="empty pytree"):
+        flatten_embedding({})
+    with pytest.raises(ValueError, match="leading sample dimension"):
+        flatten_embedding(jnp.array(1.0))
+    with pytest.raises(ValueError, match="real-valued"):
+        flatten_embedding(jnp.ones((2, 1), dtype=complex))
+    with pytest.raises(ValueError, match="finite coordinates"):
+        flatten_embedding(jnp.array([[jnp.nan]]))
+    with pytest.raises(ValueError, match="share their leading"):
+        flatten_embedding((jnp.ones((2, 1)), jnp.ones((3, 1))))
+
+    flattened = flatten_embedding((jnp.ones((2, 1)), jnp.zeros((2, 2))))
+    assert flattened.shape == (2, 3)
+
+
+def test_point_and_tangent_validators_wrap_structure_and_domain_errors():
+    class BrokenGeometry:
+        def belongs(self, point):
+            del point
+            raise TypeError("bad point tree")
+
+        def is_tangent(self, base_point, tangent):
+            del base_point, tangent
+            raise ValueError("bad tangent tree")
+
+    with pytest.raises(ValueError, match="contain only finite"):
+        validate_manifold_point(Euclidean(1), jnp.array([jnp.nan]), name="point")
+    with pytest.raises(ValueError, match="invalid manifold-point structure"):
+        validate_manifold_point(BrokenGeometry(), jnp.array([0.0]), name="point")
+    with pytest.raises(ValueError, match="must belong"):
+        validate_manifold_point(Sphere(2), jnp.array([2.0, 0.0]), name="point")
+    with pytest.raises(ValueError, match="contain only finite"):
+        validate_tangent_vector(
+            Euclidean(1),
+            jnp.array([0.0]),
+            jnp.array([jnp.nan]),
+            name="tangent",
+        )
+    with pytest.raises(ValueError, match="invalid tangent-vector structure"):
+        validate_tangent_vector(
+            BrokenGeometry(),
+            jnp.array([0.0]),
+            jnp.array([0.0]),
+            name="tangent",
+        )
+    with pytest.raises(ValueError, match="tangent space"):
+        validate_tangent_vector(
+            Sphere(2),
+            jnp.array([1.0, 0.0]),
+            jnp.array([1.0, 0.0]),
+            name="tangent",
+        )
+
+
+def test_require_unbatched_reports_the_observed_batch_shape():
+    with pytest.raises(ValueError, match=r"batch shape \(2,\)"):
+        require_unbatched(SimpleNamespace(batch_shape=(2,)), "method")
 
 
 def test_removed_learning_names_have_no_compatibility_aliases():

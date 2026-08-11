@@ -8,16 +8,23 @@ from typing import Any
 import jax.numpy as jnp
 
 from ._capabilities import require_exact_operations
-from ._data import as_manifold_data
+from ._data import ManifoldData, as_manifold_data
 from ._geometry import pairwise_distances
 from ._results import TransportResult
-from ._utils import normalize_weights, require_unbatched
+from ._utils import (
+    as_real_array,
+    integer_control,
+    normalize_weights,
+    positive_control,
+    require_unbatched,
+    tree_contains_tracer,
+)
 
 
 def _complete_tree_basis(plan: Any, costs: Any, tolerance: float) -> Any:
     """Complete positive transport edges to a deterministic spanning-tree basis."""
     rows, columns = plan.shape
-    basis = jnp.asarray(plan > tolerance)
+    basis = jnp.asarray(plan > 0.0)
     parent = list(range(rows + columns))
 
     def find(node: int) -> int:
@@ -33,13 +40,22 @@ def _complete_tree_basis(plan: Any, costs: Any, tolerance: float) -> Any:
         parent[root_right] = root_left
         return True
 
-    positive = [(row, column) for row in range(rows) for column in range(columns) if bool(basis[row, column])]
+    positive = [
+        (row, column)
+        for row in range(rows)
+        for column in range(columns)
+        if bool(basis[row, column])
+    ]
     rebuilt = jnp.zeros_like(basis)
     for row, column in positive:
         if union(row, rows + column):
             rebuilt = rebuilt.at[row, column].set(True)
     candidates = sorted(
-        ((float(costs[row, column]), row, column) for row in range(rows) for column in range(columns)),
+        (
+            (float(costs[row, column]), row, column)
+            for row in range(rows)
+            for column in range(columns)
+        ),
         key=lambda item: (item[0], item[1], item[2]),
     )
     count = int(jnp.sum(rebuilt))
@@ -87,7 +103,9 @@ def _dual_potentials(costs: Any, basis: Any) -> tuple[Any, Any]:
         if kind == "row":
             for column in range(columns):
                 if bool(basis[index, column]) and column_potentials[column] is None:
-                    column_potentials[column] = float(costs[index, column]) - float(row_potentials[index])
+                    column_potentials[column] = float(costs[index, column]) - float(
+                        row_potentials[index]
+                    )
                     queue.append(("column", column))
         else:
             for row in range(rows):
@@ -96,7 +114,10 @@ def _dual_potentials(costs: Any, basis: Any) -> tuple[Any, Any]:
                     queue.append(("row", row))
     if any(value is None for value in row_potentials + column_potentials):
         raise RuntimeError("Transportation basis is disconnected.")
-    return jnp.asarray(row_potentials), jnp.asarray(column_potentials)
+    return (
+        jnp.asarray(row_potentials, dtype=costs.dtype),
+        jnp.asarray(column_potentials, dtype=costs.dtype),
+    )
 
 
 def _basis_path(basis: Any, entering: tuple[int, int]) -> list[tuple[int, int]]:
@@ -139,19 +160,66 @@ def _transportation_simplex(
     max_pivots: int,
 ) -> TransportResult:
     """Solve a balanced transportation problem with deterministic Bland pivots."""
-    costs = jnp.asarray(costs, dtype=float)
-    positive_rows = jnp.nonzero(a > tolerance, size=a.size, fill_value=-1)[0]
+    costs = as_real_array(costs, name="transport costs")
+    a = jnp.asarray(a, dtype=costs.dtype)
+    b = jnp.asarray(b, dtype=costs.dtype)
+    requested_tolerance = positive_control(tolerance, name="tolerance")
+    max_pivots = integer_control(max_pivots, name="max_pivots")
+    if max_pivots < 0:
+        raise ValueError("max_pivots must be nonnegative.")
+    if a.ndim != 1 or b.ndim != 1 or a.size < 1 or b.size < 1:
+        raise ValueError("a and b must be nonempty one-dimensional marginals.")
+    if costs.ndim != 2 or costs.shape != (a.size, b.size):
+        raise ValueError("costs must have shape (len(a), len(b)).")
+    if (
+        not bool(jnp.all(jnp.isfinite(costs)))
+        or not bool(jnp.all(jnp.isfinite(a)))
+        or not bool(jnp.all(jnp.isfinite(b)))
+    ):
+        raise ValueError("transport costs and marginals must be finite.")
+    if bool(jnp.any(a < 0.0)) or bool(jnp.any(b < 0.0)):
+        raise ValueError("transport marginals must be nonnegative.")
+    mass_a = float(jnp.sum(a))
+    mass_b = float(jnp.sum(b))
+    if mass_a <= 0.0 or mass_b <= 0.0:
+        raise ValueError("transport marginals must have positive total mass.")
+    dtype_epsilon = float(jnp.finfo(costs.dtype).eps)
+    mass_scale = max(mass_a, mass_b)
+    mass_tolerance = max(
+        requested_tolerance * mass_scale,
+        100.0 * dtype_epsilon * max(costs.shape) * mass_scale,
+    )
+    if abs(mass_a - mass_b) > mass_tolerance:
+        raise ValueError("transport marginals must have equal total mass.")
+    normalized_a = a / mass_a
+    normalized_b = b / mass_b
+    cost_scale = float(jnp.max(jnp.abs(costs)))
+    safe_cost_scale = cost_scale if cost_scale > 0.0 else 1.0
+    normalized_costs = costs / safe_cost_scale
+    tolerance = max(
+        requested_tolerance,
+        100.0 * dtype_epsilon * max(costs.shape),
+    )
+    positive_rows = jnp.nonzero(normalized_a > 0.0, size=a.size, fill_value=-1)[0]
     positive_rows = positive_rows[positive_rows >= 0]
-    positive_columns = jnp.nonzero(b > tolerance, size=b.size, fill_value=-1)[0]
+    positive_columns = jnp.nonzero(
+        normalized_b > 0.0,
+        size=b.size,
+        fill_value=-1,
+    )[0]
     positive_columns = positive_columns[positive_columns >= 0]
-    reduced_costs = costs[positive_rows[:, None], positive_columns[None, :]]
-    reduced_a = a[positive_rows]
-    reduced_b = b[positive_columns]
+    reduced_costs = normalized_costs[
+        positive_rows[:, None],
+        positive_columns[None, :],
+    ]
+    reduced_a = normalized_a[positive_rows]
+    reduced_b = normalized_b[positive_columns]
     plan, basis = _northwest_corner(reduced_a, reduced_b, reduced_costs, tolerance)
     converged = False
     minimum_reduced_cost = -jnp.inf
     row_potentials = column_potentials = None
-    for iteration in range(int(max_pivots) + 1):
+    pivots = 0
+    while True:
         row_potentials, column_potentials = _dual_potentials(reduced_costs, basis)
         reduced = reduced_costs - row_potentials[:, None] - column_potentials[None, :]
         reduced = jnp.where(basis, jnp.inf, reduced)
@@ -159,12 +227,16 @@ def _transportation_simplex(
         if float(minimum_reduced_cost) >= -tolerance:
             converged = True
             break
+        if pivots >= max_pivots:
+            break
         entering_candidates = [
             (row, column)
             for row in range(plan.shape[0])
             for column in range(plan.shape[1])
             if not bool(basis[row, column]) and float(reduced[row, column]) < -tolerance
         ]
+        if not entering_candidates:
+            raise RuntimeError("Negative reduced cost was reported but no entering edge was found.")
         entering = min(entering_candidates)
         path = _basis_path(basis, entering)
         minus_edges = path[0::2]
@@ -179,28 +251,65 @@ def _transportation_simplex(
             plan = plan.at[edge].add(theta)
         for edge in minus_edges:
             plan = plan.at[edge].add(-theta)
-        plan = jnp.where(jnp.abs(plan) <= tolerance, 0.0, plan)
+        plan = jnp.where((plan < 0.0) & (plan >= -tolerance), 0.0, plan)
+        plan = plan.at[leaving].set(0.0)
+        if bool(jnp.any(plan < -tolerance)):
+            raise RuntimeError("Transportation pivot produced a negative basic mass.")
         basis = basis.at[entering].set(True)
         basis = basis.at[leaving].set(False)
-    full_plan = jnp.zeros_like(costs)
-    full_plan = full_plan.at[positive_rows[:, None], positive_columns[None, :]].set(plan)
-    primal = jnp.sum(full_plan * costs)
-    row_residual = jnp.max(jnp.abs(jnp.sum(full_plan, axis=1) - a))
-    column_residual = jnp.max(jnp.abs(jnp.sum(full_plan, axis=0) - b))
-    dual = jnp.sum(reduced_a * row_potentials) + jnp.sum(reduced_b * column_potentials)
+        pivots += 1
+    normalized_plan = jnp.zeros_like(costs)
+    normalized_plan = normalized_plan.at[
+        positive_rows[:, None],
+        positive_columns[None, :],
+    ].set(plan)
+    full_plan = mass_a * normalized_plan
+    normalized_primal = jnp.sum(normalized_plan * normalized_costs)
+    normalized_row_residual = jnp.max(jnp.abs(jnp.sum(normalized_plan, axis=1) - normalized_a))
+    normalized_column_residual = jnp.max(jnp.abs(jnp.sum(normalized_plan, axis=0) - normalized_b))
+    normalized_dual = jnp.sum(reduced_a * row_potentials) + jnp.sum(reduced_b * column_potentials)
+    normalized_duality_gap = normalized_primal - normalized_dual
+    certificate_scale = max(
+        abs(float(normalized_primal)),
+        abs(float(normalized_dual)),
+        1.0,
+    )
+    feasible = (
+        float(normalized_row_residual) <= tolerance
+        and float(normalized_column_residual) <= tolerance
+        and abs(float(normalized_duality_gap)) <= tolerance * certificate_scale
+    )
+    reduced_optimal = float(minimum_reduced_cost) >= -tolerance
+    converged = bool(converged and feasible and reduced_optimal)
+    if converged:
+        reason = "optimality, feasibility, and duality certificates satisfied"
+    elif not feasible:
+        reason = "transport certificate failed feasibility or duality checks"
+    else:
+        reason = "maximum pivots reached"
     return TransportResult(
         distance=jnp.nan,
-        cost=primal,
+        cost=mass_a * safe_cost_scale * normalized_primal,
         plan=full_plan,
-        iterations=iteration,
+        iterations=pivots,
         converged=converged,
-        reason="optimal reduced costs" if converged else "maximum pivots reached",
+        reason=reason,
         diagnostics={
-            "row_residual": row_residual,
-            "column_residual": column_residual,
-            "duality_gap": primal - dual,
-            "minimum_reduced_cost": minimum_reduced_cost,
+            "row_residual": mass_a * normalized_row_residual,
+            "column_residual": mass_b * normalized_column_residual,
+            "duality_gap": mass_a * safe_cost_scale * normalized_duality_gap,
+            "minimum_reduced_cost": safe_cost_scale * minimum_reduced_cost,
+            "normalized_row_residual": normalized_row_residual,
+            "normalized_column_residual": normalized_column_residual,
+            "normalized_duality_gap": normalized_duality_gap,
+            "normalized_minimum_reduced_cost": minimum_reduced_cost,
+            "normalized_cost": normalized_primal,
+            "mass_scale": mass_a,
+            "cost_scale": safe_cost_scale,
             "basis": basis,
+            "requested_tolerance": requested_tolerance,
+            "effective_tolerance": tolerance,
+            "mass_tolerance": mass_tolerance,
         },
     )
 
@@ -222,28 +331,53 @@ def empirical_wasserstein_distance(
     right = as_manifold_data(manifold, y)
     require_unbatched(left, "empirical_wasserstein_distance")
     require_unbatched(right, "empirical_wasserstein_distance")
-    if float(p) < 1.0:
-        raise ValueError("p must be at least 1.")
+    p = positive_control(p, name="p")
+    if p < 1.0:
+        raise ValueError("p must be finite and at least 1.")
+    tolerance = positive_control(tolerance, name="tolerance")
+    max_pivots = integer_control(max_pivots, name="max_pivots")
+    if max_pivots < 0:
+        raise ValueError("max_pivots must be nonnegative.")
     a = normalize_weights(left.n_samples, weights_x)
     b = normalize_weights(right.n_samples, weights_y)
     distances = pairwise_distances(manifold, left, right)
-    costs = distances ** float(p)
+    distance_scale = jnp.max(distances)
+    safe_distance_scale = jnp.where(
+        distance_scale > 0.0,
+        distance_scale,
+        jnp.ones_like(distance_scale),
+    )
+    normalized_costs = (distances / safe_distance_scale) ** p
     result = _transportation_simplex(
-        costs,
+        normalized_costs,
         a,
         b,
-        tolerance=float(tolerance),
-        max_pivots=int(max_pivots),
+        tolerance=tolerance,
+        max_pivots=max_pivots,
     )
-    distance = jnp.maximum(result.cost, 0.0) ** (1.0 / float(p))
+    effective_tolerance = result.diagnostics["effective_tolerance"]
+    if float(result.cost) < -effective_tolerance:
+        raise FloatingPointError("Exact transport returned a negative nontrivial cost.")
+    normalized_cost = jnp.maximum(result.cost, 0.0)
+    distance = safe_distance_scale * normalized_cost ** (1.0 / p)
+    distance = jnp.where(distance_scale > 0.0, distance, 0.0)
+    cost_scale = safe_distance_scale**p
+    cost = cost_scale * normalized_cost
     return TransportResult(
         distance=distance,
-        cost=result.cost,
+        cost=cost,
         plan=result.plan,
         iterations=result.iterations,
         converged=result.converged,
         reason=result.reason,
-        diagnostics={**result.diagnostics, "p": float(p), "cost_matrix": costs},
+        diagnostics={
+            **result.diagnostics,
+            "p": p,
+            "distance_scale": distance_scale,
+            "normalized_cost": normalized_cost,
+            "normalized_cost_matrix": normalized_costs,
+            "cost_matrix": cost_scale * normalized_costs,
+        },
     )
 
 
@@ -274,20 +408,27 @@ def sinkhorn_divergence(
 ) -> Any:
     """Return debiased entropic transport divergence through optional OTT-JAX."""
     require_exact_operations(manifold, "sinkhorn_divergence", "dist")
-    left = as_manifold_data(manifold, x, check="shape")
-    right = as_manifold_data(manifold, y, check="shape")
+    raw_left = x.values if isinstance(x, ManifoldData) else x
+    raw_right = y.values if isinstance(y, ManifoldData) else y
+    check = "shape" if tree_contains_tracer((raw_left, raw_right)) else "belongs"
+    left = as_manifold_data(manifold, x, check=check)
+    right = as_manifold_data(manifold, y, check=check)
     require_unbatched(left, "sinkhorn_divergence")
     require_unbatched(right, "sinkhorn_divergence")
-    if epsilon <= 0.0 or p < 1.0:
-        raise ValueError("epsilon must be positive and p must be at least 1.")
+    epsilon = positive_control(epsilon, name="epsilon")
+    p = positive_control(p, name="p")
+    if p < 1.0:
+        raise ValueError("p must be at least 1.")
     a = normalize_weights(left.n_samples, weights_x)
     b = normalize_weights(right.n_samples, weights_y)
     cross = pairwise_distances(manifold, left, right) ** p
     left_cost = pairwise_distances(manifold, left, left) ** p
     right_cost = pairwise_distances(manifold, right, right) ** p
-    return _ott_cost(cross, a, b, epsilon) - 0.5 * _ott_cost(
-        left_cost, a, a, epsilon
-    ) - 0.5 * _ott_cost(right_cost, b, b, epsilon)
+    return (
+        _ott_cost(cross, a, b, epsilon)
+        - 0.5 * _ott_cost(left_cost, a, a, epsilon)
+        - 0.5 * _ott_cost(right_cost, b, b, epsilon)
+    )
 
 
 __all__ = ["empirical_wasserstein_distance", "sinkhorn_divergence"]

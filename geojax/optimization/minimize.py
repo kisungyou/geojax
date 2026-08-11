@@ -13,12 +13,15 @@ is a list of per-iteration records.
 from __future__ import annotations
 
 from dataclasses import dataclass, field, fields, replace
+from numbers import Integral
 from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple
 import math
 import time
 
 import jax
 import jax.numpy as jnp
+
+from geojax.geometry.base import validate_boolean, validate_integer, validate_nonnegative
 
 Array = Any
 CostFn = Callable[[Array], Array]
@@ -70,6 +73,19 @@ class Minimize:
         ehess_vec: Optional[HessVecFn] = None,
         rhess_vec: Optional[HessVecFn] = None,
     ) -> None:
+        if M is None:
+            raise ValueError("M must be a manifold object.")
+        if not callable(cost):
+            raise TypeError("cost must be callable.")
+        for name, callback in {
+            "grad": grad,
+            "egrad": egrad,
+            "precon": precon,
+            "ehess_vec": ehess_vec,
+            "rhess_vec": rhess_vec,
+        }.items():
+            if callback is not None and not callable(callback):
+                raise TypeError(f"{name} must be callable or None.")
         self.M = M
         self.cost = cost
         self.x0 = x0
@@ -84,9 +100,7 @@ class Minimize:
 
     @staticmethod
     def _coerce_key(key: Optional[Array | int]) -> Optional[Array]:
-        if key is None:
-            return None
-        return jax.random.key(key) if isinstance(key, int) else key
+        return coerce_key(key)
 
     def split_key(self) -> Array:
         """Return a fresh JAX PRNG key and advance the problem key."""
@@ -97,10 +111,11 @@ class Minimize:
 
     def solve(self) -> tuple[Array, float, List["InfoEntry"]]:
         """Solve the problem using the configured class-style solver."""
-        if self.x0 is None:
-            self.x0 = initial_point(self, None, self.split_key())
-        elif hasattr(self.M, "project"):
-            self.x0 = self.M.project(self.x0)
+        self.x0 = initial_point(
+            self,
+            self.x0,
+            self.split_key() if self.x0 is None else None,
+        )
 
         if self.solver is None:
             raise ValueError("Minimize.solve() requires a solver.")
@@ -115,18 +130,27 @@ class Minimize:
         returns its directional derivative instead. ``rhess_vec`` handles that
         path separately through the geometry's advertised connection support.
         """
+        validate_tangent(self.M, x, u, name="Hessian direction")
         if self._ehess_vec is not None:
-            return self._ehess_vec(x, u)
-        if self.egrad is not None:
-            return jax.jvp(self.egrad, (x,), (u,))[1]
-        if self.grad is not None:
-            return jax.jvp(self.grad, (x,), (u,))[1]
-        return jax.jvp(jax.grad(self.cost), (x,), (u,))[1]
+            result = self._ehess_vec(x, u)
+        elif self.egrad is not None:
+            result = jax.jvp(self.egrad, (x,), (u,))[1]
+        elif self.grad is not None:
+            result = jax.jvp(self.grad, (x,), (u,))[1]
+        else:
+            result = jax.jvp(jax.grad(self.cost), (x,), (u,))[1]
+        return _validate_vector_like(x, result, name="Euclidean Hessian-vector product")
 
     def rhess_vec(self, x: Array, u: Array) -> Array:
         """Riemannian Hessian-vector product."""
+        validate_tangent(self.M, x, u, name="Hessian direction")
         if self._rhess_vec is not None:
-            return self._rhess_vec(x, u)
+            return validate_tangent(
+                self.M,
+                x,
+                self._rhess_vec(x, u),
+                name="Riemannian Hessian-vector product",
+            )
 
         def require_exact(operation: str, description: str) -> None:
             if hasattr(self.M, "operation_kind"):
@@ -150,24 +174,34 @@ class Minimize:
 
         if self._ehess_vec is not None:
             require_exact("ehess_to_rhess", "ambient-to-Riemannian Hessian conversion")
-            egrad = self.egrad(x) if self.egrad is not None else jax.grad(self.cost)(x)
-            return self.M.ehess_to_rhess(x, egrad, self._ehess_vec(x, u), u)
+            egrad = _validate_vector_like(
+                x,
+                self.egrad(x) if self.egrad is not None else jax.grad(self.cost)(x),
+                name="Euclidean gradient",
+            )
+            result = self.M.ehess_to_rhess(x, egrad, self.ehess_vec(x, u), u)
+            return validate_tangent(self.M, x, result, name="Riemannian Hessian-vector product")
 
         if self.egrad is not None:
             require_exact("ehess_to_rhess", "ambient-to-Riemannian Hessian conversion")
-            egrad = self.egrad(x)
+            egrad = _validate_vector_like(x, self.egrad(x), name="Euclidean gradient")
             ehess_u = self.ehess_vec(x, u)
-            return self.M.ehess_to_rhess(x, egrad, ehess_u, u)
+            result = self.M.ehess_to_rhess(x, egrad, ehess_u, u)
+            return validate_tangent(self.M, x, result, name="Riemannian Hessian-vector product")
 
         if self.grad is not None:
             require_exact("rgrad_jvp", "Riemannian-gradient JVP conversion")
-            grad_jvp = jax.jvp(self.grad, (x,), (u,))[1]
-            return self.M.tangent_project(x, grad_jvp)
+            gradient, grad_jvp = jax.jvp(self.grad, (x,), (u,))
+            validate_tangent(self.M, x, gradient, name="Riemannian gradient")
+            _validate_vector_like(x, grad_jvp, name="Riemannian-gradient JVP")
+            result = self.M.tangent_project(x, grad_jvp)
+            return validate_tangent(self.M, x, result, name="Riemannian Hessian-vector product")
 
         require_exact("ehess_to_rhess", "ambient-to-Riemannian Hessian conversion")
-        egrad = jax.grad(self.cost)(x)
+        egrad = _validate_vector_like(x, jax.grad(self.cost)(x), name="Euclidean gradient")
         ehess_u = self.ehess_vec(x, u)
-        return self.M.ehess_to_rhess(x, egrad, ehess_u, u)
+        result = self.M.ehess_to_rhess(x, egrad, ehess_u, u)
+        return validate_tangent(self.M, x, result, name="Riemannian Hessian-vector product")
 
     def hessian_operator(self, x: Array) -> Callable[[Array], Array]:
         """Return ``u -> rhess_vec(x, u)``."""
@@ -227,6 +261,23 @@ def as_float(x: Array) -> float:
     return float(jnp.asarray(x))
 
 
+def coerce_key(key: Optional[Array | int], *, name: str = "key") -> Optional[Array]:
+    """Normalize an integer seed or validate a scalar JAX random key."""
+    if key is None:
+        return None
+    if isinstance(key, bool):
+        raise TypeError(f"{name} must be an integer seed or JAX random key.")
+    if isinstance(key, Integral):
+        return jax.random.key(int(key))
+    try:
+        key_data = jax.random.key_data(key)
+    except (TypeError, ValueError) as exc:
+        raise TypeError(f"{name} must be an integer seed or JAX random key.") from exc
+    if jnp.shape(key_data) != (2,):
+        raise TypeError(f"{name} must be a scalar JAX random key, not a key batch.")
+    return key
+
+
 def tree_scale(a: Any, x: Any) -> Any:
     return jax.tree_util.tree_map(lambda z: a * z, x)
 
@@ -260,6 +311,44 @@ def tree_lincomb(*terms: Any) -> Any:
     return out
 
 
+def _validate_vector_like(reference: Any, value: Any, *, name: str) -> Any:
+    """Validate the structure, shapes and numerical values of a vector pytree."""
+    reference_leaves, reference_tree = jax.tree_util.tree_flatten(reference)
+    value_leaves, value_tree = jax.tree_util.tree_flatten(value)
+    if reference_tree != value_tree:
+        raise ValueError(f"{name} must have the same pytree structure as the point.")
+    if len(reference_leaves) != len(value_leaves):
+        raise ValueError(f"{name} must have the same number of leaves as the point.")
+    if not value_leaves:
+        raise ValueError(f"{name} must be a nonempty pytree of arrays.")
+    for index, (point_leaf, vector_leaf) in enumerate(zip(reference_leaves, value_leaves)):
+        point_array = jnp.asarray(point_leaf)
+        vector_array = jnp.asarray(vector_leaf)
+        if point_array.shape != vector_array.shape:
+            raise ValueError(
+                f"{name} leaf {index} must have shape {point_array.shape}; "
+                f"received {vector_array.shape}."
+            )
+        if jnp.iscomplexobj(vector_array):
+            raise ValueError(f"{name} must be real-valued.")
+        if not isinstance(vector_array, jax.core.Tracer) and not bool(
+            jnp.all(jnp.isfinite(vector_array))
+        ):
+            raise FloatingPointError(f"{name} must contain only finite values.")
+    return value
+
+
+def validate_tangent(M: Any, x: Any, value: Any, *, name: str) -> Any:
+    """Validate a tangent-valued callback result at ``x``."""
+    _validate_vector_like(x, value, name=name)
+    if any(isinstance(leaf, jax.core.Tracer) for leaf in jax.tree_util.tree_leaves((x, value))):
+        return value
+    is_tangent = getattr(M, "is_tangent", None)
+    if callable(is_tangent) and not bool(jnp.all(jnp.asarray(is_tangent(x, value)))):
+        raise ValueError(f"{name} is not tangent at the supplied manifold point.")
+    return value
+
+
 def get(problem: Any, name: str, default: Any = None) -> Any:
     """Read a field from a dataclass/object or mapping."""
     if isinstance(problem, Mapping):
@@ -288,15 +377,47 @@ def initial_point(problem: Any, x: Optional[Array], key: Optional[Array]) -> Arr
             raise ValueError(
                 "No initial point was supplied and problem.M has no random_point(key) method."
             )
-        return M.random_point(key)
-    return M.project(x) if hasattr(M, "project") else x
+        point = M.random_point(key)
+    else:
+        point = M.project(x) if hasattr(M, "project") else x
+    return validate_point(M, point, name="initial manifold point")
+
+
+def validate_point(M: Any, point: Any, *, name: str = "manifold point") -> Any:
+    """Reject empty, nonfinite, or off-manifold points without repairing them."""
+    leaves = jax.tree_util.tree_leaves(point)
+    if not leaves:
+        raise ValueError(f"The {name} must contain at least one array leaf.")
+    if any(isinstance(leaf, jax.core.Tracer) for leaf in leaves):
+        return point
+    if not all(bool(jnp.all(jnp.isfinite(jnp.asarray(leaf)))) for leaf in leaves):
+        raise ValueError(f"The {name} must contain only finite values.")
+    if hasattr(M, "belongs") and not bool(jnp.all(jnp.asarray(M.belongs(point)))):
+        raise ValueError(f"The {name} does not belong to M.")
+    return point
+
+
+def require_geometry_methods(M: Any, *names: str, context: str) -> None:
+    """Require callable geometric primitives for an optimization algorithm."""
+    missing = [name for name in names if not callable(getattr(M, name, None))]
+    if missing:
+        joined = ", ".join(missing)
+        raise ValueError(f"{context} requires geometry method(s): {joined}.")
 
 
 def retract(M: Any, x: Array, direction: Array, alpha: float | Array) -> Array:
     """Take a trial step using ``M.retr`` if available, otherwise ``M.exp``."""
+    validate_tangent(M, x, direction, name="retraction direction")
+    alpha_array = jnp.asarray(alpha)
+    if alpha_array.shape != () or jnp.iscomplexobj(alpha_array):
+        raise ValueError("The retraction multiplier must be a real scalar.")
+    if not isinstance(alpha_array, jax.core.Tracer) and not math.isfinite(as_float(alpha_array)):
+        raise ValueError("The retraction multiplier must be finite.")
     if hasattr(M, "retr"):
-        return M.retr(x, direction, alpha)
-    return M.exp(x, tree_lincomb(alpha, direction))
+        point = M.retr(x, direction, alpha)
+    else:
+        point = M.exp(x, tree_lincomb(alpha, direction))
+    return validate_point(M, point, name="retraction trial point")
 
 
 def inner(M: Any, x: Array, u: Array, v: Array) -> Array:
@@ -307,74 +428,152 @@ def inner(M: Any, x: Array, u: Array, v: Array) -> Array:
 def lincomb(M: Any, x: Array, *terms: Any) -> Array:
     """Linear combination of tangent vectors, projected if needed."""
     if hasattr(M, "lincomb"):
-        return M.lincomb(x, *terms)
-    out = tree_lincomb(*terms)
-    if hasattr(M, "tangent_project"):
-        return M.tangent_project(x, out)
-    if hasattr(M, "proj"):
-        return M.proj(x, out)
-    return out
+        out = M.lincomb(x, *terms)
+    else:
+        out = tree_lincomb(*terms)
+        if hasattr(M, "tangent_project"):
+            out = M.tangent_project(x, out)
+        elif hasattr(M, "proj"):
+            out = M.proj(x, out)
+    return validate_tangent(M, x, out, name="tangent linear combination")
 
 
 def transport(M: Any, x: Array, y: Array, u: Array) -> Array:
     """Transport a tangent vector from ``x`` to ``y``."""
+    validate_tangent(M, x, u, name="vector-transport input")
+    validate_point(M, y, name="vector-transport endpoint")
     if hasattr(M, "transport"):
-        return M.transport(x, y, u)
-    if hasattr(M, "transp"):
-        return M.transp(x, y, u)
-    if hasattr(M, "tangent_project"):
-        return M.tangent_project(y, u)
-    if hasattr(M, "proj"):
-        return M.proj(y, u)
-    raise ValueError("Manifold must provide transport, tangent_project or proj.")
+        out = M.transport(x, y, u)
+    elif hasattr(M, "transp"):
+        out = M.transp(x, y, u)
+    elif hasattr(M, "tangent_project"):
+        out = M.tangent_project(y, u)
+    elif hasattr(M, "proj"):
+        out = M.proj(y, u)
+    else:
+        raise ValueError("Manifold must provide transport, tangent_project or proj.")
+    return validate_tangent(M, y, out, name="vector-transport output")
 
 
 def pair_mean(M: Any, x: Array, y: Array) -> Array:
     """Return a midpoint-like mean between two manifold points."""
     if hasattr(M, "pair_mean"):
-        return M.pair_mean(x, y)
-    if hasattr(M, "exp") and hasattr(M, "log"):
-        return M.exp(x, tree_lincomb(0.5, M.log(x, y)))
-    return tree_lincomb(0.5, x, 0.5, y)
+        point = M.pair_mean(x, y)
+    elif hasattr(M, "exp") and hasattr(M, "log"):
+        displacement = validate_tangent(M, x, M.log(x, y), name="pair-mean logarithm")
+        point = M.exp(x, tree_lincomb(0.5, displacement))
+    else:
+        raise ValueError("Manifold must provide pair_mean or both exp and log.")
+    return validate_point(M, point, name="pair mean")
+
+
+def _validated_cost_output(value: Any) -> Array:
+    array = jnp.asarray(value)
+    if array.shape != ():
+        raise ValueError(f"cost must return a scalar; received shape {array.shape}.")
+    if jnp.iscomplexobj(array):
+        raise ValueError("cost must return a real scalar.")
+    return array
 
 
 def cost_and_grad(problem: Any, x: Array) -> tuple[Array, Array]:
     """Return ``cost(x)`` and the Riemannian gradient at ``x``."""
     M = require(problem, "M")
+    validate_point(M, x, name="objective evaluation point")
     cost_fn = require(problem, "cost")
+    combined_fn = get(problem, "cost_and_grad", None)
     grad_fn = get(problem, "grad", None)
     egrad_fn = get(problem, "egrad", None)
 
+    if combined_fn is not None:
+        c, g = combined_fn(x)
+        c = _validated_cost_output(c)
+        return c, validate_tangent(M, x, g, name="Riemannian gradient")
+
     if grad_fn is not None:
-        c = cost_fn(x)
-        g = grad_fn(x)
+        c = _validated_cost_output(cost_fn(x))
+        g = validate_tangent(M, x, grad_fn(x), name="Riemannian gradient")
         return c, g
 
     if egrad_fn is not None:
-        c = cost_fn(x)
-        eg = egrad_fn(x)
-        return c, M.egrad_to_rgrad(x, eg)
+        c = _validated_cost_output(cost_fn(x))
+        eg = _validate_vector_like(x, egrad_fn(x), name="Euclidean gradient")
+        g = M.egrad_to_rgrad(x, eg)
+        return c, validate_tangent(M, x, g, name="Riemannian gradient")
 
-    c, eg = jax.value_and_grad(cost_fn)(x)
-    return c, M.egrad_to_rgrad(x, eg)
+    def scalar_cost(point: Any) -> Array:
+        return _validated_cost_output(cost_fn(point))
+
+    c, eg = jax.value_and_grad(scalar_cost)(x)
+    g = M.egrad_to_rgrad(x, eg)
+    return c, validate_tangent(M, x, g, name="Riemannian gradient")
 
 
 def gradient_value(problem: Any, x: Array) -> Array:
     """Return only the Riemannian gradient at ``x``."""
     M = require(problem, "M")
+    validate_point(M, x, name="gradient evaluation point")
     cost_fn = require(problem, "cost")
     grad_fn = get(problem, "grad", None)
     egrad_fn = get(problem, "egrad", None)
     if grad_fn is not None:
-        return grad_fn(x)
+        return validate_tangent(M, x, grad_fn(x), name="Riemannian gradient")
     if egrad_fn is not None:
-        return M.egrad_to_rgrad(x, egrad_fn(x))
-    return M.egrad_to_rgrad(x, jax.grad(cost_fn)(x))
+        eg = _validate_vector_like(x, egrad_fn(x), name="Euclidean gradient")
+        return validate_tangent(M, x, M.egrad_to_rgrad(x, eg), name="Riemannian gradient")
+
+    def scalar_cost(point: Any) -> Array:
+        return _validated_cost_output(cost_fn(point))
+
+    return validate_tangent(
+        M,
+        x,
+        M.egrad_to_rgrad(x, jax.grad(scalar_cost)(x)),
+        name="Riemannian gradient",
+    )
 
 
 def cost_value(problem: Any, x: Array) -> Array:
     """Return ``cost(x)``."""
-    return require(problem, "cost")(x)
+    validate_point(require(problem, "M"), x, name="objective evaluation point")
+    return _validated_cost_output(require(problem, "cost")(x))
+
+
+def validate_line_search_result(problem: Any, result: Any) -> Any:
+    """Validate a custom line search result before a solver consumes it."""
+    required = ("point", "cost", "gradient", "stepsize", "alpha", "stats", "state")
+    missing = [name for name in required if not hasattr(result, name)]
+    if missing:
+        raise TypeError(
+            "line_search.search(...) returned an incomplete result; missing "
+            + ", ".join(missing)
+            + "."
+        )
+    M = require(problem, "M")
+    validate_point(M, result.point, name="line-search result point")
+    value = _validated_cost_output(result.cost)
+    for name in ("stepsize", "alpha"):
+        raw = getattr(result, name)
+        if isinstance(raw, bool):
+            raise TypeError(f"line-search {name} must be a real scalar.")
+        scalar = float(raw)
+        if not math.isfinite(scalar) or scalar < 0.0:
+            raise ValueError(f"line-search {name} must be finite and nonnegative.")
+    stats = result.stats
+    if not isinstance(stats, LineSearchStats):
+        raise TypeError("line-search stats must be a LineSearchStats instance.")
+    if not isinstance(stats.accepted, bool):
+        raise TypeError("line-search accepted status must be a boolean.")
+    if stats.accepted and not math.isfinite(as_float(value)):
+        raise FloatingPointError("An accepted line-search cost must be finite.")
+    if result.gradient is not None:
+        validate_tangent(
+            M,
+            result.point,
+            result.gradient,
+            name="line-search result gradient",
+        )
+    return result
 
 
 def precondition_gradient(problem: Any, x: Array, grad: Array) -> Array:
@@ -382,7 +581,12 @@ def precondition_gradient(problem: Any, x: Array, grad: Array) -> Array:
     precon = get(problem, "precon", None)
     if precon is None:
         return grad
-    return precon(x, grad)
+    return validate_tangent(
+        require(problem, "M"),
+        x,
+        precon(x, grad),
+        name="preconditioned gradient",
+    )
 
 
 precondition = precondition_gradient
@@ -405,6 +609,9 @@ def make_info(
     **extra_fields: Any,
 ) -> InfoEntry:
     """Build an :class:`InfoEntry`, applying ``options.statsfun`` if present."""
+    stats_source = options if options is not None else solver
+    if stats_source is not None:
+        validate_stopping_controls(stats_source)
     extra = {name: value for name, value in extra_fields.items() if value is not None}
     entry = InfoEntry(
         iter=iter,
@@ -417,25 +624,58 @@ def make_info(
         reason=reason,
         extra=extra,
     )
-    stats_source = options if options is not None else solver
     statsfun = getattr(stats_source, "statsfun", None)
     if statsfun is not None:
         user_extra = statsfun(problem, x, entry)
         if user_extra is not None:
+            if not isinstance(user_extra, Mapping):
+                raise TypeError("statsfun must return a mapping or None.")
             merged = {**entry.extra, **dict(user_extra)}
             entry = replace(entry, extra=merged)
     return entry
 
 
+def validate_stopping_controls(options: Any) -> tuple[bool, float, int, float, float]:
+    """Validate controls shared by all optimization solvers."""
+    requires_gradient = validate_boolean(
+        getattr(options, "requires_gradient", True), name="requires_gradient"
+    )
+    tolgradnorm = float(getattr(options, "tolgradnorm", 1e-6))
+    maxiter = validate_integer(getattr(options, "maxiter", 1000), name="maxiter")
+    maxtime = float(getattr(options, "maxtime", math.inf))
+    minstepsize = validate_nonnegative(getattr(options, "minstepsize", 1e-10), name="minstepsize")
+    validate_integer(getattr(options, "verbosity", 2), name="verbosity", minimum=0)
+    if maxiter < 0:
+        raise ValueError("maxiter must be nonnegative.")
+    if isinstance(getattr(options, "maxtime", math.inf), bool):
+        raise TypeError("maxtime must be a real scalar, not a boolean.")
+    if math.isnan(maxtime) or maxtime < 0.0:
+        raise ValueError("maxtime must be nonnegative and not NaN.")
+    if requires_gradient and (
+        isinstance(getattr(options, "tolgradnorm", 1e-6), bool)
+        or not math.isfinite(tolgradnorm)
+        or tolgradnorm < 0.0
+    ):
+        raise ValueError("tolgradnorm must be finite and nonnegative.")
+    for name in ("statsfun", "stopfun"):
+        callback = getattr(options, name, None)
+        if callback is not None and not callable(callback):
+            raise TypeError(f"{name} must be callable or None.")
+    return requires_gradient, tolgradnorm, maxiter, maxtime, minstepsize
+
+
 def stopping_reason(problem: Any, x: Array, info: List[InfoEntry], options: Any) -> str:
     """Evaluate standard Manopt-style stopping criteria."""
     current = info[-1]
-    tolgradnorm = float(getattr(options, "tolgradnorm", 1e-6))
-    maxiter = int(getattr(options, "maxiter", 1000))
-    maxtime = float(getattr(options, "maxtime", math.inf))
-    minstepsize = float(getattr(options, "minstepsize", 1e-10))
+    requires_gradient, tolgradnorm, maxiter, maxtime, minstepsize = validate_stopping_controls(
+        options
+    )
 
-    if current.gradnorm <= tolgradnorm:
+    if not math.isfinite(current.cost):
+        return "Non-finite objective value encountered."
+    if requires_gradient and not math.isfinite(current.gradnorm):
+        return "Non-finite gradient norm encountered."
+    if requires_gradient and current.gradnorm <= tolgradnorm:
         return f"Gradient norm tolerance reached: {current.gradnorm:g} <= {tolgradnorm:g}."
     if current.iter >= maxiter:
         return f"Maximum iteration count reached: options.maxiter = {maxiter}."
@@ -446,7 +686,14 @@ def stopping_reason(problem: Any, x: Array, info: List[InfoEntry], options: Any)
 
     stopfun = getattr(options, "stopfun", None)
     if stopfun is not None:
-        stop, reason = stopfun(problem, x, current)
+        result = stopfun(problem, x, current)
+        if not isinstance(result, tuple) or len(result) != 2:
+            raise TypeError("stopfun must return a pair (stop, reason).")
+        stop, reason = result
+        if not isinstance(stop, bool):
+            raise TypeError("stopfun's stop value must be a boolean.")
+        if not isinstance(reason, str):
+            raise TypeError("stopfun's reason must be a string.")
         if stop:
             return reason or "User stopfun triggered."
     return ""
@@ -503,6 +750,9 @@ __all__ = [
     "require",
     "require_field",
     "initial_point",
+    "validate_point",
+    "validate_tangent",
+    "require_geometry_methods",
     "retract",
     "inner",
     "lincomb",
@@ -511,9 +761,11 @@ __all__ = [
     "cost_and_grad",
     "gradient_value",
     "cost_value",
+    "validate_line_search_result",
     "precondition_gradient",
     "precondition",
     "make_info",
+    "validate_stopping_controls",
     "stopping_reason",
     "print_iteration_header",
     "print_iteration",

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import jax
 import jax.numpy as jnp
 import pytest
 
@@ -100,16 +101,38 @@ def test_strong_wolfe_conditions_hold_on_quadratic():
     assert jnp.abs(derivative) <= strategy.curvature * jnp.abs(derivative0)
 
 
+def test_strong_wolfe_uses_the_nonlinear_retraction_curve_derivative():
+    class NonlinearRetraction(Euclidean):
+        def retr(self, x, u, alpha=1.0):
+            return x + alpha * u + 0.5 * alpha**2 * u
+
+    manifold = NonlinearRetraction(1)
+    point = jnp.ones(1)
+    direction = -point
+    problem = Minimize(
+        M=manifold,
+        cost=lambda value: 0.5 * jnp.sum(value * value),
+        x0=point,
+    )
+    strategy = StrongWolfe(normalize_step=False)
+
+    result = strategy.search(problem, point, direction, problem.cost(point), -1.0)
+    _, curve_velocity = jax.jvp(
+        lambda alpha: manifold.retr(point, direction, alpha),
+        (jnp.asarray(result.alpha),),
+        (jnp.asarray(1.0),),
+    )
+    derivative = manifold.inner(result.point, result.gradient, curve_velocity)
+
+    assert result.stats.accepted
+    assert result.alpha < 1.0
+    assert jnp.abs(derivative) <= strategy.curvature
+
+
 @pytest.mark.parametrize(
     ("strategy", "direction", "derivative", "reason"),
     [
         (ConstantStep(), jnp.zeros(2), 0.0, "zero or non-finite direction"),
-        (
-            ConstantStep(stepsize=-1.0),
-            jnp.array([-1.0, 0.0]),
-            -1.0,
-            "non-positive trial multiplier",
-        ),
         (BacktrackingArmijo(), jnp.zeros(2), 0.0, "zero or non-finite direction"),
         (
             BacktrackingArmijo(),
@@ -139,6 +162,18 @@ def test_line_search_rejects_invalid_directions(strategy, direction, derivative,
     assert result.stats.reason == reason
     assert result.stepsize == 0.0
     assert result.point is problem.x0
+
+
+def test_constant_step_rejects_invalid_configuration():
+    _, problem = quadratic_problem()
+    with pytest.raises(ValueError, match="stepsize must be finite and positive"):
+        ConstantStep(stepsize=-1.0).search(
+            problem,
+            problem.x0,
+            jnp.array([-1.0, 0.0]),
+            problem.cost(problem.x0),
+            -1.0,
+        )
 
 
 @pytest.mark.parametrize(
@@ -229,3 +264,50 @@ def test_strong_wolfe_reports_unsatisfied_conditions():
     assert result.stats.costevals == 1
     assert result.stats.gradevals == 1
     assert result.stats.reason == "strong-Wolfe conditions were not satisfied"
+
+
+def test_armijo_backtracks_when_a_trial_leaves_the_manifold_domain():
+    class LocallyDefinedRetraction(Euclidean):
+        def retr(self, x, u, alpha=1.0):
+            candidate = x + alpha * u
+            return jnp.where(alpha > 0.5, jnp.nan, candidate)
+
+    manifold = LocallyDefinedRetraction(1)
+    problem = Minimize(
+        M=manifold,
+        cost=lambda x: 0.5 * jnp.sum(x * x),
+        x0=jnp.array([1.0]),
+    )
+    result = BacktrackingArmijo(
+        initial_stepsize=1.0,
+        normalize_step=False,
+    ).search(problem, problem.x0, -problem.x0, problem.cost(problem.x0), -1.0)
+    assert result.stats.accepted
+    assert result.alpha == pytest.approx(0.5)
+    assert jnp.allclose(result.point, jnp.array([0.5]))
+
+
+def test_strong_wolfe_does_not_differentiate_nonfinite_trial_costs():
+    manifold = Euclidean(1)
+
+    def cost(point):
+        return jnp.where(jnp.abs(point[0]) <= 2.0, 0.5 * point[0] ** 2, jnp.nan)
+
+    def gradient(point):
+        if abs(float(point[0])) > 2.0:
+            raise AssertionError("gradient evaluated at a nonfinite-cost trial")
+        return point
+
+    problem = Minimize(
+        M=manifold,
+        cost=cost,
+        grad=gradient,
+        x0=jnp.array([1.0]),
+    )
+    result = StrongWolfe(
+        initial_stepsize=10.0,
+        max_stepsize=10.0,
+        normalize_step=False,
+    ).search(problem, problem.x0, -problem.x0, cost(problem.x0), -1.0)
+    assert result.stats.accepted
+    assert result.stats.costevals > result.stats.gradevals

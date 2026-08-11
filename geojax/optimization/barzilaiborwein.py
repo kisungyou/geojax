@@ -7,6 +7,8 @@ from typing import Any, List, Optional
 import math
 import time
 
+from geojax.geometry.base import validate_positive
+
 from .linesearch import BacktrackingArmijo, LineSearchProtocol, LineSearchState
 from .minimize import (
     Array,
@@ -26,11 +28,14 @@ from .minimize import (
     tree_lincomb,
     tree_neg,
     tree_sub,
+    validate_line_search_result,
 )
 
 
 @dataclass(frozen=True)
 class BarzilaiBorwein:
+    """Riemannian gradient descent with BB1, BB2, or alternating step estimates."""
+
     requires_gradient: bool = True
     bb_type: str = "alternate"  # "BB1", "BB2", or "alternate"
     initial_stepsize: float = 1.0
@@ -48,11 +53,22 @@ class BarzilaiBorwein:
     stopfun: Optional[StopFn] = None
 
     def solve(self, problem: Any) -> tuple[Array, float, List[InfoEntry]]:
+        if not isinstance(self.bb_type, str):
+            raise TypeError("bb_type must be a string.")
+        if self.bb_type.upper() not in {"BB1", "BB2", "ALTERNATE"}:
+            raise ValueError("bb_type must be 'BB1', 'BB2', or 'alternate'.")
+        min_stepsize = validate_positive(self.min_stepsize, name="min_stepsize")
+        initial_stepsize = validate_positive(self.initial_stepsize, name="initial_stepsize")
+        max_stepsize = validate_positive(self.max_stepsize, name="max_stepsize")
+        if not min_stepsize <= initial_stepsize <= max_stepsize:
+            raise ValueError(
+                "Step bounds must satisfy 0 < min_stepsize <= initial_stepsize <= max_stepsize."
+            )
         M = require(problem, "M")
         x = require(problem, "x0")
         start_time = time.perf_counter()
         info: List[InfoEntry] = []
-        alpha = float(self.initial_stepsize)
+        alpha = initial_stepsize
         search_state: LineSearchState | None = None
 
         f, g = cost_and_grad(problem, x)
@@ -82,14 +98,17 @@ class BarzilaiBorwein:
 
             d = tree_neg(g)
             df0 = inner(M, x, g, d)
-            result = self.line_search.search(
+            result = validate_line_search_result(
                 problem,
-                x,
-                d,
-                f,
-                df0,
-                state=search_state,
-                initial_alpha=alpha,
+                self.line_search.search(
+                    problem,
+                    x,
+                    d,
+                    f,
+                    df0,
+                    state=search_state,
+                    initial_alpha=alpha,
+                ),
             )
             search_state = result.state
             newx = result.point
@@ -110,9 +129,7 @@ class BarzilaiBorwein:
                     next_alpha = ss / sy
                 elif mode == "BB2":
                     next_alpha = sy / yy
-                else:
-                    raise ValueError("bb_type must be 'BB1', 'BB2', or 'alternate'.")
-            alpha = min(max(float(next_alpha), float(self.min_stepsize)), float(self.max_stepsize))
+            alpha = min(max(float(next_alpha), min_stepsize), max_stepsize)
 
             x, f, g = newx, newf, newg
             gnorm = M.norm(x, g)

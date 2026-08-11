@@ -33,8 +33,10 @@ from .minimize import (
     tree_neg,
     tree_sub,
     transport,
+    validate_line_search_result,
 )
 from .linesearch import AdaptiveArmijo, LineSearchProtocol, LineSearchState
+from geojax.geometry.base import validate_positive
 
 
 @dataclass(frozen=True)
@@ -78,6 +80,18 @@ def _safe_divide(num: Any, den: Any, default: float = 0.0) -> float:
         return default
     out = num_f / den_f
     return out if math.isfinite(out) else default
+
+
+def _safe_preconditioned_gradient(
+    M: Any, x: Array, grad: Array, candidate: Array
+) -> tuple[Array, Array, bool]:
+    """Return a positive preconditioned gradient or the raw gradient."""
+    pairing = inner(M, x, grad, candidate)
+    pairing_f = _finite_scalar(pairing, default=math.nan)
+    if math.isfinite(pairing_f) and pairing_f > 0.0:
+        return candidate, pairing, False
+    raw_pairing = inner(M, x, grad, grad)
+    return grad, raw_pairing, True
 
 
 def _compute_beta_and_direction(
@@ -187,6 +201,33 @@ def _solve_conjugate_gradient(
 ) -> tuple[Array, float, List[InfoEntry]]:
     """Internal nonlinear Riemannian conjugate-gradient iteration engine."""
     options = ConjugateGradient() if options is None else options
+    valid_beta_types = {
+        "STEEP",
+        "S-D",
+        "F-R",
+        "P-R",
+        "H-S",
+        "H-Z",
+        "L-S",
+        "P-R-SATO",
+        "H-S-SATO",
+    }
+    if not isinstance(options.beta_type, str):
+        raise TypeError("beta_type must be a string.")
+    if options.beta_type.upper() not in valid_beta_types:
+        raise ValueError(
+            "Unknown beta_type. Expected one of: 'steep', 'S-D', 'F-R', "
+            "'P-R', 'H-S', 'H-Z', 'L-S', 'P-R-SATO', 'H-S-SATO'."
+        )
+    if isinstance(options.orth_value, bool):
+        raise TypeError("orth_value must be a real scalar, not a boolean.")
+    if math.isinf(float(options.orth_value)):
+        if float(options.orth_value) < 0.0:
+            raise ValueError("orth_value must be positive and not NaN.")
+    else:
+        validate_positive(options.orth_value, name="orth_value")
+    if math.isnan(float(options.orth_value)):
+        raise ValueError("orth_value must be positive and not NaN.")
     M = require(problem, "M")
     require(problem, "cost")
 
@@ -197,8 +238,9 @@ def _solve_conjugate_gradient(
 
     cost_value, grad = cost_and_grad(problem, sol)
     gradnorm = M.norm(sol, grad)
-    Pgrad = precondition(problem, sol, grad)
-    gradPgrad = inner(M, sol, grad, Pgrad)
+    Pgrad, gradPgrad, preconditioner_fallback = _safe_preconditioned_gradient(
+        M, sol, grad, precondition(problem, sol, grad)
+    )
     desc_dir = tree_neg(Pgrad)
     beta = 0.0
 
@@ -214,6 +256,7 @@ def _solve_conjugate_gradient(
             x=sol,
             options=options,
             beta=beta,
+            preconditioner_fallback=preconditioner_fallback,
         )
     )
 
@@ -237,21 +280,24 @@ def _solve_conjugate_gradient(
 
         df0 = inner(M, sol, grad, desc_dir)
         df0_float = _finite_scalar(df0, default=math.inf)
-        gradPgrad_float = _finite_scalar(gradPgrad, default=0.0)
 
         if df0_float >= 0.0 or not math.isfinite(df0_float):
-            desc_dir = tree_neg(Pgrad)
-            df0 = -gradPgrad
-            df0_float = -gradPgrad_float
+            desc_dir = tree_neg(grad)
+            df0 = -inner(M, sol, grad, grad)
+            df0_float = _finite_scalar(df0, default=-math.inf)
             beta = 0.0
+            preconditioner_fallback = True
 
-        result = options.line_search.search(
+        result = validate_line_search_result(
             problem,
-            sol,
-            desc_dir,
-            cost_value,
-            df0,
-            state=search_state,
+            options.line_search.search(
+                problem,
+                sol,
+                desc_dir,
+                cost_value,
+                df0,
+                state=search_state,
+            ),
         )
         search_state = result.state
         newsol = result.point
@@ -261,8 +307,9 @@ def _solve_conjugate_gradient(
             result.gradient if result.gradient is not None else gradient_value(problem, newsol)
         )
         newgradnorm = M.norm(newsol, newgrad)
-        Pnewgrad = precondition(problem, newsol, newgrad)
-        newgradPnewgrad = inner(M, newsol, newgrad, Pnewgrad)
+        Pnewgrad, newgradPnewgrad, new_preconditioner_fallback = _safe_preconditioned_gradient(
+            M, newsol, newgrad, precondition(problem, newsol, newgrad)
+        )
 
         beta, new_desc_dir = _compute_beta_and_direction(
             M=M,
@@ -286,6 +333,7 @@ def _solve_conjugate_gradient(
         Pgrad = Pnewgrad
         gradPgrad = newgradPnewgrad
         desc_dir = new_desc_dir
+        preconditioner_fallback = new_preconditioner_fallback
 
         info.append(
             make_info(
@@ -299,6 +347,7 @@ def _solve_conjugate_gradient(
                 x=sol,
                 options=options,
                 beta=beta,
+                preconditioner_fallback=preconditioner_fallback,
             )
         )
 

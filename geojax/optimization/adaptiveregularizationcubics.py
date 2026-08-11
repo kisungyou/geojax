@@ -7,6 +7,8 @@ from typing import Any, List, Optional
 import math
 import time
 
+from geojax.geometry.base import validate_integer, validate_nonnegative, validate_positive
+
 from .minimize import (
     Array,
     InfoEntry,
@@ -25,6 +27,7 @@ from .minimize import (
     stopping_reason,
     tree_lincomb,
     tree_neg,
+    validate_tangent,
 )
 
 
@@ -66,20 +69,45 @@ class AdaptiveRegularizationCubics:
         hessian_vector = get(problem, "rhess_vec", None)
         if hessian_vector is None:
             raise ValueError("AdaptiveRegularizationCubics requires problem.rhess_vec(x, u).")
-        if self.initial_sigma <= 0.0:
-            raise ValueError("initial_sigma must be positive.")
-        if not 0.0 < self.min_sigma <= self.initial_sigma <= self.max_sigma:
+        initial_sigma = validate_positive(self.initial_sigma, name="initial_sigma")
+        min_sigma = validate_positive(self.min_sigma, name="min_sigma")
+        max_sigma = validate_positive(self.max_sigma, name="max_sigma")
+        if not min_sigma <= initial_sigma <= max_sigma:
             raise ValueError(
                 "Sigma bounds must satisfy 0 < min_sigma <= initial_sigma <= max_sigma."
             )
-        if not 0.0 < self.decrease_factor < 1.0 or self.increase_factor <= 1.0:
+        decrease_factor = validate_positive(self.decrease_factor, name="decrease_factor")
+        increase_factor = validate_positive(self.increase_factor, name="increase_factor")
+        acceptance_threshold = validate_nonnegative(
+            self.acceptance_threshold, name="acceptance_threshold"
+        )
+        very_successful_threshold = validate_positive(
+            self.very_successful_threshold, name="very_successful_threshold"
+        )
+        if decrease_factor >= 1.0 or increase_factor <= 1.0:
             raise ValueError("decrease_factor must be in (0, 1) and increase_factor must exceed 1.")
-        if not 0.0 <= self.acceptance_threshold < self.very_successful_threshold < 1.0:
+        if not acceptance_threshold < very_successful_threshold < 1.0:
             raise ValueError(
                 "Thresholds must satisfy 0 <= acceptance_threshold < very_successful_threshold < 1."
             )
+        subproblem_iterations = validate_integer(
+            self.subproblem_iterations,
+            name="subproblem_iterations",
+        )
+        subproblem_backtracks = validate_integer(
+            self.subproblem_backtracks,
+            name="subproblem_backtracks",
+        )
+        if subproblem_iterations < 0 or subproblem_backtracks <= 0:
+            raise ValueError(
+                "subproblem_iterations must be nonnegative and subproblem_backtracks positive."
+            )
+        subproblem_tolerance = validate_nonnegative(
+            self.subproblem_tolerance,
+            name="subproblem_tolerance",
+        )
 
-        sigma = float(self.initial_sigma)
+        sigma = initial_sigma
         start_time = time.perf_counter()
         info: List[InfoEntry] = []
         f, g = cost_and_grad(problem, x)
@@ -117,22 +145,22 @@ class AdaptiveRegularizationCubics:
                 g,
                 lambda direction: hessian_vector(x, direction),
                 sigma_used,
-                max_iterations=self.subproblem_iterations,
-                tolerance=self.subproblem_tolerance,
-                max_backtracks=self.subproblem_backtracks,
+                max_iterations=subproblem_iterations,
+                tolerance=subproblem_tolerance,
+                max_backtracks=subproblem_backtracks,
             )
             predicted = max(-model_value, 0.0)
             stepnorm = as_float(M.norm(x, step))
             trial = retract(M, x, step, 1.0)
             trial_cost = cost_value(problem, trial)
             actual = as_float(f) - as_float(trial_cost)
-            rho = actual / predicted if predicted > 1e-300 else -math.inf
-            accepted = bool(math.isfinite(rho) and rho >= self.acceptance_threshold)
+            rho = actual / predicted if predicted > 0.0 else -math.inf
+            accepted = bool(math.isfinite(rho) and rho >= acceptance_threshold)
 
-            if rho >= self.very_successful_threshold:
-                sigma = max(self.min_sigma, self.decrease_factor * sigma)
-            elif rho < self.acceptance_threshold or not math.isfinite(rho):
-                sigma = min(self.max_sigma, self.increase_factor * sigma)
+            if rho >= very_successful_threshold:
+                sigma = max(min_sigma, decrease_factor * sigma)
+            elif rho < acceptance_threshold or not math.isfinite(rho):
+                sigma = min(max_sigma, increase_factor * sigma)
 
             if accepted:
                 x = trial
@@ -179,15 +207,35 @@ def _solve_cubic_subproblem(
     """Return a Cauchy-initialized approximate minimizer of the cubic model."""
 
     gradient_norm = as_float(M.norm(x, gradient))
-    unit_descent = tree_lincomb(-1.0 / max(gradient_norm, 1e-300), gradient)
-    hessian_unit = hessian_vector(unit_descent)
+    if not math.isfinite(gradient_norm) or gradient_norm <= 0.0:
+        raise ValueError("The cubic subproblem requires a finite nonzero gradient.")
+    unit_descent = tree_lincomb(-1.0 / gradient_norm, gradient)
+    hessian_unit = validate_tangent(
+        M,
+        x,
+        hessian_vector(unit_descent),
+        name="cubic Hessian output",
+    )
     curvature = as_float(inner(M, x, unit_descent, hessian_unit))
-    discriminant = max(curvature * curvature + 4.0 * sigma * gradient_norm, 0.0)
-    cauchy_length = (-curvature + math.sqrt(discriminant)) / (2.0 * sigma)
+    if not math.isfinite(curvature):
+        raise FloatingPointError("The cubic Hessian produced nonfinite Cauchy curvature.")
+    discriminant = curvature * curvature + 4.0 * sigma * gradient_norm
+    if not math.isfinite(discriminant) or discriminant < 0.0:
+        raise FloatingPointError("The cubic Cauchy-point discriminant is nonfinite.")
+    root = math.sqrt(discriminant)
+    if curvature > 0.0:
+        cauchy_length = 2.0 * gradient_norm / (curvature + root)
+    else:
+        cauchy_length = (-curvature + root) / (2.0 * sigma)
     step = tree_lincomb(cauchy_length, unit_descent)
 
     def model(point: Array) -> tuple[float, Array]:
-        hessian_point = hessian_vector(point)
+        hessian_point = validate_tangent(
+            M,
+            x,
+            hessian_vector(point),
+            name="cubic Hessian output",
+        )
         norm_point = as_float(M.norm(x, point))
         value = (
             as_float(inner(M, x, gradient, point))
@@ -206,10 +254,15 @@ def _solve_cubic_subproblem(
 
     model_value, model_gradient = model(step)
     model_gradnorm = as_float(M.norm(x, model_gradient))
+    if not math.isfinite(model_value) or not math.isfinite(model_gradnorm):
+        raise FloatingPointError("The cubic subproblem model is nonfinite at its Cauchy point.")
     inner_iterations = 0
-    for inner_iterations in range(1, max(0, int(max_iterations)) + 1):
-        if model_gradnorm <= float(tolerance) * gradient_norm:
+    converged = model_gradnorm <= tolerance * gradient_norm
+    reason = "model-gradient tolerance" if converged else "maximum inner iterations"
+    for candidate_iteration in range(1, max_iterations + 1):
+        if converged:
             break
+        inner_iterations = candidate_iteration
         direction = tree_neg(model_gradient)
         slope = -(model_gradnorm * model_gradnorm)
         alpha = 1.0
@@ -225,10 +278,17 @@ def _solve_cubic_subproblem(
                 model_value = candidate_value
                 model_gradient = candidate_gradient
                 model_gradnorm = as_float(M.norm(x, model_gradient))
+                if not math.isfinite(model_gradnorm):
+                    raise FloatingPointError("The cubic model gradient became nonfinite.")
                 accepted = True
                 break
             alpha *= 0.5
         if not accepted:
+            reason = "subproblem line search failed"
+            break
+        if model_gradnorm <= tolerance * gradient_norm:
+            converged = True
+            reason = "model-gradient tolerance"
             break
 
     return (
@@ -238,6 +298,8 @@ def _solve_cubic_subproblem(
             "subproblem_iterations": inner_iterations,
             "subproblem_gradient_norm": model_gradnorm,
             "cauchy_length": cauchy_length,
+            "subproblem_converged": converged,
+            "subproblem_reason": reason,
         },
     )
 

@@ -9,12 +9,20 @@ import time
 
 import jax
 
+from geojax.geometry.base import (
+    validate_boolean,
+    validate_integer,
+    validate_nonnegative,
+    validate_positive,
+)
+
 from .minimize import (
     Array,
     InfoEntry,
     StatsFn,
     StopFn,
     as_float,
+    coerce_key,
     cost_and_grad,
     get,
     make_info,
@@ -26,6 +34,8 @@ from .minimize import (
     tree_lincomb,
     tree_neg,
     tree_zeros_like,
+    validate_stopping_controls,
+    validate_tangent,
 )
 
 
@@ -43,8 +53,8 @@ class ConstantSchedule:
     stepsize: float = 1e-2
 
     def __call__(self, iteration: int) -> float:
-        del iteration
-        return float(self.stepsize)
+        validate_integer(iteration, name="iteration", minimum=0)
+        return validate_positive(self.stepsize, name="stepsize")
 
 
 @dataclass(frozen=True)
@@ -57,8 +67,15 @@ class PolynomialDecay:
     minimum_stepsize: float = 0.0
 
     def __call__(self, iteration: int) -> float:
-        value = self.initial_stepsize / (1.0 + self.decay_rate * iteration) ** self.power
-        return max(float(value), float(self.minimum_stepsize))
+        iteration = validate_integer(iteration, name="iteration", minimum=0)
+        initial_stepsize = validate_positive(self.initial_stepsize, name="initial_stepsize")
+        decay_rate = validate_nonnegative(self.decay_rate, name="decay_rate")
+        power = validate_nonnegative(self.power, name="power")
+        minimum_stepsize = validate_nonnegative(self.minimum_stepsize, name="minimum_stepsize")
+        if minimum_stepsize > initial_stepsize:
+            raise ValueError("minimum_stepsize cannot exceed initial_stepsize.")
+        value = initial_stepsize / (1.0 + decay_rate * iteration) ** power
+        return max(float(value), minimum_stepsize)
 
 
 @dataclass(frozen=True)
@@ -70,9 +87,15 @@ class CosineDecay:
     decay_steps: int = 1000
 
     def __call__(self, iteration: int) -> float:
-        progress = min(max(float(iteration) / max(int(self.decay_steps), 1), 0.0), 1.0)
+        iteration = validate_integer(iteration, name="iteration", minimum=0)
+        decay_steps = validate_integer(self.decay_steps, name="decay_steps", minimum=1)
+        initial_stepsize = validate_positive(self.initial_stepsize, name="initial_stepsize")
+        final_stepsize = validate_nonnegative(self.final_stepsize, name="final_stepsize")
+        if final_stepsize > initial_stepsize:
+            raise ValueError("final_stepsize cannot exceed initial_stepsize.")
+        progress = min(max(float(iteration) / decay_steps, 0.0), 1.0)
         weight = 0.5 * (1.0 + math.cos(math.pi * progress))
-        return float(self.final_stepsize + weight * (self.initial_stepsize - self.final_stepsize))
+        return float(final_stepsize + weight * (initial_stepsize - final_stepsize))
 
 
 @dataclass(frozen=True)
@@ -96,6 +119,7 @@ class StochasticGradient:
     stopfun: Optional[StopFn] = None
 
     def solve(self, problem: Any) -> tuple[Array, float, List[InfoEntry]]:
+        validate_stopping_controls(self)
         M = require(problem, "M")
         x = require(problem, "x0")
         sample_batch = get(problem, "sample_batch", None)
@@ -105,19 +129,26 @@ class StochasticGradient:
                 "StochasticGradient requires a FiniteSum-like problem with "
                 "sample_batch and batch_cost_and_grad methods."
             )
-        if self.batch_size <= 0 or self.evaluation_period <= 0:
-            raise ValueError("batch_size and evaluation_period must be positive.")
-        if not 0.0 <= self.momentum < 1.0:
+        batch_size = validate_integer(self.batch_size, name="batch_size", minimum=1)
+        evaluation_period = validate_integer(
+            self.evaluation_period, name="evaluation_period", minimum=1
+        )
+        momentum = validate_nonnegative(self.momentum, name="momentum")
+        if momentum >= 1.0:
             raise ValueError("momentum must lie in [0, 1).")
+        clip_norm = (
+            None if self.clip_norm is None else validate_positive(self.clip_norm, name="clip_norm")
+        )
+        replace_batches = validate_boolean(self.replace, name="replace")
+        if not callable(self.step_schedule):
+            raise TypeError("step_schedule must be callable.")
 
         local_key = None
         split_key = get(problem, "split_key", None) if self.key is None else None
         if not callable(split_key):
-            local_key = (
-                jax.random.key(0)
-                if self.key is None
-                else (jax.random.key(self.key) if isinstance(self.key, int) else self.key)
-            )
+            local_key = coerce_key(self.key)
+            if local_key is None:
+                local_key = jax.random.key(0)
 
         def next_key() -> Array:
             nonlocal local_key
@@ -143,6 +174,7 @@ class StochasticGradient:
                 x=x,
                 solver=self,
                 full_evaluation=True,
+                evaluation_scope="full",
             )
         )
         print_iteration_header(self.verbosity)
@@ -158,44 +190,81 @@ class StochasticGradient:
                         current,
                         cost=as_float(f),
                         gradnorm=as_float(M.norm(x, full_gradient)),
-                        extra={**current.extra, "full_evaluation": True},
+                        extra={
+                            **current.extra,
+                            "full_evaluation": True,
+                            "evaluation_scope": "full",
+                        },
                     )
                 info[-1] = replace(current, reason=reason)
                 if self.verbosity >= 1:
                     print(reason)
                 break
 
-            indices = sample_batch(next_key(), self.batch_size, replace=self.replace)
+            indices = sample_batch(next_key(), batch_size, replace=replace_batches)
             _, stochastic_gradient = batch_cost_and_grad(x, indices)
+            stochastic_gradient = validate_tangent(
+                M,
+                x,
+                stochastic_gradient,
+                name="mini-batch Riemannian gradient",
+            )
             stochastic_norm = as_float(M.norm(x, stochastic_gradient))
-            if self.clip_norm is not None and stochastic_norm > float(self.clip_norm):
+            if clip_norm is not None and stochastic_norm > clip_norm:
                 stochastic_gradient = tree_lincomb(
-                    float(self.clip_norm) / max(stochastic_norm, 1e-300),
+                    clip_norm / max(stochastic_norm, 1e-300),
                     stochastic_gradient,
                 )
-                stochastic_norm = float(self.clip_norm)
+                stochastic_norm = clip_norm
 
             velocity = tree_lincomb(
-                float(self.momentum),
+                momentum,
                 velocity,
                 1.0,
                 stochastic_gradient,
             )
             direction = tree_neg(velocity)
-            learning_rate = float(self.step_schedule(current.iter))
-            if not math.isfinite(learning_rate) or learning_rate <= 0.0:
-                raise ValueError("step_schedule must return a positive finite value.")
+            scheduled_value = self.step_schedule(current.iter)
+            if isinstance(scheduled_value, bool):
+                raise TypeError("step_schedule must return a real scalar, not a boolean.")
+            learning_rate = float(scheduled_value)
+            if not math.isfinite(learning_rate) or learning_rate < 0.0:
+                raise ValueError("step_schedule must return a finite nonnegative value.")
+            if learning_rate == 0.0:
+                reason = "Step schedule reached a zero learning rate."
+                if not bool(current.extra.get("full_evaluation", False)):
+                    f, full_gradient = cost_and_grad(problem, x)
+                    current = replace(
+                        current,
+                        cost=as_float(f),
+                        gradnorm=as_float(M.norm(x, full_gradient)),
+                        extra={
+                            **current.extra,
+                            "full_evaluation": True,
+                            "evaluation_scope": "full",
+                        },
+                    )
+                info[-1] = replace(current, reason=reason)
+                if self.verbosity >= 1:
+                    print(reason)
+                break
             stepnorm = learning_rate * as_float(M.norm(x, direction))
             newx = retract(M, x, direction, learning_rate)
             velocity = transport(M, x, newx, velocity)
             x = newx
 
             next_iteration = current.iter + 1
-            full_evaluation = next_iteration % int(self.evaluation_period) == 0
+            full_evaluation = next_iteration % evaluation_period == 0
             if full_evaluation:
                 f, diagnostic_gradient = cost_and_grad(problem, x)
             else:
                 f, diagnostic_gradient = batch_cost_and_grad(x, indices)
+                diagnostic_gradient = validate_tangent(
+                    M,
+                    x,
+                    diagnostic_gradient,
+                    name="diagnostic mini-batch Riemannian gradient",
+                )
             gradnorm = M.norm(x, diagnostic_gradient)
             info.append(
                 make_info(
@@ -209,9 +278,10 @@ class StochasticGradient:
                     x=x,
                     solver=self,
                     learning_rate=learning_rate,
-                    batch_size=int(self.batch_size),
+                    batch_size=batch_size,
                     stochastic_gradnorm=stochastic_norm,
                     full_evaluation=full_evaluation,
+                    evaluation_scope="full" if full_evaluation else "mini_batch",
                 )
             )
 
@@ -227,6 +297,12 @@ def _stochastic_stopping_reason(
     solver: StochasticGradient,
 ) -> str:
     current = info[-1]
+    if not math.isfinite(float(current.cost)):
+        return "Nonfinite cost encountered."
+    if bool(current.extra.get("full_evaluation", False)) and not math.isfinite(
+        float(current.gradnorm)
+    ):
+        return "Nonfinite gradient norm encountered."
     if bool(current.extra.get("full_evaluation", False)) and current.gradnorm <= solver.tolgradnorm:
         return f"Gradient norm tolerance reached: {current.gradnorm:g} <= {solver.tolgradnorm:g}."
     if current.iter >= solver.maxiter:
@@ -236,7 +312,14 @@ def _stochastic_stopping_reason(
     if current.iter > 0 and current.stepsize < solver.minstepsize:
         return f"Last stepsize smaller than options.minstepsize = {solver.minstepsize:g}."
     if solver.stopfun is not None:
-        stop, reason = solver.stopfun(problem, x, current)
+        result = solver.stopfun(problem, x, current)
+        if not isinstance(result, tuple) or len(result) != 2:
+            raise TypeError("stopfun must return a pair (stop, reason).")
+        stop, reason = result
+        if not isinstance(stop, bool):
+            raise TypeError("stopfun's stop value must be a boolean.")
+        if not isinstance(reason, str):
+            raise TypeError("stopfun's reason must be a string.")
         if stop:
             return reason or "User stopfun triggered."
     return ""

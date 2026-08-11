@@ -58,7 +58,17 @@ and permutation tests carry no end-to-end gradient guarantee.
 Randomized methods receive an explicit JAX key. Public parameter names follow
 `n_clusters`, `n_neighbors`, `n_components`, `sample_weight`, `maxiter`, and
 `tol`. Iterative immutable results expose `objective`, `iterations`,
-`converged`, `reason`, and family-specific diagnostics.
+`converged`, `reason`, and family-specific diagnostics. Treat `converged` as
+the stable machine-readable status; `reason` is descriptive text and may gain
+detail as an algorithm's convergence certificate improves.
+
+An outer model may retain an incomplete internal fit when that point is still
+finite and geometrically valid, but it must propagate the status through its
+own `converged` and `reason` fields and retain the component result in
+`diagnostics`. Inference routines that require a resolved null statistic must
+instead fail explicitly when an internal mean does not converge. Small updates
+from a decaying learning rate are not a convergence certificate: stochastic
+summaries also evaluate a full-data stationarity residual.
 
 Fitted predictors own the geometry and validated training representation they
 need for prediction. A classifier must preserve the user's class labels while
@@ -73,6 +83,13 @@ Dense distance algorithms must state their $O(n^2)$ memory use; graph methods
 with cubic work must say so. Implementations should use `squared_dist` in
 smooth squared-distance objectives and preserve each geometry's cut-locus
 branch policy.
+
+Spectral methods must normalize their physical scale before eigendecomposition
+and report the normalization in diagnostics. If mapping the normalized result
+back to physical units would overflow the active dtype, the method raises a
+clear rescaling error rather than returning nonfinite eigenvalues. Probability
+labels on distance classifiers must be described as scores unless the model
+implements and validates a probabilistic calibration procedure.
 
 A new method is incomplete until tests cover:
 

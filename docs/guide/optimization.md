@@ -42,7 +42,7 @@ $$
 \min_{x\in\mathcal M} f(x).
 $$
 
-For a residual map $r:\mathcal M\to\mathbb R^m$, `LeastSquares` constructs
+For a real residual map $r:\mathcal M\to\mathbb R^m$, `LeastSquares` constructs
 
 $$
 f(x)=\frac12\lVert r(x)\rVert_2^2
@@ -77,6 +77,10 @@ problem = FiniteSum(
 )
 ```
 
+Stochastic history rows label `extra["evaluation_scope"]` as `"full"` or
+`"mini_batch"`. Their `cost` and `gradnorm` have that scope; the terminating row
+is always refreshed with the full objective and gradient.
+
 ## Choosing a solver
 
 | Solver | Useful starting point |
@@ -99,6 +103,11 @@ Gauss--Newton and Levenberg--Marquardt require `LeastSquares`.
 `StochasticGradient` requires `FiniteSum`, and `AlternatingGradient` requires a
 `Product` geometry. All remaining solvers, including the derivative-free
 methods, consume `Minimize`.
+
+`NelderMead` declares convergence only when both the vertex-cost spread and
+the intrinsic simplex diameter meet `tolcostspread` and
+`tolsimplexdiameter`, respectively. Requiring both prevents a flat objective
+from terminating with a still-wide simplex.
 
 The table spans classical spectral, quasi-Newton, derivative-free, and
 second-order families
@@ -128,12 +137,12 @@ Gauss--Newton use an unnormalized adaptive Armijo search, so a unit Newton step
 is tested first. Every strategy returns common cost/gradient evaluation counts
 and its accepted multiplier in `InfoEntry.linesearch`.
 
-`StrongWolfe` pairs the trial gradient with the transported initial direction.
-That is the exact derivative of the search curve for a geodesic with parallel
-transport. With a general retraction and vector transport, it is the standard
-transported-derivative proxy, so classical Wolfe guarantees require the usual
-compatibility assumptions. The sufficient-decrease and curvature conditions
-trace to {cite:t}`armijo1966minimization` and {cite:t}`wolfe1969convergence`.
+`StrongWolfe` pairs the trial gradient with the JAX-differentiated velocity of
+the configured retraction curve. The curvature test therefore uses the actual
+derivative even for a nonlinear retraction; the retraction must be
+JAX-differentiable in its scalar multiplier. The sufficient-decrease and
+curvature conditions trace to {cite:t}`armijo1966minimization` and
+{cite:t}`wolfe1969convergence`.
 
 ## Second-order models
 
@@ -157,8 +166,8 @@ Automatic ambient-to-Riemannian Hessian conversion is currently exact for:
 
 | Exact automatic path | Geometries |
 |---|---|
-| Ambient `egrad` or autodiff cost | `Euclidean`, `Sphere`, `SphereExtrinsic`, `Torus`, `GrassmannProjection`, `GeneralizedStiefel`, `StiefelEuclidean`, `SpecialOrthogonal`, `SpecialEuclidean` |
-| JVP of a supplied Riemannian `grad` | `Euclidean`, `Sphere`, `SphereExtrinsic`, `Torus`, `GeneralizedStiefel`, `StiefelEuclidean`, `SpecialOrthogonal`, `SpecialEuclidean` |
+| Ambient `egrad` or autodiff cost | `Euclidean`, `Sphere`, `SphereExtrinsic`, `Torus`, `Grassmann`, `GrassmannProjection`, `GeneralizedStiefel`, `StiefelEuclidean`, `SpecialOrthogonal`, `SpecialEuclidean` |
+| JVP of a supplied Riemannian `grad` | `Euclidean`, `Sphere`, `SphereExtrinsic`, `Torus`, `Grassmann`, `GrassmannProjection`, `GeneralizedStiefel`, `StiefelEuclidean`, `SpecialOrthogonal`, `SpecialEuclidean` |
 | Product geometry | Exact only when every factor supports the selected path |
 
 For every other geometry, supply `rhess_vec`. GeoJAX raises an error instead of

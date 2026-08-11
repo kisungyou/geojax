@@ -67,7 +67,7 @@ cluster_scales = jnp.array([0.070, 0.065, 0.075])
 keys = jax.random.split(jax.random.key(17), 3)
 
 disk_points = jnp.concatenate([
-    center + scale * jax.random.normal(key, shape=(36, 2))
+    center + scale * jax.random.normal(key, shape=(18, 2))
     for center, scale, key in zip(disk_centers, cluster_scales, keys)
 ])
 radius = jnp.linalg.norm(disk_points, axis=1, keepdims=True)
@@ -96,6 +96,11 @@ $$
 
 This fixed-point calculation is nested inside each Lloyd iteration.
 
+The executable example uses 54 well-separated observations, one seeded
+initialization, and a moderate stopping tolerance so the live documentation
+build stays quick. For a final scientific fit, increase `n_init` and
+`center_maxiter` and tighten `tol` after checking the reported diagnostics.
+
 ```{code-cell} python
 result = kmeans(
     M,
@@ -103,10 +108,10 @@ result = kmeans(
     n_clusters=3,
     key=jax.random.key(29),
     init="kmeans++",
-    n_init=5,
-    maxiter=30,
-    center_maxiter=35,
-    tol=1e-7,
+    n_init=1,
+    maxiter=8,
+    center_maxiter=20,
+    tol=1e-2,
 )
 
 center_disk = M.to_poincare(result.centers)

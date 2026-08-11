@@ -22,6 +22,36 @@ def test_product_accepts_nested_pytrees():
     assert set(x["nested"]) == {"phase", "cov"}
 
 
+def test_product_accepts_product_geometries_as_nested_factors():
+    inner = Product({"direction": Sphere(size=2), "phase": Torus(size=2)})
+    M = Product({"inner": inner, "cov": SPDLogEuclidean(size=(2, 2))})
+    scales = jnp.array([0.5, 1.5])
+    x = M.random_point(jax.random.key(10), sample_shape=(2,))
+    u = M.random_tangent(
+        jax.random.key(11),
+        x,
+        scale=scales,
+        normalize=True,
+    )
+
+    assert jnp.all(M.belongs(x))
+    assert jnp.all(M.is_tangent(x, u))
+    assert jnp.allclose(M.norm(x, u), scales, atol=2e-5, rtol=2e-5)
+
+    steps = jnp.array([0.2, 0.7])
+    batched = M.retr(x, u, steps)
+    mapped = jax.vmap(lambda point, tangent, step: M.retr(point, tangent, step))(
+        x,
+        u,
+        steps,
+    )
+    for actual, expected in zip(
+        jax.tree_util.tree_leaves(batched),
+        jax.tree_util.tree_leaves(mapped),
+    ):
+        assert jnp.allclose(actual, expected, atol=2e-5, rtol=2e-5)
+
+
 def test_product_rejects_wrong_tree_structure():
     M = Product({"a": Sphere(size=3), "b": Torus(size=2)})
     x = M.random_point(jax.random.key(0))

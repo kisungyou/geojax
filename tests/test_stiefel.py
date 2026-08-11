@@ -89,7 +89,7 @@ def test_stiefel_gradient_conversion_and_isometric_transport(geometry):
 
 
 @pytest.mark.parametrize("geometry", [Stiefel, StiefelEuclidean])
-def test_stiefel_optimization_smoke(geometry):
+def test_stiefel_optimization_smoke(geometry, dtype_atol):
     M = geometry(size=(4, 2))
     target = M.random_point(jax.random.key(0))
     initial = M.exp(target, M.random_tangent(jax.random.key(1), target, scale=0.15))
@@ -102,5 +102,5 @@ def test_stiefel_optimization_smoke(geometry):
     ).solve()
 
     assert final_cost < 1e-12
-    assert history[-1].gradnorm < 1e-7
+    assert history[-1].gradnorm < max(1e-7, dtype_atol)
     assert jnp.allclose(estimate, target, atol=2e-6)

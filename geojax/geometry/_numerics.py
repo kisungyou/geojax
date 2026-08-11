@@ -7,7 +7,7 @@ the non-unique logarithm at the antipode of a sphere.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Callable
 
 import jax
 import jax.numpy as jnp
@@ -26,6 +26,69 @@ def squared_norm(x: Array, *, axis: int | tuple[int, ...], keepdims: bool = Fals
     """Squared Euclidean norm with negative roundoff clipped to zero."""
     value = jnp.sum(jnp.asarray(x) * jnp.asarray(x), axis=axis, keepdims=keepdims)
     return jnp.maximum(value, 0.0)
+
+
+def stable_norm(
+    x: Array,
+    *,
+    axis: int | tuple[int, ...],
+    keepdims: bool = False,
+) -> Array:
+    """Euclidean norm evaluated after max-absolute-value rescaling.
+
+    The rescaling prevents avoidable overflow and underflow in ``sum(x**2)``.
+    At the origin, :func:`sqrt_nonnegative` selects the zero subgradient.
+    """
+    value = jnp.asarray(x)
+    maximum = jnp.max(jnp.abs(value), axis=axis, keepdims=True)
+    safe_maximum = jnp.where(maximum > 0.0, maximum, jnp.ones_like(maximum))
+    normalized_squared = jnp.sum(
+        (value / safe_maximum) ** 2,
+        axis=axis,
+        keepdims=True,
+    )
+    result = maximum * sqrt_nonnegative(normalized_squared)
+    if keepdims:
+        return result
+    return jnp.squeeze(result, axis=axis)
+
+
+def stable_metric_norm(
+    vector: Array,
+    quadratic_form: Callable[[Array], Array],
+    *,
+    axis: int | tuple[int, ...],
+) -> Array:
+    """Norm of a homogeneous positive quadratic form without squaring large data."""
+    value = jnp.asarray(vector)
+    maximum = jnp.max(jnp.abs(value), axis=axis, keepdims=True)
+    safe_maximum = jnp.where(maximum > 0.0, maximum, jnp.ones_like(maximum))
+    normalized = value / safe_maximum
+    scale = jnp.squeeze(maximum, axis=axis)
+    return scale * sqrt_nonnegative(jnp.maximum(quadratic_form(normalized), 0.0))
+
+
+@jax.custom_jvp
+def sqrt_nonnegative(value: Array) -> Array:
+    """Square root on nonnegative inputs with a zero JVP at the origin.
+
+    A norm, and therefore a metric distance, is not classically differentiable
+    at zero.  Choosing the zero element of its subdifferential prevents the
+    removable ``0 * inf`` produced when users differentiate expressions such
+    as ``dist(x, y) ** 2``.  Away from zero this is the ordinary square root.
+    """
+    return jnp.sqrt(jnp.maximum(jnp.asarray(value), 0.0))
+
+
+@sqrt_nonnegative.defjvp
+def _sqrt_nonnegative_jvp(primals, tangents):
+    (value,), (value_dot,) = primals, tangents
+    raw = jnp.asarray(value)
+    positive = raw > 0.0
+    safe_value = jnp.where(positive, raw, jnp.ones_like(raw))
+    derivative = 0.5 / jnp.sqrt(safe_value)
+    tangent = jnp.where(positive, derivative * value_dot, 0.0)
+    return sqrt_nonnegative(raw), tangent
 
 
 def cos_from_squared_norm(squared_radius: Array) -> Array:
@@ -83,16 +146,16 @@ def tanhc_from_squared_norm(squared_radius: Array) -> Array:
 
 def atanhc_from_squared_norm(squared_radius: Array, eps: float = 0.0) -> Array:
     """Evaluate ``atanh(sqrt(s)) / sqrt(s)`` at zero and inside the unit ball."""
+    del eps
     s = jnp.maximum(jnp.asarray(squared_radius), 0.0)
-    dtype = s.dtype
     cutoff = _series_cutoff(s)
-    upper = (1.0 - jnp.maximum(jnp.asarray(eps, dtype=dtype), jnp.finfo(dtype).eps)) ** 2
-    clipped = jnp.minimum(s, upper)
-    regular_s = jnp.where(clipped > cutoff, clipped, jnp.ones_like(clipped))
+    valid = s < 1.0
+    regular_s = jnp.where(valid & (s > cutoff), s, 0.25 * jnp.ones_like(s))
     radius = jnp.sqrt(regular_s)
     regular = jnp.arctanh(radius) / radius
-    series = 1.0 + clipped / 3.0 + clipped * clipped / 5.0
-    return jnp.where(clipped > cutoff, regular, series)
+    series = 1.0 + s / 3.0 + s * s / 5.0
+    interior = jnp.where(s > cutoff, regular, series)
+    return jnp.where(valid, interior, jnp.full_like(interior, jnp.nan))
 
 
 @jax.custom_jvp
@@ -104,7 +167,8 @@ def _acos_over_sin_from_cosine(cosine: Array) -> Array:
     safe_sine_squared = jnp.where(sine_squared > 0.0, sine_squared, jnp.ones_like(c))
     regular = jnp.arccos(c) / jnp.sqrt(safe_sine_squared)
     series = 1.0 + delta / 3.0 + 2.0 * delta**2 / 15.0 + 2.0 * delta**3 / 35.0
-    return jnp.where(delta <= cutoff, series, regular)
+    result = jnp.where(delta <= cutoff, series, regular)
+    return jnp.where(c <= -1.0, jnp.full_like(result, jnp.inf), result)
 
 
 @_acos_over_sin_from_cosine.defjvp
@@ -123,7 +187,11 @@ def _acos_over_sin_from_cosine_jvp(primals, tangents):
     regular_derivative = (c * jnp.arccos(c) - sine) / (sine * safe_sine_squared)
     series_derivative = -(1.0 / 3.0 + 4.0 * delta / 15.0 + 6.0 * delta**2 / 35.0)
     derivative = jnp.where(delta <= cutoff, series_derivative, regular_derivative)
-    return _acos_over_sin_from_cosine(c), derivative * cosine_dot
+    derivative = jnp.where(c <= -1.0, jnp.full_like(derivative, -jnp.inf), derivative)
+    # The primal clips roundoff outside the cosine range. Its derivative must
+    # consequently vanish there rather than extending the interior formula.
+    tangent = jnp.where((cosine >= -1.0) & (cosine <= 1.0), derivative * cosine_dot, 0.0)
+    return _acos_over_sin_from_cosine(c), tangent
 
 
 def acos_over_sin(cosine: Array, sine_squared: Array | None = None) -> Array:
@@ -144,15 +212,14 @@ def acos_over_sin(cosine: Array, sine_squared: Array | None = None) -> Array:
     delta = 1.0 - c
     cutoff = _series_cutoff(delta)
     sine_squared = jnp.maximum(jnp.asarray(sine_squared), 0.0)
-    safe_sine_squared = jnp.where(
-        sine_squared > 0.0,
-        sine_squared,
-        jnp.ones_like(sine_squared),
-    )
-    sine = jnp.sqrt(safe_sine_squared)
-    regular = jnp.arctan2(sine, c) / sine
+    positive_sine = sine_squared > 0.0
+    safe_sine = jnp.sqrt(jnp.where(positive_sine, sine_squared, jnp.ones_like(sine_squared)))
+    sine = jnp.where(positive_sine, safe_sine, jnp.zeros_like(safe_sine))
+    regular = jnp.arctan2(sine, c) / safe_sine
     series = 1.0 + delta / 3.0 + 2.0 * delta**2 / 15.0 + 2.0 * delta**3 / 35.0
-    return jnp.where(delta <= cutoff, series, regular)
+    result = jnp.where(delta <= cutoff, series, regular)
+    cut_locus = (c <= -1.0) & (sine_squared <= 0.0)
+    return jnp.where(cut_locus, jnp.full_like(result, jnp.inf), result)
 
 
 @jax.custom_jvp
@@ -210,7 +277,11 @@ def _acos_squared_jvp(primals, tangents):
     derivative = -2.0 * acos_over_sin(c)
     dtype = jnp.result_type(c, float)
     at_cut = c <= -1.0 + 8.0 * jnp.finfo(dtype).eps
-    tangent = jnp.where(at_cut, jnp.nan, derivative * cosine_dot)
+    tangent = jnp.where(
+        at_cut,
+        jnp.nan,
+        jnp.where(cosine > 1.0, 0.0, derivative * cosine_dot),
+    )
     return primal, tangent
 
 
@@ -224,10 +295,27 @@ def acosh_squared(alpha: Array) -> Array:
 @acosh_squared.defjvp
 def _acosh_squared_jvp(primals, tangents):
     (alpha,), (alpha_dot,) = primals, tangents
-    a = jnp.maximum(jnp.asarray(alpha), 1.0)
+    raw = jnp.asarray(alpha)
+    a = jnp.maximum(raw, 1.0)
     primal = acosh_squared(a)
-    tangent = 2.0 * acosh_over_sqrt(a) * alpha_dot
+    tangent = jnp.where(raw >= 1.0, 2.0 * acosh_over_sqrt(a) * alpha_dot, 0.0)
     return primal, tangent
+
+
+def asinh_squared_from_squared_chord(squared_chord: Array) -> Array:
+    """Convert a nonnegative hyperbolic chord square to geodesic distance squared.
+
+    For points on the unit hyperboloid, a Lorentzian chord with squared
+    length ``c`` has geodesic distance ``2 * asinh(sqrt(c) / 2)``.  Evaluating
+    the squared expression as a polynomial near zero avoids both the square
+    root singularity and the loss of the small increment in ``acosh(1 + c/2)``.
+    """
+    c = jnp.maximum(jnp.asarray(squared_chord), 0.0)
+    cutoff = _series_cutoff(c)
+    regular_c = jnp.where(c > cutoff, c, jnp.ones_like(c))
+    regular = 4.0 * jnp.arcsinh(0.5 * jnp.sqrt(regular_c)) ** 2
+    series = c - c * c / 12.0 + c * c * c / 90.0
+    return jnp.where(c > cutoff, regular, series)
 
 
 def matrix_expm(A: Array) -> Array:
@@ -245,12 +333,16 @@ __all__ = [
     "acos_squared",
     "acosh_over_sqrt",
     "acosh_squared",
+    "asinh_squared_from_squared_chord",
     "atanhc_from_squared_norm",
     "cos_from_squared_norm",
     "cosh_from_squared_norm",
     "matrix_expm",
     "sinc_from_squared_norm",
     "sinhc_from_squared_norm",
+    "stable_metric_norm",
+    "stable_norm",
+    "sqrt_nonnegative",
     "squared_norm",
     "tanhc_from_squared_norm",
 ]

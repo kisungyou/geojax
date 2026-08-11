@@ -136,10 +136,68 @@ def test_optimizer_protocol_and_operation_metadata(M):
         else:
             assert kind in {"proxy", "numerical-local"}
 
+    assert M.operation_kind("squared_dist") == M.operation_kind("dist")
+
     transport_kind = M.operation_kind("transport")
     assert transport_kind in {"parallel", "isometric", "vector"}
     assert M.operation_kind("ehess_to_rhess") in {"exact", "projection"}
     assert M.operation_kind("rgrad_jvp") in {"exact", "projection"}
+
+
+@pytest.mark.parametrize("M", geometries())
+def test_compatibility_aliases_use_virtual_dispatch(M):
+    x = M.random_point(jax.random.key(25))
+    leaves, treedef = jax.tree_util.tree_flatten(x)
+    keys = jax.random.split(jax.random.key(26), len(leaves))
+    ambient = jax.tree_util.tree_unflatten(
+        treedef,
+        [
+            leaf + 0.1 * jax.random.normal(key, leaf.shape, dtype=leaf.dtype)
+            for key, leaf in zip(keys, leaves)
+        ],
+    )
+    projected = M.project(ambient)
+    assert_tree_allclose(M.normalize(ambient), projected, atol=1e-6)
+
+    tangent_ambient = jax.tree_util.tree_unflatten(
+        treedef,
+        [jax.random.normal(key, leaf.shape, dtype=leaf.dtype) for key, leaf in zip(keys, leaves)],
+    )
+    tangent = M.tangent_project(projected, tangent_ambient)
+    for alias in (M.projection, M.proj, M.to_tangent):
+        assert_tree_allclose(alias(projected, tangent_ambient), tangent, atol=1e-6)
+
+    rgrad = M.egrad_to_rgrad(projected, tangent_ambient)
+    assert_tree_allclose(M.egrad2rgrad(projected, tangent_ambient), rgrad, atol=1e-6)
+    transported = M.transport(projected, projected, tangent)
+    assert_tree_allclose(M.transp(projected, projected, tangent), transported, atol=1e-6)
+
+
+@pytest.mark.parametrize("M", geometries())
+def test_euclidean_to_riemannian_gradient_is_metric_dual(M):
+    x = M.random_point(jax.random.key(30))
+    u = M.random_tangent(jax.random.key(31), x, scale=0.1)
+    leaves, treedef = jax.tree_util.tree_flatten(x)
+    keys = jax.random.split(jax.random.key(32), len(leaves))
+    ambient_gradient = jax.tree_util.tree_unflatten(
+        treedef,
+        [jax.random.normal(key, leaf.shape, dtype=leaf.dtype) for key, leaf in zip(keys, leaves)],
+    )
+    rgrad = M.egrad_to_rgrad(x, ambient_gradient)
+    differential = sum(
+        jnp.vdot(gradient_leaf, tangent_leaf)
+        for gradient_leaf, tangent_leaf in zip(
+            jax.tree_util.tree_leaves(ambient_gradient),
+            jax.tree_util.tree_leaves(u),
+        )
+    )
+    assert bool(jnp.all(M.is_tangent(x, rgrad)))
+    assert jnp.allclose(
+        M.inner(x, rgrad, u),
+        differential,
+        atol=3e-5,
+        rtol=3e-5,
+    )
 
 
 @pytest.mark.parametrize("M", geometries())
@@ -157,6 +215,43 @@ def test_batch_helpers_and_random_sample_shape(M):
     assert jnp.shape(dists) == (3,)
     assert len(jax.tree_util.tree_leaves(logs)) > 0
     assert bool(jnp.all(M.belongs(exps)))
+
+
+@pytest.mark.parametrize("M", [Euclidean(size=2), *geometries()])
+def test_batched_tangent_coefficients_scale_samples_not_event_coordinates(M):
+    coefficients = jnp.array([0.25, 0.75])
+    x = M.random_point(jax.random.key(40), sample_shape=(2,))
+    scaled = M.random_tangent(
+        jax.random.key(41),
+        x,
+        scale=coefficients,
+        normalize=True,
+    )
+
+    assert bool(jnp.all(M.is_tangent(x, scaled)))
+    assert jnp.allclose(
+        M.norm(x, scaled),
+        coefficients,
+        atol=5e-5,
+        rtol=5e-5,
+    )
+
+    u = M.random_tangent(jax.random.key(42), x, scale=1e-3)
+    batched_retraction = M.retr(x, u, coefficients)
+    mapped_retraction = jax.vmap(lambda point, tangent, step: M.retr(point, tangent, step))(
+        x, u, coefficients
+    )
+    assert_tree_allclose(batched_retraction, mapped_retraction, atol=2e-5)
+
+    batched_combination = M.lincomb(x, coefficients, u)
+    mapped_combination = jax.vmap(
+        lambda point, tangent, coefficient: M.lincomb(
+            point,
+            coefficient,
+            tangent,
+        )
+    )(x, u, coefficients)
+    assert_tree_allclose(batched_combination, mapped_combination, atol=2e-5)
 
 
 @pytest.mark.parametrize("M", geometries())
@@ -177,8 +272,7 @@ def test_project_repairs_zero_and_noisy_ambient_inputs(M):
         projected = M.project(ambient)
         assert bool(jnp.all(M.belongs(projected))), type(M).__name__
         assert all(
-            bool(jnp.all(jnp.isfinite(leaf)))
-            for leaf in jax.tree_util.tree_leaves(projected)
+            bool(jnp.all(jnp.isfinite(leaf))) for leaf in jax.tree_util.tree_leaves(projected)
         )
 
 

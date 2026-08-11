@@ -25,18 +25,14 @@ SCIENTIFIC_GUIDES = {
 
 def test_learning_api_documents_every_public_symbol_once():
     text = (DOCS / "api" / "learning.md").read_text(encoding="utf-8")
-    documented_functions = re.findall(
-        r"\.\. autofunction::\s+([A-Za-z_][A-Za-z0-9_]*)", text
-    )
+    documented_functions = re.findall(r"\.\. autofunction::\s+([A-Za-z_][A-Za-z0-9_]*)", text)
     documented_classes = re.findall(
         r"\.\. (?:autoclass|autoexception)::\s+([A-Za-z_][A-Za-z0-9_]*)", text
     )
     public_functions = {
         name for name in learning.__all__ if inspect.isfunction(getattr(learning, name))
     }
-    public_classes = {
-        name for name in learning.__all__ if inspect.isclass(getattr(learning, name))
-    }
+    public_classes = {name for name in learning.__all__ if inspect.isclass(getattr(learning, name))}
 
     assert set(documented_functions) == public_functions
     assert set(documented_classes) == public_classes

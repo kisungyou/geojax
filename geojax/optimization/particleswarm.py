@@ -10,6 +10,11 @@ import time
 import jax
 import jax.numpy as jnp
 
+from geojax.geometry.base import (
+    validate_integer,
+    validate_nonnegative,
+)
+
 from .minimize import (
     Array,
     InfoEntry,
@@ -19,16 +24,20 @@ from .minimize import (
     cost_value,
     make_info,
     require,
+    require_geometry_methods,
     retract,
     stopping_reason,
     transport,
     tree_lincomb,
-    tree_zeros_like,
+    validate_point,
+    validate_tangent,
 )
 
 
 @dataclass(frozen=True)
 class ParticleSwarm:
+    """Derivative-free particle swarm with tangent velocities and transport."""
+
     requires_gradient: bool = False
     swarm_size: int = 30
     inertia: float = 0.5
@@ -46,19 +55,47 @@ class ParticleSwarm:
     def solve(self, problem: Any) -> tuple[Array, float, List[InfoEntry]]:
         M = require(problem, "M")
         x0 = require(problem, "x0")
-        n_particles = max(int(self.swarm_size), 2)
+        n_particles = validate_integer(self.swarm_size, name="swarm_size", minimum=2)
+        initial_velocity_scale = validate_nonnegative(
+            self.initial_velocity_scale, name="initial_velocity_scale"
+        )
+        inertia = validate_nonnegative(self.inertia, name="inertia")
+        cognitive = validate_nonnegative(self.cognitive, name="cognitive")
+        social = validate_nonnegative(self.social, name="social")
+        require_geometry_methods(
+            M,
+            "random_point",
+            "random_tangent",
+            "log",
+            "norm",
+            "transport",
+            context="ParticleSwarm",
+        )
         start_time = time.perf_counter()
 
         particles = [x0]
         for _ in range(n_particles - 1):
-            particles.append(M.random_point(problem.split_key()))
+            particles.append(
+                validate_point(
+                    M,
+                    M.random_point(problem.split_key()),
+                    name="particle-swarm sample",
+                )
+            )
         velocities = [
-            M.random_tangent(problem.split_key(), x, scale=self.initial_velocity_scale)
-            if hasattr(M, "random_tangent")
-            else tree_zeros_like(x)
+            validate_tangent(
+                M,
+                x,
+                M.random_tangent(problem.split_key(), x, scale=initial_velocity_scale),
+                name="particle-swarm velocity",
+            )
             for x in particles
         ]
         costs = [as_float(cost_value(problem, x)) for x in particles]
+        if not all(math.isfinite(value) for value in costs):
+            raise FloatingPointError(
+                "ParticleSwarm requires finite objective values at every initial particle."
+            )
         pbest = list(particles)
         pbest_costs = list(costs)
         gidx = int(jnp.argmin(jnp.asarray(pbest_costs)))
@@ -96,35 +133,50 @@ class ParticleSwarm:
             for x, v, xb, _fb in zip(particles, velocities, pbest, pbest_costs):
                 key = problem.split_key()
                 r1, r2 = jax.random.uniform(key, shape=(2,))
-                to_pbest = M.log(x, xb) if hasattr(M, "log") else tree_zeros_like(x)
-                to_gbest = M.log(x, gbest) if hasattr(M, "log") else tree_zeros_like(x)
+                to_pbest = validate_tangent(
+                    M, x, M.log(x, xb), name="particle-to-personal-best displacement"
+                )
+                to_gbest = validate_tangent(
+                    M, x, M.log(x, gbest), name="particle-to-global-best displacement"
+                )
                 if hasattr(M, "lincomb"):
                     v_new = M.lincomb(
                         x,
-                        self.inertia,
+                        inertia,
                         v,
-                        self.cognitive * r1,
+                        cognitive * r1,
                         to_pbest,
-                        self.social * r2,
+                        social * r2,
                         to_gbest,
                     )
                 else:
                     v_new = tree_lincomb(
-                        self.inertia,
+                        inertia,
                         v,
-                        self.cognitive * r1,
+                        cognitive * r1,
                         to_pbest,
-                        self.social * r2,
+                        social * r2,
                         to_gbest,
                     )
+                validate_tangent(M, x, v_new, name="updated particle-swarm velocity")
                 x_new = retract(M, x, v_new, 1.0)
-                v_at_new = transport(M, x, x_new, v_new)
+                validate_point(M, x_new, name="updated particle")
+                v_at_new = validate_tangent(
+                    M,
+                    x_new,
+                    transport(M, x, x_new, v_new),
+                    name="transported particle-swarm velocity",
+                )
                 new_particles.append(x_new)
                 new_velocities.append(v_at_new)
                 stepnorms.append(as_float(M.norm(x, v_new)) if hasattr(M, "norm") else math.nan)
             particles = new_particles
             velocities = new_velocities
             costs = [as_float(cost_value(problem, x)) for x in particles]
+            if not all(math.isfinite(value) for value in costs):
+                raise FloatingPointError(
+                    "ParticleSwarm encountered a nonfinite particle objective."
+                )
             for i, (x, f) in enumerate(zip(particles, costs)):
                 if f < pbest_costs[i]:
                     pbest[i] = x

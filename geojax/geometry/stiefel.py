@@ -8,8 +8,15 @@ from typing import Any, NamedTuple, Sequence
 import jax
 import jax.numpy as jnp
 
-from .base import ExactGeometryMixin, Shape, as_sample_shape
-from ._numerics import matrix_expm
+from .base import (
+    ExactGeometryMixin,
+    Shape,
+    as_sample_shape,
+    validate_integer,
+    validate_nonnegative,
+    validate_positive,
+)
+from ._numerics import matrix_expm, stable_metric_norm, sqrt_nonnegative
 
 Array = Any
 
@@ -33,7 +40,7 @@ def _trace_inner(A: Array, B: Array) -> Array:
 def _parse_size(size: int | Sequence[int]) -> tuple[int, int]:
     if isinstance(size, int):
         raise ValueError("Stiefel size must be a pair (ambient_dim, frame_size).")
-    parsed = tuple(int(value) for value in size)
+    parsed = tuple(validate_integer(value, name="Stiefel size entry", minimum=1) for value in size)
     if len(parsed) != 2:
         raise ValueError("Stiefel size must be a pair (ambient_dim, frame_size).")
     n, k = parsed
@@ -86,16 +93,17 @@ class _StiefelBase(ExactGeometryMixin):
         log_damping: float = 1e-6,
     ) -> None:
         parsed = _parse_size(size)
-        if log_maxiter < 1:
-            raise ValueError("log_maxiter must be positive.")
-        if log_tol <= 0.0 or log_damping <= 0.0:
-            raise ValueError("log_tol and log_damping must be positive.")
+        log_maxiter = validate_integer(log_maxiter, name="Stiefel log_maxiter", minimum=1)
         object.__setattr__(self, "size", parsed)
-        object.__setattr__(self, "atol", float(atol))
-        object.__setattr__(self, "eps", float(eps))
-        object.__setattr__(self, "log_maxiter", int(log_maxiter))
-        object.__setattr__(self, "log_tol", float(log_tol))
-        object.__setattr__(self, "log_damping", float(log_damping))
+        object.__setattr__(self, "atol", validate_nonnegative(atol, name="Stiefel atol"))
+        object.__setattr__(self, "eps", validate_positive(eps, name="Stiefel eps"))
+        object.__setattr__(self, "log_maxiter", log_maxiter)
+        object.__setattr__(self, "log_tol", validate_positive(log_tol, name="Stiefel log_tol"))
+        object.__setattr__(
+            self,
+            "log_damping",
+            validate_positive(log_damping, name="Stiefel log_damping"),
+        )
 
     @property
     def n(self) -> int:
@@ -133,8 +141,6 @@ class _StiefelBase(ExactGeometryMixin):
         U, _, Vh = jnp.linalg.svd(A, full_matrices=False)
         return U @ Vh
 
-    normalize = project
-
     def is_tangent(self, X: Array, U: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
         if not self._shape_matches(X, U):
@@ -148,12 +154,12 @@ class _StiefelBase(ExactGeometryMixin):
         X, A = self._check_shapes(("X", X), ("A", A))
         return A - X @ _sym(_transpose(X) @ A)
 
-    projection = tangent_project
-    proj = tangent_project
-    to_tangent = tangent_project
-
     def norm(self, X: Array, U: Array) -> Array:
-        return jnp.sqrt(jnp.maximum(self.inner(X, U, U), 0.0))
+        return stable_metric_norm(
+            U,
+            lambda normalized: self.inner(X, normalized, normalized),
+            axis=(-2, -1),
+        )
 
     def _orthogonal_complement(self, X: Array) -> Array:
         if self.n == self.k:
@@ -310,10 +316,13 @@ class _StiefelBase(ExactGeometryMixin):
         )
 
     def dist(self, X: Array, Y: Array) -> Array:
-        return jnp.sqrt(self.squared_dist(X, Y))
+        return sqrt_nonnegative(self.squared_dist(X, Y))
 
     def _squared_dist_single(self, X: Array, Y: Array) -> Array:
-        threshold = 32.0 * jnp.sqrt(jnp.finfo(X.dtype).eps)
+        # The first-order local expression exists only to fill the exact
+        # coincident-point derivative. Restrict it to roundoff scale so it is
+        # not used as a finite-radius distance approximation in float32.
+        threshold = 64.0 * jnp.finfo(X.dtype).eps
         difference = Y - X
 
         def local(_: None) -> Array:
@@ -356,8 +365,6 @@ class _StiefelBase(ExactGeometryMixin):
         action = frame_Y @ _transpose(frame_X)
         return self.tangent_project(Y, action @ U)
 
-    transp = transport
-
     def random_point(self, key: Array, sample_shape: Shape = ()) -> Array:
         sample_shape = as_sample_shape(sample_shape)
         normal = jax.random.normal(key, shape=sample_shape + self.shape)
@@ -378,8 +385,13 @@ class _StiefelBase(ExactGeometryMixin):
         tangent = self.tangent_project(X, normal)
         if normalize:
             tangent_norm = self.norm(X, tangent)[..., None, None]
-            tangent = jnp.where(tangent_norm > self.eps, tangent / tangent_norm, tangent)
-        return scale * tangent
+            safe_norm = jnp.where(
+                tangent_norm > 0.0,
+                tangent_norm,
+                jnp.ones_like(tangent_norm),
+            )
+            tangent = jnp.where(tangent_norm > 0.0, tangent / safe_norm, tangent)
+        return self._scale_tangent(tangent, scale)
 
 
 class Stiefel(_StiefelBase):
@@ -420,8 +432,6 @@ class Stiefel(_StiefelBase):
         X, egrad = self._check_shapes(("X", X), ("egrad", egrad))
         return egrad - X @ _transpose(egrad) @ X
 
-    egrad2rgrad = egrad_to_rgrad
-
 
 class StiefelEuclidean(_StiefelBase):
     """Stiefel manifold with the metric induced by its Euclidean embedding.
@@ -460,8 +470,6 @@ class StiefelEuclidean(_StiefelBase):
 
     def egrad_to_rgrad(self, X: Array, egrad: Array) -> Array:
         return self.tangent_project(X, egrad)
-
-    egrad2rgrad = egrad_to_rgrad
 
     def ehess_to_rhess(self, X: Array, egrad: Array, ehess_vec: Array, U: Array) -> Array:
         correction = jnp.asarray(U) @ _sym(_transpose(X) @ jnp.asarray(egrad))

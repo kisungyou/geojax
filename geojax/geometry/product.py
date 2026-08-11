@@ -8,13 +8,14 @@ from typing import Any, Iterable, Sequence, Tuple, Union
 import jax
 import jax.numpy as jnp
 
-from .base import GeometryMixin, GeometryProtocol, as_sample_shape
+from .base import GeometryMixin, GeometryProtocol, as_sample_shape, scale_tangent
+from ._numerics import stable_norm
 
 Array = Any
 Shape = Union[int, Sequence[int], Tuple[int, ...]]
 
 
-@dataclass(frozen=True, init=False)
+@dataclass(frozen=True, init=False, eq=False)
 class Product(GeometryMixin):
     """Direct product of manifold geometries.
 
@@ -30,7 +31,9 @@ class Product(GeometryMixin):
         leaves, treedef = jax.tree_util.tree_flatten(factors)
         if not leaves:
             raise ValueError("Product requires at least one factor geometry.")
-        invalid = [type(factor).__name__ for factor in leaves if not isinstance(factor, GeometryProtocol)]
+        invalid = [
+            type(factor).__name__ for factor in leaves if not isinstance(factor, GeometryProtocol)
+        ]
         if invalid:
             names = ", ".join(invalid)
             raise TypeError(
@@ -42,13 +45,35 @@ class Product(GeometryMixin):
         object.__setattr__(self, "_treedef", treedef)
 
     def _flatten_like(self, tree: Any, name: str) -> tuple[Any, ...]:
-        leaves, treedef = jax.tree_util.tree_flatten(tree)
-        if treedef != self._treedef:
+        try:
+            leaves = self._treedef.flatten_up_to(tree)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"Product {name} must match the factor pytree structure.") from exc
+        if len(leaves) != len(self._factor_leaves):
             raise ValueError(f"Product {name} must match the factor pytree structure.")
         return tuple(leaves)
 
     def _unflatten(self, leaves: Iterable[Any]) -> Any:
         return jax.tree_util.tree_unflatten(self._treedef, list(leaves))
+
+    def _scale_tangent(self, vector: Any, coefficient: float | Array) -> Any:
+        """Scale every factor tangent using the shared leading-batch contract."""
+        leaves = self._flatten_like(vector, "tangent vector")
+        scaled = []
+        for M, leaf in zip(self._factor_leaves, leaves):
+            if isinstance(M, Product):
+                scaled.append(M._scale_tangent(leaf, coefficient))
+            elif hasattr(M, "_scale_tangent"):
+                scaled.append(M._scale_tangent(leaf, coefficient))
+            else:
+                scaled.append(
+                    scale_tangent(
+                        leaf,
+                        coefficient,
+                        event_ndim=len(tuple(M.shape)),
+                    )
+                )
+        return self._unflatten(scaled)
 
     @staticmethod
     def _combine_checks(checks: list[Array]) -> Array:
@@ -105,6 +130,13 @@ class Product(GeometryMixin):
         )
 
     def operation_kind(self, name: str) -> str:
+        if name == "squared_dist":
+            kinds = [M.operation_kind(name) for M in self._factor_leaves]
+            if all(kind == "exact" for kind in kinds):
+                return "exact"
+            if any(kind == "proxy" for kind in kinds):
+                return "proxy"
+            return "numerical-local"
         if name in {"exp", "log", "dist"}:
             kinds = [
                 M.operation_kind(name)
@@ -140,18 +172,12 @@ class Product(GeometryMixin):
         xs = self._flatten_like(x, "point")
         return self._unflatten(M.project(xi) for M, xi in zip(self._factor_leaves, xs))
 
-    normalize = project
-
     def tangent_project(self, x: Any, u: Any) -> Any:
         xs = self._flatten_like(x, "point")
         us = self._flatten_like(u, "tangent vector")
         return self._unflatten(
             M.tangent_project(xi, ui) for M, xi, ui in zip(self._factor_leaves, xs, us)
         )
-
-    projection = tangent_project
-    proj = tangent_project
-    to_tangent = tangent_project
 
     def inner(self, x: Any, u: Any, v: Any) -> Array:
         xs = self._flatten_like(x, "point")
@@ -164,7 +190,12 @@ class Product(GeometryMixin):
         return out
 
     def norm(self, x: Any, u: Any) -> Array:
-        return jnp.sqrt(jnp.maximum(self.inner(x, u, u), 0.0))
+        xs = self._flatten_like(x, "point")
+        us = self._flatten_like(u, "tangent vector")
+        factor_norms = jnp.broadcast_arrays(
+            *(M.norm(xi, ui) for M, xi, ui in zip(self._factor_leaves, xs, us))
+        )
+        return stable_norm(jnp.stack(factor_norms, axis=-1), axis=-1)
 
     def lincomb(self, x: Any, *terms: Any) -> Any:
         if len(terms) % 2 != 0:
@@ -200,17 +231,19 @@ class Product(GeometryMixin):
     def squared_dist(self, x: Any, y: Any) -> Array:
         xs = self._flatten_like(x, "point")
         ys = self._flatten_like(y, "point")
-        vals = [
-            M.squared_dist(xi, yi)
-            for M, xi, yi in zip(self._factor_leaves, xs, ys)
-        ]
+        vals = [M.squared_dist(xi, yi) for M, xi, yi in zip(self._factor_leaves, xs, ys)]
         out = vals[0]
         for val in vals[1:]:
             out = out + val
         return jnp.maximum(out, 0.0)
 
     def dist(self, x: Any, y: Any) -> Array:
-        return jnp.sqrt(self.squared_dist(x, y))
+        xs = self._flatten_like(x, "point")
+        ys = self._flatten_like(y, "point")
+        factor_distances = jnp.broadcast_arrays(
+            *(M.dist(xi, yi) for M, xi, yi in zip(self._factor_leaves, xs, ys))
+        )
+        return stable_norm(jnp.stack(factor_distances, axis=-1), axis=-1)
 
     def transport(self, x: Any, y: Any, u: Any) -> Any:
         xs = self._flatten_like(x, "point")
@@ -220,8 +253,6 @@ class Product(GeometryMixin):
         for M, xi, yi, ui in zip(self._factor_leaves, xs, ys, us):
             out.append(M.transport(xi, yi, ui))
         return self._unflatten(out)
-
-    transp = transport
 
     def pair_mean(self, x: Any, y: Any) -> Any:
         xs = self._flatten_like(x, "point")
@@ -237,8 +268,6 @@ class Product(GeometryMixin):
         return self._unflatten(
             M.egrad_to_rgrad(xi, gi) for M, xi, gi in zip(self._factor_leaves, xs, gs)
         )
-
-    egrad2rgrad = egrad_to_rgrad
 
     def ehess_to_rhess(self, x: Any, egrad: Any, ehess_vec: Any, u: Any) -> Any:
         xs = self._flatten_like(x, "point")
@@ -275,20 +304,10 @@ class Product(GeometryMixin):
         u = self._unflatten(leaves)
         if normalize:
             nrm = self.norm(x, u)
-            normalized = []
-            for M, leaf in zip(self._factor_leaves, leaves):
-                event_ndim = len(M.shape)
-                denominator = nrm.reshape(nrm.shape + (1,) * event_ndim)
-                coefficient = jnp.asarray(scale)
-                coefficient = coefficient.reshape(coefficient.shape + (1,) * event_ndim)
-                normalized.append(
-                    jnp.where(
-                        denominator > 0.0,
-                        coefficient * leaf / jnp.where(denominator > 0.0, denominator, 1.0),
-                        leaf,
-                    )
-                )
-            u = self._unflatten(normalized)
+            safe_nrm = jnp.where(nrm > 0.0, nrm, jnp.ones_like(nrm))
+            normalization = jnp.where(nrm > 0.0, 1.0 / safe_nrm, 1.0)
+            u = self._scale_tangent(u, normalization)
+            u = self._scale_tangent(u, scale)
         return u
 
 

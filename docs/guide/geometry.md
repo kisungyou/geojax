@@ -80,8 +80,8 @@ geometry-specific stable formulas where necessary. Removable zero-norm and
 repeated-spectrum singularities have analytic derivatives; genuine cut loci
 remain explicit.
 
-`operation_kind("exp")`, `operation_kind("log")`, and
-`operation_kind("dist")` distinguish `"exact"`, `"numerical-local"`, and
+`operation_kind("exp")`, `operation_kind("log")`, `operation_kind("dist")`,
+and `operation_kind("squared_dist")` distinguish `"exact"`, `"numerical-local"`, and
 `"proxy"` behavior as applicable. A proxy class keeps the uniform names for
 composability, but evaluates `retr`, `invretr`, or the inverse-retraction norm.
 Numerical-local Stiefel operations solve an exact endpoint equation without

@@ -8,12 +8,24 @@ from typing import Any, Sequence, Tuple, Union
 import jax
 import jax.numpy as jnp
 
-from .base import ExactGeometryMixin, as_sample_shape, check_event_shape, dtype_margin
+from .base import (
+    ExactGeometryMixin,
+    as_sample_shape,
+    check_event_shape,
+    dtype_margin,
+    validate_integer,
+    validate_nonnegative,
+    validate_positive,
+)
 from ._numerics import (
     acosh_over_sqrt,
-    acosh_squared,
+    asinh_squared_from_squared_chord,
     cosh_from_squared_norm,
     sinhc_from_squared_norm,
+    stable_metric_norm,
+    stable_norm,
+    sqrt_nonnegative,
+    squared_norm,
 )
 
 Array = Any
@@ -29,12 +41,10 @@ class Hyperboloid(ExactGeometryMixin):
     eps: float
 
     def __init__(self, size: int, *, atol: float = 1e-6, eps: float = 1e-12) -> None:
-        size = int(size)
-        if size < 2:
-            raise ValueError("Hyperboloid size must be at least 2.")
+        size = validate_integer(size, name="Hyperboloid size", minimum=2)
         object.__setattr__(self, "size", size)
-        object.__setattr__(self, "atol", float(atol))
-        object.__setattr__(self, "eps", float(eps))
+        object.__setattr__(self, "atol", validate_nonnegative(atol, name="Hyperboloid atol"))
+        object.__setattr__(self, "eps", validate_positive(eps, name="Hyperboloid eps"))
 
     @property
     def dim(self) -> int:
@@ -55,10 +65,13 @@ class Hyperboloid(ExactGeometryMixin):
         if not self._shape_matches(x):
             return self._shape_failure(x)
         sheet = x[..., 0] > 0.0
-        quad = self.lorentz_inner(x, x)
-        cancellation_scale = x[..., 0] ** 2 + jnp.sum(x[..., 1:] ** 2, axis=-1) + 1.0
-        rounding = 16.0 * jnp.finfo(x.dtype).eps * cancellation_scale
-        return sheet & (jnp.abs(quad + 1.0) <= tol + rounding)
+        expected_time = jnp.hypot(
+            jnp.ones_like(x[..., 0]),
+            stable_norm(x[..., 1:], axis=-1),
+        )
+        dtype = jnp.result_type(x, float)
+        rounding = 16.0 * jnp.finfo(dtype).eps * jnp.maximum(jnp.abs(x[..., 0]), expected_time)
+        return sheet & (jnp.abs(x[..., 0] - expected_time) <= tol + rounding)
 
     def is_tangent(self, x: Array, u: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
@@ -70,32 +83,32 @@ class Hyperboloid(ExactGeometryMixin):
             + jnp.sum(jnp.abs(x[..., 1:] * u[..., 1:]), axis=-1)
             + 1.0
         )
-        rounding = 16.0 * jnp.finfo(jnp.result_type(x, u)).eps * cancellation_scale
+        dtype = jnp.result_type(x, u, float)
+        rounding = 16.0 * jnp.finfo(dtype).eps * cancellation_scale
         return jnp.abs(self.lorentz_inner(x, u)) <= tol + rounding
 
     def project(self, x: Array) -> Array:
         x = self._check_shape(x, name="x")
         spatial = x[..., 1:]
-        time = jnp.sqrt(1.0 + jnp.sum(spatial * spatial, axis=-1, keepdims=True))
+        spatial_norm = stable_norm(spatial, axis=-1, keepdims=True)
+        time = jnp.hypot(jnp.ones_like(spatial_norm), spatial_norm)
         return jnp.concatenate([time, spatial], axis=-1)
-
-    normalize = project
 
     def tangent_project(self, x: Array, u: Array) -> Array:
         x = self.project(x)
         _, u = self._check_shapes(("x", x), ("u", u))
         return u + self.lorentz_inner(x, u, keepdims=True) * x
 
-    projection = tangent_project
-    proj = tangent_project
-    to_tangent = tangent_project
-
     def inner(self, x: Array, u: Array, v: Array) -> Array:
         self._check_shapes(("x", x), ("u", u), ("v", v))
         return self.lorentz_inner(u, v)
 
     def norm(self, x: Array, u: Array) -> Array:
-        return jnp.sqrt(jnp.maximum(self.inner(x, u, u), 0.0))
+        return stable_metric_norm(
+            u,
+            lambda normalized: self.inner(x, normalized, normalized),
+            axis=-1,
+        )
 
     def exp(self, x: Array, u: Array) -> Array:
         x = self.project(x)
@@ -115,11 +128,24 @@ class Hyperboloid(ExactGeometryMixin):
         """Squared hyperbolic distance with a finite derivative at coincidence."""
         x = self.project(x)
         y = self.project(y)
-        alpha = jnp.maximum(-self.lorentz_inner(x, y), 1.0)
-        return acosh_squared(alpha)
+        # In Poincare coordinates p = x_spatial / (x_time + 1), the Lorentz
+        # chord square is
+        #
+        #   4 ||p-q||^2 / ((1-||p||^2)(1-||q||^2))
+        #   = ||p-q||^2 (x_time+1)(y_time+1).
+        #
+        # This positive-products form avoids subtracting nearly equal, huge
+        # temporal and spatial chord squares near the ideal boundary.
+        x_scale = x[..., :1] + 1.0
+        y_scale = y[..., :1] + 1.0
+        poincare_x = x[..., 1:] / x_scale
+        poincare_y = y[..., 1:] / y_scale
+        squared_chord = squared_norm(poincare_y - poincare_x, axis=-1)
+        squared_chord = squared_chord * x_scale[..., 0] * y_scale[..., 0]
+        return asinh_squared_from_squared_chord(squared_chord)
 
     def dist(self, x: Array, y: Array) -> Array:
-        return jnp.sqrt(self.squared_dist(x, y))
+        return sqrt_nonnegative(self.squared_dist(x, y))
 
     def transport(self, x: Array, y: Array, u: Array) -> Array:
         x = self.project(x)
@@ -129,8 +155,6 @@ class Hyperboloid(ExactGeometryMixin):
         denom_safe = jnp.where(denom > self.eps, denom, 1.0)
         coef = self.lorentz_inner(y, u, keepdims=True) / denom_safe
         return self.tangent_project(y, u + coef * (x + y))
-
-    transp = transport
 
     def geodesic_flow(self, x: Array, v: Array, t: float | Array = 1.0) -> tuple[Array, Array]:
         x = self.project(x)
@@ -153,14 +177,14 @@ class Hyperboloid(ExactGeometryMixin):
     def from_poincare(self, point: Array) -> Array:
         """Convert points in the open Poincare ball to the hyperboloid."""
         point = check_event_shape(point, (self.dim,), name="point")
-        squared_radius = jnp.sum(point * point, axis=-1, keepdims=True)
-        radius = jnp.sqrt(jnp.maximum(squared_radius, 0.0))
+        radius = stable_norm(point, axis=-1, keepdims=True)
         margin = dtype_margin(point, configured=self.eps, atol=self.atol)
         max_radius = 1.0 - margin
         safe_radius = jnp.where(radius > 0.0, radius, 1.0)
-        point = jnp.where(radius < max_radius, point, max_radius * point / safe_radius)
+        inside = radius < 1.0
+        point = jnp.where(inside, point, max_radius * point / safe_radius)
         squared_radius = jnp.sum(point * point, axis=-1, keepdims=True)
-        denominator = jnp.maximum(1.0 - squared_radius, margin)
+        denominator = 1.0 - squared_radius
         time = (1.0 + squared_radius) / denominator
         spatial = 2.0 * point / denominator
         return jnp.concatenate([time, spatial], axis=-1)
@@ -170,12 +194,11 @@ class Hyperboloid(ExactGeometryMixin):
         minkowski_grad = egrad.at[..., 0].multiply(-1.0)
         return self.tangent_project(x, minkowski_grad)
 
-    egrad2rgrad = egrad_to_rgrad
-
     def random_point(self, key: Array, sample_shape: Shape = ()) -> Array:
         sample_shape = as_sample_shape(sample_shape)
         spatial = jax.random.normal(key, shape=sample_shape + (self.dim,))
-        time = jnp.sqrt(1.0 + jnp.sum(spatial * spatial, axis=-1, keepdims=True))
+        spatial_norm = stable_norm(spatial, axis=-1, keepdims=True)
+        time = jnp.hypot(jnp.ones_like(spatial_norm), spatial_norm)
         return jnp.concatenate([time, spatial], axis=-1)
 
     def random_tangent(
@@ -190,8 +213,9 @@ class Hyperboloid(ExactGeometryMixin):
         u = self.tangent_project(x, z)
         if normalize:
             n = self.norm(x, u)[..., None]
-            u = jnp.where(n > self.eps, u / n, u)
-        return scale * u
+            safe_n = jnp.where(n > 0.0, n, jnp.ones_like(n))
+            u = jnp.where(n > 0.0, u / safe_n, u)
+        return self._scale_tangent(u, scale)
 
 
 __all__ = ["Hyperboloid"]

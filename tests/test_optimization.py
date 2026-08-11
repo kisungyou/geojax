@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import math
+
 import jax
 import jax.numpy as jnp
 import pytest
@@ -112,14 +114,15 @@ def test_sphere_hessian_conversion_includes_embedding_curvature():
     assert jnp.allclose(problem.rhess_vec(x, u), expected, atol=2e-6, rtol=2e-6)
 
 
-def test_automatic_hessian_rejects_geometry_without_exact_conversion():
+def test_grassmann_automatic_hessian_uses_exact_conversion():
     M = Grassmann(size=(4, 2))
     x = M.random_point(jax.random.key(90))
     u = M.random_tangent(jax.random.key(91), x, scale=0.1)
     problem = Minimize(M=M, cost=lambda point: jnp.sum(point * point))
 
-    with pytest.raises(ValueError, match="Supply rhess_vec explicitly"):
-        problem.rhess_vec(x, u)
+    hessian_u = problem.rhess_vec(x, u)
+    assert bool(M.is_tangent(x, hessian_u))
+    assert jnp.allclose(hessian_u, jnp.zeros_like(hessian_u), atol=2e-6)
 
 
 def test_minimize_hessian_vector_construction_paths():
@@ -275,7 +278,7 @@ def test_lbfgs_rejects_nonpositive_memory():
         x0=jnp.ones(1),
         solver=LBFGS(memory=0, verbosity=0),
     )
-    with pytest.raises(ValueError, match="memory must be positive"):
+    with pytest.raises(ValueError, match="memory must be at least 1"):
         problem.solve()
 
 
@@ -292,6 +295,79 @@ def test_truncated_cg_reports_the_final_residual():
     assert not hit_boundary
     assert jnp.allclose(eta, jnp.array([-1.0, 0.0]))
     assert diagnostics["tcg_residual_norm"] == pytest.approx(0.0)
+
+
+def test_truncated_cg_falls_back_from_nonpositive_preconditioner():
+    manifold = Euclidean(2)
+    problem = Minimize(
+        M=manifold,
+        cost=lambda point: 0.5 * jnp.sum(point**2),
+        precon=lambda point, residual: -residual,
+    )
+    eta, hit_boundary, diagnostics = _truncated_cg(
+        problem,
+        jnp.zeros(2),
+        jnp.array([1.0, 0.0]),
+        10.0,
+        TrustRegions(maxinner=5, verbosity=0),
+    )
+    assert not hit_boundary
+    assert jnp.allclose(eta, jnp.array([-1.0, 0.0]))
+    assert diagnostics["preconditioner_fallback"]
+
+
+def test_conjugate_gradient_falls_back_from_nonpositive_preconditioner():
+    problem = Minimize(
+        M=Euclidean(2),
+        cost=lambda point: 0.5 * jnp.sum(point**2),
+        x0=jnp.array([2.0, -1.0]),
+        precon=lambda point, gradient: -gradient,
+        solver=ConjugateGradient(maxiter=30, verbosity=0),
+    )
+    _, final_cost, info = problem.solve()
+    assert final_cost < 1e-10
+    assert info[0].extra["preconditioner_fallback"]
+
+
+def test_trust_region_rejects_nonfinite_trial_and_shrinks_radius():
+    problem = Minimize(
+        M=Euclidean(1),
+        cost=lambda point: jnp.where(point[0] <= 0.2, -point[0], jnp.nan),
+        grad=lambda point: jnp.array([-1.0]),
+        rhess_vec=lambda point, tangent: jnp.zeros_like(tangent),
+        x0=jnp.zeros(1),
+        solver=TrustRegions(
+            initial_radius=1.0,
+            max_radius=2.0,
+            maxiter=1,
+            verbosity=0,
+        ),
+    )
+    solution, final_cost, info = problem.solve()
+    assert jnp.allclose(solution, jnp.zeros(1))
+    assert final_cost == pytest.approx(0.0)
+    assert not info[1].extra["accepted"]
+    assert info[1].extra["rho"] == -math.inf
+    assert info[1].extra["radius"] == pytest.approx(0.25)
+
+
+def test_trust_region_shrinks_a_tiny_radius_without_an_absolute_floor():
+    radius = 1e-20
+    problem = Minimize(
+        M=Euclidean(1),
+        cost=lambda point: jnp.where(point[0] <= 0.0, -point[0], jnp.nan),
+        grad=lambda point: jnp.array([-1.0]),
+        rhess_vec=lambda point, tangent: jnp.zeros_like(tangent),
+        x0=jnp.zeros(1),
+        solver=TrustRegions(
+            initial_radius=radius,
+            max_radius=1.0,
+            maxiter=1,
+            verbosity=0,
+        ),
+    )
+    _, _, info = problem.solve()
+    assert info[1].extra["radius"] == pytest.approx(0.25 * radius)
 
 
 def test_lbfgs_smoke_with_nonisometric_rank_stratum_transport():
@@ -321,7 +397,7 @@ def test_nelder_mead_initial_scale_is_applied_once():
         solver=NelderMead(
             initial_scale=scale,
             maxiter=0,
-            tolcostspread=-1.0,
+            tolcostspread=0.0,
             verbosity=0,
         ),
     ).solve()

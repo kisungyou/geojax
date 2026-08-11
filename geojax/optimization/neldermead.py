@@ -9,6 +9,12 @@ import time
 
 import jax.numpy as jnp
 
+from geojax.geometry.base import (
+    validate_integer,
+    validate_nonnegative,
+    validate_positive,
+)
+
 from .minimize import (
     Array,
     InfoEntry,
@@ -17,15 +23,19 @@ from .minimize import (
     as_float,
     cost_value,
     make_info,
-    pair_mean,
     require,
+    require_geometry_methods,
     stopping_reason,
     tree_lincomb,
+    validate_point,
+    validate_tangent,
 )
 
 
 @dataclass(frozen=True)
 class NelderMead:
+    """Derivative-free manifold simplex search using intrinsic trial points."""
+
     requires_gradient: bool = False
     initial_scale: float = 0.1
     reflection: float = 1.0
@@ -33,6 +43,7 @@ class NelderMead:
     contraction: float = 0.5
     shrink: float = 0.5
     tolcostspread: float = 1e-10
+    tolsimplexdiameter: float = 1e-8
     maxiter: int = 1000
     maxtime: float = math.inf
     minstepsize: float = 0.0
@@ -44,32 +55,54 @@ class NelderMead:
     def solve(self, problem: Any) -> tuple[Array, float, List[InfoEntry]]:
         M = require(problem, "M")
         x0 = require(problem, "x0")
-        if self.initial_scale <= 0.0:
-            raise ValueError("initial_scale must be positive.")
-        dim = int(getattr(M, "dim", 1))
+        initial_scale = validate_positive(self.initial_scale, name="initial_scale")
+        reflection = validate_positive(self.reflection, name="reflection")
+        expansion = validate_positive(self.expansion, name="expansion")
+        contraction = validate_positive(self.contraction, name="contraction")
+        shrink = validate_positive(self.shrink, name="shrink")
+        tolcostspread = validate_nonnegative(self.tolcostspread, name="tolcostspread")
+        tolsimplexdiameter = validate_nonnegative(
+            self.tolsimplexdiameter,
+            name="tolsimplexdiameter",
+        )
+        if expansion <= 1.0:
+            raise ValueError("reflection must be positive and expansion must exceed one.")
+        if contraction >= 1.0 or shrink >= 1.0:
+            raise ValueError("contraction and shrink must lie in (0, 1).")
+        dim = validate_integer(getattr(M, "dim", None), name="M.dim", minimum=1)
+        require_geometry_methods(
+            M,
+            "random_tangent",
+            "retr",
+            "exp",
+            "log",
+            "dist",
+            context="NelderMead",
+        )
         start_time = time.perf_counter()
         simplex = [x0]
         for _ in range(dim):
-            if hasattr(M, "random_tangent"):
-                u = M.random_tangent(
-                    problem.split_key(), x0, scale=self.initial_scale, normalize=True
-                )
-                simplex.append(
-                    M.retr(x0, u)
-                    if hasattr(M, "retr")
-                    else M.exp(x0, u)
-                )
-            else:
-                simplex.append(M.random_point(problem.split_key()))
+            u = validate_tangent(
+                M,
+                x0,
+                M.random_tangent(problem.split_key(), x0, scale=initial_scale, normalize=True),
+                name="Nelder-Mead simplex direction",
+            )
+            simplex.append(validate_point(M, M.retr(x0, u), name="Nelder-Mead simplex vertex"))
         values = [as_float(cost_value(problem, x)) for x in simplex]
+        if not all(math.isfinite(value) for value in values):
+            raise FloatingPointError(
+                "NelderMead requires finite objective values at every initial vertex."
+            )
         simplex, values = _sort(simplex, values)
-        spread = float(jnp.std(jnp.asarray(values)))
+        spread = _cost_spread(values)
+        diameter = _diameter(M, simplex)
         info: List[InfoEntry] = [
             make_info(
                 iter=0,
                 cost=values[0],
                 gradnorm=spread,
-                stepsize=math.nan,
+                stepsize=diameter,
                 start_time=start_time,
                 linesearch=None,
                 problem=problem,
@@ -82,8 +115,12 @@ class NelderMead:
         while True:
             if self.verbosity >= 2:
                 print(f"{info[-1].iter:5d}\t{info[-1].cost:+.16e}\t{info[-1].gradnorm:.8e}")
-            if spread <= self.tolcostspread:
-                reason = f"Simplex cost spread tolerance reached: {spread:.3e}."
+            if spread <= tolcostspread and diameter <= tolsimplexdiameter:
+                reason = (
+                    "Simplex tolerances reached: "
+                    f"cost spread {spread:.3e} <= {tolcostspread:.3e} and "
+                    f"diameter {diameter:.3e} <= {tolsimplexdiameter:.3e}."
+                )
                 info[-1] = InfoEntry(**{**info[-1].__dict__, "reason": reason})
                 if self.verbosity >= 1:
                     print(reason)
@@ -98,13 +135,21 @@ class NelderMead:
             best = simplex[0]
             worst = simplex[-1]
             centroid = _centroid(M, simplex[:-1])
-            v = M.log(centroid, worst)
-            xr = M.exp(centroid, tree_lincomb(-self.reflection, v))
-            fr = as_float(cost_value(problem, xr))
+            v = validate_tangent(
+                M,
+                centroid,
+                M.log(centroid, worst),
+                name="Nelder-Mead reflection displacement",
+            )
+            xr = M.exp(centroid, tree_lincomb(-reflection, v))
+            fr = _trial_cost(M, problem, xr)
 
             if fr < values[0]:
-                xe = M.exp(centroid, tree_lincomb(-self.expansion, v))
-                fe = as_float(cost_value(problem, xe))
+                xe = M.exp(
+                    centroid,
+                    tree_lincomb(-expansion * reflection, v),
+                )
+                fe = _trial_cost(M, problem, xe)
                 if fe < fr:
                     simplex[-1], values[-1] = xe, fe
                 else:
@@ -113,10 +158,13 @@ class NelderMead:
                 simplex[-1], values[-1] = xr, fr
             else:
                 if fr < values[-1]:
-                    xc = M.exp(centroid, tree_lincomb(-self.contraction, v))
+                    xc = M.exp(
+                        centroid,
+                        tree_lincomb(-contraction * reflection, v),
+                    )
                 else:
-                    xc = M.exp(centroid, tree_lincomb(self.contraction, v))
-                fc = as_float(cost_value(problem, xc))
+                    xc = M.exp(centroid, tree_lincomb(contraction, v))
+                fc = _trial_cost(M, problem, xc)
                 if fc < min(fr, values[-1]):
                     simplex[-1], values[-1] = xc, fc
                 else:
@@ -124,12 +172,12 @@ class NelderMead:
                     new_simplex = [best]
                     new_values = [values[0]]
                     for x in simplex[1:]:
-                        xs = M.exp(best, tree_lincomb(self.shrink, M.log(best, x)))
+                        xs = M.exp(best, tree_lincomb(shrink, M.log(best, x)))
                         new_simplex.append(xs)
-                        new_values.append(as_float(cost_value(problem, xs)))
+                        new_values.append(_trial_cost(M, problem, xs))
                     simplex, values = new_simplex, new_values
             simplex, values = _sort(simplex, values)
-            spread = float(jnp.std(jnp.asarray(values)))
+            spread = _cost_spread(values)
             diameter = _diameter(M, simplex)
             info.append(
                 make_info(
@@ -154,13 +202,24 @@ def _sort(simplex: list[Array], values: list[float]) -> tuple[list[Array], list[
     return [simplex[i] for i in order], [values[i] for i in order]
 
 
+def _cost_spread(values: list[float]) -> float:
+    if not all(math.isfinite(value) for value in values):
+        return math.inf
+    return float(jnp.std(jnp.asarray(values)))
+
+
+def _trial_cost(M: Any, problem: Any, point: Array) -> float:
+    validate_point(M, point, name="Nelder-Mead trial point")
+    value = as_float(cost_value(problem, point))
+    return value if math.isfinite(value) else math.inf
+
+
 def _centroid(M: Any, points: list[Array]) -> Array:
     c = points[0]
     for k, p in enumerate(points[1:], start=1):
-        c = (
-            M.exp(c, tree_lincomb(1.0 / (k + 1.0), M.log(c, p)))
-            if hasattr(M, "exp") and hasattr(M, "log")
-            else pair_mean(M, c, p)
+        c = M.exp(
+            c,
+            tree_lincomb(1.0 / (k + 1.0), M.log(c, p)),
         )
     return c
 
@@ -173,6 +232,8 @@ def _diameter(M: Any, points: list[Array]) -> float:
         for i in range(len(points))
         for j in range(i + 1, len(points))
     ]
+    if not all(math.isfinite(value) for value in vals):
+        return math.inf
     return max(vals) if vals else 0.0
 
 

@@ -6,6 +6,13 @@ import jax
 import jax.numpy as jnp
 import pytest
 
+from geojax.geometry._numerics import (
+    acos_over_sin,
+    acos_squared,
+    acosh_squared,
+    sqrt_nonnegative,
+)
+
 from geojax.geometry import (
     CorrelationAffineQuotient,
     CorrelationECM,
@@ -97,6 +104,70 @@ def _tree_sum(tree: Any) -> Any:
     return sum(jnp.sum(leaf) for leaf in jax.tree_util.tree_leaves(tree))
 
 
+def test_clipped_inverse_trigonometric_kernels_have_consistent_jvps():
+    acos_value, acos_tangent = jax.jvp(
+        acos_squared,
+        (jnp.asarray(1.1),),
+        (jnp.asarray(1.0),),
+    )
+    acosh_value, acosh_tangent = jax.jvp(
+        acosh_squared,
+        (jnp.asarray(0.9),),
+        (jnp.asarray(1.0),),
+    )
+
+    assert jnp.allclose(acos_value, 0.0)
+    assert jnp.allclose(acos_tangent, 0.0)
+    assert jnp.allclose(acosh_value, 0.0)
+    assert jnp.allclose(acosh_tangent, 0.0)
+
+
+def test_acos_over_sin_diverges_at_the_antipodal_cut_locus():
+    cosine = jnp.asarray(-1.0)
+
+    assert jnp.isposinf(acos_over_sin(cosine))
+    assert jnp.isposinf(acos_over_sin(cosine, jnp.asarray(0.0)))
+
+    nearby_sine = jnp.asarray(1e-4)
+    nearby = acos_over_sin(cosine, nearby_sine**2)
+    assert jnp.isfinite(nearby)
+    assert nearby > 1e4
+
+
+def test_nonnegative_square_root_uses_zero_subgradient_at_origin():
+    value, tangent = jax.jvp(
+        sqrt_nonnegative,
+        (jnp.asarray(0.0),),
+        (jnp.asarray(1.0),),
+    )
+    assert value == 0.0
+    assert tangent == 0.0
+    assert jnp.allclose(jax.grad(sqrt_nonnegative)(jnp.asarray(4.0)), 0.25)
+
+
+def test_norms_rescale_before_squaring_extreme_tangent_coordinates():
+    manifold = Euclidean(2)
+    dtype = jnp.asarray(1.0).dtype
+    limits = jnp.finfo(dtype)
+    large = 0.9 * jnp.sqrt(limits.max)
+    tiny = 2.0 * jnp.sqrt(limits.tiny)
+
+    large_vector = jnp.array([large, -large], dtype=dtype)
+    tiny_vector = jnp.array([tiny, -tiny], dtype=dtype)
+    large_norm = manifold.norm(jnp.zeros(2, dtype=dtype), large_vector)
+    tiny_norm = manifold.norm(jnp.zeros(2, dtype=dtype), tiny_vector)
+
+    assert bool(jnp.isfinite(large_norm))
+    assert jnp.allclose(large_norm / large, jnp.sqrt(2.0), rtol=2e-6)
+    assert tiny_norm > 0.0
+    assert jnp.allclose(tiny_norm / tiny, jnp.sqrt(2.0), rtol=2e-6)
+
+    product = Product((Euclidean(1), Euclidean(1)))
+    point = (jnp.zeros(1, dtype=dtype), jnp.zeros(1, dtype=dtype))
+    tangent = (jnp.array([large]), jnp.array([large]))
+    assert jnp.allclose(product.norm(point, tangent) / large, jnp.sqrt(2.0), rtol=2e-6)
+
+
 @pytest.mark.parametrize("M", _geometries(), ids=_geometry_id)
 def test_zero_and_coincident_operations_have_finite_first_derivatives(M, dtype_atol):
     key_x, key_u = jax.random.split(jax.random.key(610))
@@ -108,6 +179,8 @@ def test_zero_and_coincident_operations_have_finite_first_derivatives(M, dtype_a
     log_value, log_jvp = jax.jvp(lambda endpoint: M.log(x, endpoint), (x,), (u,))
     squared_distance = M.squared_dist(x, x)
     squared_distance_gradient = jax.grad(lambda endpoint: M.squared_dist(x, endpoint))(x)
+    composed_squared_distance = M.dist(x, x) ** 2
+    composed_squared_gradient = jax.grad(lambda endpoint: M.dist(x, endpoint) ** 2)(x)
     transported = M.transport(x, x, u)
 
     _assert_finite(
@@ -118,6 +191,8 @@ def test_zero_and_coincident_operations_have_finite_first_derivatives(M, dtype_a
             log_jvp,
             squared_distance,
             squared_distance_gradient,
+            composed_squared_distance,
+            composed_squared_gradient,
             transported,
         )
     )
@@ -126,6 +201,7 @@ def test_zero_and_coincident_operations_have_finite_first_derivatives(M, dtype_a
     _assert_tree_allclose(log_value, zero, atol=tolerance, rtol=tolerance)
     _assert_tree_allclose(transported, u, atol=max(2e-4, 20.0 * dtype_atol), rtol=2e-4)
     assert jnp.allclose(squared_distance, 0.0, atol=tolerance, rtol=tolerance)
+    assert jnp.allclose(composed_squared_distance, 0.0, atol=tolerance, rtol=tolerance)
 
 
 @pytest.mark.parametrize(

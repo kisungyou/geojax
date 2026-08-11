@@ -40,6 +40,32 @@ def test_special_orthogonal_pi_rotation_marks_nonunique_log():
     assert jnp.all(jnp.isnan(M.log(jnp.eye(2), -jnp.eye(2))))
 
 
+def test_special_orthogonal_cut_detection_uses_numerical_resolution_not_atol():
+    manifold = SpecialOrthogonal(size=2, atol=1e-2)
+    near_half_turn = rotation(jnp.pi - 1e-4)
+
+    assert bool(jnp.all(jnp.isfinite(manifold.log(jnp.eye(2), near_half_turn))))
+
+
+def test_special_orthogonal_distance_is_finite_at_cut_locus(dtype_atol):
+    M = SpecialOrthogonal(size=3)
+    identity = jnp.eye(3)
+    half_turn = jnp.diag(jnp.array([1.0, -1.0, -1.0]))
+
+    assert jnp.allclose(
+        M.squared_dist(identity, half_turn),
+        2.0 * jnp.pi**2,
+        atol=max(2e-8, 10.0 * dtype_atol),
+        rtol=max(2e-8, 10.0 * dtype_atol),
+    )
+    assert jnp.allclose(
+        M.dist(identity, half_turn),
+        jnp.sqrt(2.0) * jnp.pi,
+        atol=max(2e-8, 10.0 * dtype_atol),
+        rtol=max(2e-8, 10.0 * dtype_atol),
+    )
+
+
 def test_special_euclidean_group_and_riemannian_exponentials():
     M = SpecialEuclidean(size=2)
     omega = jnp.array([[0.0, -0.6], [0.6, 0.0]])
@@ -54,6 +80,14 @@ def test_special_euclidean_group_and_riemannian_exponentials():
     assert jnp.allclose(M.group_log(group_point), xi, atol=1e-6)
     assert not jnp.allclose(M.translation(group_point), M.translation(riemannian_point))
     assert jnp.allclose(M.compose(group_point, M.inverse(group_point)), M.identity, atol=1e-6)
+
+
+def test_special_euclidean_component_construction_uses_a_common_floating_dtype():
+    manifold = SpecialEuclidean(size=2)
+    point = manifold.from_components(jnp.eye(2, dtype=int), jnp.array([0.25, -0.5]))
+
+    assert jnp.issubdtype(point.dtype, jnp.floating)
+    assert jnp.allclose(manifold.translation(point), jnp.array([0.25, -0.5]))
 
 
 def test_special_euclidean_rigid_registration_smoke(dtype_atol):

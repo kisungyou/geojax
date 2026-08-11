@@ -8,13 +8,24 @@ from typing import Any, Sequence
 import jax
 import jax.numpy as jnp
 
-from .base import ExactGeometryMixin, Shape, as_sample_shape, dtype_margin
+from .base import (
+    ExactGeometryMixin,
+    Shape,
+    as_sample_shape,
+    dtype_margin,
+    validate_integer,
+    validate_nonnegative,
+    validate_positive,
+)
 from ._numerics import (
     acos_over_sin,
     acos_squared,
     atanhc_from_squared_norm,
     cos_from_squared_norm,
     sinc_from_squared_norm,
+    stable_metric_norm,
+    stable_norm,
+    sqrt_nonnegative,
     squared_norm,
     tanhc_from_squared_norm,
 )
@@ -22,14 +33,10 @@ from ._numerics import (
 Array = Any
 
 
-def _safe_divide(numerator: Array, denominator: Array, eps: float) -> Array:
-    return numerator / jnp.where(jnp.abs(denominator) > eps, denominator, 1.0)
-
-
 def _parse_matrix_size(size: int | Sequence[int], name: str) -> tuple[int, int]:
     if isinstance(size, int):
         raise ValueError(f"{name} size must be a pair.")
-    parsed = tuple(int(value) for value in size)
+    parsed = tuple(validate_integer(value, name=f"{name} size entry", minimum=1) for value in size)
     if len(parsed) != 2 or min(parsed) < 1:
         raise ValueError(f"{name} size must be a pair of positive integers.")
     return parsed
@@ -47,10 +54,13 @@ class Oblique(ExactGeometryMixin):
     atol: float
     eps: float
 
+    hessian_conversion_is_exact = True
+    riemannian_gradient_jvp_is_exact = True
+
     def __init__(self, size: int | Sequence[int], *, atol: float = 1e-6, eps: float = 1e-12):
         object.__setattr__(self, "size", _parse_matrix_size(size, "Oblique"))
-        object.__setattr__(self, "atol", float(atol))
-        object.__setattr__(self, "eps", float(eps))
+        object.__setattr__(self, "atol", validate_nonnegative(atol, name="Oblique atol"))
+        object.__setattr__(self, "eps", validate_positive(eps, name="Oblique eps"))
 
     @property
     def n(self) -> int:
@@ -72,16 +82,15 @@ class Oblique(ExactGeometryMixin):
         tol = self.atol if atol is None else atol
         if not self._shape_matches(X):
             return self._shape_failure(X)
-        norms = jnp.linalg.norm(jnp.asarray(X), axis=-2)
+        norms = stable_norm(jnp.asarray(X), axis=-2)
         return jnp.all(jnp.abs(norms - 1.0) <= tol, axis=-1)
 
     def project(self, A: Array) -> Array:
         A = self._check_shape(A, name="A")
-        norms = jnp.linalg.norm(A, axis=-2, keepdims=True)
+        norms = stable_norm(A, axis=-2, keepdims=True)
         fallback = jnp.zeros_like(A).at[..., 0, :].set(1.0)
-        return jnp.where(norms > self.eps, A / jnp.maximum(norms, self.eps), fallback)
-
-    normalize = project
+        safe_norms = jnp.where(norms > 0.0, norms, jnp.ones_like(norms))
+        return jnp.where(norms > 0.0, A / safe_norms, fallback)
 
     def is_tangent(self, X: Array, U: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
@@ -95,19 +104,19 @@ class Oblique(ExactGeometryMixin):
         X, U = self._check_shapes(("X", X), ("U", U))
         return U - X * jnp.sum(X * U, axis=-2, keepdims=True)
 
-    projection = tangent_project
-    proj = tangent_project
-    to_tangent = tangent_project
-
     def inner(self, X: Array, U: Array, V: Array) -> Array:
         _, U, V = self._check_shapes(("X", X), ("U", U), ("V", V))
         return jnp.sum(U * V, axis=(-2, -1))
 
     def norm(self, X: Array, U: Array) -> Array:
-        return jnp.sqrt(jnp.maximum(self.inner(X, U, U), 0.0))
+        return stable_metric_norm(
+            U,
+            lambda normalized: self.inner(X, normalized, normalized),
+            axis=(-2, -1),
+        )
 
     def exp(self, X: Array, U: Array) -> Array:
-        X = jnp.asarray(X)
+        X = self._check_shape(X, name="X")
         U = self.tangent_project(X, U)
         lengths_squared = squared_norm(U, axis=-2, keepdims=True)
         return X * cos_from_squared_norm(lengths_squared) + U * sinc_from_squared_norm(
@@ -115,8 +124,7 @@ class Oblique(ExactGeometryMixin):
         )
 
     def log(self, X: Array, Y: Array) -> Array:
-        X = jnp.asarray(X)
-        Y = jnp.asarray(Y)
+        X, Y = self._check_shapes(("X", X), ("Y", Y))
         dots = jnp.clip(jnp.sum(X * Y, axis=-2, keepdims=True), -1.0, 1.0)
         direction = Y - dots * X
         sine_squared = squared_norm(direction, axis=-2, keepdims=True)
@@ -127,15 +135,15 @@ class Oblique(ExactGeometryMixin):
         return jnp.where(at_cut, jnp.full_like(result, jnp.nan), result)
 
     def squared_dist(self, X: Array, Y: Array) -> Array:
-        dots = jnp.clip(jnp.sum(jnp.asarray(X) * jnp.asarray(Y), axis=-2), -1.0, 1.0)
+        X, Y = self._check_shapes(("X", X), ("Y", Y))
+        dots = jnp.clip(jnp.sum(X * Y, axis=-2), -1.0, 1.0)
         return jnp.sum(acos_squared(dots), axis=-1)
 
     def dist(self, X: Array, Y: Array) -> Array:
-        return jnp.sqrt(self.squared_dist(X, Y))
+        return sqrt_nonnegative(self.squared_dist(X, Y))
 
     def transport(self, X: Array, Y: Array, U: Array) -> Array:
-        X = jnp.asarray(X)
-        Y = jnp.asarray(Y)
+        X, Y = self._check_shapes(("X", X), ("Y", Y))
         U = self.tangent_project(X, U)
         dots = jnp.clip(jnp.sum(X * Y, axis=-2, keepdims=True), -1.0, 1.0)
         direction = Y - dots * X
@@ -151,12 +159,18 @@ class Oblique(ExactGeometryMixin):
         at_cut = (dots < 0.0) & (sine <= sine_cutoff)
         return jnp.where(at_cut, jnp.full_like(result, jnp.nan), result)
 
-    transp = transport
-
     def egrad_to_rgrad(self, X: Array, egrad: Array) -> Array:
         return self.tangent_project(X, egrad)
 
-    egrad2rgrad = egrad_to_rgrad
+    def ehess_to_rhess(self, X: Array, egrad: Array, ehess_vec: Array, U: Array) -> Array:
+        X, egrad, ehess_vec, U = self._check_shapes(
+            ("X", X),
+            ("egrad", egrad),
+            ("ehess_vec", ehess_vec),
+            ("U", U),
+        )
+        curvature = U * jnp.sum(X * egrad, axis=-2, keepdims=True)
+        return self.tangent_project(X, ehess_vec - curvature)
 
     def random_point(self, key: Array, sample_shape: Shape = ()) -> Array:
         normal = jax.random.normal(key, shape=as_sample_shape(sample_shape) + self.shape)
@@ -173,8 +187,9 @@ class Oblique(ExactGeometryMixin):
         tangent = self.tangent_project(X, jax.random.normal(key, shape=jnp.shape(X)))
         if normalize:
             length = self.norm(X, tangent)[..., None, None]
-            tangent = jnp.where(length > self.eps, tangent / length, tangent)
-        return scale * tangent
+            safe_length = jnp.where(length > 0.0, length, jnp.ones_like(length))
+            tangent = jnp.where(length > 0.0, tangent / safe_length, tangent)
+        return self._scale_tangent(tangent, scale)
 
 
 @dataclass(frozen=True, init=False)
@@ -186,12 +201,10 @@ class ProbabilitySimplex(ExactGeometryMixin):
     eps: float
 
     def __init__(self, size: int, *, atol: float = 1e-6, eps: float = 1e-10):
-        size = int(size)
-        if size < 2:
-            raise ValueError("ProbabilitySimplex size must be at least 2.")
+        size = validate_integer(size, name="ProbabilitySimplex size", minimum=2)
         object.__setattr__(self, "size", size)
-        object.__setattr__(self, "atol", float(atol))
-        object.__setattr__(self, "eps", float(eps))
+        object.__setattr__(self, "atol", validate_nonnegative(atol, name="ProbabilitySimplex atol"))
+        object.__setattr__(self, "eps", validate_positive(eps, name="ProbabilitySimplex eps"))
 
     @property
     def shape(self) -> tuple[int]:
@@ -211,10 +224,8 @@ class ProbabilitySimplex(ExactGeometryMixin):
     def project(self, p: Array) -> Array:
         p = self._check_shape(p, name="p")
         floor = dtype_margin(p, configured=self.eps)
-        p = jnp.maximum(p, floor)
+        p = jnp.where(p > 0.0, p, floor)
         return p / jnp.sum(p, axis=-1, keepdims=True)
-
-    normalize = project
 
     def is_tangent(self, p: Array, u: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
@@ -230,17 +241,17 @@ class ProbabilitySimplex(ExactGeometryMixin):
         # g_p(p, v) = sum_i v_i for every ambient vector v.
         return u - p * jnp.sum(u, axis=-1, keepdims=True)
 
-    projection = tangent_project
-    proj = tangent_project
-    to_tangent = tangent_project
-
     def inner(self, p: Array, u: Array, v: Array) -> Array:
         p, u, v = self._check_shapes(("p", p), ("u", u), ("v", v))
         p = self.project(p)
         return jnp.sum(u * v / p, axis=-1)
 
     def norm(self, p: Array, u: Array) -> Array:
-        return jnp.sqrt(jnp.maximum(self.inner(p, u, u), 0.0))
+        return stable_metric_norm(
+            u,
+            lambda normalized: self.inner(p, normalized, normalized),
+            axis=-1,
+        )
 
     def exp(self, p: Array, u: Array) -> Array:
         p = self.project(p)
@@ -253,12 +264,26 @@ class ProbabilitySimplex(ExactGeometryMixin):
         ) * root + 0.5 * sinc_from_squared_norm(half_length_squared) * (u / root)
         result = next_root**2
         result = result / jnp.sum(result, axis=-1, keepdims=True)
-        valid = jnp.all(next_root > 0.0, axis=-1, keepdims=True) | (length_squared <= self.eps**2)
+        # The interior simplex is the positive orthant of the radius-two
+        # sphere under p -> 2 sqrt(p). Checking only the endpoint is
+        # insufficient: a long great circle can cross a coordinate hyperplane
+        # and later re-enter the orthant. Compute the first positive zero of
+        # every square-root coordinate and certify the entire segment.
+        half_length = jnp.sqrt(half_length_squared)
+        safe_half_length = jnp.where(half_length > 0.0, half_length, 1.0)
+        root_velocity = 0.5 * u / root
+        unit_velocity = root_velocity / safe_half_length
+        first_boundary = jnp.min(
+            jnp.arctan2(root, -unit_velocity),
+            axis=-1,
+            keepdims=True,
+        )
+        valid = half_length < first_boundary
         return jnp.where(valid, result, jnp.full_like(result, jnp.nan))
 
     def retr(self, p: Array, u: Array, t: float | Array = 1.0) -> Array:
         """Positive normalized-addition retraction used by optimizers."""
-        return self.project(jnp.asarray(p) + t * self.tangent_project(p, u))
+        return self.project(jnp.asarray(p) + self._scale_tangent(self.tangent_project(p, u), t))
 
     def log(self, p: Array, q: Array) -> Array:
         p = self.project(p)
@@ -274,7 +299,7 @@ class ProbabilitySimplex(ExactGeometryMixin):
         return 4.0 * acos_squared(jnp.clip(affinity, -1.0, 1.0))
 
     def dist(self, p: Array, q: Array) -> Array:
-        return jnp.sqrt(self.squared_dist(p, q))
+        return sqrt_nonnegative(self.squared_dist(p, q))
 
     def transport(self, p: Array, q: Array, u: Array) -> Array:
         p = self.project(p)
@@ -289,14 +314,10 @@ class ProbabilitySimplex(ExactGeometryMixin):
         sphere_v = sphere_u - coefficient * (sphere_p + sphere_q)
         return self.tangent_project(q, root_q * sphere_v)
 
-    transp = transport
-
     def egrad_to_rgrad(self, p: Array, egrad: Array) -> Array:
         p, egrad = self._check_shapes(("p", p), ("egrad", egrad))
         p = self.project(p)
         return p * (egrad - jnp.sum(p * egrad, axis=-1, keepdims=True))
-
-    egrad2rgrad = egrad_to_rgrad
 
     def random_point(self, key: Array, sample_shape: Shape = ()) -> Array:
         values = jax.random.exponential(key, shape=as_sample_shape(sample_shape) + self.shape)
@@ -313,8 +334,9 @@ class ProbabilitySimplex(ExactGeometryMixin):
         tangent = self.tangent_project(p, jax.random.normal(key, shape=jnp.shape(p)))
         if normalize:
             length = self.norm(p, tangent)[..., None]
-            tangent = jnp.where(length > self.eps, tangent / length, tangent)
-        return scale * tangent
+            safe_length = jnp.where(length > 0.0, length, jnp.ones_like(length))
+            tangent = jnp.where(length > 0.0, tangent / safe_length, tangent)
+        return self._scale_tangent(tangent, scale)
 
 
 @dataclass(frozen=True, init=False)
@@ -326,12 +348,10 @@ class PoincareBall(ExactGeometryMixin):
     eps: float
 
     def __init__(self, size: int, *, atol: float = 1e-6, eps: float = 1e-10):
-        size = int(size)
-        if size < 1:
-            raise ValueError("PoincareBall size must be positive.")
+        size = validate_integer(size, name="PoincareBall size", minimum=1)
         object.__setattr__(self, "size", size)
-        object.__setattr__(self, "atol", float(atol))
-        object.__setattr__(self, "eps", float(eps))
+        object.__setattr__(self, "atol", validate_nonnegative(atol, name="PoincareBall atol"))
+        object.__setattr__(self, "eps", validate_positive(eps, name="PoincareBall eps"))
 
     @property
     def shape(self) -> tuple[int]:
@@ -345,17 +365,15 @@ class PoincareBall(ExactGeometryMixin):
         del atol
         if not self._shape_matches(x):
             return self._shape_failure(x)
-        return jnp.linalg.norm(jnp.asarray(x), axis=-1) < 1.0
+        return stable_norm(jnp.asarray(x), axis=-1) < 1.0
 
     def project(self, x: Array) -> Array:
         x = self._check_shape(x, name="x")
-        norm = jnp.linalg.norm(x, axis=-1, keepdims=True)
+        norm = stable_norm(x, axis=-1, keepdims=True)
         margin = dtype_margin(x, configured=self.eps, atol=self.atol)
         radius = 1.0 - margin
-        denominator = jnp.maximum(norm, margin)
-        return jnp.where(norm < radius, x, radius * x / denominator)
-
-    normalize = project
+        denominator = jnp.where(norm > 0.0, norm, jnp.ones_like(norm))
+        return jnp.where(norm < 1.0, x, radius * x / denominator)
 
     def is_tangent(self, x: Array, u: Array, atol: float | None = None) -> Array:
         del atol
@@ -368,15 +386,17 @@ class PoincareBall(ExactGeometryMixin):
         _, u = self._check_shapes(("x", x), ("u", u))
         return u
 
-    projection = tangent_project
-    proj = tangent_project
-    to_tangent = tangent_project
-
     def conformal_factor(self, x: Array) -> Array:
         x = self._check_shape(x, name="x")
         squared_norm = jnp.sum(x**2, axis=-1)
-        floor = dtype_margin(x, configured=self.eps)
-        return 2.0 / jnp.maximum(1.0 - squared_norm, floor)
+        denominator = 1.0 - squared_norm
+        safe_denominator = jnp.where(
+            denominator > 0.0,
+            denominator,
+            jnp.ones_like(denominator),
+        )
+        factor = 2.0 / safe_denominator
+        return jnp.where(denominator > 0.0, factor, jnp.full_like(factor, jnp.nan))
 
     def inner(self, x: Array, u: Array, v: Array) -> Array:
         x, u, v = self._check_shapes(("x", x), ("u", u), ("v", v))
@@ -384,7 +404,11 @@ class PoincareBall(ExactGeometryMixin):
         return factor**2 * jnp.sum(u * v, axis=-1)
 
     def norm(self, x: Array, u: Array) -> Array:
-        return jnp.sqrt(jnp.maximum(self.inner(x, u, u), 0.0))
+        return stable_metric_norm(
+            u,
+            lambda normalized: self.inner(x, normalized, normalized),
+            axis=-1,
+        )
 
     def mobius_add(self, x: Array, y: Array) -> Array:
         x, y = self._check_shapes(("x", x), ("y", y))
@@ -393,8 +417,17 @@ class PoincareBall(ExactGeometryMixin):
         xy = jnp.sum(x * y, axis=-1, keepdims=True)
         numerator = (1.0 + 2.0 * xy + y2) * x + (1.0 - x2) * y
         denominator = 1.0 + 2.0 * xy + x2 * y2
-        floor = dtype_margin(x, configured=self.eps)
-        return numerator / jnp.maximum(denominator, floor)
+        safe_denominator = jnp.where(
+            denominator > 0.0,
+            denominator,
+            jnp.ones_like(denominator),
+        )
+        result = numerator / safe_denominator
+        return jnp.where(
+            denominator > 0.0,
+            result,
+            jnp.full_like(result, jnp.nan),
+        )
 
     def exp(self, x: Array, u: Array) -> Array:
         x = self.project(x)
@@ -422,7 +455,7 @@ class PoincareBall(ExactGeometryMixin):
         return 4.0 * squared_length * ratio * ratio
 
     def dist(self, x: Array, y: Array) -> Array:
-        return jnp.sqrt(self.squared_dist(x, y))
+        return sqrt_nonnegative(self.squared_dist(x, y))
 
     def _gyration(self, u: Array, v: Array, w: Array) -> Array:
         u2 = jnp.sum(u * u, axis=-1, keepdims=True)
@@ -433,7 +466,17 @@ class PoincareBall(ExactGeometryMixin):
         a = -uw * v2 + vw + 2.0 * uv * vw
         b = -vw * u2 - uw
         denominator = 1.0 + 2.0 * uv + u2 * v2
-        return w + 2.0 * (a * u + b * v) / jnp.maximum(denominator, self.eps)
+        safe_denominator = jnp.where(
+            denominator > 0.0,
+            denominator,
+            jnp.ones_like(denominator),
+        )
+        result = w + 2.0 * (a * u + b * v) / safe_denominator
+        return jnp.where(
+            denominator > 0.0,
+            result,
+            jnp.full_like(result, jnp.nan),
+        )
 
     def transport(self, x: Array, y: Array, u: Array) -> Array:
         x = self.project(x)
@@ -442,20 +485,21 @@ class PoincareBall(ExactGeometryMixin):
         rotated = self._gyration(y, -x, u)
         return (self.conformal_factor(x) / self.conformal_factor(y))[..., None] * rotated
 
-    transp = transport
-
     def egrad_to_rgrad(self, x: Array, egrad: Array) -> Array:
         x, egrad = self._check_shapes(("x", x), ("egrad", egrad))
         factor = self.conformal_factor(x)[..., None]
         return egrad / factor**2
 
-    egrad2rgrad = egrad_to_rgrad
-
     def random_point(self, key: Array, sample_shape: Shape = ()) -> Array:
         sample_shape = as_sample_shape(sample_shape)
         key_direction, key_radius = jax.random.split(key)
         direction = jax.random.normal(key_direction, shape=sample_shape + self.shape)
-        direction /= jnp.maximum(jnp.linalg.norm(direction, axis=-1, keepdims=True), self.eps)
+        direction_norm = stable_norm(direction, axis=-1, keepdims=True)
+        direction /= jnp.where(
+            direction_norm > 0.0,
+            direction_norm,
+            jnp.ones_like(direction_norm),
+        )
         radius = 0.8 * jax.random.uniform(key_radius, shape=sample_shape + (1,)) ** (
             1.0 / self.size
         )
@@ -473,8 +517,9 @@ class PoincareBall(ExactGeometryMixin):
         tangent = jax.random.normal(key, shape=jnp.shape(x))
         if normalize:
             length = self.norm(x, tangent)[..., None]
-            tangent = jnp.where(length > self.eps, tangent / length, tangent)
-        return scale * tangent
+            safe_length = jnp.where(length > 0.0, length, jnp.ones_like(length))
+            tangent = jnp.where(length > 0.0, tangent / safe_length, tangent)
+        return self._scale_tangent(tangent, scale)
 
 
 __all__ = ["Oblique", "ProbabilitySimplex", "PoincareBall"]

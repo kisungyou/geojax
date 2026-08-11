@@ -7,6 +7,8 @@ from typing import Any, List, Optional
 import math
 import time
 
+from geojax.geometry.base import validate_integer, validate_nonnegative
+
 from ._tangent_cg import tangent_conjugate_gradient
 from .linesearch import AdaptiveArmijo, LineSearchProtocol, LineSearchState
 from .minimize import (
@@ -26,6 +28,7 @@ from .minimize import (
     require,
     stopping_reason,
     tree_neg,
+    validate_line_search_result,
 )
 
 
@@ -60,6 +63,25 @@ class NewtonCG:
         hessian_vector = get(problem, "rhess_vec", None)
         if hessian_vector is None:
             raise ValueError("NewtonCG requires problem.rhess_vec(x, u).")
+        maxinner = validate_integer(self.maxinner, name="maxinner")
+        if maxinner <= 0:
+            raise ValueError("maxinner must be positive.")
+        configured_relative_tolerance = (
+            None
+            if self.cg_relative_tolerance is None
+            else validate_nonnegative(
+                self.cg_relative_tolerance,
+                name="cg_relative_tolerance",
+            )
+        )
+        cg_absolute_tolerance = validate_nonnegative(
+            self.cg_absolute_tolerance,
+            name="cg_absolute_tolerance",
+        )
+        curvature_tolerance = validate_nonnegative(
+            self.curvature_tolerance,
+            name="curvature_tolerance",
+        )
 
         start_time = time.perf_counter()
         search_state: LineSearchState | None = None
@@ -91,7 +113,7 @@ class NewtonCG:
                     print(reason)
                 break
 
-            relative_tolerance = self.cg_relative_tolerance
+            relative_tolerance = configured_relative_tolerance
             if relative_tolerance is None:
                 relative_tolerance = min(0.5, math.sqrt(max(as_float(gradnorm), 0.0)))
             cg = tangent_conjugate_gradient(
@@ -101,9 +123,9 @@ class NewtonCG:
                 tree_neg(g),
                 preconditioner=lambda residual: precondition(problem, x, residual),
                 relative_tolerance=float(relative_tolerance),
-                absolute_tolerance=self.cg_absolute_tolerance,
-                max_iterations=self.maxinner,
-                curvature_tolerance=self.curvature_tolerance,
+                absolute_tolerance=cg_absolute_tolerance,
+                max_iterations=maxinner,
+                curvature_tolerance=curvature_tolerance,
             )
             direction = cg.solution
             directional_derivative = inner(M, x, g, direction)
@@ -117,13 +139,16 @@ class NewtonCG:
                 direction = tree_neg(g)
                 directional_derivative = -(gradnorm * gradnorm)
 
-            line_result = self.line_search.search(
+            line_result = validate_line_search_result(
                 problem,
-                x,
-                direction,
-                f,
-                directional_derivative,
-                state=search_state,
+                self.line_search.search(
+                    problem,
+                    x,
+                    direction,
+                    f,
+                    directional_derivative,
+                    state=search_state,
+                ),
             )
             search_state = line_result.state
             x = line_result.point
@@ -148,6 +173,7 @@ class NewtonCG:
                     cg_iterations=cg.iterations,
                     cg_residual_norm=cg.residual_norm,
                     negative_curvature=cg.negative_curvature,
+                    preconditioner_fallback=cg.preconditioner_fallback,
                     cg_reason=cg.reason,
                 )
             )

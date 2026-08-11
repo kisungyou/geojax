@@ -6,9 +6,10 @@ than only the maintainer's active Python environment.
 
 ## Current environment
 
-Run both JAX precision modes before committing:
+Check style and run both JAX precision modes before committing:
 
 ```bash
+make quality
 make test
 make test-float32
 ```
@@ -74,6 +75,11 @@ environment. Missing versions are errors; they are never silently skipped.
 The supported minor versions also live in `.python-versions`, so
 `uv python install` can prepare all of them directly.
 
+Each tox environment builds a wheel, changes to an isolated temporary working
+directory, clears pytest's source-tree `pythonpath`, and asserts that
+`import geojax` resolves inside that environment. The matrix therefore tests
+the installed artifact rather than accidentally importing the checkout.
+
 For a faster laptop run with bounded and coverage-safe concurrency:
 
 ```bash
@@ -102,6 +108,11 @@ change. Tox also fixes the Python hash seed and stores coverage data inside
 each environment, so sequential and modestly parallel runs have the same
 isolation guarantees.
 
+GitHub CI complements the reproducible release matrix with the declared
+minimum stack and a continuously updated latest-JAX lane, split across float32
+and float64. It also runs quality checks, rebuilds the documentation, and
+installs both generated package formats outside the checkout.
+
 ## Documentation
 
 ```bash
@@ -121,5 +132,7 @@ make release-check
 ```
 
 The release target requires the complete tox matrix, rebuilds every tutorial,
-creates clean wheel and source archives, and applies Twine's strict metadata
-validation. It does not upload or publish anything.
+creates clean wheel and source archives, applies Twine's strict metadata
+validation, and installs both artifacts from a temporary directory. It first
+requires a clean commit carrying the annotated version tag, and prints the
+SHA-256 digest of each artifact. It does not upload or publish anything.

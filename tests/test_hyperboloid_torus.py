@@ -26,6 +26,18 @@ def test_torus_wrap_and_short_log():
     assert bool(M.belongs(M.exp(x, v)))
 
 
+def test_torus_log_rejects_antipodal_coordinates_but_distance_is_defined():
+    M = Torus(size=2)
+    x = jnp.zeros(2)
+    y = jnp.array([-jnp.pi, 0.25])
+
+    tangent = M.log(x, y)
+
+    assert jnp.isnan(tangent[0])
+    assert jnp.isfinite(M.dist(x, y))
+    assert jnp.allclose(M.dist(x, y), jnp.sqrt(jnp.pi**2 + 0.25**2))
+
+
 def test_open_ball_repairs_keep_a_float32_interior_margin():
     ball = PoincareBall(size=2)
     outside = jnp.array([2.0, 0.0], dtype=jnp.float32)
@@ -42,3 +54,34 @@ def test_open_ball_repairs_keep_a_float32_interior_margin():
     assert bool(hyperboloid.belongs(lifted))
     assert jnp.all(jnp.isfinite(lifted))
     assert jnp.linalg.norm(recovered) < 1.0
+
+
+def test_open_ball_operations_preserve_valid_points_near_the_boundary():
+    point = jnp.array([1.0 - 1e-6, 0.0])
+    ball = PoincareBall(size=2, eps=1e-3)
+
+    assert bool(ball.belongs(point))
+    assert jnp.array_equal(ball.project(point), point)
+    assert jnp.allclose(
+        ball.conformal_factor(point),
+        2.0 / (1.0 - jnp.sum(point * point)),
+    )
+
+    hyperboloid = Hyperboloid(size=3, eps=1e-3)
+    lifted = hyperboloid.from_poincare(point)
+    assert bool(hyperboloid.belongs(lifted))
+    assert jnp.allclose(hyperboloid.to_poincare(lifted), point, rtol=1e-8, atol=1e-10)
+
+
+def test_hyperboloid_distance_resists_near_boundary_lorentz_cancellation():
+    manifold = Hyperboloid(size=3)
+    left_ball = jnp.array([1.0 - 1e-5, 0.0], dtype=jnp.float32)
+    right_ball = jnp.array([1.0 - 2e-5, 0.0], dtype=jnp.float32)
+    left = manifold.from_poincare(left_ball)
+    right = manifold.from_poincare(right_ball)
+
+    expected = 2.0 * jnp.abs(jnp.arctanh(left_ball[0]) - jnp.arctanh(right_ball[0]))
+    distance = manifold.dist(left, right)
+
+    assert distance > 0.0
+    assert jnp.allclose(distance, expected, rtol=2e-3, atol=2e-4)

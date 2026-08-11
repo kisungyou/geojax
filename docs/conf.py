@@ -2,12 +2,20 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 import sys
 
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
+# myst-nb executes tutorials in child kernels whose working directory is the
+# tutorial directory. Propagate the source root so those kernels import the
+# checkout being documented even when GeoJAX is not installed in the host env.
+_inherited_pythonpath = os.environ.get("PYTHONPATH")
+os.environ["PYTHONPATH"] = os.pathsep.join(
+    entry for entry in (str(ROOT), _inherited_pythonpath) if entry
+)
 
 project = "GeoJAX"
 author = "Kisung You"

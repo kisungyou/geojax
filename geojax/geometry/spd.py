@@ -28,8 +28,15 @@ from typing import Any, Sequence, Tuple, Union
 import jax
 import jax.numpy as jnp
 
-from .base import ExactGeometryMixin, as_sample_shape, dtype_margin
-from ._numerics import matrix_expm
+from .base import (
+    ExactGeometryMixin,
+    as_sample_shape,
+    dtype_margin,
+    validate_integer,
+    validate_nonnegative,
+    validate_positive,
+)
+from ._numerics import stable_metric_norm, stable_norm, sqrt_nonnegative
 
 Array = Any
 Shape = Union[int, Sequence[int], Tuple[int, ...]]
@@ -42,7 +49,7 @@ def _as_sample_shape(sample_shape: Shape = ()) -> tuple[int, ...]:
 def _parse_spd_size(size: int | Sequence[int]) -> tuple[int, int]:
     if isinstance(size, int):
         raise ValueError("SPD size must be square, e.g. size=(3, 3).")
-    shape = tuple(int(v) for v in size)
+    shape = tuple(validate_integer(v, name="SPD size entry", minimum=1) for v in size)
     if len(shape) != 2 or shape[0] != shape[1]:
         raise ValueError("SPD size must be square, e.g. size=(3, 3).")
     if shape[0] < 1:
@@ -70,8 +77,31 @@ def _spd_from_eigh(Q: Array, vals: Array) -> Array:
     return (Q * vals[..., None, :]) @ jnp.swapaxes(Q, -1, -2)
 
 
-def _spd_expm(A: Array) -> Array:
-    return _sym(matrix_expm(_sym(A)))
+def _sylvester_eigenbasis_impl(P: Array, U: Array) -> Array:
+    """Solve ``P A + A P = U`` in an SPD eigenbasis."""
+    P = _sym(jnp.asarray(P))
+    U = _sym(jnp.asarray(U))
+    eigenvalues, eigenvectors = _eigh_sym(P)
+    rotated = jnp.swapaxes(eigenvectors, -1, -2) @ U @ eigenvectors
+    denominator = eigenvalues[..., :, None] + eigenvalues[..., None, :]
+    solution = rotated / denominator
+    return _sym(eigenvectors @ solution @ jnp.swapaxes(eigenvectors, -1, -2))
+
+
+@jax.custom_jvp
+def _solve_spd_sylvester(P: Array, U: Array) -> Array:
+    """SPD Sylvester solve with an implicit, repeated-spectrum-safe JVP."""
+    return _sylvester_eigenbasis_impl(P, U)
+
+
+@_solve_spd_sylvester.defjvp
+def _solve_spd_sylvester_jvp(primals, tangents):
+    P, U = primals
+    P_dot, U_dot = tangents
+    solution = _sylvester_eigenbasis_impl(P, U)
+    right_hand_side = _sym(U_dot - _sym(P_dot) @ solution - solution @ _sym(P_dot))
+    solution_dot = _sylvester_eigenbasis_impl(P, right_hand_side)
+    return solution, solution_dot
 
 
 def _spd_logm(P: Array, eps: float) -> Array:
@@ -94,6 +124,8 @@ def _spectral_divided_difference(
     eigenvalues: Array,
     function_values: Array,
     derivatives: Array,
+    *,
+    scale_floor: float = 1.0,
 ) -> Array:
     """Stable Loewner matrix for a scalar spectral function."""
     lam_i = eigenvalues[..., :, None]
@@ -104,7 +136,11 @@ def _spectral_divided_difference(
     deriv_j = derivatives[..., None, :]
     denominator = lam_i - lam_j
     dtype = jnp.result_type(eigenvalues, float)
-    scale = jnp.maximum(1.0, jnp.maximum(jnp.abs(lam_i), jnp.abs(lam_j)))
+    scale = jnp.maximum(
+        jnp.asarray(scale_floor, dtype=dtype),
+        jnp.maximum(jnp.abs(lam_i), jnp.abs(lam_j)),
+    )
+    scale = jnp.maximum(scale, jnp.finfo(dtype).tiny)
     separated = jnp.abs(denominator) > 32.0 * jnp.finfo(dtype).eps * scale
     safe_denominator = jnp.where(separated, denominator, jnp.ones_like(denominator))
     quotient = (value_i - value_j) / safe_denominator
@@ -114,10 +150,10 @@ def _spectral_divided_difference(
 
 @partial(jax.custom_jvp, nondiff_argnums=(1,))
 def _spd_project_differentiable(P: Array, eps: float) -> Array:
-    """Eigenvalue-clipping SPD projection with a repeated-spectrum-safe JVP."""
+    """Repair nonpositive eigenvalues while preserving every valid SPD point."""
     P = _sym(jnp.asarray(P))
     eigenvalues, eigenvectors = _eigh_sym(P)
-    clipped = jnp.maximum(eigenvalues, eps)
+    clipped = jnp.where(eigenvalues > 0.0, eigenvalues, eps)
     return _spd_from_eigh(eigenvectors, clipped)
 
 
@@ -127,9 +163,14 @@ def _spd_project_differentiable_jvp(eps, primals, tangents):
     P = _sym(jnp.asarray(P))
     E = _sym(jnp.asarray(E))
     eigenvalues, eigenvectors = _eigh_sym(P)
-    clipped = jnp.maximum(eigenvalues, eps)
-    derivatives = (eigenvalues > eps).astype(P.dtype)
-    loewner = _spectral_divided_difference(eigenvalues, clipped, derivatives)
+    clipped = jnp.where(eigenvalues > 0.0, eigenvalues, eps)
+    derivatives = (eigenvalues > 0.0).astype(P.dtype)
+    loewner = _spectral_divided_difference(
+        eigenvalues,
+        clipped,
+        derivatives,
+        scale_floor=0.0,
+    )
     rotated = jnp.swapaxes(eigenvectors, -1, -2) @ E @ eigenvectors
     derivative = eigenvectors @ (loewner * rotated) @ jnp.swapaxes(eigenvectors, -1, -2)
     return _spd_from_eigh(eigenvectors, clipped), _sym(derivative)
@@ -140,7 +181,8 @@ def _spd_logm_differentiable(P: Array, eps: float) -> Array:
     """Principal symmetric matrix logarithm with a stable Frechet derivative."""
     P = _sym(jnp.asarray(P))
     eigenvalues, eigenvectors = _eigh_sym(P)
-    safe = jnp.maximum(eigenvalues, eps)
+    del eps
+    safe = jnp.maximum(eigenvalues, jnp.finfo(P.dtype).tiny)
     return _spd_from_eigh(eigenvectors, jnp.log(safe))
 
 
@@ -150,10 +192,16 @@ def _spd_logm_differentiable_jvp(eps, primals, tangents):
     P = _sym(jnp.asarray(P))
     E = _sym(jnp.asarray(E))
     eigenvalues, eigenvectors = _eigh_sym(P)
-    safe = jnp.maximum(eigenvalues, eps)
+    del eps
+    safe = jnp.maximum(eigenvalues, jnp.finfo(P.dtype).tiny)
     values = jnp.log(safe)
-    derivatives = jnp.where(eigenvalues > eps, 1.0 / safe, 0.0)
-    loewner = _spectral_divided_difference(eigenvalues, values, derivatives)
+    derivatives = jnp.where(eigenvalues > 0.0, 1.0 / safe, 0.0)
+    loewner = _spectral_divided_difference(
+        eigenvalues,
+        values,
+        derivatives,
+        scale_floor=0.0,
+    )
     rotated = jnp.swapaxes(eigenvectors, -1, -2) @ E @ eigenvectors
     derivative = eigenvectors @ (loewner * rotated) @ jnp.swapaxes(eigenvectors, -1, -2)
     return _spd_from_eigh(eigenvectors, values), _sym(derivative)
@@ -223,15 +271,38 @@ def _frechet_spectral(A: Array, E: Array, func_name: str, eps: float) -> Array:
         function_values = jnp.exp(vals)
         derivatives = function_values
     elif func_name == "log":
-        safe = jnp.maximum(vals, eps)
+        del eps
+        safe = jnp.maximum(vals, jnp.finfo(A.dtype).tiny)
         function_values = jnp.log(safe)
-        derivatives = jnp.where(vals > eps, 1.0 / safe, 0.0)
+        derivatives = jnp.where(vals > 0.0, 1.0 / safe, 0.0)
     else:
         raise ValueError("func_name must be 'exp' or 'log'.")
 
-    L = _spectral_divided_difference(vals, function_values, derivatives)
+    L = _spectral_divided_difference(
+        vals,
+        function_values,
+        derivatives,
+        scale_floor=0.0 if func_name == "log" else 1.0,
+    )
     Ft = L * Et
     return _sym(Q @ Ft @ jnp.swapaxes(Q, -1, -2))
+
+
+@jax.custom_jvp
+def _spd_expm(A: Array) -> Array:
+    """Symmetric matrix exponential with accurate small eigenvalues."""
+    A = _sym(jnp.asarray(A))
+    eigenvalues, eigenvectors = _eigh_sym(A)
+    return _spd_from_eigh(eigenvectors, jnp.exp(eigenvalues))
+
+
+@_spd_expm.defjvp
+def _spd_expm_jvp(primals, tangents):
+    (A,), (E,) = primals, tangents
+    A = _sym(jnp.asarray(A))
+    primal = _spd_expm(A)
+    tangent = _frechet_spectral(A, E, "exp", 0.0)
+    return primal, tangent
 
 
 @dataclass(frozen=True, init=False)
@@ -252,8 +323,8 @@ class SPDLogEuclidean(ExactGeometryMixin):
         self, size: int | Sequence[int], *, atol: float = 1e-6, eps: float = 1e-10
     ) -> None:
         object.__setattr__(self, "size", _parse_spd_size(size))
-        object.__setattr__(self, "atol", float(atol))
-        object.__setattr__(self, "eps", float(eps))
+        object.__setattr__(self, "atol", validate_nonnegative(atol, name="SPDLogEuclidean atol"))
+        object.__setattr__(self, "eps", validate_positive(eps, name="SPDLogEuclidean eps"))
 
     @property
     def n(self) -> int:
@@ -272,7 +343,7 @@ class SPDLogEuclidean(ExactGeometryMixin):
         P = jnp.asarray(P)
         if not self._shape_matches(P):
             return self._shape_failure(P)
-        sym_ok = jnp.linalg.norm(P - jnp.swapaxes(P, -1, -2), axis=(-2, -1)) <= tol
+        sym_ok = stable_norm(P - jnp.swapaxes(P, -1, -2), axis=(-2, -1)) <= tol
         vals = jnp.linalg.eigvalsh(_sym(P))
         pd_ok = jnp.min(vals, axis=-1) > 0.0
         return sym_ok & pd_ok
@@ -282,7 +353,7 @@ class SPDLogEuclidean(ExactGeometryMixin):
         if not self._shape_matches(P, U):
             return self._shape_failure(P)
         _, U = self._check_shapes(("P", P), ("U", U))
-        return jnp.linalg.norm(U - jnp.swapaxes(U, -1, -2), axis=(-2, -1)) <= tol
+        return stable_norm(U - jnp.swapaxes(U, -1, -2), axis=(-2, -1)) <= tol
 
     def project(self, P: Array) -> Array:
         P = self._check_shape(P, name="P")
@@ -292,10 +363,6 @@ class SPDLogEuclidean(ExactGeometryMixin):
     def tangent_project(self, P: Array, U: Array) -> Array:
         _, U = self._check_shapes(("P", P), ("U", U))
         return _sym(U)
-
-    projection = tangent_project
-    proj = tangent_project
-    to_tangent = tangent_project
 
     def logm(self, P: Array) -> Array:
         return _spd_logm(self.project(P), self.eps)
@@ -315,7 +382,11 @@ class SPDLogEuclidean(ExactGeometryMixin):
         return _trace_inner(dU, dV)
 
     def norm(self, P: Array, U: Array) -> Array:
-        return jnp.sqrt(jnp.maximum(self.inner(P, U, U), 0.0))
+        return stable_metric_norm(
+            U,
+            lambda normalized: self.inner(P, normalized, normalized),
+            axis=(-2, -1),
+        )
 
     def exp(self, P: Array, U: Array) -> Array:
         P = self.project(P)
@@ -325,7 +396,7 @@ class SPDLogEuclidean(ExactGeometryMixin):
         return self.expm(A + W)
 
     def retr(self, P: Array, U: Array, t: float | Array = 1.0) -> Array:
-        return self.exp(P, t * U)
+        return self.exp(P, self._scale_tangent(U, t))
 
     def log(self, P: Array, Q: Array) -> Array:
         P = self.project(P)
@@ -335,7 +406,7 @@ class SPDLogEuclidean(ExactGeometryMixin):
         return self.dexp(A, B - A)
 
     def dist(self, P: Array, Q: Array) -> Array:
-        return jnp.sqrt(self.squared_dist(P, Q))
+        return sqrt_nonnegative(self.squared_dist(P, Q))
 
     def squared_dist(self, P: Array, Q: Array) -> Array:
         """Squared Euclidean distance between matrix-log coordinates."""
@@ -347,8 +418,6 @@ class SPDLogEuclidean(ExactGeometryMixin):
         W = self.dlog(P, U)
         return self.dexp(B, W)
 
-    transp = transport
-
     def egrad_to_rgrad(self, P: Array, egrad: Array) -> Array:
         P = self.project(P)
         E = self.tangent_project(P, egrad)
@@ -358,14 +427,12 @@ class SPDLogEuclidean(ExactGeometryMixin):
         grad_A = self.dexp(A, E)
         return self.dexp(A, grad_A)
 
-    egrad2rgrad = egrad_to_rgrad
-
     def lincomb(self, P: Array, *terms: Any) -> Array:
         if len(terms) % 2 != 0:
             raise ValueError("lincomb expects coefficient/vector pairs.")
         out = None
         for coeff, vec in zip(terms[0::2], terms[1::2]):
-            term = coeff * vec
+            term = self._scale_tangent(vec, coeff)
             out = term if out is None else out + term
         if out is None:
             raise ValueError("lincomb requires at least one coefficient/vector pair.")
@@ -389,8 +456,9 @@ class SPDLogEuclidean(ExactGeometryMixin):
         U = self.tangent_project(P, Z)
         if normalize:
             n = self.norm(P, U)[..., None, None]
-            U = jnp.where(n > self.eps, U / n, U)
-        return scale * U
+            safe_n = jnp.where(n > 0.0, n, jnp.ones_like(n))
+            U = jnp.where(n > 0.0, U / safe_n, U)
+        return self._scale_tangent(U, scale)
 
 
 @dataclass(frozen=True, init=False)
@@ -412,8 +480,8 @@ class SPDAffineInvariant(ExactGeometryMixin):
         self, size: int | Sequence[int], *, atol: float = 1e-6, eps: float = 1e-10
     ) -> None:
         object.__setattr__(self, "size", _parse_spd_size(size))
-        object.__setattr__(self, "atol", float(atol))
-        object.__setattr__(self, "eps", float(eps))
+        object.__setattr__(self, "atol", validate_nonnegative(atol, name="SPDAffineInvariant atol"))
+        object.__setattr__(self, "eps", validate_positive(eps, name="SPDAffineInvariant eps"))
 
     @property
     def n(self) -> int:
@@ -432,7 +500,7 @@ class SPDAffineInvariant(ExactGeometryMixin):
         P = jnp.asarray(P)
         if not self._shape_matches(P):
             return self._shape_failure(P)
-        sym_ok = jnp.linalg.norm(P - jnp.swapaxes(P, -1, -2), axis=(-2, -1)) <= tol
+        sym_ok = stable_norm(P - jnp.swapaxes(P, -1, -2), axis=(-2, -1)) <= tol
         vals = jnp.linalg.eigvalsh(_sym(P))
         pd_ok = jnp.min(vals, axis=-1) > 0.0
         return sym_ok & pd_ok
@@ -442,7 +510,7 @@ class SPDAffineInvariant(ExactGeometryMixin):
         if not self._shape_matches(P, U):
             return self._shape_failure(P)
         _, U = self._check_shapes(("P", P), ("U", U))
-        return jnp.linalg.norm(U - jnp.swapaxes(U, -1, -2), axis=(-2, -1)) <= tol
+        return stable_norm(U - jnp.swapaxes(U, -1, -2), axis=(-2, -1)) <= tol
 
     def project(self, P: Array) -> Array:
         P = self._check_shape(P, name="P")
@@ -453,10 +521,6 @@ class SPDAffineInvariant(ExactGeometryMixin):
         _, U = self._check_shapes(("P", P), ("U", U))
         return _sym(U)
 
-    projection = tangent_project
-    proj = tangent_project
-    to_tangent = tangent_project
-
     def inner(self, P: Array, U: Array, V: Array) -> Array:
         P = self.project(P)
         U = self.tangent_project(P, U)
@@ -465,7 +529,11 @@ class SPDAffineInvariant(ExactGeometryMixin):
         return _trace_inner(Pinv @ U @ Pinv, V)
 
     def norm(self, P: Array, U: Array) -> Array:
-        return jnp.sqrt(jnp.maximum(self.inner(P, U, U), 0.0))
+        return stable_metric_norm(
+            U,
+            lambda normalized: self.inner(P, normalized, normalized),
+            axis=(-2, -1),
+        )
 
     def exp(self, P: Array, U: Array) -> Array:
         P = self.project(P)
@@ -476,7 +544,7 @@ class SPDAffineInvariant(ExactGeometryMixin):
         return self.project(Psqrt @ _spd_expm(A) @ Psqrt)
 
     def retr(self, P: Array, U: Array, t: float | Array = 1.0) -> Array:
-        return self.exp(P, t * U)
+        return self.exp(P, self._scale_tangent(U, t))
 
     def log(self, P: Array, Q: Array) -> Array:
         P = self.project(P)
@@ -496,7 +564,7 @@ class SPDAffineInvariant(ExactGeometryMixin):
         return jnp.maximum(_trace_inner(L, L), 0.0)
 
     def dist(self, P: Array, Q: Array) -> Array:
-        return jnp.sqrt(self.squared_dist(P, Q))
+        return sqrt_nonnegative(self.squared_dist(P, Q))
 
     def transport(self, P: Array, Q: Array, U: Array) -> Array:
         P = self.project(P)
@@ -509,21 +577,17 @@ class SPDAffineInvariant(ExactGeometryMixin):
         E = Psqrt @ Asqrt @ Pinvsqrt
         return _sym(E @ U @ jnp.swapaxes(E, -1, -2))
 
-    transp = transport
-
     def egrad_to_rgrad(self, P: Array, egrad: Array) -> Array:
         P = self.project(P)
         E = self.tangent_project(P, egrad)
         return _sym(P @ E @ P)
-
-    egrad2rgrad = egrad_to_rgrad
 
     def lincomb(self, P: Array, *terms: Any) -> Array:
         if len(terms) % 2 != 0:
             raise ValueError("lincomb expects coefficient/vector pairs.")
         out = None
         for coeff, vec in zip(terms[0::2], terms[1::2]):
-            term = coeff * vec
+            term = self._scale_tangent(vec, coeff)
             out = term if out is None else out + term
         if out is None:
             raise ValueError("lincomb requires at least one coefficient/vector pair.")
@@ -547,8 +611,9 @@ class SPDAffineInvariant(ExactGeometryMixin):
         U = self.tangent_project(P, Z)
         if normalize:
             n = self.norm(P, U)[..., None, None]
-            U = jnp.where(n > self.eps, U / n, U)
-        return scale * U
+            safe_n = jnp.where(n > 0.0, n, jnp.ones_like(n))
+            U = jnp.where(n > 0.0, U / safe_n, U)
+        return self._scale_tangent(U, scale)
 
 
 @dataclass(frozen=True, init=False)
@@ -575,8 +640,10 @@ class SPDBuresWasserstein(ExactGeometryMixin):
         self, size: int | Sequence[int], *, atol: float = 1e-6, eps: float = 1e-10
     ) -> None:
         object.__setattr__(self, "size", _parse_spd_size(size))
-        object.__setattr__(self, "atol", float(atol))
-        object.__setattr__(self, "eps", float(eps))
+        object.__setattr__(
+            self, "atol", validate_nonnegative(atol, name="SPDBuresWasserstein atol")
+        )
+        object.__setattr__(self, "eps", validate_positive(eps, name="SPDBuresWasserstein eps"))
 
     @property
     def n(self) -> int:
@@ -595,7 +662,7 @@ class SPDBuresWasserstein(ExactGeometryMixin):
         P = jnp.asarray(P)
         if not self._shape_matches(P):
             return self._shape_failure(P)
-        sym_ok = jnp.linalg.norm(P - jnp.swapaxes(P, -1, -2), axis=(-2, -1)) <= tol
+        sym_ok = stable_norm(P - jnp.swapaxes(P, -1, -2), axis=(-2, -1)) <= tol
         vals = jnp.linalg.eigvalsh(_sym(P))
         pd_ok = jnp.min(vals, axis=-1) > 0.0
         return sym_ok & pd_ok
@@ -610,27 +677,17 @@ class SPDBuresWasserstein(ExactGeometryMixin):
         if not self._shape_matches(P, U):
             return self._shape_failure(P)
         _, U = self._check_shapes(("P", P), ("U", U))
-        return jnp.linalg.norm(U - jnp.swapaxes(U, -1, -2), axis=(-2, -1)) <= tol
+        return stable_norm(U - jnp.swapaxes(U, -1, -2), axis=(-2, -1)) <= tol
 
     def tangent_project(self, P: Array, U: Array) -> Array:
         _, U = self._check_shapes(("P", P), ("U", U))
         return _sym(U)
 
-    projection = tangent_project
-    proj = tangent_project
-    to_tangent = tangent_project
-
     def sylvester(self, P: Array, U: Array) -> Array:
         """Solve ``P A + A P = U`` for symmetric ``A``."""
         P = self.project(P)
         U = self.tangent_project(P, U)
-        identity = jnp.eye(self.n, dtype=P.dtype)
-        operator = jnp.einsum("...ik,jl->...ijkl", P, identity)
-        operator = operator + jnp.einsum("ik,...lj->...ijkl", identity, P)
-        operator = operator.reshape(P.shape[:-2] + (self.n**2, self.n**2))
-        right_hand_side = U.reshape(U.shape[:-2] + (self.n**2, 1))
-        solution = jnp.linalg.solve(operator, right_hand_side)[..., 0]
-        return _sym(solution.reshape(U.shape))
+        return _solve_spd_sylvester(P, U)
 
     def inner(self, P: Array, U: Array, V: Array) -> Array:
         P = self.project(P)
@@ -638,7 +695,11 @@ class SPDBuresWasserstein(ExactGeometryMixin):
         return 0.5 * _trace_inner(self.sylvester(P, U), V)
 
     def norm(self, P: Array, U: Array) -> Array:
-        return jnp.sqrt(jnp.maximum(self.inner(P, U, U), 0.0))
+        return stable_metric_norm(
+            U,
+            lambda normalized: self.inner(P, normalized, normalized),
+            axis=(-2, -1),
+        )
 
     def exp(self, P: Array, U: Array) -> Array:
         P = self.project(P)
@@ -647,12 +708,15 @@ class SPDBuresWasserstein(ExactGeometryMixin):
         # P + U + A P A = (I + A) P (I + A) on the valid branch.
         result = _sym(P + U + A @ P @ A)
         lift = jnp.eye(self.n, dtype=P.dtype) + A
-        threshold = dtype_margin(P, configured=self.eps)
-        valid = jnp.min(jnp.linalg.svd(lift, compute_uv=False), axis=-1) > threshold
+        # The horizontal lift is (I + t A) P^(1/2). It remains full rank for
+        # every t in [0, 1] exactly when I + A is positive definite. Endpoint
+        # invertibility alone would accept paths that hit the PSD boundary and
+        # later re-enter SPD.
+        valid = jnp.min(jnp.linalg.eigvalsh(_sym(lift)), axis=-1) > 0.0
         return jnp.where(valid[..., None, None], result, jnp.full_like(result, jnp.nan))
 
     def retr(self, P: Array, U: Array, t: float | Array = 1.0) -> Array:
-        return self.exp(P, t * U)
+        return self.exp(P, self._scale_tangent(U, t))
 
     def optimal_transport_map(self, P: Array, Q: Array) -> Array:
         """Return the optimal Gaussian transport map from covariance P to Q."""
@@ -670,17 +734,15 @@ class SPDBuresWasserstein(ExactGeometryMixin):
         return _sym(displacement @ P + P @ displacement)
 
     def squared_dist(self, P: Array, Q: Array) -> Array:
+        # The equivalent trace identity suffers catastrophic cancellation for
+        # nearby matrices. The exact logarithm has norm equal to geodesic
+        # distance and retains all resolvable first-order displacement.
         P = self.project(P)
-        Q = self.project(Q)
-        Psqrt = _spd_sqrtm_differentiable(P)
-        cross = _spd_sqrtm_differentiable(Psqrt @ Q @ Psqrt)
-        value = jnp.trace(P, axis1=-2, axis2=-1)
-        value = value + jnp.trace(Q, axis1=-2, axis2=-1)
-        value = value - 2.0 * jnp.trace(cross, axis1=-2, axis2=-1)
-        return jnp.maximum(value, 0.0)
+        tangent = self.log(P, Q)
+        return jnp.maximum(self.inner(P, tangent, tangent), 0.0)
 
     def dist(self, P: Array, Q: Array) -> Array:
-        return jnp.sqrt(self.squared_dist(P, Q))
+        return sqrt_nonnegative(self.squared_dist(P, Q))
 
     def _metric_coordinates(self, P: Array, U: Array) -> Array:
         """Map a tangent isometrically to the fixed Euclidean Sym(n) space."""
@@ -689,7 +751,7 @@ class SPDBuresWasserstein(ExactGeometryMixin):
         vals, eigvecs = _eigh_sym(P)
         rotated = jnp.swapaxes(eigvecs, -1, -2) @ U @ eigvecs
         weights = jnp.sqrt(2.0 * (vals[..., :, None] + vals[..., None, :]))
-        coordinates = rotated / jnp.maximum(weights, self.eps)
+        coordinates = rotated / jnp.maximum(weights, jnp.finfo(P.dtype).tiny)
         return _sym(eigvecs @ coordinates @ jnp.swapaxes(eigvecs, -1, -2))
 
     def _from_metric_coordinates(self, P: Array, coordinates: Array) -> Array:
@@ -711,21 +773,17 @@ class SPDBuresWasserstein(ExactGeometryMixin):
         """
         return self._from_metric_coordinates(Q, self._metric_coordinates(P, U))
 
-    transp = transport
-
     def egrad_to_rgrad(self, P: Array, egrad: Array) -> Array:
         P = self.project(P)
         E = self.tangent_project(P, egrad)
         return _sym(2.0 * (P @ E + E @ P))
-
-    egrad2rgrad = egrad_to_rgrad
 
     def lincomb(self, P: Array, *terms: Any) -> Array:
         if len(terms) % 2 != 0:
             raise ValueError("lincomb expects coefficient/vector pairs.")
         out = None
         for coeff, vec in zip(terms[0::2], terms[1::2]):
-            term = coeff * vec
+            term = self._scale_tangent(vec, coeff)
             out = term if out is None else out + term
         if out is None:
             raise ValueError("lincomb requires at least one coefficient/vector pair.")
@@ -749,8 +807,9 @@ class SPDBuresWasserstein(ExactGeometryMixin):
         U = self.tangent_project(P, Z)
         if normalize:
             norm = self.norm(P, U)[..., None, None]
-            U = jnp.where(norm > self.eps, U / norm, U)
-        return scale * U
+            safe_norm = jnp.where(norm > 0.0, norm, jnp.ones_like(norm))
+            U = jnp.where(norm > 0.0, U / safe_norm, U)
+        return self._scale_tangent(U, scale)
 
 
 __all__ = ["SPDLogEuclidean", "SPDAffineInvariant", "SPDBuresWasserstein"]

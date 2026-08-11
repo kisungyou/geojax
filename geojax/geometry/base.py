@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import math
+import operator
 from typing import Any, Protocol, Sequence, Tuple, Union, runtime_checkable
 
 import jax.numpy as jnp
@@ -12,9 +14,60 @@ Shape = Union[int, Sequence[int], Tuple[int, ...]]
 
 def as_sample_shape(sample_shape: Shape = ()) -> tuple[int, ...]:
     """Normalize an integer or tuple-like sample shape."""
-    if isinstance(sample_shape, int):
-        return (sample_shape,)
-    return tuple(sample_shape)
+    values = (sample_shape,) if isinstance(sample_shape, int) else tuple(sample_shape)
+    parsed = []
+    for value in values:
+        if isinstance(value, bool):
+            raise TypeError("sample_shape entries must be integers, not booleans.")
+        try:
+            dimension = operator.index(value)
+        except TypeError as exc:
+            raise TypeError("sample_shape entries must be integers.") from exc
+        if dimension < 0:
+            raise ValueError("sample_shape entries must be nonnegative.")
+        parsed.append(int(dimension))
+    return tuple(parsed)
+
+
+def validate_nonnegative(value: float, *, name: str) -> float:
+    """Return a finite nonnegative scalar or raise a precise error."""
+    if isinstance(value, bool):
+        raise TypeError(f"{name} must be a real scalar, not a boolean.")
+    result = float(value)
+    if not math.isfinite(result) or result < 0.0:
+        raise ValueError(f"{name} must be finite and nonnegative.")
+    return result
+
+
+def validate_positive(value: float, *, name: str) -> float:
+    """Return a finite positive scalar or raise a precise error."""
+    if isinstance(value, bool):
+        raise TypeError(f"{name} must be a real scalar, not a boolean.")
+    result = float(value)
+    if not math.isfinite(result) or result <= 0.0:
+        raise ValueError(f"{name} must be finite and positive.")
+    return result
+
+
+def validate_integer(value: Any, *, name: str, minimum: int | None = None) -> int:
+    """Return an integer-valued dimension/control without truncating floats."""
+    if isinstance(value, bool):
+        raise TypeError(f"{name} must be an integer, not a boolean.")
+    try:
+        result = operator.index(value)
+    except TypeError as exc:
+        raise TypeError(f"{name} must be an integer.") from exc
+    result = int(result)
+    if minimum is not None and result < minimum:
+        raise ValueError(f"{name} must be at least {minimum}.")
+    return result
+
+
+def validate_boolean(value: Any, *, name: str) -> bool:
+    """Return a genuine boolean without accepting integer lookalikes."""
+    if not isinstance(value, bool):
+        raise TypeError(f"{name} must be a boolean.")
+    return value
 
 
 def event_shape_matches(x: Array, event_shape: Sequence[int]) -> bool:
@@ -26,7 +79,11 @@ def event_shape_matches(x: Array, event_shape: Sequence[int]) -> bool:
     """
     array = jnp.asarray(x)
     shape = tuple(int(value) for value in event_shape)
-    return array.ndim >= len(shape) and tuple(array.shape[-len(shape) :]) == shape
+    return (
+        not jnp.iscomplexobj(array)
+        and array.ndim >= len(shape)
+        and tuple(array.shape[-len(shape) :]) == shape
+    )
 
 
 def false_for_event_shape(x: Array, event_shape: Sequence[int]) -> Array:
@@ -40,12 +97,50 @@ def false_for_event_shape(x: Array, event_shape: Sequence[int]) -> Array:
 def check_event_shape(x: Array, event_shape: Sequence[int], *, name: str = "array") -> Array:
     """Convert ``x`` to a JAX array and reject an incompatible event shape."""
     array = jnp.asarray(x)
+    if jnp.iscomplexobj(array):
+        raise TypeError(f"{name} must be real-valued; complex arrays are unsupported.")
     shape = tuple(int(value) for value in event_shape)
     if not event_shape_matches(array, shape):
         raise ValueError(
             f"{name} must have trailing event shape {shape}; received shape {array.shape}."
         )
     return array
+
+
+def scale_tangent(vector: Array, coefficient: float | Array, *, event_ndim: int) -> Array:
+    """Scale an event-shaped tangent by scalar or leading-batch coefficients.
+
+    ``coefficient`` follows the leading batch dimensions of ``vector``.  Event
+    dimensions are never considered for coefficient broadcasting, which
+    prevents a batch of steps from accidentally scaling event coordinates when
+    a batch dimension happens to equal an event dimension.
+
+    Trailing singleton dimensions beyond the available batch rank are accepted
+    for compatibility with explicitly expanded coefficients.
+    """
+    value = jnp.asarray(vector)
+    if isinstance(event_ndim, bool) or not isinstance(event_ndim, int):
+        raise TypeError("event_ndim must be an integer.")
+    if event_ndim < 0 or event_ndim > value.ndim:
+        raise ValueError("event_ndim must be between zero and vector.ndim.")
+
+    batch_shape = value.shape[:-event_ndim] if event_ndim else value.shape
+    factor = jnp.asarray(coefficient)
+    while factor.ndim > len(batch_shape) and factor.shape[-1] == 1:
+        factor = jnp.squeeze(factor, axis=-1)
+    if factor.ndim > len(batch_shape):
+        raise ValueError(
+            "coefficient must be scalar or broadcast over the tangent's "
+            f"leading batch shape {batch_shape}; received shape {factor.shape}."
+        )
+    try:
+        jnp.broadcast_shapes(batch_shape, factor.shape)
+    except ValueError as exc:
+        raise ValueError(
+            "coefficient must be scalar or broadcast over the tangent's "
+            f"leading batch shape {batch_shape}; received shape {factor.shape}."
+        ) from exc
+    return value * factor.reshape(factor.shape + (1,) * event_ndim)
 
 
 def dtype_margin(
@@ -61,6 +156,9 @@ def dtype_margin(
     repaired point on the accepted side of strict membership checks, and the
     machine-precision term prevents margins from rounding away in float32.
     """
+    configured = validate_nonnegative(configured, name="configured margin")
+    atol = validate_nonnegative(atol, name="absolute tolerance")
+    ulps = validate_nonnegative(ulps, name="ULP multiplier")
     array = jnp.asarray(x)
     dtype = jnp.result_type(array, float)
     return max(
@@ -234,16 +332,50 @@ class GeometryMixin:
 
     def _check_shapes(self, *named_arrays: tuple[str, Array]) -> tuple[Array, ...]:
         """Validate event shapes and broadcast-compatible leading dimensions."""
-        arrays = tuple(
-            self._check_shape(array, name=name) for name, array in named_arrays
-        )
+        arrays = tuple(self._check_shape(array, name=name) for name, array in named_arrays)
         event_ndim = len(self._event_shape())
         try:
             jnp.broadcast_shapes(*(array.shape[:-event_ndim] for array in arrays))
         except ValueError as exc:
-            shapes = ", ".join(f"{name}={array.shape}" for (name, _), array in zip(named_arrays, arrays))
-            raise ValueError(f"Leading batch dimensions are not broadcast-compatible: {shapes}.") from exc
+            shapes = ", ".join(
+                f"{name}={array.shape}" for (name, _), array in zip(named_arrays, arrays)
+            )
+            raise ValueError(
+                f"Leading batch dimensions are not broadcast-compatible: {shapes}."
+            ) from exc
         return arrays
+
+    def _scale_tangent(self, vector: Array, coefficient: float | Array) -> Array:
+        """Apply a scalar or leading-batch coefficient to an array tangent."""
+        return scale_tangent(
+            vector,
+            coefficient,
+            event_ndim=len(self._event_shape()),
+        )
+
+    def normalize(self, x: Array) -> Array:
+        """Compatibility alias that dispatches to :meth:`project`."""
+        return self.project(x)
+
+    def projection(self, x: Array, u: Array) -> Array:
+        """Compatibility alias that dispatches to :meth:`tangent_project`."""
+        return self.tangent_project(x, u)
+
+    def proj(self, x: Array, u: Array) -> Array:
+        """Compatibility alias that dispatches to :meth:`tangent_project`."""
+        return self.tangent_project(x, u)
+
+    def to_tangent(self, x: Array, u: Array) -> Array:
+        """Compatibility alias that dispatches to :meth:`tangent_project`."""
+        return self.tangent_project(x, u)
+
+    def transp(self, x: Array, y: Array, u: Array) -> Array:
+        """Compatibility alias that dispatches to :meth:`transport`."""
+        return self.transport(x, y, u)
+
+    def egrad2rgrad(self, x: Array, egrad: Array) -> Array:
+        """Compatibility alias that dispatches to :meth:`egrad_to_rgrad`."""
+        return self.egrad_to_rgrad(x, egrad)
 
     def operation_kind(self, name: str) -> str:
         """Describe the mathematical status of a geometric operation."""
@@ -257,6 +389,9 @@ class GeometryMixin:
             return "exact" if self.hessian_conversion_is_exact else "projection"
         if name == "rgrad_jvp":
             return "exact" if self.riemannian_gradient_jvp_is_exact else "projection"
+        if name == "squared_dist":
+            explicit_kind = getattr(self, "squared_dist_kind", None)
+            return str(explicit_kind) if explicit_kind is not None else self.operation_kind("dist")
         if name not in {"exp", "log", "dist"}:
             raise ValueError(f"Unknown geometric operation: {name!r}.")
         explicit_kind = getattr(self, f"{name}_kind", None)
@@ -289,7 +424,7 @@ class GeometryMixin:
 
     def retr(self, x: Array, u: Array, t: float | Array = 1.0) -> Array:
         """Default retraction: use the exponential map."""
-        return self.exp(x, t * u)
+        return self.exp(x, self._scale_tangent(u, t))
 
     def invretr(self, x: Array, y: Array) -> Array:
         """Default inverse retraction: use the logarithmic map."""
@@ -301,7 +436,7 @@ class GeometryMixin:
             raise ValueError("lincomb expects coefficient/vector pairs.")
         out = None
         for coeff, vec in zip(terms[0::2], terms[1::2]):
-            term = coeff * vec
+            term = self._scale_tangent(vec, coeff)
             out = term if out is None else out + term
         if out is None:
             raise ValueError("lincomb requires at least one coefficient/vector pair.")
@@ -352,8 +487,6 @@ class RetractionGeometryMixin(GeometryMixin):
         del x
         return self.tangent_project(y, u)
 
-    transp = transport
-
 
 class ExactGeometryMixin(GeometryMixin):
     """Opt-in defaults for geometries with certified exact geodesic operations."""
@@ -378,4 +511,9 @@ __all__ = [
     "dtype_margin",
     "event_shape_matches",
     "false_for_event_shape",
+    "scale_tangent",
+    "validate_boolean",
+    "validate_nonnegative",
+    "validate_positive",
+    "validate_integer",
 ]

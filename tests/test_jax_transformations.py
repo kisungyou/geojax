@@ -122,6 +122,19 @@ def test_complete_geometry_protocol_is_jittable(M):
     assert bool(jnp.all(result["distance"] >= 0.0))
 
 
+@pytest.mark.parametrize("M", _geometry_cases(), ids=_geometry_id)
+def test_geometry_instances_are_valid_static_jit_arguments(M):
+    point = M.random_point(jax.random.key(150))
+
+    projected = jax.jit(
+        lambda geometry, value: geometry.project(value),
+        static_argnums=0,
+    )(M, point)
+
+    _assert_tree_finite(projected)
+    assert bool(jnp.all(M.belongs(projected)))
+
+
 @pytest.mark.parametrize(
     "M",
     [

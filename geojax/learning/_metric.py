@@ -6,19 +6,33 @@ from typing import Any, Callable
 
 import jax
 import jax.numpy as jnp
+import numpy as np
 
 from geojax.geometry import Euclidean, Product
+from geojax.geometry._numerics import stable_norm
 
 from ._capabilities import LearningCapabilityError
 from ._data import as_manifold_data
 from ._results import MetricLearningModel
-from ._utils import flatten_embedding, require_unbatched
+from ._utils import (
+    flatten_embedding,
+    interval_control,
+    nonnegative_control,
+    positive_control,
+    require_unbatched,
+)
 
 
-def _spd_log(matrix: Any, floor: float) -> Any:
+def _spd_log(matrix: Any, relative_floor: float) -> tuple[Any, Any]:
     values, vectors = jnp.linalg.eigh(0.5 * (matrix + matrix.T))
+    tiny = jnp.finfo(values.dtype).tiny
+    scale = jnp.maximum(jnp.max(jnp.abs(values)), tiny)
+    floor = jnp.maximum(
+        jnp.asarray(relative_floor, dtype=values.dtype) * scale,
+        tiny,
+    )
     logged = jnp.log(jnp.maximum(values, floor))
-    return (vectors * logged[None, :]) @ vectors.T
+    return (vectors * logged[None, :]) @ vectors.T, floor
 
 
 def _spd_exp(matrix: Any) -> Any:
@@ -62,25 +76,51 @@ def riemannian_metric_learning(
     embedding: Callable[[Any], Any] | None = None,
     eigenvalue_floor: float = 1e-10,
 ) -> MetricLearningModel:
-    """Fit regularized log-Euclidean RMML from embedded labeled pairs."""
+    r"""Fit the regularized log-Euclidean RMML closed form.
+
+    For similar- and dissimilar-pair scatter matrices ``S`` and ``D``, this
+    implements Equation (21) of Zhu et al. (2018),
+
+    ``A = exp((-balance * log(S) + (1 - balance) * log(D)) / 2)``.
+
+    The derivation is invariant only when ``embedding`` is an appropriate
+    equivariant embedding for the supplied geometry.  An arbitrary callable
+    still defines a valid Euclidean-feature Mahalanobis model, but it does not
+    inherit that Riemannian invariance automatically.
+    """
     adapted = as_manifold_data(manifold, data)
     require_unbatched(adapted, "riemannian_metric_learning")
-    label_values = jnp.asarray(labels)
-    if label_values.shape != (adapted.n_samples,):
+    raw_labels = np.asarray(labels)
+    if raw_labels.shape != (adapted.n_samples,):
         raise ValueError(f"labels must have shape ({adapted.n_samples},).")
-    if jnp.unique(label_values).size < 2:
+    if raw_labels.dtype.kind in {"f", "c"} and not np.all(np.isfinite(raw_labels)):
+        raise ValueError("labels must not contain NaN or infinite values.")
+    if raw_labels.dtype.kind in {"O", "U", "S"} and any(
+        value is None or (isinstance(value, (float, np.floating)) and not np.isfinite(value))
+        for value in raw_labels.tolist()
+    ):
+        raise ValueError("labels must not contain missing values.")
+    try:
+        classes, encoded = np.unique(raw_labels, return_inverse=True)
+    except TypeError as exc:
+        raise TypeError("labels must contain mutually comparable scalar values.") from exc
+    if classes.size < 2:
         raise ValueError("labels must contain at least two classes.")
-    if regularization < 0.0 or eigenvalue_floor <= 0.0:
-        raise ValueError("regularization must be nonnegative and eigenvalue_floor positive.")
-    if not 0.0 <= float(balance) <= 1.0:
-        raise ValueError("balance must lie between 0 and 1.")
+    label_values = jnp.asarray(encoded, dtype=int)
+    regularization = nonnegative_control(regularization, name="regularization")
+    eigenvalue_floor = positive_control(eigenvalue_floor, name="eigenvalue_floor")
+    balance = interval_control(balance, name="balance", lower=0.0, upper=1.0)
     if embedding is not None and not callable(embedding):
         raise TypeError("embedding must be callable.")
-    embedding_function = embedding or _default_embedding(manifold)
+    embedding_function = _default_embedding(manifold) if embedding is None else embedding
     coordinates = flatten_embedding(embedding_function(adapted.values))
     if coordinates.shape[0] != adapted.n_samples:
         raise ValueError("embedding must preserve the leading sample dimension.")
+    if not bool(jnp.all(jnp.isfinite(coordinates))):
+        raise ValueError("embedding must return only finite coordinates.")
     dimension = coordinates.shape[1]
+    if dimension < 1:
+        raise ValueError("embedding must return at least one feature per observation.")
     similar = jnp.zeros((dimension, dimension), dtype=coordinates.dtype)
     dissimilar = jnp.zeros_like(similar)
     similar_count = dissimilar_count = 0
@@ -97,28 +137,45 @@ def riemannian_metric_learning(
     if similar_count == 0 or dissimilar_count == 0:
         raise ValueError("RMML needs at least one similar and one dissimilar pair.")
     identity = jnp.eye(dimension, dtype=coordinates.dtype)
-    regularized_similar = similar + float(regularization) * identity
-    regularized_dissimilar = dissimilar + float(regularization) * identity
-    floor = float(eigenvalue_floor)
-    metric = _spd_exp(
-        -float(balance) * _spd_log(regularized_similar, floor)
-        + (1.0 - float(balance)) * _spd_log(regularized_dissimilar, floor)
+    if not bool(jnp.all(jnp.isfinite(similar))) or not bool(jnp.all(jnp.isfinite(dissimilar))):
+        raise FloatingPointError("RMML pair-scatter matrices are nonfinite.")
+    regularized_similar = similar + regularization * identity
+    regularized_dissimilar = dissimilar + regularization * identity
+    log_similar, similar_floor = _spd_log(
+        regularized_similar,
+        eigenvalue_floor,
     )
+    log_dissimilar, dissimilar_floor = _spd_log(
+        regularized_dissimilar,
+        eigenvalue_floor,
+    )
+    metric = _spd_exp(0.5 * (-balance * log_similar + (1.0 - balance) * log_dissimilar))
     metric = 0.5 * (metric + metric.T)
+    metric_eigenvalues = jnp.linalg.eigvalsh(metric)
+    if not bool(jnp.all(jnp.isfinite(metric))) or not bool(jnp.all(metric_eigenvalues > 0.0)):
+        raise FloatingPointError("RMML failed to construct a finite positive-definite metric.")
     transformed = coordinates @ jnp.linalg.cholesky(metric)
-    learned_distances = jnp.linalg.norm(
-        transformed[:, None, :] - transformed[None, :, :], axis=-1
+    learned_distances = stable_norm(
+        transformed[:, None, :] - transformed[None, :, :],
+        axis=-1,
     )
     model = MetricLearningModel(
+        manifold=manifold,
         metric=metric,
         embedding=embedding_function,
-        regularization=float(regularization),
+        regularization=regularization,
         diagnostics={
             "similar_scatter": similar,
             "dissimilar_scatter": dissimilar,
             "similar_pairs": similar_count,
             "dissimilar_pairs": dissimilar_count,
-            "balance": float(balance),
+            "balance": balance,
+            "classes": classes,
+            "encoded_labels": label_values,
+            "eigenvalue_floor": eigenvalue_floor,
+            "effective_similar_eigenvalue_floor": similar_floor,
+            "effective_dissimilar_eigenvalue_floor": dissimilar_floor,
+            "metric_eigenvalues": metric_eigenvalues,
             "embedded_data": coordinates,
             "pairwise_distances": learned_distances,
         },

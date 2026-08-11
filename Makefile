@@ -21,11 +21,12 @@ SPHINXOPTS ?= -E -a
 PYTESTOPTS ?= --cov --cov-report=term-missing
 TOX_PARALLEL ?= 2
 
-.PHONY: help install test test-float32 test-matrix test-matrix-parallel website serve release-check clean
+.PHONY: help install quality test test-float32 test-matrix test-matrix-parallel website serve package-check release-source-check release-check clean
 
 help:
 	@echo "GeoJAX targets"
 	@echo "  make install   Build a wheel and install it in the current environment"
+	@echo "  make quality   Check lint and formatting"
 	@echo "  make test      Run the full float64 test suite with coverage"
 	@echo "  make test-float32"
 	@echo "                 Run the full float32 test suite with coverage"
@@ -36,7 +37,7 @@ help:
 	@echo "  make website   Execute tutorials and build the documentation website"
 	@echo "  make serve     Serve the built website at http://127.0.0.1:8000"
 	@echo "  make release-check"
-	@echo "                 Run the complete matrix, docs, and package checks"
+	@echo "                 Verify a clean version tag, then run every release gate"
 	@echo "  make clean     Remove build artifacts"
 	@echo ""
 	@echo "Variables"
@@ -51,6 +52,10 @@ install:
 	rm -rf build $(DIST_DIR) *.egg-info
 	$(PYTHON) -m build --wheel
 	$(PIP) install --force-reinstall $(DIST_DIR)/$(PACKAGE)-*.whl
+
+quality:
+	$(PYTHON) -m ruff check geojax tests docs scripts
+	$(PYTHON) -m ruff format --check geojax tests docs scripts
 
 test:
 	GEOJAX_TEST_X64=1 $(PYTHON) -m pytest $(PYTESTOPTS)
@@ -77,10 +82,20 @@ website:
 serve: website
 	$(PYTHON) -m http.server 8000 --directory $(SITE_DIR)
 
-release-check: test-matrix website
+package-check:
 	rm -rf build $(DIST_DIR) *.egg-info
 	$(PYTHON) -m build --sdist --wheel --outdir $(RELEASE_DIST_DIR)
 	$(PYTHON) -m twine check --strict $(RELEASE_DIST_DIR)/*
+	$(PYTHON) scripts/smoke_package.py $(RELEASE_DIST_DIR)
+
+release-source-check:
+	$(PYTHON) scripts/check_release_source.py
+
+release-check: release-source-check
+	$(MAKE) quality
+	$(MAKE) test-matrix
+	$(MAKE) website
+	$(MAKE) package-check
 
 clean:
 	rm -rf build $(DIST_DIR) $(SITE_DIR) $(JUPYTER_EXECUTE_DIR) $(JUPYTER_CACHE_DIR) *.egg-info .pytest_cache

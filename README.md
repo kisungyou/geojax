@@ -195,11 +195,10 @@ generated HTML for malformed mathematics and broken local references. Open
 
 ```bash
 python -m pip install -e ".[dev,docs,examples]"
+make quality
 make test
 make test-float32
-ruff check geojax tests
-python -m build
-python -m twine check dist/*
+make package-check
 ```
 
 Before a release, `make test-matrix` provisions and exercises Python
@@ -207,6 +206,8 @@ Before a release, `make test-matrix` provisions and exercises Python
 both JAX precision modes. Missing interpreters are downloaded and managed by
 `tox-uv` rather than skipped or inherited from the active base environment.
 `make test-matrix-parallel` provides a coverage-safe two-worker alternative.
+Every tox run imports the installed wheel from an isolated working directory;
+GitHub CI additionally tracks the latest compatible JAX release.
 See the
 [testing guide](https://www.kisungyou.com/geojax/development/testing.html)
 for the exact matrix.

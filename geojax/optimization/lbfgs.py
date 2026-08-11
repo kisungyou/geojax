@@ -7,6 +7,12 @@ from typing import Any, List, Optional
 import math
 import time
 
+from geojax.geometry.base import (
+    validate_boolean,
+    validate_integer,
+    validate_nonnegative,
+)
+
 from .linesearch import AdaptiveArmijo, LineSearchProtocol, LineSearchState
 from .minimize import (
     Array,
@@ -26,11 +32,14 @@ from .minimize import (
     tree_lincomb,
     tree_neg,
     tree_sub,
+    validate_line_search_result,
 )
 
 
 @dataclass(frozen=True)
 class LBFGS:
+    """Limited-memory Riemannian BFGS with transported secant pairs."""
+
     requires_gradient: bool = True
     memory: int = 10
     tolgradnorm: float = 1e-6
@@ -45,8 +54,11 @@ class LBFGS:
     stopfun: Optional[StopFn] = None
 
     def solve(self, problem: Any) -> tuple[Array, float, List[InfoEntry]]:
-        if int(self.memory) < 1:
-            raise ValueError("memory must be positive.")
+        memory_size = validate_integer(self.memory, name="memory", minimum=1)
+        cautious_update = validate_boolean(self.cautious_update, name="cautious_update")
+        cautious_threshold = validate_nonnegative(
+            self.cautious_threshold, name="cautious_threshold"
+        )
         M = require(problem, "M")
         x = require(problem, "x0")
         start_time = time.perf_counter()
@@ -83,13 +95,16 @@ class LBFGS:
             if as_float(inner(M, x, g, d)) >= 0.0:
                 d = tree_neg(g)
             df0 = inner(M, x, g, d)
-            result = self.line_search.search(
+            result = validate_line_search_result(
                 problem,
-                x,
-                d,
-                f,
-                df0,
-                state=search_state,
+                self.line_search.search(
+                    problem,
+                    x,
+                    d,
+                    f,
+                    df0,
+                    state=search_state,
+                ),
             )
             search_state = result.state
             newx = result.point
@@ -108,14 +123,14 @@ class LBFGS:
                 x,
                 newx,
                 memory,
-                cautious_update=self.cautious_update,
-                cautious_threshold=self.cautious_threshold,
+                cautious_update=cautious_update,
+                cautious_threshold=cautious_threshold,
             )
             if sy > 1e-300 and yy > 0.0 and ss > 0.0:
-                if (not self.cautious_update) or sy >= self.cautious_threshold * ss:
+                if (not cautious_update) or sy >= cautious_threshold * ss:
                     memory.append((step, y, 1.0 / sy))
-                    if len(memory) > int(self.memory):
-                        memory = memory[-int(self.memory) :]
+                    if len(memory) > memory_size:
+                        memory = memory[-memory_size:]
 
             x, f, g = newx, newf, newg
             gnorm = M.norm(x, g)

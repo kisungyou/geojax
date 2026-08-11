@@ -7,6 +7,8 @@ from typing import Any, List, Optional
 import math
 import time
 
+from geojax.geometry.base import validate_integer, validate_nonnegative
+
 from ._tangent_cg import tangent_conjugate_gradient
 from .linesearch import AdaptiveArmijo, LineSearchProtocol, LineSearchState
 from .minimize import (
@@ -26,6 +28,7 @@ from .minimize import (
     require,
     stopping_reason,
     tree_neg,
+    validate_line_search_result,
 )
 
 
@@ -34,6 +37,11 @@ def _least_squares_method(problem: Any, name: str) -> Any:
     if not callable(method):
         raise ValueError(f"Least-squares solver requires problem.{name}(...).")
     return method
+
+
+def _residual_norm_from_cost(cost: Array) -> float:
+    """Recover ``||r||`` from the least-squares identity ``f = ||r||^2 / 2``."""
+    return math.sqrt(max(2.0 * as_float(cost), 0.0))
 
 
 @dataclass(frozen=True)
@@ -59,7 +67,17 @@ class GaussNewton:
         M = require(problem, "M")
         x = require(problem, "x0")
         normal_operator = _least_squares_method(problem, "normal_operator")
-        residual_norm = _least_squares_method(problem, "residual_norm")
+        maxinner = validate_integer(self.maxinner, name="maxinner")
+        if maxinner <= 0:
+            raise ValueError("maxinner must be positive.")
+        cg_relative_tolerance = validate_nonnegative(
+            self.cg_relative_tolerance,
+            name="cg_relative_tolerance",
+        )
+        cg_absolute_tolerance = validate_nonnegative(
+            self.cg_absolute_tolerance,
+            name="cg_absolute_tolerance",
+        )
 
         start_time = time.perf_counter()
         search_state: LineSearchState | None = None
@@ -77,7 +95,7 @@ class GaussNewton:
                 problem=problem,
                 x=x,
                 solver=self,
-                residual_norm=as_float(residual_norm(x)),
+                residual_norm=_residual_norm_from_cost(f),
             )
         )
         print_iteration_header(self.verbosity)
@@ -98,9 +116,9 @@ class GaussNewton:
                 lambda direction: normal_operator(x, direction),
                 tree_neg(g),
                 preconditioner=lambda value: precondition(problem, x, value),
-                relative_tolerance=self.cg_relative_tolerance,
-                absolute_tolerance=self.cg_absolute_tolerance,
-                max_iterations=self.maxinner,
+                relative_tolerance=cg_relative_tolerance,
+                absolute_tolerance=cg_absolute_tolerance,
+                max_iterations=maxinner,
             )
             direction = cg.solution
             directional_derivative = inner(M, x, g, direction)
@@ -111,13 +129,16 @@ class GaussNewton:
                 direction = tree_neg(g)
                 directional_derivative = -(gradnorm * gradnorm)
 
-            line_result = self.line_search.search(
+            line_result = validate_line_search_result(
                 problem,
-                x,
-                direction,
-                f,
-                directional_derivative,
-                state=search_state,
+                self.line_search.search(
+                    problem,
+                    x,
+                    direction,
+                    f,
+                    directional_derivative,
+                    state=search_state,
+                ),
             )
             search_state = line_result.state
             x = line_result.point
@@ -139,10 +160,11 @@ class GaussNewton:
                     problem=problem,
                     x=x,
                     solver=self,
-                    residual_norm=as_float(residual_norm(x)),
+                    residual_norm=_residual_norm_from_cost(f),
                     cg_iterations=cg.iterations,
                     cg_residual_norm=cg.residual_norm,
                     negative_curvature=cg.negative_curvature,
+                    preconditioner_fallback=cg.preconditioner_fallback,
                     cg_reason=cg.reason,
                 )
             )

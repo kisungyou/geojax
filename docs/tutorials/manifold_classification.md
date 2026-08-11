@@ -169,9 +169,9 @@ for name, color in zip(models, ("#111827", "#2563EB", "#009E8E", "#7C3AED")):
         color=color, linewidth=1.8, label=f"{name} ({accuracies[name]:.2f})",
     )
 axes[2].set(
-    title="Maximum class probability",
+    title="Maximum normalized class score",
     xlabel="query angle",
-    ylabel="confidence",
+    ylabel="normalized score",
     xlim=(-np.pi, np.pi),
     ylim=(0.48, 1.02),
 )
@@ -195,7 +195,10 @@ Nearest-centroid prediction is interpretable and stable when classes are
 unimodal. k-NN adapts to nonlinear class regions but stores the complete
 training set. Tangent logistic regression and discriminant analysis connect
 to familiar supervised models, with the important cost that their coordinates
-are local to one reference point.
+are local to one reference point. The normalized curves share the
+`predict_proba` interface, but only express each fitted rule's relative class
+scores; in particular, nearest-centroid and k-NN scores are not calibrated
+posterior probabilities and should not be compared across models as such.
 
 ## References
 

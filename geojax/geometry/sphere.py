@@ -19,12 +19,21 @@ from typing import Any, Sequence, Tuple, Union
 import jax
 import jax.numpy as jnp
 
-from .base import ExactGeometryMixin, as_sample_shape
+from .base import (
+    ExactGeometryMixin,
+    as_sample_shape,
+    validate_integer,
+    validate_nonnegative,
+    validate_positive,
+)
 from ._numerics import (
     acos_over_sin,
     acos_squared,
     cos_from_squared_norm,
     sinc_from_squared_norm,
+    stable_metric_norm,
+    stable_norm,
+    sqrt_nonnegative,
     squared_norm,
 )
 
@@ -54,12 +63,10 @@ class Sphere(ExactGeometryMixin):
     eps: float
 
     def __init__(self, size: int, *, atol: float = 1e-6, eps: float = 1e-12) -> None:
-        size = int(size)
-        if size < 2:
-            raise ValueError("Sphere size must be at least 2.")
+        size = validate_integer(size, name="Sphere size", minimum=2)
         object.__setattr__(self, "size", size)
-        object.__setattr__(self, "atol", float(atol))
-        object.__setattr__(self, "eps", float(eps))
+        object.__setattr__(self, "atol", validate_nonnegative(atol, name="Sphere atol"))
+        object.__setattr__(self, "eps", validate_positive(eps, name="Sphere eps"))
 
     @property
     def dim(self) -> int:
@@ -94,7 +101,7 @@ class Sphere(ExactGeometryMixin):
         x = jnp.asarray(x)
         if not self._shape_matches(x):
             return self._shape_failure(x)
-        return jnp.abs(jnp.linalg.norm(x, axis=-1) - 1.0) <= tol
+        return jnp.abs(stable_norm(x, axis=-1) - 1.0) <= tol
 
     def is_tangent(self, x: Array, u: Array, atol: float | None = None) -> Array:
         """Check whether u is tangent at x, i.e. <x, u> = 0."""
@@ -111,12 +118,10 @@ class Sphere(ExactGeometryMixin):
         methods use exact sphere formulas.
         """
         x = self._check_shape(x, name="x")
-        norm = jnp.linalg.norm(x, axis=-1, keepdims=True)
-        norm_safe = jnp.where(norm > self.eps, norm, 1.0)
+        norm = stable_norm(x, axis=-1, keepdims=True)
+        norm_safe = jnp.where(norm > 0.0, norm, 1.0)
         e0 = self._safe_unit_first_axis(x)
-        return jnp.where(norm > self.eps, x / norm_safe, e0)
-
-    normalize = project
+        return jnp.where(norm > 0.0, x / norm_safe, e0)
 
     # ------------------------------------------------------------------
     # Tangent geometry
@@ -130,10 +135,6 @@ class Sphere(ExactGeometryMixin):
         return u - self._dot(x, u, keepdims=True) * x
 
     # Common aliases used by manifold libraries.
-    projection = tangent_project
-    proj = tangent_project
-    to_tangent = tangent_project
-
     def inner(self, x: Array, u: Array, v: Array) -> Array:
         """Canonical Riemannian inner product on T_x S^d."""
         _, u, v = self._check_shapes(("x", x), ("u", u), ("v", v))
@@ -141,7 +142,11 @@ class Sphere(ExactGeometryMixin):
 
     def norm(self, x: Array, u: Array) -> Array:
         """Canonical Riemannian norm of a tangent vector."""
-        return jnp.sqrt(jnp.maximum(self.inner(x, u, u), 0.0))
+        return stable_metric_norm(
+            u,
+            lambda normalized: self.inner(x, normalized, normalized),
+            axis=-1,
+        )
 
     # ------------------------------------------------------------------
     # Geodesic geometry
@@ -152,7 +157,7 @@ class Sphere(ExactGeometryMixin):
         For u in T_x S^d and r = ||u||,
             Exp_x(u) = cos(r) x + sin(r) u / r.
         """
-        x = jnp.asarray(x)
+        x = self.project(x)
         u = self.tangent_project(x, jnp.asarray(u))
         r2 = squared_norm(u, axis=-1, keepdims=True)
         y = cos_from_squared_norm(r2) * x + sinc_from_squared_norm(r2) * u
@@ -190,7 +195,7 @@ class Sphere(ExactGeometryMixin):
 
     def dist(self, x: Array, y: Array) -> Array:
         """Geodesic distance on the unit sphere."""
-        return jnp.sqrt(self.squared_dist(x, y))
+        return sqrt_nonnegative(self.squared_dist(x, y))
 
     def transport(self, x: Array, y: Array, u: Array) -> Array:
         """Parallel transport along the unique shortest geodesic from x to y.
@@ -286,10 +291,10 @@ class Sphere(ExactGeometryMixin):
         z = jax.random.normal(key, shape=jnp.shape(x))
         v = self.tangent_project(x, z)
         if normalize:
-            n = jnp.linalg.norm(v, axis=-1, keepdims=True)
-            n_safe = jnp.where(n > self.eps, n, 1.0)
-            v = jnp.where(n > self.eps, v / n_safe, v)
-        return scale * v
+            n = stable_norm(v, axis=-1, keepdims=True)
+            n_safe = jnp.where(n > 0.0, n, 1.0)
+            v = jnp.where(n > 0.0, v / n_safe, v)
+        return self._scale_tangent(v, scale)
 
 
 class SphereExtrinsic(Sphere):
@@ -327,22 +332,46 @@ class SphereExtrinsic(Sphere):
 
     def chordal_dist(self, x: Array, y: Array) -> Array:
         """Euclidean chordal distance ``||j(x) - j(y)||``."""
-        return jnp.sqrt(jnp.maximum(self.squared_chordal_dist(x, y), 0.0))
+        return sqrt_nonnegative(self.squared_chordal_dist(x, y))
 
     embedding_dist = chordal_dist
 
     def extrinsic_mean(self, points: Array, weights: Array | None = None) -> Array:
         """Project the weighted ambient mean back to the sphere."""
         points = jnp.asarray(points)
+        if jnp.iscomplexobj(points):
+            raise TypeError("points must be real-valued; complex arrays are unsupported.")
+        points = jnp.asarray(points, dtype=float)
+        if points.ndim != 2 or points.shape[-1] != self.size:
+            raise ValueError(
+                f"points must have shape (n_samples, {self.size}); received {points.shape}."
+            )
+        if points.shape[0] < 1:
+            raise ValueError("points must contain at least one observation.")
+        if not bool(jnp.all(jnp.isfinite(points))) or not bool(jnp.all(self.belongs(points))):
+            raise ValueError("points must contain only finite sphere points.")
         if weights is None:
             ambient_mean = jnp.mean(points, axis=0)
         else:
             weights = jnp.asarray(weights)
-            weights = weights / jnp.sum(weights)
+            if jnp.iscomplexobj(weights):
+                raise TypeError("weights must be real-valued; complex arrays are unsupported.")
+            weights = jnp.asarray(weights, dtype=points.dtype)
+            if weights.shape != (points.shape[0],):
+                raise ValueError(f"weights must have shape ({points.shape[0]},).")
+            if not bool(jnp.all(jnp.isfinite(weights))) or bool(jnp.any(weights < 0.0)):
+                raise ValueError("weights must be finite and nonnegative.")
+            total = jnp.sum(weights)
+            if float(total) <= 0.0:
+                raise ValueError("weights must contain positive total mass.")
+            weights = weights / total
             ambient_mean = jnp.sum(weights[..., None] * points, axis=0)
-        norm = jnp.linalg.norm(ambient_mean)
-        normalized = ambient_mean / jnp.where(norm > self.eps, norm, 1.0)
-        return jnp.where(norm > self.eps, normalized, jnp.full_like(normalized, jnp.nan))
+        norm = stable_norm(ambient_mean, axis=-1)
+        dtype = jnp.result_type(points, float)
+        cancellation_tolerance = 32.0 * points.shape[0] * jnp.finfo(dtype).eps
+        unique = norm > cancellation_tolerance
+        normalized = ambient_mean / jnp.where(unique, norm, 1.0)
+        return jnp.where(unique, normalized, jnp.full_like(normalized, jnp.nan))
 
 
 __all__ = ["Sphere", "SphereExtrinsic"]

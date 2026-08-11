@@ -32,7 +32,16 @@ baseline; Sammon reweights stress toward nearby pairs
 {cite:p}`sammon1969nonlinear`; Isomap follows a neighborhood graph
 {cite:p}`tenenbaum2000global`; t-SNE emphasizes probabilistic neighborhoods
 {cite:p}`vandermaaten2008visualizing`; and PHATE emphasizes multiscale
-transitions {cite:p}`moon2019phate`.
+transitions {cite:p}`moon2019phate`. GeoJAX implements the PHATE affinity,
+diffusion-time, and potential-distance stages directly, then uses classical
+scaling for the final metric embedding. It is therefore a dense,
+dependency-free approximation rather than a bit-for-bit reproduction of the
+reference PHATE optimizer.
+
+The geodesic RBF similarity on a torus is not guaranteed to be positive
+semidefinite. For this comparison we therefore request kernel PCA's explicit
+positive-spectral-part approximation with `allow_indefinite=True`; the default
+remains strict and rejects an indefinite kernel matrix.
 
 ```{code-cell} python
 from pathlib import Path
@@ -68,7 +77,7 @@ points = M.project(jnp.stack([2.0 * phase, 3.0 * phase], axis=-1))
 path_position = phase / (2.0 * jnp.pi)
 
 mds = classical_mds(M, points, n_components=2)
-kpca = kernel_pca(M, points, n_components=2)
+kpca = kernel_pca(M, points, n_components=2, allow_indefinite=True)
 iso = isomap(M, points, n_components=2, n_neighbors=5, mutual=False)
 sammon = sammon_mapping(M, points, n_components=2, maxiter=100, tol=1e-6)
 stochastic = tsne(

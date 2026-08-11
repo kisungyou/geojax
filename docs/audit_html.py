@@ -14,9 +14,7 @@ VOID_TAGS = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link",
 TEX_LEAK = re.compile(
     r"\\(?:begin|end|frac|lVert|mathbb|mathcal|operatorname|pi|rVert|sum|Theta|top)\b"
 )
-PROSE_IN_MATH = re.compile(
-    r"[.`]\s+(?:A|An|For|It|Its|The|This|When|where|which|is|requires|to)\b"
-)
+PROSE_IN_MATH = re.compile(r"[.`]\s+(?:A|An|For|It|Its|The|This|When|where|which|is|requires|to)\b")
 TEXT_LIKE_COMMAND = re.compile(
     r"\\(?:text(?:normal|rm|sf|tt|bf|it)?|mbox|operatorname|"
     r"mathrm|mathbf|mathit|mathtt)\s*\{"
@@ -155,9 +153,7 @@ def tex_syntax_errors(tex: str) -> list[str]:
         elif not environments:
             errors.append(f"unexpected end of {environment!r} environment")
         elif environments[-1] != environment:
-            errors.append(
-                f"environment {environments[-1]!r} closed by {environment!r}"
-            )
+            errors.append(f"environment {environments[-1]!r} closed by {environment!r}")
             environments.pop()
         else:
             environments.pop()
@@ -179,8 +175,7 @@ def tex_syntax_errors(tex: str) -> list[str]:
         if unsafe:
             rendered = ", ".join(repr(character) for character in unsafe)
             errors.append(
-                f"{match.group(0)[:-1]} argument contains unescaped TeX special(s): "
-                f"{rendered}"
+                f"{match.group(0)[:-1]} argument contains unescaped TeX special(s): {rendered}"
             )
 
     if re.search(r"(?<!\\)\$", tex):
@@ -222,9 +217,7 @@ def audit_site(site: Path) -> list[str]:
         relative_page = page.relative_to(site)
         raw_html = page.read_text(encoding="utf-8")
         if re.search(r'class="[^"]*\btraceback\b', raw_html):
-            errors.append(
-                f"{relative_page}: executed notebook traceback embedded in rendered page"
-            )
+            errors.append(f"{relative_page}: executed notebook traceback embedded in rendered page")
         prose = " ".join(parser.prose)
         if TEX_LEAK.search(prose):
             errors.append(f"{relative_page}: raw TeX command leaked into rendered prose")
@@ -243,9 +236,7 @@ def audit_site(site: Path) -> list[str]:
             if "`" in math or PROSE_IN_MATH.search(math):
                 errors.append(f"{relative_page}: prose appears inside math node {math[:100]!r}")
             for issue in tex_syntax_errors(math[2:-2]):
-                errors.append(
-                    f"{relative_page}: {issue} in rendered math node {math[:100]!r}"
-                )
+                errors.append(f"{relative_page}: {issue} in rendered math node {math[:100]!r}")
 
         for kind, reference in parser.references:
             resolved = resolve_local_reference(site, page, reference)

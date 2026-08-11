@@ -2,6 +2,28 @@
 
 ## 0.2.0 - Unreleased
 
+- Corrected leading-batch tangent scaling across every geometry, made
+  compatibility aliases preserve subclass dispatch, enabled static-JIT use of
+  generalized and Product geometries, and qualified squared-distance
+  capabilities explicitly.
+- Replaced the Bures--Wasserstein Kronecker Sylvester solve with a batched
+  eigenbasis implementation and implicit repeated-spectrum-safe derivative,
+  and made the shared antipodal trigonometric kernel expose its documented
+  divergence.
+- Stabilized nearby hyperboloid distances with a cancellation-resistant chord
+  formula, preserved tiny eigenvalues in symmetric SPD exponentials, and kept
+  float32 Fréchet-median iterations from stopping above their precision floor.
+- Made least-squares residuals explicitly real-valued, fused their objective
+  and gradient linearization, restored JIT-safe Jacobian and finite-sum kernels,
+  required both diameter and cost convergence in Nelder--Mead, and evaluated
+  Strong-Wolfe curvature with the actual retraction-curve derivative.
+- Prevented ordinary pairwise distances from overflowing through an unnecessary
+  square, repaired zero-scatter RMML floors, and enabled end-to-end dictionary
+  learning on nested Product geometries.
+- Added installed-wheel tox isolation, minimum/latest JAX CI lanes in both
+  precision modes, clean wheel and sdist installation smoke tests, tagged-source
+  release checks, and cold-versus-steady benchmark timing with environment and
+  evaluation-count metadata.
 - Added a self-provisioning, release-blocking test matrix for Python
   3.11--3.14, minimum and pinned stable JAX stacks, and both float32 and
   float64 modes, using managed interpreters, isolated coverage data,
@@ -21,6 +43,13 @@
   and made trust-region residual diagnostics report the terminal inner state.
 - Corrected Dubey--Müller Fréchet-ANOVA scaling, weighted trimming by retained
   probability mass, and streaming means so prior mass is always explicit.
+- Made returned learning results self-consistent: Fréchet-median histories now
+  include the returned point, Lloyd centers agree with returned assignments,
+  stochastic summaries require full-data stationarity rather than merely tiny
+  decayed steps, and fitted models propagate incomplete reference-point fits.
+- Normalized dense spectral calculations before eigendecomposition, rejected
+  unrepresentable physical distance scales, and made real-only APIs reject
+  complex input instead of silently discarding imaginary components.
 - Bound validated learning datasets to their geometry instance, upgraded weak
   validation before stronger reuse, and tightened kernel-PCA, t-SNE, PHATE,
   and disconnected-Isomap numerical contracts.
