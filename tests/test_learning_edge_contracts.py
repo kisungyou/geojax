@@ -300,11 +300,28 @@ def test_dictionary_and_semisupervised_alternate_contracts():
         tol=0.0,
     )
     assert dictionary.diagnostics["initial_indices"] is None
-    assert dictionary.reason in {
-        "maximum iterations reached",
-        "no decreasing atom update found",
-        "objective tolerance reached",
-    }
+    # A zero requested tolerance can leave an inner solve incomplete at
+    # floating-point resolution.  The machine-readable status must retain
+    # that information even when the outer objective stops changing.
+    assert dictionary.reason
+    coding = dictionary.diagnostics["coding_result"]
+    atom_histories = dictionary.diagnostics["atom_optimizer_histories"]
+    atom_tolerances = dictionary.diagnostics["atom_optimizer_tolerances"]
+    certified_atoms = jnp.asarray(
+        [
+            history[-1].gradnorm <= tolerance
+            for history, tolerance in zip(atom_histories, atom_tolerances)
+        ]
+    )
+    assert jnp.array_equal(dictionary.diagnostics["atom_optimizer_converged"], certified_atoms)
+    if not coding.converged or not bool(jnp.all(certified_atoms)):
+        assert not dictionary.converged
+    objective_history = dictionary.diagnostics["objective_history"]
+    assert bool(jnp.all(jnp.isfinite(objective_history)))
+    assert bool(jnp.all(objective_history >= 0.0))
+    assert jnp.allclose(dictionary.objective, objective_history[-1])
+    assert jnp.allclose(jnp.sum(dictionary.codes, axis=1), 1.0)
+    assert bool(jnp.all(dictionary.codes >= 0.0))
     with pytest.raises(ValueError, match="nonnegative"):
         manifold_dictionary_learning(
             manifold, values, n_atoms=2, initial_atoms=initial_atoms, ridge=-1.0

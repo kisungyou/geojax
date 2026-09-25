@@ -9,6 +9,7 @@ import time
 
 from geojax.geometry.base import validate_integer, validate_nonnegative, validate_positive
 
+from .linesearch import _trial_point
 from .minimize import (
     Array,
     InfoEntry,
@@ -23,7 +24,6 @@ from .minimize import (
     print_iteration,
     print_iteration_header,
     require,
-    retract,
     stopping_reason,
     tree_lincomb,
     tree_neg,
@@ -151,8 +151,8 @@ class AdaptiveRegularizationCubics:
             )
             predicted = max(-model_value, 0.0)
             stepnorm = as_float(M.norm(x, step))
-            trial = retract(M, x, step, 1.0)
-            trial_cost = cost_value(problem, trial)
+            trial = _trial_point(M, x, step, 1.0)
+            trial_cost = math.inf if trial is None else cost_value(problem, trial)
             actual = as_float(f) - as_float(trial_cost)
             rho = actual / predicted if predicted > 0.0 else -math.inf
             accepted = bool(math.isfinite(rho) and rho >= acceptance_threshold)

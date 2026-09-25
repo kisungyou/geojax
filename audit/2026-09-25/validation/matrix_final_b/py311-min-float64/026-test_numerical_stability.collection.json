@@ -1,0 +1,2061 @@
+{
+  "collection_reports": [],
+  "deselected": [],
+  "exitstatus": 0,
+  "nodeids": [
+    "tests/test_numerical_stability.py::test_clipped_inverse_trigonometric_kernels_have_consistent_jvps",
+    "tests/test_numerical_stability.py::test_acos_over_sin_diverges_at_the_antipodal_cut_locus",
+    "tests/test_numerical_stability.py::test_nonnegative_square_root_uses_zero_subgradient_at_origin",
+    "tests/test_numerical_stability.py::test_norms_rescale_before_squaring_extreme_tangent_coordinates",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Euclidean]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Oblique]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[ProbabilitySimplex]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[PoincareBall]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Sphere]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SphereExtrinsic]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Grassmann]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[GrassmannProjection]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[GeneralizedStiefel]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[GeneralizedGrassmann]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SPDLogEuclidean]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SPDAffineInvariant]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SPDBuresWasserstein]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[FixedRank]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[RankKPSD]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[RankKPSDBuresWasserstein]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Elliptope]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Spectrahedron]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[CorrelationECM]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[CorrelationLEC]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[CorrelationAffineQuotient]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Product]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Hyperboloid]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Torus]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SpecialOrthogonal]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SpecialEuclidean]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Stiefel]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[StiefelEuclidean]",
+    "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[KendallShape]",
+    "tests/test_numerical_stability.py::test_coincident_logarithms_have_finite_reverse_mode_derivatives[Oblique]",
+    "tests/test_numerical_stability.py::test_coincident_logarithms_have_finite_reverse_mode_derivatives[ProbabilitySimplex]",
+    "tests/test_numerical_stability.py::test_coincident_logarithms_have_finite_reverse_mode_derivatives[Sphere]",
+    "tests/test_numerical_stability.py::test_coincident_logarithms_have_finite_reverse_mode_derivatives[Hyperboloid]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Euclidean]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Oblique]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[ProbabilitySimplex]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[PoincareBall]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Sphere]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SphereExtrinsic]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Grassmann]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[GrassmannProjection]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[GeneralizedStiefel]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[GeneralizedGrassmann]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SPDLogEuclidean]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SPDAffineInvariant]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SPDBuresWasserstein]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[FixedRank]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[RankKPSD]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[RankKPSDBuresWasserstein]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Elliptope]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Spectrahedron]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[CorrelationECM]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[CorrelationLEC]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[CorrelationAffineQuotient]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Product]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Hyperboloid]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Torus]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SpecialOrthogonal]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SpecialEuclidean]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Stiefel]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[StiefelEuclidean]",
+    "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[KendallShape]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Euclidean]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Oblique]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[ProbabilitySimplex]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[PoincareBall]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Sphere]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SphereExtrinsic]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Grassmann]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[GrassmannProjection]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[GeneralizedStiefel]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[GeneralizedGrassmann]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SPDLogEuclidean]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SPDAffineInvariant]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SPDBuresWasserstein]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[FixedRank]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[RankKPSD]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[RankKPSDBuresWasserstein]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Elliptope]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Spectrahedron]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[CorrelationECM]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[CorrelationLEC]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[CorrelationAffineQuotient]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Product]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Hyperboloid]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Torus]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SpecialOrthogonal]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SpecialEuclidean]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Stiefel]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[StiefelEuclidean]",
+    "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[KendallShape]",
+    "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[Sphere]",
+    "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[Hyperboloid]",
+    "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[PoincareBall]",
+    "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[Grassmann]",
+    "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[SPDAffineInvariant]",
+    "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[SpecialOrthogonal]",
+    "tests/test_numerical_stability.py::test_spd_repeated_spectrum_has_finite_values_and_gradients[SPDLogEuclidean]",
+    "tests/test_numerical_stability.py::test_spd_repeated_spectrum_has_finite_values_and_gradients[SPDAffineInvariant]",
+    "tests/test_numerical_stability.py::test_spd_repeated_spectrum_has_finite_values_and_gradients[SPDBuresWasserstein]",
+    "tests/test_numerical_stability.py::test_genuine_sphere_cut_locus_remains_explicit",
+    "tests/test_numerical_stability.py::test_sphere_log_remains_accurate_near_but_off_the_cut_locus",
+    "tests/test_numerical_stability.py::test_grassmann_cut_locus_has_finite_distance_but_no_selected_logarithm",
+    "tests/test_numerical_stability.py::test_hyperboloid_poincare_roundtrip_and_distance_agree"
+  ],
+  "runtime_reports": [
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_clipped_inverse_trigonometric_kernels_have_consistent_jvps",
+      "outcome": "passed",
+      "seconds": 0.00017904199194163084,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_clipped_inverse_trigonometric_kernels_have_consistent_jvps",
+      "outcome": "passed",
+      "seconds": 0.5761635410017334,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_clipped_inverse_trigonometric_kernels_have_consistent_jvps",
+      "outcome": "passed",
+      "seconds": 0.00018754199845716357,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_acos_over_sin_diverges_at_the_antipodal_cut_locus",
+      "outcome": "passed",
+      "seconds": 0.00011670798994600773,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_acos_over_sin_diverges_at_the_antipodal_cut_locus",
+      "outcome": "passed",
+      "seconds": 0.08694000000832602,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_acos_over_sin_diverges_at_the_antipodal_cut_locus",
+      "outcome": "passed",
+      "seconds": 0.0001200829865410924,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nonnegative_square_root_uses_zero_subgradient_at_origin",
+      "outcome": "passed",
+      "seconds": 0.00011049996828660369,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nonnegative_square_root_uses_zero_subgradient_at_origin",
+      "outcome": "passed",
+      "seconds": 0.1973379590199329,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nonnegative_square_root_uses_zero_subgradient_at_origin",
+      "outcome": "passed",
+      "seconds": 0.00011720799375325441,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_norms_rescale_before_squaring_extreme_tangent_coordinates",
+      "outcome": "passed",
+      "seconds": 0.00010683404980227351,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_norms_rescale_before_squaring_extreme_tangent_coordinates",
+      "outcome": "passed",
+      "seconds": 0.6743926249910146,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_norms_rescale_before_squaring_extreme_tangent_coordinates",
+      "outcome": "passed",
+      "seconds": 0.00012233300367370248,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Euclidean]",
+      "outcome": "passed",
+      "seconds": 0.0003258329816162586,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Euclidean]",
+      "outcome": "passed",
+      "seconds": 1.7661685419734567,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Euclidean]",
+      "outcome": "passed",
+      "seconds": 0.00015466701006516814,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Oblique]",
+      "outcome": "passed",
+      "seconds": 0.0002621249877847731,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Oblique]",
+      "outcome": "passed",
+      "seconds": 3.717304666992277,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Oblique]",
+      "outcome": "passed",
+      "seconds": 0.0001564159756526351,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[ProbabilitySimplex]",
+      "outcome": "passed",
+      "seconds": 0.00027129199588671327,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[ProbabilitySimplex]",
+      "outcome": "passed",
+      "seconds": 3.3343652919866145,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[ProbabilitySimplex]",
+      "outcome": "passed",
+      "seconds": 0.00016166700515896082,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[PoincareBall]",
+      "outcome": "passed",
+      "seconds": 0.00028375000692903996,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[PoincareBall]",
+      "outcome": "passed",
+      "seconds": 3.0738727909629233,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[PoincareBall]",
+      "outcome": "passed",
+      "seconds": 0.00015175004955381155,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.00026162504218518734,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.9749537080060691,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.00017145799938589334,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SphereExtrinsic]",
+      "outcome": "passed",
+      "seconds": 0.00028795801335945725,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SphereExtrinsic]",
+      "outcome": "passed",
+      "seconds": 0.09772383299423382,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SphereExtrinsic]",
+      "outcome": "passed",
+      "seconds": 0.00016120797954499722,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Grassmann]",
+      "outcome": "passed",
+      "seconds": 0.0002702500205487013,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Grassmann]",
+      "outcome": "passed",
+      "seconds": 6.448017375019845,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Grassmann]",
+      "outcome": "passed",
+      "seconds": 0.00017625000327825546,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[GrassmannProjection]",
+      "outcome": "passed",
+      "seconds": 0.0002811250160448253,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[GrassmannProjection]",
+      "outcome": "passed",
+      "seconds": 3.4155826669884846,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[GrassmannProjection]",
+      "outcome": "passed",
+      "seconds": 0.00028058397583663464,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[GeneralizedStiefel]",
+      "outcome": "passed",
+      "seconds": 0.000413707981351763,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[GeneralizedStiefel]",
+      "outcome": "passed",
+      "seconds": 18.678662375023123,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[GeneralizedStiefel]",
+      "outcome": "passed",
+      "seconds": 0.00022879202151671052,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[GeneralizedGrassmann]",
+      "outcome": "passed",
+      "seconds": 0.0003078750451095402,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[GeneralizedGrassmann]",
+      "outcome": "passed",
+      "seconds": 5.199947042041458,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[GeneralizedGrassmann]",
+      "outcome": "passed",
+      "seconds": 0.0001616250374354422,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SPDLogEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.00027662498177960515,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SPDLogEuclidean]",
+      "outcome": "passed",
+      "seconds": 4.515572583011817,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SPDLogEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.00016020797193050385,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 0.00027299998328089714,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 0.277967041998636,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 0.00015249999705702066,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SPDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.0002547500189393759,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SPDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.6777810000348836,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SPDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.00014729099348187447,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[FixedRank]",
+      "outcome": "passed",
+      "seconds": 0.0004196660011075437,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[FixedRank]",
+      "outcome": "passed",
+      "seconds": 3.186428375018295,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[FixedRank]",
+      "outcome": "passed",
+      "seconds": 0.00018870795611292124,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[RankKPSD]",
+      "outcome": "passed",
+      "seconds": 0.00030041701393201947,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[RankKPSD]",
+      "outcome": "passed",
+      "seconds": 3.121621750004124,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[RankKPSD]",
+      "outcome": "passed",
+      "seconds": 0.00019650004105642438,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[RankKPSDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.0002886250149458647,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[RankKPSDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 3.858951625006739,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[RankKPSDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.00018066703341901302,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Elliptope]",
+      "outcome": "passed",
+      "seconds": 0.003175166028086096,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Elliptope]",
+      "outcome": "passed",
+      "seconds": 1.4096975839929655,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Elliptope]",
+      "outcome": "passed",
+      "seconds": 0.00015241600340232253,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Spectrahedron]",
+      "outcome": "passed",
+      "seconds": 0.0002684170030988753,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Spectrahedron]",
+      "outcome": "passed",
+      "seconds": 0.4715543750207871,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Spectrahedron]",
+      "outcome": "passed",
+      "seconds": 0.00018020800780504942,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[CorrelationECM]",
+      "outcome": "passed",
+      "seconds": 0.0002966250176541507,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[CorrelationECM]",
+      "outcome": "passed",
+      "seconds": 3.5052385829621926,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[CorrelationECM]",
+      "outcome": "passed",
+      "seconds": 0.000164708006195724,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[CorrelationLEC]",
+      "outcome": "passed",
+      "seconds": 0.0006097909645177424,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[CorrelationLEC]",
+      "outcome": "passed",
+      "seconds": 0.4065584579948336,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[CorrelationLEC]",
+      "outcome": "passed",
+      "seconds": 0.00016033300198614597,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[CorrelationAffineQuotient]",
+      "outcome": "passed",
+      "seconds": 0.0002777079935185611,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[CorrelationAffineQuotient]",
+      "outcome": "passed",
+      "seconds": 0.49964345898479223,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[CorrelationAffineQuotient]",
+      "outcome": "passed",
+      "seconds": 0.00017274997662752867,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Product]",
+      "outcome": "passed",
+      "seconds": 0.0002978749689646065,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Product]",
+      "outcome": "passed",
+      "seconds": 1.1966270830016583,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Product]",
+      "outcome": "passed",
+      "seconds": 0.00015958398580551147,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Hyperboloid]",
+      "outcome": "passed",
+      "seconds": 0.0002791669685393572,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Hyperboloid]",
+      "outcome": "passed",
+      "seconds": 0.8217386250034906,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Hyperboloid]",
+      "outcome": "passed",
+      "seconds": 0.00015062501188367605,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Torus]",
+      "outcome": "passed",
+      "seconds": 0.0002484580036252737,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Torus]",
+      "outcome": "passed",
+      "seconds": 0.024058124981820583,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Torus]",
+      "outcome": "passed",
+      "seconds": 0.0001419170293956995,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SpecialOrthogonal]",
+      "outcome": "passed",
+      "seconds": 0.0002358749625273049,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SpecialOrthogonal]",
+      "outcome": "passed",
+      "seconds": 2.3179997080005705,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SpecialOrthogonal]",
+      "outcome": "passed",
+      "seconds": 0.00015704199904575944,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SpecialEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.0002678749733604491,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SpecialEuclidean]",
+      "outcome": "passed",
+      "seconds": 2.4728089579730295,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[SpecialEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.00026825000531971455,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Stiefel]",
+      "outcome": "passed",
+      "seconds": 0.0003165840171277523,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Stiefel]",
+      "outcome": "passed",
+      "seconds": 12.532934583956376,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[Stiefel]",
+      "outcome": "passed",
+      "seconds": 0.0002979160053655505,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[StiefelEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.00040612503653392196,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[StiefelEuclidean]",
+      "outcome": "passed",
+      "seconds": 18.677629499987233,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[StiefelEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.0007121670059859753,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[KendallShape]",
+      "outcome": "passed",
+      "seconds": 0.000520500005222857,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[KendallShape]",
+      "outcome": "passed",
+      "seconds": 5.887288749974687,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_zero_and_coincident_operations_have_finite_first_derivatives[KendallShape]",
+      "outcome": "passed",
+      "seconds": 0.0005912079941481352,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_coincident_logarithms_have_finite_reverse_mode_derivatives[Oblique]",
+      "outcome": "passed",
+      "seconds": 0.0003452090313658118,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_coincident_logarithms_have_finite_reverse_mode_derivatives[Oblique]",
+      "outcome": "passed",
+      "seconds": 1.4471287080086768,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_coincident_logarithms_have_finite_reverse_mode_derivatives[Oblique]",
+      "outcome": "passed",
+      "seconds": 0.0002654999843798578,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_coincident_logarithms_have_finite_reverse_mode_derivatives[ProbabilitySimplex]",
+      "outcome": "passed",
+      "seconds": 0.0002711659763008356,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_coincident_logarithms_have_finite_reverse_mode_derivatives[ProbabilitySimplex]",
+      "outcome": "passed",
+      "seconds": 0.8818384589976631,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_coincident_logarithms_have_finite_reverse_mode_derivatives[ProbabilitySimplex]",
+      "outcome": "passed",
+      "seconds": 0.00015079102013260126,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_coincident_logarithms_have_finite_reverse_mode_derivatives[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.00023199996212497354,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_coincident_logarithms_have_finite_reverse_mode_derivatives[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.6632715410087258,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_coincident_logarithms_have_finite_reverse_mode_derivatives[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.00015541701577603817,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_coincident_logarithms_have_finite_reverse_mode_derivatives[Hyperboloid]",
+      "outcome": "passed",
+      "seconds": 0.0002317499602213502,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_coincident_logarithms_have_finite_reverse_mode_derivatives[Hyperboloid]",
+      "outcome": "passed",
+      "seconds": 0.3630440420238301,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_coincident_logarithms_have_finite_reverse_mode_derivatives[Hyperboloid]",
+      "outcome": "passed",
+      "seconds": 0.0001486249966546893,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Euclidean]",
+      "outcome": "passed",
+      "seconds": 0.00023266603238880634,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Euclidean]",
+      "outcome": "passed",
+      "seconds": 0.7997049170080572,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Euclidean]",
+      "outcome": "passed",
+      "seconds": 0.00014454196207225323,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Oblique]",
+      "outcome": "passed",
+      "seconds": 0.00021174998255446553,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Oblique]",
+      "outcome": "passed",
+      "seconds": 2.2162430839962326,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Oblique]",
+      "outcome": "passed",
+      "seconds": 0.0002537500113248825,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[ProbabilitySimplex]",
+      "outcome": "passed",
+      "seconds": 0.00032341701444238424,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[ProbabilitySimplex]",
+      "outcome": "passed",
+      "seconds": 1.6141877499758266,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[ProbabilitySimplex]",
+      "outcome": "passed",
+      "seconds": 0.00015841703861951828,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[PoincareBall]",
+      "outcome": "passed",
+      "seconds": 0.0002339589991606772,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[PoincareBall]",
+      "outcome": "passed",
+      "seconds": 0.8235844590235502,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[PoincareBall]",
+      "outcome": "passed",
+      "seconds": 0.00014366698451340199,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.00023016700288280845,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.13332383299712092,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.00015237496700137854,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SphereExtrinsic]",
+      "outcome": "passed",
+      "seconds": 0.000232374994084239,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SphereExtrinsic]",
+      "outcome": "passed",
+      "seconds": 0.02070695802103728,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SphereExtrinsic]",
+      "outcome": "passed",
+      "seconds": 0.00014583300799131393,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Grassmann]",
+      "outcome": "passed",
+      "seconds": 0.0002327919937670231,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Grassmann]",
+      "outcome": "passed",
+      "seconds": 6.368465124978684,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Grassmann]",
+      "outcome": "passed",
+      "seconds": 0.0002519169938750565,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[GrassmannProjection]",
+      "outcome": "passed",
+      "seconds": 0.0005182920140214264,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[GrassmannProjection]",
+      "outcome": "passed",
+      "seconds": 0.8286453749751672,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[GrassmannProjection]",
+      "outcome": "passed",
+      "seconds": 0.0001683329464867711,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[GeneralizedStiefel]",
+      "outcome": "passed",
+      "seconds": 0.00026949995663017035,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[GeneralizedStiefel]",
+      "outcome": "passed",
+      "seconds": 11.874703917012084,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[GeneralizedStiefel]",
+      "outcome": "passed",
+      "seconds": 0.0007763330359011889,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[GeneralizedGrassmann]",
+      "outcome": "passed",
+      "seconds": 0.0005652920226566494,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[GeneralizedGrassmann]",
+      "outcome": "passed",
+      "seconds": 2.5949809580342844,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[GeneralizedGrassmann]",
+      "outcome": "passed",
+      "seconds": 0.0007122919778339565,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SPDLogEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.0003517500008456409,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SPDLogEuclidean]",
+      "outcome": "passed",
+      "seconds": 2.8329222080064937,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SPDLogEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.0010874999570660293,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 0.0003179580089636147,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 0.1526084590004757,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 0.00014166702749207616,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SPDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.0002121249563060701,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SPDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.1892781249480322,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SPDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.00013220799155533314,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[FixedRank]",
+      "outcome": "passed",
+      "seconds": 0.00020579103147611022,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[FixedRank]",
+      "outcome": "passed",
+      "seconds": 1.072755583038088,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[FixedRank]",
+      "outcome": "passed",
+      "seconds": 0.00014395802281796932,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[RankKPSD]",
+      "outcome": "passed",
+      "seconds": 0.00022658397210761905,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[RankKPSD]",
+      "outcome": "passed",
+      "seconds": 2.755582499958109,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[RankKPSD]",
+      "outcome": "passed",
+      "seconds": 0.00017016695346683264,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[RankKPSDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.0002531249774619937,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[RankKPSDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 1.1865322919911705,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[RankKPSDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.00020104198483750224,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Elliptope]",
+      "outcome": "passed",
+      "seconds": 0.00030208402313292027,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Elliptope]",
+      "outcome": "passed",
+      "seconds": 1.3202266670414247,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Elliptope]",
+      "outcome": "passed",
+      "seconds": 0.0002317499602213502,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Spectrahedron]",
+      "outcome": "passed",
+      "seconds": 0.000318917038384825,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Spectrahedron]",
+      "outcome": "passed",
+      "seconds": 0.29219075001310557,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Spectrahedron]",
+      "outcome": "passed",
+      "seconds": 0.0001438749604858458,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[CorrelationECM]",
+      "outcome": "passed",
+      "seconds": 0.00022187497233971953,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[CorrelationECM]",
+      "outcome": "passed",
+      "seconds": 1.611105082964059,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[CorrelationECM]",
+      "outcome": "passed",
+      "seconds": 0.00014979200204834342,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[CorrelationLEC]",
+      "outcome": "passed",
+      "seconds": 0.00023495900677517056,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[CorrelationLEC]",
+      "outcome": "passed",
+      "seconds": 0.2693637919728644,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[CorrelationLEC]",
+      "outcome": "passed",
+      "seconds": 0.0001484589884057641,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[CorrelationAffineQuotient]",
+      "outcome": "passed",
+      "seconds": 0.00023162498837336898,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[CorrelationAffineQuotient]",
+      "outcome": "passed",
+      "seconds": 0.14072579197818413,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[CorrelationAffineQuotient]",
+      "outcome": "passed",
+      "seconds": 0.00014179199934005737,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Product]",
+      "outcome": "passed",
+      "seconds": 0.0002430829918012023,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Product]",
+      "outcome": "passed",
+      "seconds": 0.5231839169864543,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Product]",
+      "outcome": "passed",
+      "seconds": 0.00019116600742563605,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Hyperboloid]",
+      "outcome": "passed",
+      "seconds": 0.00025095802266150713,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Hyperboloid]",
+      "outcome": "passed",
+      "seconds": 0.5134962919983082,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Hyperboloid]",
+      "outcome": "passed",
+      "seconds": 0.00014016602654010057,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Torus]",
+      "outcome": "passed",
+      "seconds": 0.00021495803957805037,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Torus]",
+      "outcome": "passed",
+      "seconds": 0.004718208045233041,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Torus]",
+      "outcome": "passed",
+      "seconds": 0.00013579201186075807,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SpecialOrthogonal]",
+      "outcome": "passed",
+      "seconds": 0.00021233304869383574,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SpecialOrthogonal]",
+      "outcome": "passed",
+      "seconds": 0.6112210000283085,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SpecialOrthogonal]",
+      "outcome": "passed",
+      "seconds": 0.0001521249650977552,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SpecialEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.00023858301574364305,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SpecialEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.9832198329968378,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[SpecialEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.00015425001038238406,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Stiefel]",
+      "outcome": "passed",
+      "seconds": 0.00022204202832654119,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Stiefel]",
+      "outcome": "passed",
+      "seconds": 7.11465554201277,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[Stiefel]",
+      "outcome": "passed",
+      "seconds": 0.00030987500213086605,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[StiefelEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.0025710840127430856,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[StiefelEuclidean]",
+      "outcome": "passed",
+      "seconds": 8.185058458009735,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[StiefelEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.00040012499084696174,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[KendallShape]",
+      "outcome": "passed",
+      "seconds": 0.0006087080109864473,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[KendallShape]",
+      "outcome": "passed",
+      "seconds": 2.134286791959312,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_nested_batches_and_broadcast_bases_preserve_event_axes[KendallShape]",
+      "outcome": "passed",
+      "seconds": 0.00016845797654241323,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Euclidean]",
+      "outcome": "passed",
+      "seconds": 0.0003320419928058982,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Euclidean]",
+      "outcome": "passed",
+      "seconds": 0.11036737496033311,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Euclidean]",
+      "outcome": "passed",
+      "seconds": 0.0001784159685485065,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Oblique]",
+      "outcome": "passed",
+      "seconds": 0.0003024999750778079,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Oblique]",
+      "outcome": "passed",
+      "seconds": 0.054440332984086126,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Oblique]",
+      "outcome": "passed",
+      "seconds": 0.00017783400835469365,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[ProbabilitySimplex]",
+      "outcome": "passed",
+      "seconds": 0.0002901660045608878,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[ProbabilitySimplex]",
+      "outcome": "passed",
+      "seconds": 0.2786519999499433,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[ProbabilitySimplex]",
+      "outcome": "passed",
+      "seconds": 0.00018462497973814607,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[PoincareBall]",
+      "outcome": "passed",
+      "seconds": 0.00031337502878159285,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[PoincareBall]",
+      "outcome": "passed",
+      "seconds": 0.2020496250479482,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[PoincareBall]",
+      "outcome": "passed",
+      "seconds": 0.00017462496180087328,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.0002917079837061465,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.005217499972786754,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.00016220897668972611,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SphereExtrinsic]",
+      "outcome": "passed",
+      "seconds": 0.0002742920187301934,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SphereExtrinsic]",
+      "outcome": "passed",
+      "seconds": 0.003764041990507394,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SphereExtrinsic]",
+      "outcome": "passed",
+      "seconds": 0.00016233400674536824,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Grassmann]",
+      "outcome": "passed",
+      "seconds": 0.0002763749798759818,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Grassmann]",
+      "outcome": "passed",
+      "seconds": 0.004195750050712377,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Grassmann]",
+      "outcome": "passed",
+      "seconds": 0.00016870797844603658,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[GrassmannProjection]",
+      "outcome": "passed",
+      "seconds": 0.0002842909889295697,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[GrassmannProjection]",
+      "outcome": "passed",
+      "seconds": 0.012786209001205862,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[GrassmannProjection]",
+      "outcome": "passed",
+      "seconds": 0.00016841699834913015,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[GeneralizedStiefel]",
+      "outcome": "passed",
+      "seconds": 0.00028149998979642987,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[GeneralizedStiefel]",
+      "outcome": "passed",
+      "seconds": 0.11673545796656981,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[GeneralizedStiefel]",
+      "outcome": "passed",
+      "seconds": 0.0001704170135781169,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[GeneralizedGrassmann]",
+      "outcome": "passed",
+      "seconds": 0.00029045797418802977,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[GeneralizedGrassmann]",
+      "outcome": "passed",
+      "seconds": 0.004800416994839907,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[GeneralizedGrassmann]",
+      "outcome": "passed",
+      "seconds": 0.00016729097114875913,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SPDLogEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.0002934999647550285,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SPDLogEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.1354596660239622,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SPDLogEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.00016774999676272273,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 0.0002833340549841523,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 0.11379670799942687,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 0.0001682079746387899,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SPDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.00028737500542774796,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SPDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.017705165955703706,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SPDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.000165084027685225,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[FixedRank]",
+      "outcome": "passed",
+      "seconds": 0.0002810420119203627,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[FixedRank]",
+      "outcome": "passed",
+      "seconds": 0.8042708340217359,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[FixedRank]",
+      "outcome": "passed",
+      "seconds": 0.0001729580108076334,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[RankKPSD]",
+      "outcome": "passed",
+      "seconds": 0.0002984580351039767,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[RankKPSD]",
+      "outcome": "passed",
+      "seconds": 0.020104082999750972,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[RankKPSD]",
+      "outcome": "passed",
+      "seconds": 0.0002494999789632857,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[RankKPSDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.0003482080064713955,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[RankKPSDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.06591891701100394,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[RankKPSDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.00019333302043378353,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Elliptope]",
+      "outcome": "passed",
+      "seconds": 0.0003504999913275242,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Elliptope]",
+      "outcome": "passed",
+      "seconds": 0.06428279198007658,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Elliptope]",
+      "outcome": "passed",
+      "seconds": 0.00015662499936297536,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Spectrahedron]",
+      "outcome": "passed",
+      "seconds": 0.00028020801255479455,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Spectrahedron]",
+      "outcome": "passed",
+      "seconds": 0.01965808297973126,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Spectrahedron]",
+      "outcome": "passed",
+      "seconds": 0.0001979580265469849,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[CorrelationECM]",
+      "outcome": "passed",
+      "seconds": 0.0004504579701460898,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[CorrelationECM]",
+      "outcome": "passed",
+      "seconds": 0.030625333019997925,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[CorrelationECM]",
+      "outcome": "passed",
+      "seconds": 0.0001515000476501882,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[CorrelationLEC]",
+      "outcome": "passed",
+      "seconds": 0.0002662499900907278,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[CorrelationLEC]",
+      "outcome": "passed",
+      "seconds": 0.0427001669886522,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[CorrelationLEC]",
+      "outcome": "passed",
+      "seconds": 0.00016424997011199594,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[CorrelationAffineQuotient]",
+      "outcome": "passed",
+      "seconds": 0.00027724995743483305,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[CorrelationAffineQuotient]",
+      "outcome": "passed",
+      "seconds": 0.3234621660085395,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[CorrelationAffineQuotient]",
+      "outcome": "passed",
+      "seconds": 0.0001689160126261413,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Product]",
+      "outcome": "passed",
+      "seconds": 0.0002817080239765346,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Product]",
+      "outcome": "passed",
+      "seconds": 0.2239590419922024,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Product]",
+      "outcome": "passed",
+      "seconds": 0.00016725005116313696,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Hyperboloid]",
+      "outcome": "passed",
+      "seconds": 0.00027754204347729683,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Hyperboloid]",
+      "outcome": "passed",
+      "seconds": 0.05911029200069606,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Hyperboloid]",
+      "outcome": "passed",
+      "seconds": 0.00015404203440994024,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Torus]",
+      "outcome": "passed",
+      "seconds": 0.0002625840133987367,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Torus]",
+      "outcome": "passed",
+      "seconds": 0.0027122919564135373,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Torus]",
+      "outcome": "passed",
+      "seconds": 0.00014987500617280602,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SpecialOrthogonal]",
+      "outcome": "passed",
+      "seconds": 0.0002589169889688492,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SpecialOrthogonal]",
+      "outcome": "passed",
+      "seconds": 0.24861058400711045,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SpecialOrthogonal]",
+      "outcome": "passed",
+      "seconds": 0.0001573750050738454,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SpecialEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.0002647920046001673,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SpecialEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.09810683398973197,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[SpecialEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.00016833300469443202,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Stiefel]",
+      "outcome": "passed",
+      "seconds": 0.0002806659904308617,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Stiefel]",
+      "outcome": "passed",
+      "seconds": 0.003677792032249272,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[Stiefel]",
+      "outcome": "passed",
+      "seconds": 0.0001437499886378646,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[StiefelEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.0002578749554231763,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[StiefelEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.003086124954279512,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[StiefelEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.00013749999925494194,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[KendallShape]",
+      "outcome": "passed",
+      "seconds": 0.0002539579872973263,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[KendallShape]",
+      "outcome": "passed",
+      "seconds": 0.020373915962409228,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_normalized_random_tangents_have_requested_riemannian_scale[KendallShape]",
+      "outcome": "passed",
+      "seconds": 0.00016533402958884835,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.0006208340055309236,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.15168262500083074,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.0001640000264160335,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[Hyperboloid]",
+      "outcome": "passed",
+      "seconds": 0.00027954200049862266,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[Hyperboloid]",
+      "outcome": "passed",
+      "seconds": 0.12392766698030755,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[Hyperboloid]",
+      "outcome": "passed",
+      "seconds": 0.00016579200746491551,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[PoincareBall]",
+      "outcome": "passed",
+      "seconds": 0.00025241600815206766,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[PoincareBall]",
+      "outcome": "passed",
+      "seconds": 0.07254966703476384,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[PoincareBall]",
+      "outcome": "passed",
+      "seconds": 0.00018916698172688484,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[Grassmann]",
+      "outcome": "passed",
+      "seconds": 0.00028033298440277576,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[Grassmann]",
+      "outcome": "passed",
+      "seconds": 0.07369445898802951,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[Grassmann]",
+      "outcome": "passed",
+      "seconds": 0.0001645419979467988,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 0.00028266594745218754,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 0.018043791002128273,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 0.00016270799096673727,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[SpecialOrthogonal]",
+      "outcome": "passed",
+      "seconds": 0.00025466596707701683,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[SpecialOrthogonal]",
+      "outcome": "passed",
+      "seconds": 0.01748245902126655,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_exponential_jvp_matches_directional_finite_difference[SpecialOrthogonal]",
+      "outcome": "passed",
+      "seconds": 0.00016712502110749483,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_spd_repeated_spectrum_has_finite_values_and_gradients[SPDLogEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.00026283302577212453,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_spd_repeated_spectrum_has_finite_values_and_gradients[SPDLogEuclidean]",
+      "outcome": "passed",
+      "seconds": 1.4787110830075108,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_spd_repeated_spectrum_has_finite_values_and_gradients[SPDLogEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.00018687499687075615,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_spd_repeated_spectrum_has_finite_values_and_gradients[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 0.00025616702623665333,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_spd_repeated_spectrum_has_finite_values_and_gradients[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 0.0549640420358628,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_spd_repeated_spectrum_has_finite_values_and_gradients[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 0.00016762502491474152,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_spd_repeated_spectrum_has_finite_values_and_gradients[SPDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.00023166602477431297,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_spd_repeated_spectrum_has_finite_values_and_gradients[SPDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.4044010420329869,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_spd_repeated_spectrum_has_finite_values_and_gradients[SPDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.00014249997911974788,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_genuine_sphere_cut_locus_remains_explicit",
+      "outcome": "passed",
+      "seconds": 0.0001123330439440906,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_genuine_sphere_cut_locus_remains_explicit",
+      "outcome": "passed",
+      "seconds": 0.16335612500552088,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_genuine_sphere_cut_locus_remains_explicit",
+      "outcome": "passed",
+      "seconds": 0.00012275000335648656,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_sphere_log_remains_accurate_near_but_off_the_cut_locus",
+      "outcome": "passed",
+      "seconds": 0.00011229200754314661,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_sphere_log_remains_accurate_near_but_off_the_cut_locus",
+      "outcome": "passed",
+      "seconds": 1.2256237919791602,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_sphere_log_remains_accurate_near_but_off_the_cut_locus",
+      "outcome": "passed",
+      "seconds": 0.00013879098696634173,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_grassmann_cut_locus_has_finite_distance_but_no_selected_logarithm",
+      "outcome": "passed",
+      "seconds": 0.0001219160039909184,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_grassmann_cut_locus_has_finite_distance_but_no_selected_logarithm",
+      "outcome": "passed",
+      "seconds": 0.7281066250288859,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_grassmann_cut_locus_has_finite_distance_but_no_selected_logarithm",
+      "outcome": "passed",
+      "seconds": 0.0001479579950682819,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_hyperboloid_poincare_roundtrip_and_distance_agree",
+      "outcome": "passed",
+      "seconds": 0.0001260829740203917,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_hyperboloid_poincare_roundtrip_and_distance_agree",
+      "outcome": "passed",
+      "seconds": 2.0333716250024736,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_numerical_stability.py::test_hyperboloid_poincare_roundtrip_and_distance_agree",
+      "outcome": "passed",
+      "seconds": 0.00017891702009364963,
+      "when": "teardown"
+    }
+  ]
+}

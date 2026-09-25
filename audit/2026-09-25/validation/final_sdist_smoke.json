@@ -1,0 +1,36 @@
+{
+  "command": [
+    "/Users/kisung/miniconda3/bin/python",
+    "-u",
+    "-I",
+    "-c",
+    "import pathlib,runpy,sys; helper=runpy.run_path(sys.argv[1]); helper[\"_check_artifact\"](pathlib.Path(sys.argv[2]),sys.argv[3])",
+    "/Users/kisung/Desktop/develop/geojax/scripts/smoke_package.py",
+    "/Users/kisung/Desktop/develop/geojax/dist/audit-2026-09-25/geojax-0.2.0.tar.gz",
+    "0.2.0"
+  ],
+  "exit_code": 0,
+  "wall_seconds": 30.72568933304865,
+  "cpu_user_seconds": 13.198287,
+  "cpu_system_seconds": 3.700357,
+  "max_rss_bytes": 220381184,
+  "artifact": "/Users/kisung/Desktop/develop/geojax/dist/audit-2026-09-25/geojax-0.2.0.tar.gz",
+  "sdist_sha256": "0aa6e501b095094bc63f7e50385ac07d39f2be3c6939be35cc37d410cc5cf488",
+  "package_index": "https://pypi.org/simple",
+  "scope": "Final sdist-only fresh install, pip dependency check, installed import, package version, and py.typed using existing smoke helper. No redundant wheel reinstall or numerical suite.",
+  "python": "3.13.11",
+  "successful_artifact_imports": [
+    [
+      "geojax-0.2.0.tar.gz",
+      "0.2.0 from /private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-package-smoke-3ciuzejv/environment/lib/python3.13/site-packages/geojax"
+    ]
+  ],
+  "pip_check_passes": 1,
+  "dependency_resolution_lines": [
+    "geojax-0.2.0 jax-0.11.2 jaxlib-0.11.2 ml_dtypes-0.6.0 numpy-2.5.3 opt_einsum-3.4.0 scipy-1.18.1"
+  ],
+  "sdist_built_wheel_package_files_match_matrix_and_candidate": true,
+  "sdist_built_wheel_sha256": "79d99e2880d2dd7e09d8854deaf1d8f68ccb9dd548cbe277125cf40e38eefaea",
+  "candidate_wheel_remains_unchanged": true,
+  "all_packaged_checkout_files_remain_unchanged": true
+}

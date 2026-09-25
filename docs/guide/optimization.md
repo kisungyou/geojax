@@ -144,6 +144,15 @@ JAX-differentiable in its scalar multiplier. The sufficient-decrease and
 curvature conditions trace to {cite:t}`armijo1966minimization` and
 {cite:t}`wolfe1969convergence`.
 
+Setting `approximate_wolfe=True` permits a derivative-based acceptance test
+when objective differences are within
+`roundoff_factor * eps * abs(initial_cost)` (the factor defaults to 8).
+It combines the approximate-Wolfe slope inequalities of
+{cite:t}`hager2005new` with the strong-curvature bound, and records such an
+acceptance in the line-search reason. This option leaves gradient stopping
+tolerances unchanged. It does not certify exact objective decrease below
+floating-point resolution; ordinary `StrongWolfe()` keeps the strict test.
+
 ## Second-order models
 
 `NewtonCG`, `TrustRegions`, and `AdaptiveRegularizationCubics` use

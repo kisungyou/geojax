@@ -1,0 +1,14 @@
+--- executed-snapshot/docs/guide/learning.md
++++ final/docs/guide/learning.md
+@@ -122,8 +122,9 @@
+ are comparable to floating-point rounding. Convergence still requires the
+ reported gradient tolerance; a small step alone does not certify a mean.
+ An explicitly supplied solver retains its own line-search settings.
+-Custom retractions that cannot be differentiated in their step multiplier
+-use the previous Armijo strategy without the derivative-based safeguard.
++Custom retractions that encounter JAX tracing errors from Python or NumPy
++scalar conversions use the previous Armijo strategy without the derivative-based
++safeguard; unrelated errors still propagate.
+ Medians use a guarded Riemannian Weiszfeld iteration for a
+ Huber-smoothed distance objective; the returned diagnostics distinguish that
+ objective from the unsmoothed median loss. The minimum enclosing ball uses a

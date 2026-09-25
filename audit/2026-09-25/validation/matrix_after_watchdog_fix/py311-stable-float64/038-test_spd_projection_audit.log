@@ -1,0 +1,32 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float64/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_spd_projection_audit.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_after_watchdog_fix/py311-stable-float64/038-test_spd_projection_audit.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_after_watchdog_fix/py311-stable-float64/038-test_spd_projection_audit.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float64/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.11.15, JAX 0.10.2, NumPy 2.4.4, float64
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 8 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_projection_audit.py::test_mixed_repair_batch_does_not_change_valid_item_hessian[other_diagonal0] PASSED [ 12%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_projection_audit.py::test_mixed_repair_batch_does_not_change_valid_item_hessian[other_diagonal1] PASSED [ 25%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_projection_audit.py::test_mixed_repair_batch_does_not_change_valid_item_hessian[other_diagonal2] PASSED [ 37%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_projection_audit.py::test_repeated_positive_negative_spectra_have_exact_trace_hessian PASSED [ 50%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_projection_audit.py::test_repaired_rotation_curve_forward_reverse_and_hessian PASSED [ 62%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_projection_audit.py::test_repeated_negative_spectrum_is_locally_constant_under_vmap PASSED [ 75%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_projection_audit.py::test_zero_eigenvalue_preserves_previous_selected_first_derivative PASSED [ 87%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_projection_audit.py::test_mixed_sign_maximum_scale_projection_derivative PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_after_watchdog_fix/py311-stable-float64/038-test_spd_projection_audit.xml -
+============================== slowest durations ===============================
+4.86s call     tests/test_spd_projection_audit.py::test_repaired_rotation_curve_forward_reverse_and_hessian
+1.64s call     tests/test_spd_projection_audit.py::test_mixed_repair_batch_does_not_change_valid_item_hessian[other_diagonal0]
+1.50s call     tests/test_spd_projection_audit.py::test_repeated_negative_spectrum_is_locally_constant_under_vmap
+1.44s call     tests/test_spd_projection_audit.py::test_repeated_positive_negative_spectra_have_exact_trace_hessian
+0.95s call     tests/test_spd_projection_audit.py::test_mixed_repair_batch_does_not_change_valid_item_hessian[other_diagonal2]
+0.89s call     tests/test_spd_projection_audit.py::test_mixed_repair_batch_does_not_change_valid_item_hessian[other_diagonal1]
+0.56s call     tests/test_spd_projection_audit.py::test_mixed_sign_maximum_scale_projection_derivative
+0.30s call     tests/test_spd_projection_audit.py::test_zero_eigenvalue_preserves_previous_selected_first_derivative
+
+(16 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================== 8 passed in 12.28s ==============================

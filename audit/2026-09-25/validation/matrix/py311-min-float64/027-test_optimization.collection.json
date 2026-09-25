@@ -1,0 +1,655 @@
+{
+  "collection_reports": [],
+  "deselected": [],
+  "exitstatus": 0,
+  "nodeids": [
+    "tests/test_optimization.py::test_only_class_style_solvers_are_public",
+    "tests/test_optimization.py::test_minimize_rejects_functional_solver_callbacks",
+    "tests/test_optimization.py::test_public_solvers_smoke[solver0]",
+    "tests/test_optimization.py::test_public_solvers_smoke[solver1]",
+    "tests/test_optimization.py::test_public_solvers_smoke[solver2]",
+    "tests/test_optimization.py::test_public_solvers_smoke[solver3]",
+    "tests/test_optimization.py::test_public_solvers_smoke[solver4]",
+    "tests/test_optimization.py::test_public_solvers_smoke[solver5]",
+    "tests/test_optimization.py::test_public_solvers_smoke[solver6]",
+    "tests/test_optimization.py::test_minimize_hessian_vector_fallback_and_user_rhess",
+    "tests/test_optimization.py::test_sphere_hessian_conversion_includes_embedding_curvature",
+    "tests/test_optimization.py::test_grassmann_automatic_hessian_uses_exact_conversion",
+    "tests/test_optimization.py::test_minimize_hessian_vector_construction_paths",
+    "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[steep]",
+    "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[S-D]",
+    "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[F-R]",
+    "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[P-R]",
+    "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[P-R-SATO]",
+    "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[H-S]",
+    "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[H-S-SATO]",
+    "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[H-Z]",
+    "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[L-S]",
+    "tests/test_optimization.py::test_conjugate_gradient_beta_safeguards_and_unknown_rule",
+    "tests/test_optimization.py::test_conjugate_gradient_product_pytree_smoke",
+    "tests/test_optimization.py::test_lbfgs_recomputes_curvature_after_nonisometric_transport",
+    "tests/test_optimization.py::test_lbfgs_rejects_nonpositive_memory",
+    "tests/test_optimization.py::test_truncated_cg_reports_the_final_residual",
+    "tests/test_optimization.py::test_truncated_cg_falls_back_from_nonpositive_preconditioner",
+    "tests/test_optimization.py::test_conjugate_gradient_falls_back_from_nonpositive_preconditioner",
+    "tests/test_optimization.py::test_trust_region_rejects_nonfinite_trial_and_shrinks_radius",
+    "tests/test_optimization.py::test_trust_region_shrinks_a_tiny_radius_without_an_absolute_floor",
+    "tests/test_optimization.py::test_lbfgs_smoke_with_nonisometric_rank_stratum_transport",
+    "tests/test_optimization.py::test_nelder_mead_initial_scale_is_applied_once",
+    "tests/test_optimization.py::test_nelder_mead_diameter_uses_every_vertex_pair"
+  ],
+  "runtime_reports": [
+    {
+      "nodeid": "tests/test_optimization.py::test_only_class_style_solvers_are_public",
+      "outcome": "passed",
+      "seconds": 0.0002972910297103226,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_only_class_style_solvers_are_public",
+      "outcome": "passed",
+      "seconds": 0.0003227079869247973,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_only_class_style_solvers_are_public",
+      "outcome": "passed",
+      "seconds": 0.00026524998247623444,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_minimize_rejects_functional_solver_callbacks",
+      "outcome": "passed",
+      "seconds": 0.00017504201969131827,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_minimize_rejects_functional_solver_callbacks",
+      "outcome": "passed",
+      "seconds": 0.25601900002220646,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_minimize_rejects_functional_solver_callbacks",
+      "outcome": "passed",
+      "seconds": 0.00019212503684684634,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_public_solvers_smoke[solver0]",
+      "outcome": "passed",
+      "seconds": 0.0010473749716766179,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_public_solvers_smoke[solver0]",
+      "outcome": "passed",
+      "seconds": 6.56300383299822,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_public_solvers_smoke[solver0]",
+      "outcome": "passed",
+      "seconds": 0.0007328750216402113,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_public_solvers_smoke[solver1]",
+      "outcome": "passed",
+      "seconds": 0.0005259170429781079,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_public_solvers_smoke[solver1]",
+      "outcome": "passed",
+      "seconds": 1.1713877079891972,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_public_solvers_smoke[solver1]",
+      "outcome": "passed",
+      "seconds": 0.0002120420103892684,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_public_solvers_smoke[solver2]",
+      "outcome": "passed",
+      "seconds": 0.0004593339981511235,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_public_solvers_smoke[solver2]",
+      "outcome": "passed",
+      "seconds": 3.495127958012745,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_public_solvers_smoke[solver2]",
+      "outcome": "passed",
+      "seconds": 0.00031658296938985586,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_public_solvers_smoke[solver3]",
+      "outcome": "passed",
+      "seconds": 0.0008642079774290323,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_public_solvers_smoke[solver3]",
+      "outcome": "passed",
+      "seconds": 0.17595925001660362,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_public_solvers_smoke[solver3]",
+      "outcome": "passed",
+      "seconds": 0.00022529199486598372,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_public_solvers_smoke[solver4]",
+      "outcome": "passed",
+      "seconds": 0.0004425829974934459,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_public_solvers_smoke[solver4]",
+      "outcome": "passed",
+      "seconds": 0.9930844160262495,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_public_solvers_smoke[solver4]",
+      "outcome": "passed",
+      "seconds": 0.0002953330404125154,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_public_solvers_smoke[solver5]",
+      "outcome": "passed",
+      "seconds": 0.00046491704415529966,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_public_solvers_smoke[solver5]",
+      "outcome": "passed",
+      "seconds": 1.4248955840012059,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_public_solvers_smoke[solver5]",
+      "outcome": "passed",
+      "seconds": 0.00046912499237805605,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_public_solvers_smoke[solver6]",
+      "outcome": "passed",
+      "seconds": 0.0004124589613638818,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_public_solvers_smoke[solver6]",
+      "outcome": "passed",
+      "seconds": 0.32944454200332984,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_public_solvers_smoke[solver6]",
+      "outcome": "passed",
+      "seconds": 0.000416582974139601,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_minimize_hessian_vector_fallback_and_user_rhess",
+      "outcome": "passed",
+      "seconds": 0.0002459579845890403,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_minimize_hessian_vector_fallback_and_user_rhess",
+      "outcome": "passed",
+      "seconds": 0.5748005000059493,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_minimize_hessian_vector_fallback_and_user_rhess",
+      "outcome": "passed",
+      "seconds": 0.0002253329730592668,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_sphere_hessian_conversion_includes_embedding_curvature",
+      "outcome": "passed",
+      "seconds": 0.00027133303228765726,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_sphere_hessian_conversion_includes_embedding_curvature",
+      "outcome": "passed",
+      "seconds": 0.2943437499925494,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_sphere_hessian_conversion_includes_embedding_curvature",
+      "outcome": "passed",
+      "seconds": 0.00020275003043934703,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_grassmann_automatic_hessian_uses_exact_conversion",
+      "outcome": "passed",
+      "seconds": 0.00021224998636171222,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_grassmann_automatic_hessian_uses_exact_conversion",
+      "outcome": "passed",
+      "seconds": 1.5564668749575503,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_grassmann_automatic_hessian_uses_exact_conversion",
+      "outcome": "passed",
+      "seconds": 0.0004592499462887645,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_minimize_hessian_vector_construction_paths",
+      "outcome": "passed",
+      "seconds": 0.00025029201060533524,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_minimize_hessian_vector_construction_paths",
+      "outcome": "passed",
+      "seconds": 0.4204106670222245,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_minimize_hessian_vector_construction_paths",
+      "outcome": "passed",
+      "seconds": 0.0001663750153966248,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[steep]",
+      "outcome": "passed",
+      "seconds": 0.0004383749910630286,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[steep]",
+      "outcome": "passed",
+      "seconds": 0.15962583298096433,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[steep]",
+      "outcome": "passed",
+      "seconds": 0.00023666699416935444,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[S-D]",
+      "outcome": "passed",
+      "seconds": 0.0003326250007376075,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[S-D]",
+      "outcome": "passed",
+      "seconds": 0.0010984159889630973,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[S-D]",
+      "outcome": "passed",
+      "seconds": 0.00017629202920943499,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[F-R]",
+      "outcome": "passed",
+      "seconds": 0.0003025000332854688,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[F-R]",
+      "outcome": "passed",
+      "seconds": 0.11691108299419284,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[F-R]",
+      "outcome": "passed",
+      "seconds": 0.00018933298997581005,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[P-R]",
+      "outcome": "passed",
+      "seconds": 0.0003367920289747417,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[P-R]",
+      "outcome": "passed",
+      "seconds": 0.04590820800513029,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[P-R]",
+      "outcome": "passed",
+      "seconds": 0.0002265410148538649,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[P-R-SATO]",
+      "outcome": "passed",
+      "seconds": 0.0004178330418653786,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[P-R-SATO]",
+      "outcome": "passed",
+      "seconds": 0.010514916968531907,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[P-R-SATO]",
+      "outcome": "passed",
+      "seconds": 0.000268499949015677,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[H-S]",
+      "outcome": "passed",
+      "seconds": 0.0005896250368095934,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[H-S]",
+      "outcome": "passed",
+      "seconds": 0.007972833001986146,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[H-S]",
+      "outcome": "passed",
+      "seconds": 0.0002205409691669047,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[H-S-SATO]",
+      "outcome": "passed",
+      "seconds": 0.0003827500040642917,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[H-S-SATO]",
+      "outcome": "passed",
+      "seconds": 0.010936124948784709,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[H-S-SATO]",
+      "outcome": "passed",
+      "seconds": 0.0002778750495053828,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[H-Z]",
+      "outcome": "passed",
+      "seconds": 0.00038454204332083464,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[H-Z]",
+      "outcome": "passed",
+      "seconds": 0.08023187500657514,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[H-Z]",
+      "outcome": "passed",
+      "seconds": 0.00023966701701283455,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[L-S]",
+      "outcome": "passed",
+      "seconds": 0.0003811659989878535,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[L-S]",
+      "outcome": "passed",
+      "seconds": 0.008240957977250218,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[L-S]",
+      "outcome": "passed",
+      "seconds": 0.0002234170096926391,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_safeguards_and_unknown_rule",
+      "outcome": "passed",
+      "seconds": 0.0005328750121407211,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_safeguards_and_unknown_rule",
+      "outcome": "passed",
+      "seconds": 0.01738129201112315,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_beta_safeguards_and_unknown_rule",
+      "outcome": "passed",
+      "seconds": 0.00017974997172132134,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_product_pytree_smoke",
+      "outcome": "passed",
+      "seconds": 0.00016766699263826013,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_product_pytree_smoke",
+      "outcome": "passed",
+      "seconds": 2.598211792006623,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_product_pytree_smoke",
+      "outcome": "passed",
+      "seconds": 0.00035616697277873755,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_lbfgs_recomputes_curvature_after_nonisometric_transport",
+      "outcome": "passed",
+      "seconds": 0.00026045803679153323,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_lbfgs_recomputes_curvature_after_nonisometric_transport",
+      "outcome": "passed",
+      "seconds": 0.3427717079757713,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_lbfgs_recomputes_curvature_after_nonisometric_transport",
+      "outcome": "passed",
+      "seconds": 0.00017899996601045132,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_lbfgs_rejects_nonpositive_memory",
+      "outcome": "passed",
+      "seconds": 0.00019629200687631965,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_lbfgs_rejects_nonpositive_memory",
+      "outcome": "passed",
+      "seconds": 0.003677083004731685,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_lbfgs_rejects_nonpositive_memory",
+      "outcome": "passed",
+      "seconds": 0.0003884999896399677,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_truncated_cg_reports_the_final_residual",
+      "outcome": "passed",
+      "seconds": 0.00026279198937118053,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_truncated_cg_reports_the_final_residual",
+      "outcome": "passed",
+      "seconds": 0.031407416972797364,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_truncated_cg_reports_the_final_residual",
+      "outcome": "passed",
+      "seconds": 0.00020458298968151212,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_truncated_cg_falls_back_from_nonpositive_preconditioner",
+      "outcome": "passed",
+      "seconds": 0.0002630419912748039,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_truncated_cg_falls_back_from_nonpositive_preconditioner",
+      "outcome": "passed",
+      "seconds": 0.025613541016355157,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_truncated_cg_falls_back_from_nonpositive_preconditioner",
+      "outcome": "passed",
+      "seconds": 0.0003629170241765678,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_falls_back_from_nonpositive_preconditioner",
+      "outcome": "passed",
+      "seconds": 0.000339917023666203,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_falls_back_from_nonpositive_preconditioner",
+      "outcome": "passed",
+      "seconds": 0.6576299159787595,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_conjugate_gradient_falls_back_from_nonpositive_preconditioner",
+      "outcome": "passed",
+      "seconds": 0.00020950002362951636,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_trust_region_rejects_nonfinite_trial_and_shrinks_radius",
+      "outcome": "passed",
+      "seconds": 0.00035970803583040833,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_trust_region_rejects_nonfinite_trial_and_shrinks_radius",
+      "outcome": "passed",
+      "seconds": 0.23435120796784759,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_trust_region_rejects_nonfinite_trial_and_shrinks_radius",
+      "outcome": "passed",
+      "seconds": 0.0004076670156791806,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_trust_region_shrinks_a_tiny_radius_without_an_absolute_floor",
+      "outcome": "passed",
+      "seconds": 0.0003784580039791763,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_trust_region_shrinks_a_tiny_radius_without_an_absolute_floor",
+      "outcome": "passed",
+      "seconds": 0.03362754202680662,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_trust_region_shrinks_a_tiny_radius_without_an_absolute_floor",
+      "outcome": "passed",
+      "seconds": 0.0003011669614352286,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_lbfgs_smoke_with_nonisometric_rank_stratum_transport",
+      "outcome": "passed",
+      "seconds": 0.00027249997947365046,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_lbfgs_smoke_with_nonisometric_rank_stratum_transport",
+      "outcome": "passed",
+      "seconds": 3.7190779579686932,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_lbfgs_smoke_with_nonisometric_rank_stratum_transport",
+      "outcome": "passed",
+      "seconds": 0.00032820896012708545,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_nelder_mead_initial_scale_is_applied_once",
+      "outcome": "passed",
+      "seconds": 0.0002473330241627991,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_nelder_mead_initial_scale_is_applied_once",
+      "outcome": "passed",
+      "seconds": 0.4960454590036534,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_nelder_mead_initial_scale_is_applied_once",
+      "outcome": "passed",
+      "seconds": 0.00042041600681841373,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_nelder_mead_diameter_uses_every_vertex_pair",
+      "outcome": "passed",
+      "seconds": 0.00024870800552889705,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_nelder_mead_diameter_uses_every_vertex_pair",
+      "outcome": "passed",
+      "seconds": 0.010139665973838419,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_optimization.py::test_nelder_mead_diameter_uses_every_vertex_pair",
+      "outcome": "passed",
+      "seconds": 0.00017454096814617515,
+      "when": "teardown"
+    }
+  ]
+}

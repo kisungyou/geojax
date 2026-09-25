@@ -1,0 +1,60 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float32/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_shape_audit_fixes.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py311-stable-float32/034-test_shape_audit_fixes.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py311-stable-float32/034-test_shape_audit_fixes.xml", "--trace-after", "90.0"]
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float32/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.11.15, JAX 0.10.2, NumPy 2.4.4, float32
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 22 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[1-False] PASSED [  4%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[2-False] PASSED [  9%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[2-True] PASSED [ 13%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[3-False] PASSED [ 18%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[3-True] PASSED [ 22%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[4-True] PASSED [ 27%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[1-False] PASSED [ 31%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[2-False] PASSED [ 36%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[2-True] PASSED [ 40%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[3-False] PASSED [ 45%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[3-True] PASSED [ 50%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[4-True] PASSED [ 54%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[2-False] PASSED [ 59%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[3-False] PASSED [ 63%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[3-True] PASSED [ 68%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[4-True] PASSED [ 72%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape_audit_fixes.py::test_unique_reflected_alignment_repeated_positive_singular_values PASSED [ 77%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape_audit_fixes.py::test_default_mean_of_balanced_shapes_is_geodesic_midpoint[2-False] PASSED [ 81%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape_audit_fixes.py::test_default_mean_of_balanced_shapes_is_geodesic_midpoint[3-True] PASSED [ 86%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape_audit_fixes.py::test_original_balanced_planar_audit_mean PASSED [ 90%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape_audit_fixes.py::test_nonunique_reflection_and_singular_shapes_remain_outside_log_domain PASSED [ 95%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape_audit_fixes.py::test_reflection_uniqueness_certificate_survives_determinant_underflow PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py311-stable-float32/034-test_shape_audit_fixes.xml -
+============================== slowest durations ===============================
+8.67s call     tests/test_shape_audit_fixes.py::test_default_mean_of_balanced_shapes_is_geodesic_midpoint[2-False]
+6.07s call     tests/test_shape_audit_fixes.py::test_default_mean_of_balanced_shapes_is_geodesic_midpoint[3-True]
+5.94s call     tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[2-False]
+5.54s call     tests/test_shape_audit_fixes.py::test_original_balanced_planar_audit_mean
+5.52s call     tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[3-False]
+5.30s call     tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[4-True]
+3.27s call     tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[4-True]
+3.22s call     tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[3-False]
+3.17s call     tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[1-False]
+3.07s call     tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[2-False]
+2.69s call     tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[3-False]
+2.60s call     tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[4-True]
+2.44s call     tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[2-False]
+1.78s call     tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[1-False]
+1.09s call     tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[3-True]
+1.02s call     tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[3-True]
+0.99s call     tests/test_shape_audit_fixes.py::test_unique_reflected_alignment_repeated_positive_singular_values
+0.96s call     tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[2-True]
+0.95s call     tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[2-True]
+0.87s call     tests/test_shape_audit_fixes.py::test_reflection_uniqueness_certificate_survives_determinant_underflow
+0.77s call     tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[3-True]
+0.26s call     tests/test_shape_audit_fixes.py::test_nonunique_reflection_and_singular_shapes_remain_outside_log_domain
+
+(44 durations < 0.005s hidden.  Use -vv to show these durations.)
+======================== 22 passed in 66.34s (0:01:06) =========================

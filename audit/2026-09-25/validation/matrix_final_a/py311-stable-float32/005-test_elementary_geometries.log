@@ -1,0 +1,28 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float32/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_elementary_geometries.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py311-stable-float32/005-test_elementary_geometries.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py311-stable-float32/005-test_elementary_geometries.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float32/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.11.15, JAX 0.10.2, NumPy 2.4.4, float32
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 6 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_elementary_geometries.py::test_oblique_is_a_product_of_column_spheres PASSED [ 16%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_elementary_geometries.py::test_oblique_hessian_conversion_satisfies_quadratic_sphere_formula PASSED [ 33%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_elementary_geometries.py::test_simplex_fisher_rao_distance_and_gradient_duality PASSED [ 50%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_elementary_geometries.py::test_simplex_exponential_rejects_a_path_that_leaves_and_reenters_the_interior PASSED [ 66%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_elementary_geometries.py::test_simplex_operations_preserve_valid_small_probabilities PASSED [ 83%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_elementary_geometries.py::test_poincare_origin_formulas_and_isometric_transport PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py311-stable-float32/005-test_elementary_geometries.xml -
+============================== slowest durations ===============================
+0.99s call     tests/test_elementary_geometries.py::test_oblique_is_a_product_of_column_spheres
+0.83s call     tests/test_elementary_geometries.py::test_simplex_exponential_rejects_a_path_that_leaves_and_reenters_the_interior
+0.58s call     tests/test_elementary_geometries.py::test_oblique_hessian_conversion_satisfies_quadratic_sphere_formula
+0.58s call     tests/test_elementary_geometries.py::test_simplex_fisher_rao_distance_and_gradient_duality
+0.37s call     tests/test_elementary_geometries.py::test_simplex_operations_preserve_valid_small_probabilities
+0.27s call     tests/test_elementary_geometries.py::test_poincare_origin_formulas_and_isometric_transport
+
+(12 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================== 6 passed in 3.81s ===============================

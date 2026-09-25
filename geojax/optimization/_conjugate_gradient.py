@@ -191,6 +191,15 @@ def _compute_beta_and_direction(
         beta = 0.0
 
     new_desc_dir = tree_lincomb(-1.0, Pnewgrad, beta, desc_transp)
+    # Hestenes--Stiefel and related rules can cancel the two terms to
+    # roundoff even though the gradient is still large. A merely negative
+    # slope then lets a normalized line search amplify numerical noise.
+    # Restart when the computed slope has lost meaningful descent relative
+    # to the safe preconditioned steepest-descent slope.
+    slope = _finite_scalar(inner(M, newx, newgrad, new_desc_dir), default=math.inf)
+    roundoff = math.sqrt(jnp.finfo(jnp.asarray(newgradPnewgrad).dtype).eps)
+    if slope >= -roundoff * newgradPnewgrad_f:
+        return 0.0, tree_neg(Pnewgrad)
     return float(beta), new_desc_dir
 
 

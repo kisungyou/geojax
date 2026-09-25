@@ -1,0 +1,32 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py313-stable-float64/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_lie_groups.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_b/py313-stable-float64/021-test_lie_groups.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_b/py313-stable-float64/021-test_lie_groups.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.13.14, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py313-stable-float64/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.13.14, JAX 0.11.0, NumPy 2.4.4, float64
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 8 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_lie_groups.py::test_special_orthogonal_group_operations_and_local_maps PASSED [ 12%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_lie_groups.py::test_special_orthogonal_log_is_differentiable_away_from_cut_locus PASSED [ 25%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_lie_groups.py::test_special_orthogonal_pi_rotation_marks_nonunique_log PASSED [ 37%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_lie_groups.py::test_special_orthogonal_cut_detection_uses_numerical_resolution_not_atol PASSED [ 50%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_lie_groups.py::test_special_orthogonal_distance_is_finite_at_cut_locus PASSED [ 62%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_lie_groups.py::test_special_euclidean_group_and_riemannian_exponentials PASSED [ 75%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_lie_groups.py::test_special_euclidean_component_construction_uses_a_common_floating_dtype PASSED [ 87%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_lie_groups.py::test_special_euclidean_rigid_registration_smoke PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_b/py313-stable-float64/021-test_lie_groups.xml -
+============================== slowest durations ===============================
+5.03s call     tests/test_lie_groups.py::test_special_euclidean_rigid_registration_smoke
+1.68s call     tests/test_lie_groups.py::test_special_orthogonal_group_operations_and_local_maps
+1.63s call     tests/test_lie_groups.py::test_special_orthogonal_log_is_differentiable_away_from_cut_locus
+1.19s call     tests/test_lie_groups.py::test_special_euclidean_group_and_riemannian_exponentials
+0.20s call     tests/test_lie_groups.py::test_special_orthogonal_distance_is_finite_at_cut_locus
+0.09s call     tests/test_lie_groups.py::test_special_orthogonal_pi_rotation_marks_nonunique_log
+0.07s call     tests/test_lie_groups.py::test_special_euclidean_component_construction_uses_a_common_floating_dtype
+0.03s call     tests/test_lie_groups.py::test_special_orthogonal_cut_detection_uses_numerical_resolution_not_atol
+
+(16 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================== 8 passed in 10.09s ==============================

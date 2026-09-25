@@ -1,0 +1,211 @@
+{
+  "jax": "0.11.0",
+  "x64": true,
+  "results": [
+    {
+      "name": "SPDLogEuclidean: squared-distance Hessian at identity",
+      "passed": false,
+      "actual": [
+        [
+          "nan",
+          "nan"
+        ],
+        [
+          "nan",
+          "nan"
+        ]
+      ],
+      "expected": [
+        [
+          1.015888308335967,
+          0.6772588722239782
+        ],
+        [
+          0.6772588722239782,
+          -0.3386294361119891
+        ]
+      ]
+    },
+    {
+      "name": "SPDAffineInvariant: squared-distance Hessian at identity",
+      "passed": false,
+      "actual": [
+        [
+          "nan",
+          "nan"
+        ],
+        [
+          "nan",
+          "nan"
+        ]
+      ],
+      "expected": [
+        [
+          1.015888308335967,
+          0.6772588722239782
+        ],
+        [
+          0.6772588722239782,
+          -0.3386294361119891
+        ]
+      ]
+    },
+    {
+      "name": "SPDBuresWasserstein: squared-distance Hessian at identity",
+      "passed": false,
+      "actual": [
+        [
+          "nan",
+          "nan"
+        ],
+        [
+          "nan",
+          "nan"
+        ]
+      ],
+      "expected": [
+        [
+          0.21213203435596423,
+          0.1414213562373095
+        ],
+        [
+          0.1414213562373095,
+          -0.07071067811865475
+        ]
+      ]
+    },
+    {
+      "name": "RankKPSDBuresWasserstein: scalar distance gradient on fixed support",
+      "passed": false,
+      "actual": "nan",
+      "expected": -0.41421356237309515
+    },
+    {
+      "name": "RankKPSDBuresWasserstein: Frechet mean of two commuting rank-one matrices",
+      "passed": false,
+      "error": "FloatingPointError: Riemannian gradient must contain only finite values.",
+      "expected": [
+        [
+          1.4571067811865475,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "name": "SpecialOrthogonal: squared-distance second derivative away from cut locus",
+      "passed": false,
+      "error": "NotImplementedError: Derivatives of non-symmetric eigenvectors are only valid under assumptions on the input that JAX cannot check (see the enable_eigvec_derivs argument to jax.lax.linalg.eig). Pass enable_eigvec_derivs=True to jax.lax.linalg.eig to opt in. See https://github.com/jax-ml/jax/issues/2748 for discussion.",
+      "expected": 4.0
+    },
+    {
+      "name": "Grassmann: derivative of log at equal nonzero principal angles",
+      "passed": false,
+      "actual": [
+        [
+          "nan",
+          "nan"
+        ],
+        [
+          "nan",
+          "nan"
+        ],
+        [
+          "nan",
+          "nan"
+        ],
+        [
+          "nan",
+          "nan"
+        ]
+      ],
+      "expected": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "name": "KendallShape: squared-distance derivative from balanced regular shape",
+      "passed": false,
+      "actual": "nan",
+      "expected": 0.2
+    },
+    {
+      "name": "KendallShape: Frechet mean of two nearby regular shapes",
+      "passed": false,
+      "error": "FloatingPointError: Riemannian gradient must contain only finite values.",
+      "expected": [
+        [
+          0.49937513019748314,
+          0.024989584635339165
+        ],
+        [
+          -0.49937513019748314,
+          0.024989584635339165
+        ],
+        [
+          0.0,
+          0.47438554556214396
+        ],
+        [
+          0.0,
+          -0.5243647148328223
+        ]
+      ]
+    },
+    {
+      "name": "RankKPSDBuresWasserstein: regular geodesic beyond positive-overlap certificate",
+      "passed": false,
+      "actual": [
+        [
+          "nan",
+          "nan"
+        ],
+        [
+          "nan",
+          "nan"
+        ]
+      ],
+      "expected": [
+        [
+          1.0,
+          -1.0
+        ],
+        [
+          -1.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "name": "Euclidean: distance at largest representable finite coordinate",
+      "passed": true,
+      "actual": 1.7976931348623157e+308,
+      "expected": 1.7976931348623157e+308
+    }
+  ]
+}

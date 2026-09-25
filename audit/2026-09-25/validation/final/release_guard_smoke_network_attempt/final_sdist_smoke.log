@@ -1,0 +1,38 @@
+sha256  f12c6a7ca9e61b17fcd6e753be85b299d50223dbf9c559c3c22a632bebe47a94  geojax-0.2.0.tar.gz
+Processing /Users/kisung/Desktop/develop/geojax/dist/audit-2026-09-25-final/geojax-0.2.0.tar.gz
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'error'
+  error: subprocess-exited-with-error
+  
+  × installing build dependencies did not run successfully.
+  │ exit code: 1
+  ╰─> [7 lines of output]
+      WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0x103235940>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known')': /simple/setuptools/
+      WARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0x1031eead0>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known')': /simple/setuptools/
+      WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0x1031eed50>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known')': /simple/setuptools/
+      WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0x1031eefd0>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known')': /simple/setuptools/
+      WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0x1031ef250>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known')': /simple/setuptools/
+      ERROR: Could not find a version that satisfies the requirement setuptools>=77 (from versions: none)
+      ERROR: No matching distribution found for setuptools>=77
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+ERROR: Failed to build 'file:///Users/kisung/Desktop/develop/geojax/dist/audit-2026-09-25-final/geojax-0.2.0.tar.gz' when installing build dependencies
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import pathlib,runpy,sys; helper=runpy.run_path(sys.argv[1]); helper["_check_artifact"](pathlib.Path(sys.argv[2]),sys.argv[3])
+                                                                  ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kisung/Desktop/develop/geojax/scripts/smoke_package.py", line 46, in _check_artifact
+    subprocess.run(
+    ~~~~~~~~~~~~~~^
+        [
+        ^
+    ...<9 lines>...
+        cwd=root,
+        ^^^^^^^^^
+    )
+    ^
+  File "/Users/kisung/miniconda3/lib/python3.13/subprocess.py", line 577, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-package-smoke-3abum_jb/environment/bin/python', '-m', 'pip', 'install', '--disable-pip-version-check', '--force-reinstall', '/Users/kisung/Desktop/develop/geojax/dist/audit-2026-09-25-final/geojax-0.2.0.tar.gz']' returned non-zero exit status 1.

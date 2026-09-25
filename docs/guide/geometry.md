@@ -80,6 +80,13 @@ geometry-specific stable formulas where necessary. Removable zero-norm and
 repeated-spectrum singularities have analytic derivatives; genuine cut loci
 remain explicit.
 
+Choose numerical units that keep intermediate values and derivatives within
+the floating-point range. Rescaling the final answer cannot recover an
+intermediate derivative that has already overflowed or been flushed to zero
+as a subnormal by the backend. The covariance kernels rescale their internal
+matrix equations, but this does not remove the representability limits of
+the surrounding differentiated program.
+
 `operation_kind("exp")`, `operation_kind("log")`, `operation_kind("dist")`,
 and `operation_kind("squared_dist")` distinguish `"exact"`, `"numerical-local"`, and
 `"proxy"` behavior as applicable. A proxy class keeps the uniform names for
@@ -539,10 +546,17 @@ $$
 $$
 
 The principal logarithm is not unique when $R^\top Q$ has eigenvalue $-1$,
-which includes a relative rotation by $\pi$. `log`, `dist`, and `transport`
-return nonfinite values there instead of selecting an arbitrary rotation
-plane. Away from that cut locus, GeoJAX supplies a custom JAX derivative for
-the matrix logarithm.
+which includes a relative rotation by $\pi$. `log` and `transport` return
+nonfinite values there. `dist` and `squared_dist` retain the finite distance,
+while their derivatives are undefined at the cut. Away from it, implicit
+matrix equations provide derivatives of the logarithm, including repeated
+rotation angles and higher derivatives.
+
+Point projection has the corresponding implicit polar derivative wherever
+the closest rotation is unique. This includes repeated positive singular
+values and regular rank-$(n-1)$ inputs. Reversed-orientation inputs with tied
+smallest singular values can have several closest rotations; no smooth
+projection derivative is asserted there.
 
 ## Rigid transformations
 
@@ -790,6 +804,25 @@ The class provides exact local Bures exponential, logarithm, and distance.
 Its endpoint projection transport is a general vector transport, not parallel
 transport. The fixed-rank quotient construction follows
 {cite:t}`massart2020quotient`.
+
+Derivatives of these quotient quantities use matrix equations for the support
+projector and Sylvester inverse, so repeated positive eigenvalues and the
+structurally repeated zero eigenvalues do not create eigenvector-derivative
+singularities. The logarithm and squared distance are smooth where
+$Y_Q^\top Y_P$ is invertible. At its singular boundary the optimal alignment
+need not be unique: `log` selects one Procrustes solution, and differentiability
+is not guaranteed. Use `squared_dist` for a smooth squared-distance objective,
+including at coincident regular points.
+
+The exponential checks the entire horizontal path $Y(t)=(I+tL)Y_P$ for rank
+loss, not just its endpoint or the sign of the endpoint overlap. It therefore
+accepts regular paths beyond the positive-overlap neighborhood and rejects
+paths that leave and reenter the rank-$k$ stratum. With an orthonormal basis
+$V$ for the support, rank loss occurs in $0<t\leq1$ exactly when an eigenvalue
+$\lambda\leq-1$ of $V^\top L V$ also has a vector satisfying
+$(LV-\lambda V)v=0$. The implementation tests this condition by singular
+values, with a roundoff-scaled tolerance; a path indistinguishable from rank
+loss at working precision may be rejected.
 
 ### Elliptope and spectrahedron
 

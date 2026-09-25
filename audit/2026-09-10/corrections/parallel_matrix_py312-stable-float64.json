@@ -1,0 +1,56 @@
+{
+  "environment": "py312-stable-float64",
+  "status": "running",
+  "exit_codes": [
+    0,
+    0
+  ],
+  "step_seconds": [
+    0.45,
+    1.65
+  ],
+  "log": "audit/2026-09-10/corrections/full_py312-stable-float64.log",
+  "manifest_sha256": "cd9f7918941f8ec76caa6026a44f55a0e2ca7f3bba903a1063ac9ff0004cf263",
+  "wheel_sha256": "d255ff16d81e519ea4a851f3f35b3d2d167c7b6f576eef3dcfefc5ceb9af797a",
+  "source_unchanged_before": true,
+  "changed_files_before": [],
+  "commands": [
+    [
+      "uv",
+      "pip",
+      "install",
+      "--python",
+      "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float64/bin/python",
+      "--no-deps",
+      "--reinstall",
+      "/private/tmp/geojax-corrections/dist/geojax-0.2.0-py3-none-any.whl"
+    ],
+    [
+      "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float64/bin/python",
+      "/Users/kisung/Desktop/develop/geojax/scripts/assert_installed_package.py",
+      "/Users/kisung/Desktop/develop/geojax"
+    ],
+    [
+      "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float64/bin/python",
+      "-m",
+      "pytest",
+      "/Users/kisung/Desktop/develop/geojax/tests",
+      "--rootdir=/Users/kisung/Desktop/develop/geojax",
+      "-o",
+      "pythonpath=",
+      "--cov=geojax",
+      "--cov-report=term-missing",
+      "--durations=15",
+      "--maxfail=1"
+    ],
+    [
+      "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float64/bin/python",
+      "-m",
+      "coverage",
+      "report",
+      "--include=*/geojax/learning/*",
+      "--fail-under=95"
+    ]
+  ],
+  "seconds": 2.1
+}

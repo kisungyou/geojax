@@ -1,0 +1,25 @@
+{
+  "date": "2026-09-25",
+  "purpose": "Isolated timing diagnostic; checkout imports, not final installed-wheel matrix evidence.",
+  "command": [
+    ".tox/py312-stable-float64/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_numerical_stability.py",
+    "--cov=geojax",
+    "--cov-report=",
+    "--cov-fail-under=0",
+    "-vv",
+    "--durations=15",
+    "-o",
+    "faulthandler_timeout=90"
+  ],
+  "environment": {
+    "GEOJAX_TEST_X64": "1"
+  },
+  "returncode": 0,
+  "pytest_passed": 108,
+  "pytest_seconds": 184.32,
+  "log": "numerical_stability_isolated.log",
+  "inference": "This module completed under coverage in isolation; the precise cause of the prior incomplete full-suite run is not established."
+}

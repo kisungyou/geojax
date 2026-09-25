@@ -311,3 +311,180 @@ def test_strong_wolfe_does_not_differentiate_nonfinite_trial_costs():
     ).search(problem, problem.x0, -problem.x0, cost(problem.x0), -1.0)
     assert result.stats.accepted
     assert result.stats.costevals > result.stats.gradevals
+
+
+@pytest.mark.parametrize("scale", [1e-20, 1.0, 1e20])
+def test_approximate_wolfe_resolves_rounded_quadratic_without_relaxing_gradient(scale):
+    # The quadratic is well resolved in the gradient, but is smaller than one
+    # ULP of the additive constant. Strict Armijo cannot certify its decrease.
+    dtype = jnp.float32
+    baseline = jnp.asarray(scale, dtype=dtype)
+    target = jnp.sqrt(jnp.finfo(dtype).eps * baseline) / 8
+    point = jnp.zeros(1, dtype=dtype)
+    manifold = Euclidean(1)
+    problem = Minimize(
+        M=manifold,
+        cost=lambda value: baseline + jnp.sum((value - target) ** 2),
+        x0=point,
+    )
+    gradient = jax.grad(problem.cost)(point)
+    direction = -gradient
+    derivative0 = manifold.inner(point, gradient, direction)
+    strict = StrongWolfe(initial_stepsize=0.5, normalize_step=False)
+    rejected = strict.search(problem, point, direction, problem.cost(point), derivative0)
+    assert not rejected.stats.accepted
+
+    strategy = StrongWolfe(initial_stepsize=0.5, normalize_step=False, approximate_wolfe=True)
+    result = strategy.search(problem, point, direction, problem.cost(point), derivative0)
+    assert result.stats.accepted
+    assert "approximate-Wolfe" in result.stats.reason
+    assert result.cost == problem.cost(point)
+    assert result.alpha == 0.5
+    assert jnp.all(result.point == target)
+    assert jnp.all(result.gradient == 0.0)
+    assert result.gradient is not None
+
+
+@pytest.mark.parametrize("large_point", [False, True])
+def test_approximate_wolfe_rejects_constant_slope_and_unrepresentable_progress(large_point):
+    point = jnp.array([1e10 if large_point else 0.0], dtype=jnp.float32)
+    direction = jnp.array([-1.0 if large_point else -1e-9], dtype=jnp.float32)
+    manifold = Euclidean(1)
+    problem = Minimize(M=manifold, cost=lambda value: 1.0 + value[0], x0=point)
+    derivative0 = direction[0]
+    result = StrongWolfe(
+        normalize_step=False,
+        approximate_wolfe=True,
+        max_steps=4,
+        max_zoom_steps=4,
+    ).search(problem, point, direction, problem.cost(point), derivative0)
+    assert not result.stats.accepted
+    assert result.point is point
+    assert result.stepsize == 0.0
+
+
+@pytest.mark.parametrize("baseline", [0.0, 1e-20, 1.0])
+def test_approximate_wolfe_rejects_cost_changes_outside_relative_roundoff_budget(baseline):
+    dtype = jnp.float32
+    base = jnp.asarray(baseline, dtype=dtype)
+    target = jnp.asarray(1e-4 if baseline == 0.0 else (baseline * 1e-8) ** 0.5, dtype=dtype)
+    point = jnp.zeros(1, dtype=dtype)
+    # Model a deliberately inaccurate trial value without changing its local
+    # derivative. Even perfect trial stationarity cannot justify an increase
+    # outside the stated floating-point budget, including at tiny/zero scale.
+    original = base + target**2
+    jump = 2 * original if baseline == 0.0 else 32 * jnp.finfo(dtype).eps * original
+
+    def cost(value):
+        trial_bias = jax.lax.stop_gradient(jnp.where(value[0] != 0.0, jump, 0.0))
+        return base + jnp.sum((value - target) ** 2) + trial_bias
+
+    if baseline == 0.0:
+        # Subtract the initial value so the budget is exactly zero.
+        uncentered_cost = cost
+
+        def cost(value):
+            return uncentered_cost(value) - original
+
+    problem = Minimize(M=Euclidean(1), cost=cost, x0=point)
+    gradient = jax.grad(cost)(point)
+    result = StrongWolfe(
+        initial_stepsize=0.5,
+        normalize_step=False,
+        approximate_wolfe=True,
+        max_zoom_steps=5,
+    ).search(problem, point, -gradient, cost(point), -jnp.sum(gradient * gradient))
+    assert not result.stats.accepted
+    assert result.point is point
+
+
+def test_approximate_wolfe_rejects_uphill_and_invalid_domain_trials():
+    class BoundedLine(Euclidean):
+        def belongs(self, point, atol=None):
+            return super().belongs(point, atol=atol) & jnp.all(point > -2.0)
+
+    manifold = BoundedLine(1)
+    point = jnp.ones(1)
+    evaluated = []
+
+    def cost(value):
+        assert bool(jnp.all(value > -2.0)), "invalid-domain cost evaluation"
+        evaluated.append(float(value[0]))
+        return jnp.sum((value - 0.5) ** 2)
+
+    def gradient(value):
+        return 2 * (value - 0.5)
+
+    problem = Minimize(M=manifold, cost=cost, grad=gradient, x0=point)
+    result = StrongWolfe(initial_stepsize=4.0, normalize_step=False, approximate_wolfe=True).search(
+        problem, point, -jnp.ones(1), cost(point), -1.0
+    )
+    assert result.stats.accepted
+    assert result.alpha == 0.5
+    assert jnp.allclose(result.point, jnp.array([0.5]))
+    assert result.cost < cost(point)
+    assert result.stats.reason == ""
+    assert -1.0 in evaluated  # A valid, genuinely uphill trial was rejected.
+    assert -3.0 not in evaluated  # The out-of-domain trial never reached cost().
+
+
+@pytest.mark.parametrize(
+    "strategy,error",
+    [
+        (StrongWolfe(approximate_wolfe=1), TypeError),
+        (StrongWolfe(approximate_wolfe=True, sufficient_decrease=0.5), ValueError),
+        (StrongWolfe(approximate_wolfe=True, roundoff_factor=0.0), ValueError),
+        (StrongWolfe(approximate_wolfe=True, roundoff_factor=float("nan")), ValueError),
+        (StrongWolfe(approximate_wolfe=True, roundoff_factor=float("inf")), ValueError),
+    ],
+)
+def test_approximate_wolfe_validates_its_opt_in_controls(strategy, error):
+    manifold, problem = quadratic_problem()
+    point = problem.x0
+    with pytest.raises(error):
+        strategy.search(
+            problem, point, -point, problem.cost(point), -manifold.inner(point, point, point)
+        )
+
+
+def test_strict_wolfe_still_allows_sufficient_decrease_above_one_half():
+    manifold, problem = quadratic_problem()
+    point = problem.x0
+    result = StrongWolfe(sufficient_decrease=0.6, curvature=0.9).search(
+        problem, point, -point, problem.cost(point), -manifold.inner(point, point, point)
+    )
+    assert result.stats.accepted
+    assert result.stats.reason == ""
+
+
+@pytest.mark.parametrize("conversion", ["python", "numpy"])
+def test_default_frechet_mean_preserves_python_guarded_retractions(conversion):
+    import numpy as np
+
+    from geojax.learning import frechet_mean
+
+    class PythonGuardedRetraction(Euclidean):
+        def retr(self, point, tangent, alpha=1.0):
+            multiplier = float(np.asarray(alpha)) if conversion == "numpy" else float(alpha)
+            if multiplier > 1.0:
+                raise ValueError("step exceeds the custom retraction domain")
+            return point + multiplier * tangent
+
+    manifold = PythonGuardedRetraction(1)
+    data = jnp.array([[0.0], [1.0], [2.0]])
+    result = frechet_mean(manifold, data, initial_point=jnp.zeros(1))
+    assert result.converged
+    assert jnp.allclose(result.point, jnp.ones(1))
+    assert result.gradient_norm <= result.diagnostics["effective_tolerance"]
+    assert result.diagnostics["history"][1].linesearch.method == "adaptive_armijo"
+
+
+def test_default_frechet_mean_does_not_hide_unrelated_retraction_errors():
+    from geojax.learning import frechet_mean
+
+    class BrokenRetraction(Euclidean):
+        def retr(self, point, tangent, alpha=1.0):
+            raise TypeError("unrelated user geometry defect")
+
+    with pytest.raises(TypeError, match="unrelated user geometry defect"):
+        frechet_mean(BrokenRetraction(1), jnp.array([[0.0], [1.0]]), initial_point=jnp.zeros(1))

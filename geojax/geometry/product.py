@@ -235,7 +235,7 @@ class Product(GeometryMixin):
         out = vals[0]
         for val in vals[1:]:
             out = out + val
-        return jnp.maximum(out, 0.0)
+        return out
 
     def dist(self, x: Any, y: Any) -> Array:
         xs = self._flatten_like(x, "point")

@@ -35,7 +35,7 @@ def _prepare_graph(
     positive = distances[distances > 0.0]
     scale = float(jnp.median(positive)) if bandwidth is None and positive.size else bandwidth
     scale = positive_control(1.0 if scale is None else scale, name="bandwidth")
-    affinity = jnp.exp(-(distances**2) / (2.0 * scale**2))
+    affinity = jnp.exp(-0.5 * (distances / scale) ** 2)
     affinity = affinity.at[jnp.diag_indices(adapted.n_samples)].set(0.0)
     if n_neighbors is not None:
         neighbors = integer_control(n_neighbors, name="n_neighbors")

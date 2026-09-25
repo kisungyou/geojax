@@ -14,7 +14,7 @@ from ._capabilities import require_exact_operations
 from ._data import as_manifold_data
 from ._regression import _kernel_weights
 from ._results import GeodesicRegressionModel, LocalPolynomialRegressionModel
-from ._statistics import _gradient_tolerances, frechet_mean
+from ._statistics import _gradient_tolerances, _positive_weight_data, frechet_mean
 from ._utils import (
     as_real_array,
     integer_control,
@@ -104,6 +104,10 @@ def geodesic_regression(
     require_unbatched(adapted, "geodesic_regression")
     predictor_values = _validate_predictors(predictors, adapted.n_samples)
     weights = normalize_weights(adapted.n_samples, sample_weight)
+    original_weights = weights
+    active = jnp.flatnonzero(weights > 0.0)
+    predictor_values = predictor_values[active]
+    adapted, weights = _positive_weight_data(manifold, adapted, weights)
     predictor_mean = jnp.sum(weights * predictor_values)
     centered = predictor_values - predictor_mean
     _positive_predictor_variance(centered, weights)
@@ -202,7 +206,7 @@ def geodesic_regression(
             )
         ),
         diagnostics={
-            "weights": weights,
+            "weights": original_weights,
             "history": tuple(history),
             "mean_fit": mean_fit,
             "joint_state": state,
@@ -347,6 +351,7 @@ def _predict_one_local_polynomial(model: LocalPolynomialRegressionModel, query: 
             maxiter=model.maxiter,
             tolgradnorm=effective_tol,
             verbosity=0,
+            line_search=AdaptiveArmijo(normalize_step=False),
         ),
     ).solve()
     final = history[-1]

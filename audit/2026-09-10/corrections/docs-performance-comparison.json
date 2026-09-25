@@ -1,0 +1,38 @@
+{
+  "purpose": "Diagnose executable tutorial timeout without raising the cell budget or reducing workload",
+  "tutorial": "barycentric_dictionary",
+  "notebook_cell_timeout_seconds": 300,
+  "environment": {
+    "python": "3.13.11 | packaged by Anaconda, Inc. | (main, Dec 10 2025, 21:21:08) [Clang 20.1.8 ]",
+    "jax": "0.10.0"
+  },
+  "baseline": {
+    "source": "/private/tmp/geojax-corrections/documentation",
+    "jax": "0.10.0",
+    "python": "3.13.11",
+    "pid": 30677,
+    "result": "stopped after computation cell exceeded its300-second notebook budget",
+    "wall_seconds_at_last_sample": 306,
+    "cpu_seconds_at_last_sample": 398.5,
+    "setup_wall_seconds": 6.237720625002112,
+    "initial_coding_wall_seconds_approx": 31,
+    "stalled_stage": "dictionary atom optimizer gradient construction/compilation",
+    "stack_trace_log": "docs-dictionary-diagnostic.log",
+    "source_edits": false,
+    "resource_contention": "other focused test processes running; full matrix stopped during the probe",
+    "retained_diagnostic_snapshot": "/private/tmp/geojax-corrections/documentation-sep11-diagnostic",
+    "retained_pre_objective_fix_dictionary": "/private/tmp/geojax-corrections/dictionary-before-objective-fix.py"
+  },
+  "projection_jit_only": {
+    "stage": "cell_1",
+    "wall_seconds": 76.30786162499862,
+    "cpu_seconds": 48.379489
+  },
+  "projection_jit_and_faithful_objective": {
+    "stage": "cell_1",
+    "wall_seconds": 77.52512366599694,
+    "cpu_seconds": 63.84835499999999
+  },
+  "conclusion": "Repeated lowering of the SPD projection derivative was a major cost. Reusing a compiled projection let the unchanged tutorial workload finish within the existing cell budget.",
+  "limitations": "Wall times were measured with other task processes running, so this is a diagnosis rather than a controlled performance benchmark."
+}

@@ -1,0 +1,769 @@
+{
+  "collection_reports": [],
+  "deselected": [],
+  "exitstatus": 0,
+  "nodeids": [
+    "tests/test_linesearch.py::test_line_search_protocol_and_fixed_step",
+    "tests/test_linesearch.py::test_backtracking_armijo_satisfies_sufficient_decrease",
+    "tests/test_linesearch.py::test_adaptive_armijo_carries_state_between_searches",
+    "tests/test_linesearch.py::test_strong_wolfe_conditions_hold_on_quadratic",
+    "tests/test_linesearch.py::test_strong_wolfe_uses_the_nonlinear_retraction_curve_derivative",
+    "tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy0-direction0-0.0-zero or non-finite direction]",
+    "tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy1-direction1-0.0-zero or non-finite direction]",
+    "tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy2-direction2-1.0-direction is not descending]",
+    "tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy3-direction3-0.0-zero or non-finite direction]",
+    "tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy4-direction4-1.0-direction is not descending]",
+    "tests/test_linesearch.py::test_constant_step_rejects_invalid_configuration",
+    "tests/test_linesearch.py::test_armijo_validates_parameters[strategy0]",
+    "tests/test_linesearch.py::test_armijo_validates_parameters[strategy1]",
+    "tests/test_linesearch.py::test_armijo_validates_parameters[strategy2]",
+    "tests/test_linesearch.py::test_strong_wolfe_validates_parameters[strategy0]",
+    "tests/test_linesearch.py::test_strong_wolfe_validates_parameters[strategy1]",
+    "tests/test_linesearch.py::test_strong_wolfe_validates_parameters[strategy2]",
+    "tests/test_linesearch.py::test_strong_wolfe_validates_parameters[strategy3]",
+    "tests/test_linesearch.py::test_armijo_failure_and_adaptive_state_fallbacks",
+    "tests/test_linesearch.py::test_strong_wolfe_reports_unsatisfied_conditions",
+    "tests/test_linesearch.py::test_armijo_backtracks_when_a_trial_leaves_the_manifold_domain",
+    "tests/test_linesearch.py::test_strong_wolfe_does_not_differentiate_nonfinite_trial_costs",
+    "tests/test_linesearch.py::test_approximate_wolfe_resolves_rounded_quadratic_without_relaxing_gradient[1e-20]",
+    "tests/test_linesearch.py::test_approximate_wolfe_resolves_rounded_quadratic_without_relaxing_gradient[1.0]",
+    "tests/test_linesearch.py::test_approximate_wolfe_resolves_rounded_quadratic_without_relaxing_gradient[1e+20]",
+    "tests/test_linesearch.py::test_approximate_wolfe_rejects_constant_slope_and_unrepresentable_progress[False]",
+    "tests/test_linesearch.py::test_approximate_wolfe_rejects_constant_slope_and_unrepresentable_progress[True]",
+    "tests/test_linesearch.py::test_approximate_wolfe_rejects_cost_changes_outside_relative_roundoff_budget[0.0]",
+    "tests/test_linesearch.py::test_approximate_wolfe_rejects_cost_changes_outside_relative_roundoff_budget[1e-20]",
+    "tests/test_linesearch.py::test_approximate_wolfe_rejects_cost_changes_outside_relative_roundoff_budget[1.0]",
+    "tests/test_linesearch.py::test_approximate_wolfe_rejects_uphill_and_invalid_domain_trials",
+    "tests/test_linesearch.py::test_approximate_wolfe_validates_its_opt_in_controls[strategy0-TypeError]",
+    "tests/test_linesearch.py::test_approximate_wolfe_validates_its_opt_in_controls[strategy1-ValueError]",
+    "tests/test_linesearch.py::test_approximate_wolfe_validates_its_opt_in_controls[strategy2-ValueError]",
+    "tests/test_linesearch.py::test_approximate_wolfe_validates_its_opt_in_controls[strategy3-ValueError]",
+    "tests/test_linesearch.py::test_approximate_wolfe_validates_its_opt_in_controls[strategy4-ValueError]",
+    "tests/test_linesearch.py::test_strict_wolfe_still_allows_sufficient_decrease_above_one_half",
+    "tests/test_linesearch.py::test_default_frechet_mean_preserves_python_guarded_retractions[python]",
+    "tests/test_linesearch.py::test_default_frechet_mean_preserves_python_guarded_retractions[numpy]",
+    "tests/test_linesearch.py::test_default_frechet_mean_does_not_hide_unrelated_retraction_errors"
+  ],
+  "runtime_reports": [
+    {
+      "nodeid": "tests/test_linesearch.py::test_line_search_protocol_and_fixed_step",
+      "outcome": "passed",
+      "seconds": 0.00019150000298395753,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_line_search_protocol_and_fixed_step",
+      "outcome": "passed",
+      "seconds": 0.3674063329817727,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_line_search_protocol_and_fixed_step",
+      "outcome": "passed",
+      "seconds": 0.00023058400256559253,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_backtracking_armijo_satisfies_sufficient_decrease",
+      "outcome": "passed",
+      "seconds": 9.733403567224741e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_backtracking_armijo_satisfies_sufficient_decrease",
+      "outcome": "passed",
+      "seconds": 0.03457341605098918,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_backtracking_armijo_satisfies_sufficient_decrease",
+      "outcome": "passed",
+      "seconds": 0.0001152500044554472,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_adaptive_armijo_carries_state_between_searches",
+      "outcome": "passed",
+      "seconds": 9.9874974694103e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_adaptive_armijo_carries_state_between_searches",
+      "outcome": "passed",
+      "seconds": 0.02015979099087417,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_adaptive_armijo_carries_state_between_searches",
+      "outcome": "passed",
+      "seconds": 9.43340128287673e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_conditions_hold_on_quadratic",
+      "outcome": "passed",
+      "seconds": 7.995904888957739e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_conditions_hold_on_quadratic",
+      "outcome": "passed",
+      "seconds": 0.1371568330214359,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_conditions_hold_on_quadratic",
+      "outcome": "passed",
+      "seconds": 0.00011066603474318981,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_uses_the_nonlinear_retraction_curve_derivative",
+      "outcome": "passed",
+      "seconds": 9.104202035814524e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_uses_the_nonlinear_retraction_curve_derivative",
+      "outcome": "passed",
+      "seconds": 0.32003008300671354,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_uses_the_nonlinear_retraction_curve_derivative",
+      "outcome": "passed",
+      "seconds": 0.00010312499944120646,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy0-direction0-0.0-zero or non-finite direction]",
+      "outcome": "passed",
+      "seconds": 0.00041429197881370783,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy0-direction0-0.0-zero or non-finite direction]",
+      "outcome": "passed",
+      "seconds": 0.0012214999878779054,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy0-direction0-0.0-zero or non-finite direction]",
+      "outcome": "passed",
+      "seconds": 0.00013833295088261366,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy1-direction1-0.0-zero or non-finite direction]",
+      "outcome": "passed",
+      "seconds": 0.0002905830042436719,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy1-direction1-0.0-zero or non-finite direction]",
+      "outcome": "passed",
+      "seconds": 0.0011698330054059625,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy1-direction1-0.0-zero or non-finite direction]",
+      "outcome": "passed",
+      "seconds": 0.0003515839925967157,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy2-direction2-1.0-direction is not descending]",
+      "outcome": "passed",
+      "seconds": 0.0004715839750133455,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy2-direction2-1.0-direction is not descending]",
+      "outcome": "passed",
+      "seconds": 0.0014150000060908496,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy2-direction2-1.0-direction is not descending]",
+      "outcome": "passed",
+      "seconds": 0.00014533300418406725,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy3-direction3-0.0-zero or non-finite direction]",
+      "outcome": "passed",
+      "seconds": 0.0003434589598327875,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy3-direction3-0.0-zero or non-finite direction]",
+      "outcome": "passed",
+      "seconds": 0.0015756660141050816,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy3-direction3-0.0-zero or non-finite direction]",
+      "outcome": "passed",
+      "seconds": 0.00013508298434317112,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy4-direction4-1.0-direction is not descending]",
+      "outcome": "passed",
+      "seconds": 0.00031395902624353766,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy4-direction4-1.0-direction is not descending]",
+      "outcome": "passed",
+      "seconds": 0.0011271669645793736,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy4-direction4-1.0-direction is not descending]",
+      "outcome": "passed",
+      "seconds": 9.962497279047966e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_constant_step_rejects_invalid_configuration",
+      "outcome": "passed",
+      "seconds": 7.533299503847957e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_constant_step_rejects_invalid_configuration",
+      "outcome": "passed",
+      "seconds": 0.0005800829967483878,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_constant_step_rejects_invalid_configuration",
+      "outcome": "passed",
+      "seconds": 6.695796037092805e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_armijo_validates_parameters[strategy0]",
+      "outcome": "passed",
+      "seconds": 0.00014995801029726863,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_armijo_validates_parameters[strategy0]",
+      "outcome": "passed",
+      "seconds": 0.0010167090222239494,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_armijo_validates_parameters[strategy0]",
+      "outcome": "passed",
+      "seconds": 7.775000995025039e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_armijo_validates_parameters[strategy1]",
+      "outcome": "passed",
+      "seconds": 0.00013179099187254906,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_armijo_validates_parameters[strategy1]",
+      "outcome": "passed",
+      "seconds": 0.0009348339517600834,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_armijo_validates_parameters[strategy1]",
+      "outcome": "passed",
+      "seconds": 7.650000043213367e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_armijo_validates_parameters[strategy2]",
+      "outcome": "passed",
+      "seconds": 0.00013712502550333738,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_armijo_validates_parameters[strategy2]",
+      "outcome": "passed",
+      "seconds": 0.0009778329986147583,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_armijo_validates_parameters[strategy2]",
+      "outcome": "passed",
+      "seconds": 7.750000804662704e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_validates_parameters[strategy0]",
+      "outcome": "passed",
+      "seconds": 0.00014883297262713313,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_validates_parameters[strategy0]",
+      "outcome": "passed",
+      "seconds": 0.001477917016018182,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_validates_parameters[strategy0]",
+      "outcome": "passed",
+      "seconds": 0.0001135410275310278,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_validates_parameters[strategy1]",
+      "outcome": "passed",
+      "seconds": 0.00019358302233740687,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_validates_parameters[strategy1]",
+      "outcome": "passed",
+      "seconds": 0.0013324579922482371,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_validates_parameters[strategy1]",
+      "outcome": "passed",
+      "seconds": 9.191595017910004e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_validates_parameters[strategy2]",
+      "outcome": "passed",
+      "seconds": 0.0001473749871365726,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_validates_parameters[strategy2]",
+      "outcome": "passed",
+      "seconds": 0.0010159169905818999,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_validates_parameters[strategy2]",
+      "outcome": "passed",
+      "seconds": 7.733295205980539e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_validates_parameters[strategy3]",
+      "outcome": "passed",
+      "seconds": 0.00013820803724229336,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_validates_parameters[strategy3]",
+      "outcome": "passed",
+      "seconds": 0.0010176670039072633,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_validates_parameters[strategy3]",
+      "outcome": "passed",
+      "seconds": 8.008297299966216e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_armijo_failure_and_adaptive_state_fallbacks",
+      "outcome": "passed",
+      "seconds": 7.637497037649155e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_armijo_failure_and_adaptive_state_fallbacks",
+      "outcome": "passed",
+      "seconds": 0.004122624988667667,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_armijo_failure_and_adaptive_state_fallbacks",
+      "outcome": "passed",
+      "seconds": 0.00010833295527845621,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_reports_unsatisfied_conditions",
+      "outcome": "passed",
+      "seconds": 9.816698729991913e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_reports_unsatisfied_conditions",
+      "outcome": "passed",
+      "seconds": 0.006987583008594811,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_reports_unsatisfied_conditions",
+      "outcome": "passed",
+      "seconds": 9.287497960031033e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_armijo_backtracks_when_a_trial_leaves_the_manifold_domain",
+      "outcome": "passed",
+      "seconds": 8.816603804007173e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_armijo_backtracks_when_a_trial_leaves_the_manifold_domain",
+      "outcome": "passed",
+      "seconds": 0.08026683301432058,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_armijo_backtracks_when_a_trial_leaves_the_manifold_domain",
+      "outcome": "passed",
+      "seconds": 9.162497008219361e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_does_not_differentiate_nonfinite_trial_costs",
+      "outcome": "passed",
+      "seconds": 8.008297299966216e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_does_not_differentiate_nonfinite_trial_costs",
+      "outcome": "passed",
+      "seconds": 0.06730254099238664,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strong_wolfe_does_not_differentiate_nonfinite_trial_costs",
+      "outcome": "passed",
+      "seconds": 0.00010116701014339924,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_resolves_rounded_quadratic_without_relaxing_gradient[1e-20]",
+      "outcome": "passed",
+      "seconds": 0.0002021660329774022,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_resolves_rounded_quadratic_without_relaxing_gradient[1e-20]",
+      "outcome": "passed",
+      "seconds": 0.304930999991484,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_resolves_rounded_quadratic_without_relaxing_gradient[1e-20]",
+      "outcome": "passed",
+      "seconds": 0.0001337910071015358,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_resolves_rounded_quadratic_without_relaxing_gradient[1.0]",
+      "outcome": "passed",
+      "seconds": 0.0001929589780047536,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_resolves_rounded_quadratic_without_relaxing_gradient[1.0]",
+      "outcome": "passed",
+      "seconds": 0.18543824995867908,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_resolves_rounded_quadratic_without_relaxing_gradient[1.0]",
+      "outcome": "passed",
+      "seconds": 0.00012637500185519457,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_resolves_rounded_quadratic_without_relaxing_gradient[1e+20]",
+      "outcome": "passed",
+      "seconds": 0.0001871249987743795,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_resolves_rounded_quadratic_without_relaxing_gradient[1e+20]",
+      "outcome": "passed",
+      "seconds": 0.18669120798585936,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_resolves_rounded_quadratic_without_relaxing_gradient[1e+20]",
+      "outcome": "passed",
+      "seconds": 0.0004760830197483301,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_rejects_constant_slope_and_unrepresentable_progress[False]",
+      "outcome": "passed",
+      "seconds": 0.0002584579633548856,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_rejects_constant_slope_and_unrepresentable_progress[False]",
+      "outcome": "passed",
+      "seconds": 0.060876250034198165,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_rejects_constant_slope_and_unrepresentable_progress[False]",
+      "outcome": "passed",
+      "seconds": 0.00012099999003112316,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_rejects_constant_slope_and_unrepresentable_progress[True]",
+      "outcome": "passed",
+      "seconds": 0.00018358405213803053,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_rejects_constant_slope_and_unrepresentable_progress[True]",
+      "outcome": "passed",
+      "seconds": 0.02755941601935774,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_rejects_constant_slope_and_unrepresentable_progress[True]",
+      "outcome": "passed",
+      "seconds": 0.00013162498362362385,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_rejects_cost_changes_outside_relative_roundoff_budget[0.0]",
+      "outcome": "passed",
+      "seconds": 0.00020345801021903753,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_rejects_cost_changes_outside_relative_roundoff_budget[0.0]",
+      "outcome": "passed",
+      "seconds": 0.16166704101487994,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_rejects_cost_changes_outside_relative_roundoff_budget[0.0]",
+      "outcome": "passed",
+      "seconds": 0.00011516700033098459,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_rejects_cost_changes_outside_relative_roundoff_budget[1e-20]",
+      "outcome": "passed",
+      "seconds": 0.0001939159701578319,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_rejects_cost_changes_outside_relative_roundoff_budget[1e-20]",
+      "outcome": "passed",
+      "seconds": 0.04943233297672123,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_rejects_cost_changes_outside_relative_roundoff_budget[1e-20]",
+      "outcome": "passed",
+      "seconds": 0.00011916697258129716,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_rejects_cost_changes_outside_relative_roundoff_budget[1.0]",
+      "outcome": "passed",
+      "seconds": 0.00018933298997581005,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_rejects_cost_changes_outside_relative_roundoff_budget[1.0]",
+      "outcome": "passed",
+      "seconds": 0.04764075001003221,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_rejects_cost_changes_outside_relative_roundoff_budget[1.0]",
+      "outcome": "passed",
+      "seconds": 0.00011312501737847924,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_rejects_uphill_and_invalid_domain_trials",
+      "outcome": "passed",
+      "seconds": 9.045802289620042e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_rejects_uphill_and_invalid_domain_trials",
+      "outcome": "passed",
+      "seconds": 0.06345429102657363,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_rejects_uphill_and_invalid_domain_trials",
+      "outcome": "passed",
+      "seconds": 9.975000284612179e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_validates_its_opt_in_controls[strategy0-TypeError]",
+      "outcome": "passed",
+      "seconds": 0.00024675001623108983,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_validates_its_opt_in_controls[strategy0-TypeError]",
+      "outcome": "passed",
+      "seconds": 0.0012386669986881316,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_validates_its_opt_in_controls[strategy0-TypeError]",
+      "outcome": "passed",
+      "seconds": 9.779096581041813e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_validates_its_opt_in_controls[strategy1-ValueError]",
+      "outcome": "passed",
+      "seconds": 0.00020312500419095159,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_validates_its_opt_in_controls[strategy1-ValueError]",
+      "outcome": "passed",
+      "seconds": 0.0010426249937154353,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_validates_its_opt_in_controls[strategy1-ValueError]",
+      "outcome": "passed",
+      "seconds": 8.333398727700114e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_validates_its_opt_in_controls[strategy2-ValueError]",
+      "outcome": "passed",
+      "seconds": 0.00018933397950604558,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_validates_its_opt_in_controls[strategy2-ValueError]",
+      "outcome": "passed",
+      "seconds": 0.001005166966933757,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_validates_its_opt_in_controls[strategy2-ValueError]",
+      "outcome": "passed",
+      "seconds": 8.425000123679638e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_validates_its_opt_in_controls[strategy3-ValueError]",
+      "outcome": "passed",
+      "seconds": 0.0001788330264389515,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_validates_its_opt_in_controls[strategy3-ValueError]",
+      "outcome": "passed",
+      "seconds": 0.0009541670442558825,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_validates_its_opt_in_controls[strategy3-ValueError]",
+      "outcome": "passed",
+      "seconds": 8.299999171867967e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_validates_its_opt_in_controls[strategy4-ValueError]",
+      "outcome": "passed",
+      "seconds": 0.00018166599329560995,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_validates_its_opt_in_controls[strategy4-ValueError]",
+      "outcome": "passed",
+      "seconds": 0.0010689159971661866,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_approximate_wolfe_validates_its_opt_in_controls[strategy4-ValueError]",
+      "outcome": "passed",
+      "seconds": 9.737501386553049e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strict_wolfe_still_allows_sufficient_decrease_above_one_half",
+      "outcome": "passed",
+      "seconds": 8.462497498840094e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strict_wolfe_still_allows_sufficient_decrease_above_one_half",
+      "outcome": "passed",
+      "seconds": 0.006882083020173013,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_strict_wolfe_still_allows_sufficient_decrease_above_one_half",
+      "outcome": "passed",
+      "seconds": 0.00010854197898879647,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_default_frechet_mean_preserves_python_guarded_retractions[python]",
+      "outcome": "passed",
+      "seconds": 0.00019833300029858947,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_default_frechet_mean_preserves_python_guarded_retractions[python]",
+      "outcome": "passed",
+      "seconds": 0.8607802499900572,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_default_frechet_mean_preserves_python_guarded_retractions[python]",
+      "outcome": "passed",
+      "seconds": 0.00011787499533966184,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_default_frechet_mean_preserves_python_guarded_retractions[numpy]",
+      "outcome": "passed",
+      "seconds": 0.00018699996871873736,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_default_frechet_mean_preserves_python_guarded_retractions[numpy]",
+      "outcome": "passed",
+      "seconds": 0.02964025002438575,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_default_frechet_mean_preserves_python_guarded_retractions[numpy]",
+      "outcome": "passed",
+      "seconds": 0.00011695799184963107,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_default_frechet_mean_does_not_hide_unrelated_retraction_errors",
+      "outcome": "passed",
+      "seconds": 9.045802289620042e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_default_frechet_mean_does_not_hide_unrelated_retraction_errors",
+      "outcome": "passed",
+      "seconds": 0.6267177079571411,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_linesearch.py::test_default_frechet_mean_does_not_hide_unrelated_retraction_errors",
+      "outcome": "passed",
+      "seconds": 9.895797120407224e-05,
+      "when": "teardown"
+    }
+  ]
+}

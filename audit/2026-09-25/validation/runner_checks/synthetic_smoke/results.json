@@ -1,0 +1,149 @@
+{
+  "checks": [
+    {
+      "command": [
+        "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/bin/python",
+        "-I",
+        "-m",
+        "coverage",
+        "combine",
+        "--rcfile=/private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-runner-smoke-tsi7uzc8/repository/pyproject.toml",
+        "--keep",
+        "/private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-runner-smoke-tsi7uzc8/output/coverage/.coverage.001",
+        "/private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-runner-smoke-tsi7uzc8/output/coverage/.coverage.002"
+      ],
+      "log": "/private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-runner-smoke-tsi7uzc8/output/coverage-combine.log",
+      "name": "coverage-combine",
+      "returncode": 0,
+      "seconds": 0.09,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/bin/python",
+        "-I",
+        "-m",
+        "coverage",
+        "json",
+        "--rcfile=/private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-runner-smoke-tsi7uzc8/repository/pyproject.toml",
+        "--fail-under=0",
+        "-o",
+        "/private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-runner-smoke-tsi7uzc8/output/coverage.json"
+      ],
+      "log": "/private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-runner-smoke-tsi7uzc8/output/coverage-json.log",
+      "name": "coverage-json",
+      "returncode": 0,
+      "seconds": 1.175,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/bin/python",
+        "-I",
+        "-m",
+        "coverage",
+        "report",
+        "--rcfile=/private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-runner-smoke-tsi7uzc8/repository/pyproject.toml",
+        "--precision=4",
+        "--fail-under=85"
+      ],
+      "log": "/private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-runner-smoke-tsi7uzc8/output/coverage-global.log",
+      "name": "coverage-global",
+      "returncode": 2,
+      "seconds": 0.954,
+      "timed_out": false
+    }
+  ],
+  "error": "coverage-global failed; see /private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-runner-smoke-tsi7uzc8/output/coverage-global.log",
+  "executable": "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/bin/python",
+  "files": [
+    {
+      "collected": 1,
+      "collection_skips": [],
+      "command": [
+        "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/bin/python",
+        "-I",
+        "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py",
+        "--repository",
+        "/private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-runner-smoke-tsi7uzc8/repository",
+        "--worker",
+        "/private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-runner-smoke-tsi7uzc8/repository/tests/test_pass.py",
+        "--manifest",
+        "/private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-runner-smoke-tsi7uzc8/output/001-test_pass.collection.json",
+        "--junit",
+        "/private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-runner-smoke-tsi7uzc8/output/001-test_pass.xml",
+        "--trace-after",
+        "90"
+      ],
+      "file": "tests/test_pass.py",
+      "junit_cases": 1,
+      "log": "/private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-runner-smoke-tsi7uzc8/output/001-test_pass.log",
+      "passed": 1,
+      "returncode": 0,
+      "seconds": 1.016,
+      "timed_out": false
+    },
+    {
+      "collected": 0,
+      "collection_skips": [
+        {
+          "nodeid": "tests/test_skip.py",
+          "outcome": "skipped",
+          "reason": "('/private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-runner-smoke-tsi7uzc8/repository/tests/test_skip.py', 2, 'Skipped: synthetic missing optional dependency')"
+        }
+      ],
+      "command": [
+        "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/bin/python",
+        "-I",
+        "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py",
+        "--repository",
+        "/private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-runner-smoke-tsi7uzc8/repository",
+        "--worker",
+        "/private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-runner-smoke-tsi7uzc8/repository/tests/test_skip.py",
+        "--manifest",
+        "/private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-runner-smoke-tsi7uzc8/output/002-test_skip.collection.json",
+        "--junit",
+        "/private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-runner-smoke-tsi7uzc8/output/002-test_skip.xml",
+        "--trace-after",
+        "90"
+      ],
+      "file": "tests/test_skip.py",
+      "junit_cases": 1,
+      "log": "/private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-runner-smoke-tsi7uzc8/output/002-test_skip.log",
+      "returncode": 5,
+      "seconds": 0.199,
+      "skipped": 1,
+      "timed_out": false
+    }
+  ],
+  "finished_utc": "2026-09-25T05:00:35.845889+00:00",
+  "installed_package": "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/lib/python3.11/site-packages/geojax",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "precision_x64": "0",
+  "python": "3.11.15 (main, Jul 18 2026, 16:57:24) [Clang 22.1.3 ]",
+  "seconds": 3.473,
+  "source_unchanged": true,
+  "started_utc": "2026-09-25T05:00:32.358095+00:00",
+  "status": "failed",
+  "test_files": [
+    "tests/test_pass.py",
+    "tests/test_skip.py"
+  ],
+  "totals": {
+    "collected": 1,
+    "junit_cases": 2,
+    "passed": 1,
+    "skipped": 1
+  },
+  "versions": {
+    "coverage": "7.13.5",
+    "geojax": "0.2.0",
+    "jax": "0.6.0",
+    "jaxlib": "0.6.0",
+    "numpy": "1.26.4",
+    "pytest": "9.0.3",
+    "pytest-cov": "7.1.0",
+    "scipy": "1.17.1"
+  },
+  "working_directory": "/private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-verification-pvoq8elf"
+}

@@ -1,0 +1,33 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_correlation.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_pilot/py311-min-float32/003-test_correlation.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_pilot/py311-min-float32/003-test_correlation.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.11.15, JAX 0.6.0, NumPy 1.26.4, float32
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 10 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correlation.py::test_correlation_random_points_have_unit_diagonal[M0] PASSED [ 10%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correlation.py::test_correlation_random_points_have_unit_diagonal[M1] PASSED [ 20%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correlation.py::test_correlation_closed_form_mean_belongs PASSED [ 30%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correlation.py::test_correlation_geometries_are_distinct PASSED [ 40%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correlation.py::test_correlation_requires_square_tuple_size PASSED [ 50%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correlation.py::test_affine_quotient_horizontal_lift_and_gradient_duality PASSED [ 60%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correlation.py::test_affine_quotient_gradient_supports_batched_points PASSED [ 70%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correlation.py::test_correlation_projection_preserves_valid_near_boundary_points[M0] PASSED [ 80%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correlation.py::test_correlation_projection_preserves_valid_near_boundary_points[M1] PASSED [ 90%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correlation.py::test_correlation_projection_preserves_valid_near_boundary_points[M2] PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_pilot/py311-min-float32/003-test_correlation.xml -
+============================== slowest durations ===============================
+2.47s call     tests/test_correlation.py::test_affine_quotient_horizontal_lift_and_gradient_duality
+1.34s call     tests/test_correlation.py::test_affine_quotient_gradient_supports_batched_points
+1.03s call     tests/test_correlation.py::test_correlation_random_points_have_unit_diagonal[M0]
+1.01s call     tests/test_correlation.py::test_correlation_geometries_are_distinct
+0.82s call     tests/test_correlation.py::test_correlation_closed_form_mean_belongs
+0.74s call     tests/test_correlation.py::test_correlation_projection_preserves_valid_near_boundary_points[M0]
+0.02s call     tests/test_correlation.py::test_correlation_random_points_have_unit_diagonal[M1]
+
+(23 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================== 10 passed in 7.58s ==============================

@@ -1,0 +1,921 @@
+{
+  "collection_reports": [],
+  "deselected": [],
+  "exitstatus": 0,
+  "nodeids": [
+    "tests/test_learning_embedding_metric.py::test_classical_mds_recovers_euclidean_distances_and_reports_spectrum",
+    "tests/test_learning_embedding_metric.py::test_pga_uses_metric_components_and_supports_product_tangents",
+    "tests/test_learning_embedding_metric.py::test_kernel_pca_model_has_consistent_training_transform",
+    "tests/test_learning_embedding_metric.py::test_isomap_disconnected_policies_are_explicit",
+    "tests/test_learning_embedding_metric.py::test_sammon_tsne_and_phate_return_finite_dense_embeddings",
+    "tests/test_learning_embedding_metric.py::test_mds_rejects_invalid_distance_matrices_and_tsne_is_underflow_stable",
+    "tests/test_learning_embedding_metric.py::test_mds_scale_normalization_is_finite_and_rejects_unrepresentable_squares",
+    "tests/test_learning_embedding_metric.py::test_rmml_uses_explicit_or_geometry_embedding_and_separates_classes",
+    "tests/test_learning_embedding_metric.py::test_rmml_matches_the_log_euclidean_closed_form_for_diagonal_scatter",
+    "tests/test_learning_embedding_metric.py::test_rmml_zero_regularization_repairs_degenerate_scatter[float32]",
+    "tests/test_learning_embedding_metric.py::test_rmml_zero_regularization_repairs_degenerate_scatter[float64]",
+    "tests/test_learning_embedding_metric.py::test_rmml_rejects_a_geometry_without_equivariant_embedding",
+    "tests/test_learning_embedding_metric.py::test_embedding_input_contracts_and_alternate_graph_policies",
+    "tests/test_learning_embedding_metric.py::test_tsne_joint_probabilities_are_symmetric_and_normalized",
+    "tests/test_learning_embedding_metric.py::test_tsne_rejects_invalid_or_unattainable_perplexity",
+    "tests/test_learning_embedding_metric.py::test_rmml_validates_labels_embeddings_and_pair_structure",
+    "tests/test_learning_embedding_metric.py::test_mds_rejects_nonmatrix_empty_and_complex_distances[distances0-two-dimensional]",
+    "tests/test_learning_embedding_metric.py::test_mds_rejects_nonmatrix_empty_and_complex_distances[distances1-square]",
+    "tests/test_learning_embedding_metric.py::test_mds_rejects_nonmatrix_empty_and_complex_distances[distances2-real-valued]",
+    "tests/test_learning_embedding_metric.py::test_tsne_probability_validation_rejects_degenerate_distances[distances0-at least two]",
+    "tests/test_learning_embedding_metric.py::test_tsne_probability_validation_rejects_degenerate_distances[distances1-finite and nonnegative]",
+    "tests/test_learning_embedding_metric.py::test_tsne_probability_validation_rejects_degenerate_distances[distances2-finite and nonnegative]",
+    "tests/test_learning_embedding_metric.py::test_tsne_probability_validation_rejects_degenerate_distances[distances3-real-valued]",
+    "tests/test_learning_embedding_metric.py::test_kernel_pca_rejects_complex_nonfinite_and_asymmetric_kernels[<lambda>-real-valued]",
+    "tests/test_learning_embedding_metric.py::test_kernel_pca_rejects_complex_nonfinite_and_asymmetric_kernels[<lambda>-finite]",
+    "tests/test_learning_embedding_metric.py::test_kernel_pca_rejects_complex_nonfinite_and_asymmetric_kernels[<lambda>-symmetric]",
+    "tests/test_learning_embedding_metric.py::test_kernel_pca_validates_callable_policy_and_finite_bandwidth[kernel-3-TypeError-callable]",
+    "tests/test_learning_embedding_metric.py::test_kernel_pca_validates_callable_policy_and_finite_bandwidth[allow_indefinite-1-TypeError-boolean]",
+    "tests/test_learning_embedding_metric.py::test_kernel_pca_validates_callable_policy_and_finite_bandwidth[bandwidth-inf-ValueError-positive and finite]",
+    "tests/test_learning_embedding_metric.py::test_kernel_pca_indefinite_policy_retains_only_the_positive_spectrum",
+    "tests/test_learning_embedding_metric.py::test_kernel_pca_model_validates_query_kernel_contract[<lambda>-real-valued query]",
+    "tests/test_learning_embedding_metric.py::test_kernel_pca_model_validates_query_kernel_contract[<lambda>-finite query-by-training0]",
+    "tests/test_learning_embedding_metric.py::test_kernel_pca_model_validates_query_kernel_contract[<lambda>-finite query-by-training1]",
+    "tests/test_learning_embedding_metric.py::test_pga_rejects_invalid_logarithms_and_metric_grams[manifold0-ValueError-undefined logarithm]",
+    "tests/test_learning_embedding_metric.py::test_pga_rejects_invalid_logarithms_and_metric_grams[manifold1-FloatingPointError-nonfinite metric Gram]",
+    "tests/test_learning_embedding_metric.py::test_pga_rejects_invalid_logarithms_and_metric_grams[manifold2-FloatingPointError-not positive semidefinite]",
+    "tests/test_learning_embedding_metric.py::test_pga_model_guards_transform_logarithms_and_inverse_exponentials",
+    "tests/test_learning_embedding_metric.py::test_rmml_rejects_nonfinite_missing_and_incomparable_labels[labels0-ValueError-NaN or infinite]",
+    "tests/test_learning_embedding_metric.py::test_rmml_rejects_nonfinite_missing_and_incomparable_labels[labels1-ValueError-missing values]",
+    "tests/test_learning_embedding_metric.py::test_rmml_rejects_nonfinite_missing_and_incomparable_labels[labels2-TypeError-mutually comparable]",
+    "tests/test_learning_embedding_metric.py::test_rmml_rejects_scalar_complex_and_zero_feature_embeddings[<lambda>-leading sample dimension]",
+    "tests/test_learning_embedding_metric.py::test_rmml_rejects_scalar_complex_and_zero_feature_embeddings[<lambda>-real-valued]",
+    "tests/test_learning_embedding_metric.py::test_rmml_rejects_scalar_complex_and_zero_feature_embeddings[<lambda>-at least one feature]",
+    "tests/test_learning_embedding_metric.py::test_rmml_default_product_embedding_validates_and_preserves_the_factor_tree",
+    "tests/test_learning_embedding_metric.py::test_rmml_rejects_nonfinite_scatter_from_extreme_but_finite_features",
+    "tests/test_learning_embedding_metric.py::test_rmml_checks_the_finite_positive_definite_metric_certificate[zeros]",
+    "tests/test_learning_embedding_metric.py::test_rmml_checks_the_finite_positive_definite_metric_certificate[nan]",
+    "tests/test_learning_embedding_metric.py::test_metric_learning_model_validates_transforms_and_two_sample_distances"
+  ],
+  "runtime_reports": [
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_classical_mds_recovers_euclidean_distances_and_reports_spectrum",
+      "outcome": "passed",
+      "seconds": 0.0003867089981213212,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_classical_mds_recovers_euclidean_distances_and_reports_spectrum",
+      "outcome": "passed",
+      "seconds": 1.985095124982763,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_classical_mds_recovers_euclidean_distances_and_reports_spectrum",
+      "outcome": "passed",
+      "seconds": 0.00013579201186075807,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_pga_uses_metric_components_and_supports_product_tangents",
+      "outcome": "passed",
+      "seconds": 9.470799705013633e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_pga_uses_metric_components_and_supports_product_tangents",
+      "outcome": "passed",
+      "seconds": 3.1186797080445103,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_pga_uses_metric_components_and_supports_product_tangents",
+      "outcome": "passed",
+      "seconds": 0.00010483298683539033,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_model_has_consistent_training_transform",
+      "outcome": "passed",
+      "seconds": 9.012495866045356e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_model_has_consistent_training_transform",
+      "outcome": "passed",
+      "seconds": 0.391499416960869,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_model_has_consistent_training_transform",
+      "outcome": "passed",
+      "seconds": 0.00010054197628051043,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_isomap_disconnected_policies_are_explicit",
+      "outcome": "passed",
+      "seconds": 0.012473999988287687,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_isomap_disconnected_policies_are_explicit",
+      "outcome": "passed",
+      "seconds": 2.50992712500738,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_isomap_disconnected_policies_are_explicit",
+      "outcome": "passed",
+      "seconds": 0.00011095800437033176,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_sammon_tsne_and_phate_return_finite_dense_embeddings",
+      "outcome": "passed",
+      "seconds": 9.454099927097559e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_sammon_tsne_and_phate_return_finite_dense_embeddings",
+      "outcome": "passed",
+      "seconds": 3.3877535830251873,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_sammon_tsne_and_phate_return_finite_dense_embeddings",
+      "outcome": "passed",
+      "seconds": 0.00012741598766297102,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_mds_rejects_invalid_distance_matrices_and_tsne_is_underflow_stable",
+      "outcome": "passed",
+      "seconds": 9.400001727044582e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_mds_rejects_invalid_distance_matrices_and_tsne_is_underflow_stable",
+      "outcome": "passed",
+      "seconds": 0.6252711249981076,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_mds_rejects_invalid_distance_matrices_and_tsne_is_underflow_stable",
+      "outcome": "passed",
+      "seconds": 0.000110041000880301,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_mds_scale_normalization_is_finite_and_rejects_unrepresentable_squares",
+      "outcome": "passed",
+      "seconds": 9.208300616592169e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_mds_scale_normalization_is_finite_and_rejects_unrepresentable_squares",
+      "outcome": "passed",
+      "seconds": 0.11429904197575524,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_mds_scale_normalization_is_finite_and_rejects_unrepresentable_squares",
+      "outcome": "passed",
+      "seconds": 0.00010391598334535956,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_uses_explicit_or_geometry_embedding_and_separates_classes",
+      "outcome": "passed",
+      "seconds": 8.604198228567839e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_uses_explicit_or_geometry_embedding_and_separates_classes",
+      "outcome": "passed",
+      "seconds": 1.6830425420193933,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_uses_explicit_or_geometry_embedding_and_separates_classes",
+      "outcome": "passed",
+      "seconds": 9.679101640358567e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_matches_the_log_euclidean_closed_form_for_diagonal_scatter",
+      "outcome": "passed",
+      "seconds": 8.608301868662238e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_matches_the_log_euclidean_closed_form_for_diagonal_scatter",
+      "outcome": "passed",
+      "seconds": 0.39717708399984986,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_matches_the_log_euclidean_closed_form_for_diagonal_scatter",
+      "outcome": "passed",
+      "seconds": 9.32500115595758e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_zero_regularization_repairs_degenerate_scatter[float32]",
+      "outcome": "passed",
+      "seconds": 0.00028254202334210277,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_zero_regularization_repairs_degenerate_scatter[float32]",
+      "outcome": "passed",
+      "seconds": 0.48380662500858307,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_zero_regularization_repairs_degenerate_scatter[float32]",
+      "outcome": "passed",
+      "seconds": 0.00013004097854718566,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_zero_regularization_repairs_degenerate_scatter[float64]",
+      "outcome": "passed",
+      "seconds": 0.00019950000569224358,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_zero_regularization_repairs_degenerate_scatter[float64]",
+      "outcome": "skipped",
+      "seconds": 0.0002306249807588756,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_zero_regularization_repairs_degenerate_scatter[float64]",
+      "outcome": "passed",
+      "seconds": 8.84170294739306e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_a_geometry_without_equivariant_embedding",
+      "outcome": "passed",
+      "seconds": 7.766601629555225e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_a_geometry_without_equivariant_embedding",
+      "outcome": "passed",
+      "seconds": 2.259307790955063,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_a_geometry_without_equivariant_embedding",
+      "outcome": "passed",
+      "seconds": 0.00012725003762170672,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_embedding_input_contracts_and_alternate_graph_policies",
+      "outcome": "passed",
+      "seconds": 9.904202306643128e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_embedding_input_contracts_and_alternate_graph_policies",
+      "outcome": "passed",
+      "seconds": 3.5642154999659397,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_embedding_input_contracts_and_alternate_graph_policies",
+      "outcome": "passed",
+      "seconds": 0.00010745902545750141,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_tsne_joint_probabilities_are_symmetric_and_normalized",
+      "outcome": "passed",
+      "seconds": 9.099999442696571e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_tsne_joint_probabilities_are_symmetric_and_normalized",
+      "outcome": "passed",
+      "seconds": 0.06934708304470405,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_tsne_joint_probabilities_are_symmetric_and_normalized",
+      "outcome": "passed",
+      "seconds": 0.00011891598114743829,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_tsne_rejects_invalid_or_unattainable_perplexity",
+      "outcome": "passed",
+      "seconds": 0.00011445803102105856,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_tsne_rejects_invalid_or_unattainable_perplexity",
+      "outcome": "passed",
+      "seconds": 0.26444779202574864,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_tsne_rejects_invalid_or_unattainable_perplexity",
+      "outcome": "passed",
+      "seconds": 0.00011937500676140189,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_validates_labels_embeddings_and_pair_structure",
+      "outcome": "passed",
+      "seconds": 0.00010379200102761388,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_validates_labels_embeddings_and_pair_structure",
+      "outcome": "passed",
+      "seconds": 0.33325954200699925,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_validates_labels_embeddings_and_pair_structure",
+      "outcome": "passed",
+      "seconds": 0.00010733300587162375,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_mds_rejects_nonmatrix_empty_and_complex_distances[distances0-two-dimensional]",
+      "outcome": "passed",
+      "seconds": 0.0002792080049403012,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_mds_rejects_nonmatrix_empty_and_complex_distances[distances0-two-dimensional]",
+      "outcome": "passed",
+      "seconds": 0.00026416697073727846,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_mds_rejects_nonmatrix_empty_and_complex_distances[distances0-two-dimensional]",
+      "outcome": "passed",
+      "seconds": 8.699996396899223e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_mds_rejects_nonmatrix_empty_and_complex_distances[distances1-square]",
+      "outcome": "passed",
+      "seconds": 0.00018783396808430552,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_mds_rejects_nonmatrix_empty_and_complex_distances[distances1-square]",
+      "outcome": "passed",
+      "seconds": 0.00015258300118148327,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_mds_rejects_nonmatrix_empty_and_complex_distances[distances1-square]",
+      "outcome": "passed",
+      "seconds": 8.170801447704434e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_mds_rejects_nonmatrix_empty_and_complex_distances[distances2-real-valued]",
+      "outcome": "passed",
+      "seconds": 0.00018470804207026958,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_mds_rejects_nonmatrix_empty_and_complex_distances[distances2-real-valued]",
+      "outcome": "passed",
+      "seconds": 0.00020787498215213418,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_mds_rejects_nonmatrix_empty_and_complex_distances[distances2-real-valued]",
+      "outcome": "passed",
+      "seconds": 7.7791977673769e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_tsne_probability_validation_rejects_degenerate_distances[distances0-at least two]",
+      "outcome": "passed",
+      "seconds": 0.0001776670105755329,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_tsne_probability_validation_rejects_degenerate_distances[distances0-at least two]",
+      "outcome": "passed",
+      "seconds": 0.00021112500689923763,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_tsne_probability_validation_rejects_degenerate_distances[distances0-at least two]",
+      "outcome": "passed",
+      "seconds": 7.833394920453429e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_tsne_probability_validation_rejects_degenerate_distances[distances1-finite and nonnegative]",
+      "outcome": "passed",
+      "seconds": 0.00018799997633323073,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_tsne_probability_validation_rejects_degenerate_distances[distances1-finite and nonnegative]",
+      "outcome": "passed",
+      "seconds": 0.044553707994055,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_tsne_probability_validation_rejects_degenerate_distances[distances1-finite and nonnegative]",
+      "outcome": "passed",
+      "seconds": 0.00011437502689659595,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_tsne_probability_validation_rejects_degenerate_distances[distances2-finite and nonnegative]",
+      "outcome": "passed",
+      "seconds": 0.00023016694467514753,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_tsne_probability_validation_rejects_degenerate_distances[distances2-finite and nonnegative]",
+      "outcome": "passed",
+      "seconds": 0.0002812910242937505,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_tsne_probability_validation_rejects_degenerate_distances[distances2-finite and nonnegative]",
+      "outcome": "passed",
+      "seconds": 8.812500163912773e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_tsne_probability_validation_rejects_degenerate_distances[distances3-real-valued]",
+      "outcome": "passed",
+      "seconds": 0.00018916698172688484,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_tsne_probability_validation_rejects_degenerate_distances[distances3-real-valued]",
+      "outcome": "passed",
+      "seconds": 0.00014591700164601207,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_tsne_probability_validation_rejects_degenerate_distances[distances3-real-valued]",
+      "outcome": "passed",
+      "seconds": 7.908401312306523e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_rejects_complex_nonfinite_and_asymmetric_kernels[<lambda>-real-valued]",
+      "outcome": "passed",
+      "seconds": 0.0001775840064510703,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_rejects_complex_nonfinite_and_asymmetric_kernels[<lambda>-real-valued]",
+      "outcome": "passed",
+      "seconds": 0.12589033402036875,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_rejects_complex_nonfinite_and_asymmetric_kernels[<lambda>-real-valued]",
+      "outcome": "passed",
+      "seconds": 0.00011712498962879181,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_rejects_complex_nonfinite_and_asymmetric_kernels[<lambda>-finite]",
+      "outcome": "passed",
+      "seconds": 0.0002382500097155571,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_rejects_complex_nonfinite_and_asymmetric_kernels[<lambda>-finite]",
+      "outcome": "passed",
+      "seconds": 0.03303708304883912,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_rejects_complex_nonfinite_and_asymmetric_kernels[<lambda>-finite]",
+      "outcome": "passed",
+      "seconds": 0.00012583303032442927,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_rejects_complex_nonfinite_and_asymmetric_kernels[<lambda>-symmetric]",
+      "outcome": "passed",
+      "seconds": 0.0002434590132907033,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_rejects_complex_nonfinite_and_asymmetric_kernels[<lambda>-symmetric]",
+      "outcome": "passed",
+      "seconds": 0.053576832986436784,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_rejects_complex_nonfinite_and_asymmetric_kernels[<lambda>-symmetric]",
+      "outcome": "passed",
+      "seconds": 0.00012391700875014067,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_validates_callable_policy_and_finite_bandwidth[kernel-3-TypeError-callable]",
+      "outcome": "passed",
+      "seconds": 0.00031404203036800027,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_validates_callable_policy_and_finite_bandwidth[kernel-3-TypeError-callable]",
+      "outcome": "passed",
+      "seconds": 0.0006889160140417516,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_validates_callable_policy_and_finite_bandwidth[kernel-3-TypeError-callable]",
+      "outcome": "passed",
+      "seconds": 0.0001016249880194664,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_validates_callable_policy_and_finite_bandwidth[allow_indefinite-1-TypeError-boolean]",
+      "outcome": "passed",
+      "seconds": 0.0002989580389112234,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_validates_callable_policy_and_finite_bandwidth[allow_indefinite-1-TypeError-boolean]",
+      "outcome": "passed",
+      "seconds": 0.0006445830222219229,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_validates_callable_policy_and_finite_bandwidth[allow_indefinite-1-TypeError-boolean]",
+      "outcome": "passed",
+      "seconds": 0.00010108400601893663,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_validates_callable_policy_and_finite_bandwidth[bandwidth-inf-ValueError-positive and finite]",
+      "outcome": "passed",
+      "seconds": 0.0002965829917229712,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_validates_callable_policy_and_finite_bandwidth[bandwidth-inf-ValueError-positive and finite]",
+      "outcome": "passed",
+      "seconds": 0.002188374986872077,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_validates_callable_policy_and_finite_bandwidth[bandwidth-inf-ValueError-positive and finite]",
+      "outcome": "passed",
+      "seconds": 0.0004035000456497073,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_indefinite_policy_retains_only_the_positive_spectrum",
+      "outcome": "passed",
+      "seconds": 0.00010837498120963573,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_indefinite_policy_retains_only_the_positive_spectrum",
+      "outcome": "passed",
+      "seconds": 0.20839599997270852,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_indefinite_policy_retains_only_the_positive_spectrum",
+      "outcome": "passed",
+      "seconds": 0.00010274996748194098,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_model_validates_query_kernel_contract[<lambda>-real-valued query]",
+      "outcome": "passed",
+      "seconds": 0.0002549170167185366,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_model_validates_query_kernel_contract[<lambda>-real-valued query]",
+      "outcome": "passed",
+      "seconds": 0.3684909159783274,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_model_validates_query_kernel_contract[<lambda>-real-valued query]",
+      "outcome": "passed",
+      "seconds": 0.00012758298544213176,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_model_validates_query_kernel_contract[<lambda>-finite query-by-training0]",
+      "outcome": "passed",
+      "seconds": 0.00025275000371038914,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_model_validates_query_kernel_contract[<lambda>-finite query-by-training0]",
+      "outcome": "passed",
+      "seconds": 0.027426666987594217,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_model_validates_query_kernel_contract[<lambda>-finite query-by-training0]",
+      "outcome": "passed",
+      "seconds": 0.0001303329481743276,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_model_validates_query_kernel_contract[<lambda>-finite query-by-training1]",
+      "outcome": "passed",
+      "seconds": 0.00024108297657221556,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_model_validates_query_kernel_contract[<lambda>-finite query-by-training1]",
+      "outcome": "passed",
+      "seconds": 0.08402875001775101,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_kernel_pca_model_validates_query_kernel_contract[<lambda>-finite query-by-training1]",
+      "outcome": "passed",
+      "seconds": 0.0001253749942407012,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_pga_rejects_invalid_logarithms_and_metric_grams[manifold0-ValueError-undefined logarithm]",
+      "outcome": "passed",
+      "seconds": 0.0002947080065496266,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_pga_rejects_invalid_logarithms_and_metric_grams[manifold0-ValueError-undefined logarithm]",
+      "outcome": "passed",
+      "seconds": 0.0017031669849529862,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_pga_rejects_invalid_logarithms_and_metric_grams[manifold0-ValueError-undefined logarithm]",
+      "outcome": "passed",
+      "seconds": 0.00010054197628051043,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_pga_rejects_invalid_logarithms_and_metric_grams[manifold1-FloatingPointError-nonfinite metric Gram]",
+      "outcome": "passed",
+      "seconds": 0.00023808301193639636,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_pga_rejects_invalid_logarithms_and_metric_grams[manifold1-FloatingPointError-nonfinite metric Gram]",
+      "outcome": "passed",
+      "seconds": 0.002099582983646542,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_pga_rejects_invalid_logarithms_and_metric_grams[manifold1-FloatingPointError-nonfinite metric Gram]",
+      "outcome": "passed",
+      "seconds": 0.00011408398859202862,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_pga_rejects_invalid_logarithms_and_metric_grams[manifold2-FloatingPointError-not positive semidefinite]",
+      "outcome": "passed",
+      "seconds": 0.0005467919982038438,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_pga_rejects_invalid_logarithms_and_metric_grams[manifold2-FloatingPointError-not positive semidefinite]",
+      "outcome": "passed",
+      "seconds": 0.0034520000335760415,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_pga_rejects_invalid_logarithms_and_metric_grams[manifold2-FloatingPointError-not positive semidefinite]",
+      "outcome": "passed",
+      "seconds": 0.0001248330227099359,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_pga_model_guards_transform_logarithms_and_inverse_exponentials",
+      "outcome": "passed",
+      "seconds": 8.741702185943723e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_pga_model_guards_transform_logarithms_and_inverse_exponentials",
+      "outcome": "passed",
+      "seconds": 0.16971270798239857,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_pga_model_guards_transform_logarithms_and_inverse_exponentials",
+      "outcome": "passed",
+      "seconds": 0.00010137498611584306,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_nonfinite_missing_and_incomparable_labels[labels0-ValueError-NaN or infinite]",
+      "outcome": "passed",
+      "seconds": 0.00028433301486074924,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_nonfinite_missing_and_incomparable_labels[labels0-ValueError-NaN or infinite]",
+      "outcome": "passed",
+      "seconds": 0.0008066250011324883,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_nonfinite_missing_and_incomparable_labels[labels0-ValueError-NaN or infinite]",
+      "outcome": "passed",
+      "seconds": 0.00010041601490229368,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_nonfinite_missing_and_incomparable_labels[labels1-ValueError-missing values]",
+      "outcome": "passed",
+      "seconds": 0.00023820903152227402,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_nonfinite_missing_and_incomparable_labels[labels1-ValueError-missing values]",
+      "outcome": "passed",
+      "seconds": 0.0006522919866256416,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_nonfinite_missing_and_incomparable_labels[labels1-ValueError-missing values]",
+      "outcome": "passed",
+      "seconds": 9.254197357222438e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_nonfinite_missing_and_incomparable_labels[labels2-TypeError-mutually comparable]",
+      "outcome": "passed",
+      "seconds": 0.00024033297086134553,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_nonfinite_missing_and_incomparable_labels[labels2-TypeError-mutually comparable]",
+      "outcome": "passed",
+      "seconds": 0.0007071250001899898,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_nonfinite_missing_and_incomparable_labels[labels2-TypeError-mutually comparable]",
+      "outcome": "passed",
+      "seconds": 0.00010729196947067976,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_scalar_complex_and_zero_feature_embeddings[<lambda>-leading sample dimension]",
+      "outcome": "passed",
+      "seconds": 0.00021695805480703712,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_scalar_complex_and_zero_feature_embeddings[<lambda>-leading sample dimension]",
+      "outcome": "passed",
+      "seconds": 0.001042500021867454,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_scalar_complex_and_zero_feature_embeddings[<lambda>-leading sample dimension]",
+      "outcome": "passed",
+      "seconds": 9.508297080174088e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_scalar_complex_and_zero_feature_embeddings[<lambda>-real-valued]",
+      "outcome": "passed",
+      "seconds": 0.00021916604600846767,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_scalar_complex_and_zero_feature_embeddings[<lambda>-real-valued]",
+      "outcome": "passed",
+      "seconds": 0.022129542019683868,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_scalar_complex_and_zero_feature_embeddings[<lambda>-real-valued]",
+      "outcome": "passed",
+      "seconds": 0.00012108299415558577,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_scalar_complex_and_zero_feature_embeddings[<lambda>-at least one feature]",
+      "outcome": "passed",
+      "seconds": 0.00023312499979510903,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_scalar_complex_and_zero_feature_embeddings[<lambda>-at least one feature]",
+      "outcome": "passed",
+      "seconds": 0.03511070797685534,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_scalar_complex_and_zero_feature_embeddings[<lambda>-at least one feature]",
+      "outcome": "passed",
+      "seconds": 0.00013966701226308942,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_default_product_embedding_validates_and_preserves_the_factor_tree",
+      "outcome": "passed",
+      "seconds": 0.0001177079975605011,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_default_product_embedding_validates_and_preserves_the_factor_tree",
+      "outcome": "passed",
+      "seconds": 1.2445569160045125,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_default_product_embedding_validates_and_preserves_the_factor_tree",
+      "outcome": "passed",
+      "seconds": 0.00012858398258686066,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_nonfinite_scatter_from_extreme_but_finite_features",
+      "outcome": "passed",
+      "seconds": 9.945797501131892e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_nonfinite_scatter_from_extreme_but_finite_features",
+      "outcome": "passed",
+      "seconds": 0.01933558302698657,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_rejects_nonfinite_scatter_from_extreme_but_finite_features",
+      "outcome": "passed",
+      "seconds": 0.00010945799294859171,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_checks_the_finite_positive_definite_metric_certificate[zeros]",
+      "outcome": "passed",
+      "seconds": 0.0002767500118352473,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_checks_the_finite_positive_definite_metric_certificate[zeros]",
+      "outcome": "passed",
+      "seconds": 0.004520708054769784,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_checks_the_finite_positive_definite_metric_certificate[zeros]",
+      "outcome": "passed",
+      "seconds": 0.00015279202489182353,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_checks_the_finite_positive_definite_metric_certificate[nan]",
+      "outcome": "passed",
+      "seconds": 0.0002228330122306943,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_checks_the_finite_positive_definite_metric_certificate[nan]",
+      "outcome": "passed",
+      "seconds": 0.005012209003325552,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_rmml_checks_the_finite_positive_definite_metric_certificate[nan]",
+      "outcome": "passed",
+      "seconds": 0.00014045904390513897,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_metric_learning_model_validates_transforms_and_two_sample_distances",
+      "outcome": "passed",
+      "seconds": 9.512505494058132e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_metric_learning_model_validates_transforms_and_two_sample_distances",
+      "outcome": "passed",
+      "seconds": 0.31697350001195446,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_embedding_metric.py::test_metric_learning_model_validates_transforms_and_two_sample_distances",
+      "outcome": "passed",
+      "seconds": 0.00010779104195535183,
+      "when": "teardown"
+    }
+  ]
+}

@@ -16,6 +16,38 @@ import jax.scipy.linalg as jsp_linalg
 Array = Any
 
 
+@jax.jit
+def symmetric_part(A: Array) -> Array:
+    """Symmetric part with linear AD and safe arithmetic at both range ends."""
+    A = jnp.asarray(A, dtype=jnp.result_type(A, float))
+
+    def half_sum(first, second):
+        # Always halving first flushes the smallest normal entries to zero;
+        # always adding first overflows the largest. Scale only large pairs.
+        large = jnp.maximum(jnp.abs(first), jnp.abs(second)) > jnp.finfo(A.dtype).max / 2.0
+        factor = jnp.where(large, 0.5, 1.0)
+        first = jax.lax.optimization_barrier(first * factor)
+        second = jax.lax.optimization_barrier(second * factor)
+        return (first + second) / (2.0 * factor)
+
+    # The constant, self-adjoint block system [[I,I],[I,-I]] has inverse
+    # one-half itself. Its first solution is the desired average. Keeping
+    # the arithmetic selection inside an opaque solve preserves linearity
+    # under JVP transposition, including when A is itself a tangent tracer.
+    def operator(pair):
+        first, second = pair[0], pair[1]
+        return jnp.stack((first + second, first - second))
+
+    def solve(_, pair):
+        first, second = pair[0], pair[1]
+        return jnp.stack((half_sum(first, second), half_sum(first, -second)))
+
+    # A single array also avoids partially symbolic-zero pytree leaves in
+    # higher reverse-mode transformations of the unused skew component.
+    pair = jnp.stack((A, jnp.swapaxes(A, -1, -2)))
+    return jax.lax.custom_linear_solve(operator, pair, solve=solve, symmetric=True)[0]
+
+
 def _series_cutoff(x: Array) -> Array:
     """Return a dtype-aware cutoff for arguments represented as squared radii."""
     dtype = jnp.result_type(jnp.asarray(x), float)
@@ -23,9 +55,54 @@ def _series_cutoff(x: Array) -> Array:
 
 
 def squared_norm(x: Array, *, axis: int | tuple[int, ...], keepdims: bool = False) -> Array:
-    """Squared Euclidean norm with negative roundoff clipped to zero."""
-    value = jnp.sum(jnp.asarray(x) * jnp.asarray(x), axis=axis, keepdims=keepdims)
-    return jnp.maximum(value, 0.0)
+    """Squared Euclidean norm, including its full Hessian at the origin."""
+    return jnp.sum(jnp.asarray(x) * jnp.asarray(x), axis=axis, keepdims=keepdims)
+
+
+def nonnegative(value: Array) -> Array:
+    """Clip negative roundoff, retaining the interior derivative at zero.
+
+    ``maximum(value, 0)`` assigns a half derivative at equality in JAX. That
+    halves the Hessian when ``value`` is an already nonnegative quadratic.
+    """
+    value = jnp.asarray(value)
+    return jnp.where(value >= 0.0, value, jnp.zeros_like(value))
+
+
+def power_of_two_rescale(value: Array, *, axis: int | tuple[int, ...]) -> Array:
+    """Rescale each slice to maximum magnitude in [1/2, 1), preserving zeros.
+
+    Splitting the exponent avoids subnormal reciprocals and also supports JAX
+    versions whose ldexp forms an intermediate power of two explicitly.
+    """
+    value = jnp.asarray(value)
+    maximum = jnp.max(jnp.abs(value), axis=axis, keepdims=True)
+    _, exponent = jnp.frexp(jax.lax.stop_gradient(maximum))
+    first = -(exponent // 2)
+    # ldexp itself selects derivative 1 at a zero entry in supported JAX
+    # versions. Apply constant powers as multipliers so zero coordinates
+    # receive the same linear derivative as every other coordinate.
+    first_scale = jnp.ldexp(jnp.ones_like(maximum), first)
+    second_scale = jnp.ldexp(jnp.ones_like(maximum), -exponent - first)
+    return jax.lax.optimization_barrier(value * first_scale) * second_scale
+
+
+def spherical_squared_dist(x: Array, y: Array, *, axis: int | tuple[int, ...]) -> Array:
+    """Squared angle between unit vectors, accurate near coincidence.
+
+    The half-angle formula uses both chords instead of subtracting a cosine
+    from one. A series in the squared chord ratio fills the removable square
+    root singularity at coincidence; the antipodal singularity remains.
+    """
+    chord = squared_norm(jnp.asarray(x) - jnp.asarray(y), axis=axis)
+    antichord = squared_norm(jnp.asarray(x) + jnp.asarray(y), axis=axis)
+    small = chord <= _series_cutoff(chord) * antichord
+    safe_antichord = jnp.where(small, antichord, jnp.ones_like(antichord))
+    ratio = jnp.where(small, chord, 0.0) / safe_antichord
+    series = 4.0 * (ratio - 2.0 * ratio**2 / 3.0 + 23.0 * ratio**3 / 45.0)
+    regular_chord = jnp.where(small, jnp.ones_like(chord), chord)
+    angle = 2.0 * jnp.arctan2(jnp.sqrt(regular_chord), jnp.sqrt(antichord))
+    return jnp.where(small, series, angle**2)
 
 
 def stable_norm(
@@ -93,7 +170,7 @@ def _sqrt_nonnegative_jvp(primals, tangents):
 
 def cos_from_squared_norm(squared_radius: Array) -> Array:
     """Evaluate ``cos(sqrt(s))`` with a finite derivative at ``s = 0``."""
-    s = jnp.maximum(jnp.asarray(squared_radius), 0.0)
+    s = nonnegative(squared_radius)
     cutoff = _series_cutoff(s)
     regular_s = jnp.where(s > cutoff, s, jnp.ones_like(s))
     regular = jnp.cos(jnp.sqrt(regular_s))
@@ -103,7 +180,7 @@ def cos_from_squared_norm(squared_radius: Array) -> Array:
 
 def sinc_from_squared_norm(squared_radius: Array) -> Array:
     """Evaluate ``sin(sqrt(s)) / sqrt(s)`` at and near zero."""
-    s = jnp.maximum(jnp.asarray(squared_radius), 0.0)
+    s = nonnegative(squared_radius)
     cutoff = _series_cutoff(s)
     regular_s = jnp.where(s > cutoff, s, jnp.ones_like(s))
     radius = jnp.sqrt(regular_s)
@@ -114,7 +191,7 @@ def sinc_from_squared_norm(squared_radius: Array) -> Array:
 
 def cosh_from_squared_norm(squared_radius: Array) -> Array:
     """Evaluate ``cosh(sqrt(s))`` with a finite derivative at ``s = 0``."""
-    s = jnp.maximum(jnp.asarray(squared_radius), 0.0)
+    s = nonnegative(squared_radius)
     cutoff = _series_cutoff(s)
     regular_s = jnp.where(s > cutoff, s, jnp.ones_like(s))
     regular = jnp.cosh(jnp.sqrt(regular_s))
@@ -124,7 +201,7 @@ def cosh_from_squared_norm(squared_radius: Array) -> Array:
 
 def sinhc_from_squared_norm(squared_radius: Array) -> Array:
     """Evaluate ``sinh(sqrt(s)) / sqrt(s)`` at and near zero."""
-    s = jnp.maximum(jnp.asarray(squared_radius), 0.0)
+    s = nonnegative(squared_radius)
     cutoff = _series_cutoff(s)
     regular_s = jnp.where(s > cutoff, s, jnp.ones_like(s))
     radius = jnp.sqrt(regular_s)
@@ -135,7 +212,7 @@ def sinhc_from_squared_norm(squared_radius: Array) -> Array:
 
 def tanhc_from_squared_norm(squared_radius: Array) -> Array:
     """Evaluate ``tanh(sqrt(s)) / sqrt(s)`` at and near zero."""
-    s = jnp.maximum(jnp.asarray(squared_radius), 0.0)
+    s = nonnegative(squared_radius)
     cutoff = _series_cutoff(s)
     regular_s = jnp.where(s > cutoff, s, jnp.ones_like(s))
     radius = jnp.sqrt(regular_s)
@@ -147,7 +224,7 @@ def tanhc_from_squared_norm(squared_radius: Array) -> Array:
 def atanhc_from_squared_norm(squared_radius: Array, eps: float = 0.0) -> Array:
     """Evaluate ``atanh(sqrt(s)) / sqrt(s)`` at zero and inside the unit ball."""
     del eps
-    s = jnp.maximum(jnp.asarray(squared_radius), 0.0)
+    s = nonnegative(squared_radius)
     cutoff = _series_cutoff(s)
     valid = s < 1.0
     regular_s = jnp.where(valid & (s > cutoff), s, 0.25 * jnp.ones_like(s))
@@ -310,7 +387,7 @@ def asinh_squared_from_squared_chord(squared_chord: Array) -> Array:
     the squared expression as a polynomial near zero avoids both the square
     root singularity and the loss of the small increment in ``acosh(1 + c/2)``.
     """
-    c = jnp.maximum(jnp.asarray(squared_chord), 0.0)
+    c = nonnegative(squared_chord)
     cutoff = _series_cutoff(c)
     regular_c = jnp.where(c > cutoff, c, jnp.ones_like(c))
     regular = 4.0 * jnp.arcsinh(0.5 * jnp.sqrt(regular_c)) ** 2
@@ -338,11 +415,14 @@ __all__ = [
     "cos_from_squared_norm",
     "cosh_from_squared_norm",
     "matrix_expm",
+    "nonnegative",
+    "power_of_two_rescale",
     "sinc_from_squared_norm",
     "sinhc_from_squared_norm",
     "stable_metric_norm",
     "stable_norm",
     "sqrt_nonnegative",
     "squared_norm",
+    "spherical_squared_dist",
     "tanhc_from_squared_norm",
 ]

@@ -1,0 +1,19 @@
+{
+  "initial_network_restricted_attempt": "release_guard_smoke_network_attempt/final_sdist_smoke.json",
+  "prior_evidence": "before_release_guard/preservation.json",
+  "provenance": "The tested matrix wheel is unchanged. After the release-only Makefile, RELEASING.md, and CHANGELOG.md edits, only the source archive was rebuilt. Every included checkout file and strict package metadata passed verification. A fresh isolated installation passed dependency/import/version/typing checks, and an independent wheel rebuilt from the archive has the same 66 Python modules plus py.typed as the matrix wheel.",
+  "sdist": {
+    "clean_install_exit_code": 0,
+    "evidence": "final_sdist_smoke.json",
+    "sha256": "f12c6a7ca9e61b17fcd6e753be85b299d50223dbf9c559c3c22a632bebe47a94",
+    "wall_seconds": 30.472028749994934
+  },
+  "source_archive_rebuild_evidence": "sdist_rebuilt_wheel.json",
+  "status": "passed",
+  "wheel": {
+    "clean_install_exit_code": 0,
+    "evidence": "before_guide_clarification/artifact_smoke.json",
+    "sha256": "dd7ea7fc391ec2e0cc9c3a81757a94fb89b09a3f5401ed8ca7f4fbc62b20fc5e",
+    "unchanged_from_all_matrix_installations": true
+  }
+}

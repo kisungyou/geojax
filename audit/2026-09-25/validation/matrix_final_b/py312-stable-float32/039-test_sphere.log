@@ -1,0 +1,30 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_sphere.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_b/py312-stable-float32/039-test_sphere.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_b/py312-stable-float32/039-test_sphere.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.12.13, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.12.13, JAX 0.11.0, NumPy 2.4.4, float32
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 7 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_sphere.py::test_sphere_constructor_and_geodesic_flow PASSED [ 14%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_sphere.py::test_sphere_random_shapes PASSED [ 28%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_sphere.py::test_sphere_projection_preserves_direction_of_tiny_nonzero_vector PASSED [ 42%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_sphere.py::test_sphere_extrinsic_identity_embedding_and_chordal_distance PASSED [ 57%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_sphere.py::test_sphere_extrinsic_mean_projects_ambient_mean PASSED [ 71%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_sphere.py::test_sphere_extrinsic_mean_is_undefined_for_zero_ambient_mean PASSED [ 85%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_sphere.py::test_sphere_extrinsic_mean_validates_points_and_weights PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_b/py312-stable-float32/039-test_sphere.xml -
+============================== slowest durations ===============================
+0.88s call     tests/test_sphere.py::test_sphere_constructor_and_geodesic_flow
+0.62s call     tests/test_sphere.py::test_sphere_random_shapes
+0.54s call     tests/test_sphere.py::test_sphere_extrinsic_mean_projects_ambient_mean
+0.32s call     tests/test_sphere.py::test_sphere_extrinsic_mean_validates_points_and_weights
+0.26s call     tests/test_sphere.py::test_sphere_extrinsic_identity_embedding_and_chordal_distance
+0.06s call     tests/test_sphere.py::test_sphere_projection_preserves_direction_of_tiny_nonzero_vector
+0.02s call     tests/test_sphere.py::test_sphere_extrinsic_mean_is_undefined_for_zero_ambient_mean
+
+(14 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================== 7 passed in 2.87s ===============================

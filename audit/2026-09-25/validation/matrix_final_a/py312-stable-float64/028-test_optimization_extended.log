@@ -1,0 +1,57 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float64/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_optimization_extended.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py312-stable-float64/028-test_optimization_extended.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py312-stable-float64/028-test_optimization_extended.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.12.13, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float64/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.12.13, JAX 0.11.0, NumPy 2.4.4, float64
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 21 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization_extended.py::test_new_second_order_solvers_converge_on_quadratic[solver0] PASSED [  4%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization_extended.py::test_new_second_order_solvers_converge_on_quadratic[solver1] PASSED [  9%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization_extended.py::test_newton_cg_uses_user_hessian_vector_product PASSED [ 14%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization_extended.py::test_least_squares_autodiff_products_are_adjoint PASSED [ 19%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization_extended.py::test_least_squares_products_are_independently_jittable PASSED [ 23%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization_extended.py::test_least_squares_rejects_complex_residuals_before_forming_a_wrong_gradient PASSED [ 28%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization_extended.py::test_least_squares_rejects_an_off_tangent_user_adjoint PASSED [ 33%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization_extended.py::test_least_squares_solvers_fit_nonlinear_residual[solver0] PASSED [ 38%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization_extended.py::test_least_squares_solvers_fit_nonlinear_residual[solver1] PASSED [ 42%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization_extended.py::test_levenberg_marquardt_gain_ratio_uses_linearized_residual_model PASSED [ 47%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization_extended.py::test_tangent_cg_restarts_without_nonpositive_preconditioner PASSED [ 52%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization_extended.py::test_cubic_cauchy_point_avoids_positive_curvature_cancellation PASSED [ 57%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization_extended.py::test_stochastic_gradient_lowers_finite_sum_objective PASSED [ 61%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization_extended.py::test_finite_sum_validates_batch_indices PASSED [ 66%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization_extended.py::test_finite_sum_batch_kernel_is_independently_jittable PASSED [ 71%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization_extended.py::test_stochastic_zero_schedule_returns_full_objective PASSED [ 76%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization_extended.py::test_nelder_mead_does_not_converge_on_cost_spread_alone PASSED [ 80%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization_extended.py::test_trust_region_reuses_trial_cost_and_state_after_acceptance PASSED [ 85%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization_extended.py::test_alternating_gradient_preserves_product_pytree PASSED [ 90%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization_extended.py::test_alternating_gradient_rejects_nonproduct_geometry PASSED [ 95%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization_extended.py::test_alternating_gradient_does_not_require_product_distance PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py312-stable-float64/028-test_optimization_extended.xml -
+============================== slowest durations ===============================
+2.22s call     tests/test_optimization_extended.py::test_stochastic_gradient_lowers_finite_sum_objective
+1.60s call     tests/test_optimization_extended.py::test_alternating_gradient_preserves_product_pytree
+0.72s call     tests/test_optimization_extended.py::test_new_second_order_solvers_converge_on_quadratic[solver0]
+0.62s call     tests/test_optimization_extended.py::test_least_squares_solvers_fit_nonlinear_residual[solver0]
+0.48s call     tests/test_optimization_extended.py::test_alternating_gradient_does_not_require_product_distance
+0.45s call     tests/test_optimization_extended.py::test_stochastic_zero_schedule_returns_full_objective
+0.27s call     tests/test_optimization_extended.py::test_least_squares_products_are_independently_jittable
+0.24s call     tests/test_optimization_extended.py::test_levenberg_marquardt_gain_ratio_uses_linearized_residual_model
+0.17s call     tests/test_optimization_extended.py::test_nelder_mead_does_not_converge_on_cost_spread_alone
+0.17s call     tests/test_optimization_extended.py::test_least_squares_solvers_fit_nonlinear_residual[solver1]
+0.15s call     tests/test_optimization_extended.py::test_least_squares_autodiff_products_are_adjoint
+0.14s call     tests/test_optimization_extended.py::test_new_second_order_solvers_converge_on_quadratic[solver1]
+0.13s call     tests/test_optimization_extended.py::test_least_squares_rejects_an_off_tangent_user_adjoint
+0.07s call     tests/test_optimization_extended.py::test_finite_sum_batch_kernel_is_independently_jittable
+0.05s call     tests/test_optimization_extended.py::test_least_squares_rejects_complex_residuals_before_forming_a_wrong_gradient
+0.04s call     tests/test_optimization_extended.py::test_trust_region_reuses_trial_cost_and_state_after_acceptance
+0.03s call     tests/test_optimization_extended.py::test_cubic_cauchy_point_avoids_positive_curvature_cancellation
+0.02s call     tests/test_optimization_extended.py::test_newton_cg_uses_user_hessian_vector_product
+0.01s call     tests/test_optimization_extended.py::test_finite_sum_validates_batch_indices
+0.01s call     tests/test_optimization_extended.py::test_tangent_cg_restarts_without_nonpositive_preconditioner
+
+(43 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================== 21 passed in 7.77s ==============================

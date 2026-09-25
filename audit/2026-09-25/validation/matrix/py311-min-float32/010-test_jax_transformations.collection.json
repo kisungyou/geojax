@@ -1,0 +1,1320 @@
+{
+  "collection_reports": [],
+  "deselected": [],
+  "exitstatus": 0,
+  "nodeids": [
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Euclidean]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Oblique]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[ProbabilitySimplex]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[PoincareBall]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Sphere]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SphereExtrinsic]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Grassmann]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[GrassmannProjection]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[GeneralizedStiefel]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[GeneralizedGrassmann]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SPDLogEuclidean]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SPDAffineInvariant]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SPDBuresWasserstein]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[FixedRank]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[RankKPSD]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[RankKPSDBuresWasserstein]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Elliptope]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Spectrahedron]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[CorrelationECM]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[CorrelationLEC]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[CorrelationAffineQuotient]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Product]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Hyperboloid]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Torus]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SpecialOrthogonal]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SpecialEuclidean]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Stiefel]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[StiefelEuclidean]",
+    "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[KendallShape]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Euclidean]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Oblique]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[ProbabilitySimplex]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[PoincareBall]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Sphere]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SphereExtrinsic]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Grassmann]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[GrassmannProjection]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[GeneralizedStiefel]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[GeneralizedGrassmann]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SPDLogEuclidean]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SPDAffineInvariant]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SPDBuresWasserstein]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[FixedRank]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[RankKPSD]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[RankKPSDBuresWasserstein]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Elliptope]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Spectrahedron]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[CorrelationECM]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[CorrelationLEC]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[CorrelationAffineQuotient]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Product]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Hyperboloid]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Torus]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SpecialOrthogonal]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SpecialEuclidean]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Stiefel]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[StiefelEuclidean]",
+    "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[KendallShape]",
+    "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[Sphere]",
+    "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[Grassmann]",
+    "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[SPDAffineInvariant]",
+    "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[FixedRank]",
+    "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[SpecialOrthogonal]",
+    "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[Stiefel]",
+    "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[KendallShape]",
+    "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[Product]",
+    "tests/test_jax_transformations.py::test_autodiff_gradient_and_hessian_vector_products_are_jittable[Sphere]",
+    "tests/test_jax_transformations.py::test_autodiff_gradient_and_hessian_vector_products_are_jittable[Product]",
+    "tests/test_jax_transformations.py::test_unsupported_automatic_spd_hessian_is_reported_explicitly"
+  ],
+  "runtime_reports": [
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Euclidean]",
+      "outcome": "passed",
+      "seconds": 0.000870916002895683,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Euclidean]",
+      "outcome": "passed",
+      "seconds": 0.64058629097417,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Euclidean]",
+      "outcome": "passed",
+      "seconds": 0.0014743329957127571,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Oblique]",
+      "outcome": "passed",
+      "seconds": 0.0003174160374328494,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Oblique]",
+      "outcome": "passed",
+      "seconds": 0.6292874579667114,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Oblique]",
+      "outcome": "passed",
+      "seconds": 0.0003268750151619315,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[ProbabilitySimplex]",
+      "outcome": "passed",
+      "seconds": 0.0005393750034272671,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[ProbabilitySimplex]",
+      "outcome": "passed",
+      "seconds": 0.5022080410271883,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[ProbabilitySimplex]",
+      "outcome": "passed",
+      "seconds": 0.0002334999735467136,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[PoincareBall]",
+      "outcome": "passed",
+      "seconds": 0.00032112502958625555,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[PoincareBall]",
+      "outcome": "passed",
+      "seconds": 0.5991325000068173,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[PoincareBall]",
+      "outcome": "passed",
+      "seconds": 0.00020400003995746374,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.00028970895800739527,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.40403799997875467,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.00020091701298952103,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SphereExtrinsic]",
+      "outcome": "passed",
+      "seconds": 0.0003041250165551901,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SphereExtrinsic]",
+      "outcome": "passed",
+      "seconds": 0.440357125014998,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SphereExtrinsic]",
+      "outcome": "passed",
+      "seconds": 0.00018399994587525725,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Grassmann]",
+      "outcome": "passed",
+      "seconds": 0.0002799169742502272,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Grassmann]",
+      "outcome": "passed",
+      "seconds": 1.337252790981438,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Grassmann]",
+      "outcome": "passed",
+      "seconds": 0.0002181659801863134,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[GrassmannProjection]",
+      "outcome": "passed",
+      "seconds": 0.0003321669646538794,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[GrassmannProjection]",
+      "outcome": "passed",
+      "seconds": 1.4014117500046268,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[GrassmannProjection]",
+      "outcome": "passed",
+      "seconds": 0.00019225000869482756,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[GeneralizedStiefel]",
+      "outcome": "passed",
+      "seconds": 0.0005867910222150385,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[GeneralizedStiefel]",
+      "outcome": "passed",
+      "seconds": 4.216660249978304,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[GeneralizedStiefel]",
+      "outcome": "passed",
+      "seconds": 0.00019120797514915466,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[GeneralizedGrassmann]",
+      "outcome": "passed",
+      "seconds": 0.0002978330012410879,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[GeneralizedGrassmann]",
+      "outcome": "passed",
+      "seconds": 0.9682291250210255,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[GeneralizedGrassmann]",
+      "outcome": "passed",
+      "seconds": 0.0001805420033633709,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SPDLogEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.0003050409723073244,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SPDLogEuclidean]",
+      "outcome": "passed",
+      "seconds": 1.1900647499714978,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SPDLogEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.00017312500858679414,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 0.0003072909894399345,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 0.6202248749905266,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 0.0001823750208131969,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SPDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.00030458299443125725,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SPDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.6924214590108022,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SPDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.00015945802442729473,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[FixedRank]",
+      "outcome": "passed",
+      "seconds": 0.0002811250160448253,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[FixedRank]",
+      "outcome": "passed",
+      "seconds": 0.40342366602271795,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[FixedRank]",
+      "outcome": "passed",
+      "seconds": 0.00017808302072808146,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[RankKPSD]",
+      "outcome": "passed",
+      "seconds": 0.00028074998408555984,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[RankKPSD]",
+      "outcome": "passed",
+      "seconds": 0.5206475830054842,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[RankKPSD]",
+      "outcome": "passed",
+      "seconds": 0.0001623329590074718,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[RankKPSDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.00031041697366163135,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[RankKPSDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.9156291669933125,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[RankKPSDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.00018266600091010332,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Elliptope]",
+      "outcome": "passed",
+      "seconds": 0.00032362499041482806,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Elliptope]",
+      "outcome": "passed",
+      "seconds": 1.2840522500337102,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Elliptope]",
+      "outcome": "passed",
+      "seconds": 0.00023716595023870468,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Spectrahedron]",
+      "outcome": "passed",
+      "seconds": 0.00030337501084432006,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Spectrahedron]",
+      "outcome": "passed",
+      "seconds": 0.6113262500148267,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Spectrahedron]",
+      "outcome": "passed",
+      "seconds": 0.00015845795860514045,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[CorrelationECM]",
+      "outcome": "passed",
+      "seconds": 0.00024266698164865375,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[CorrelationECM]",
+      "outcome": "passed",
+      "seconds": 0.7826200409908779,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[CorrelationECM]",
+      "outcome": "passed",
+      "seconds": 0.00016666698502376676,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[CorrelationLEC]",
+      "outcome": "passed",
+      "seconds": 0.0002540420391596854,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[CorrelationLEC]",
+      "outcome": "passed",
+      "seconds": 0.9256573329912499,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[CorrelationLEC]",
+      "outcome": "passed",
+      "seconds": 0.00022487499518319964,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[CorrelationAffineQuotient]",
+      "outcome": "passed",
+      "seconds": 0.00030554202385246754,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[CorrelationAffineQuotient]",
+      "outcome": "passed",
+      "seconds": 0.7562582499813288,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[CorrelationAffineQuotient]",
+      "outcome": "passed",
+      "seconds": 0.0001663750153966248,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Product]",
+      "outcome": "passed",
+      "seconds": 0.0002989169443026185,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Product]",
+      "outcome": "passed",
+      "seconds": 0.47434470895677805,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Product]",
+      "outcome": "passed",
+      "seconds": 0.00018066703341901302,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Hyperboloid]",
+      "outcome": "passed",
+      "seconds": 0.00028495799051597714,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Hyperboloid]",
+      "outcome": "passed",
+      "seconds": 0.4160445419838652,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Hyperboloid]",
+      "outcome": "passed",
+      "seconds": 0.0001615419751033187,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Torus]",
+      "outcome": "passed",
+      "seconds": 0.0002727909595705569,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Torus]",
+      "outcome": "passed",
+      "seconds": 0.18297912500565872,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Torus]",
+      "outcome": "passed",
+      "seconds": 0.0001775420387275517,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SpecialOrthogonal]",
+      "outcome": "passed",
+      "seconds": 0.0003142920322716236,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SpecialOrthogonal]",
+      "outcome": "passed",
+      "seconds": 0.5360533330240287,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SpecialOrthogonal]",
+      "outcome": "passed",
+      "seconds": 0.0001866249949671328,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SpecialEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.0003006670158356428,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SpecialEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.7447617500438355,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[SpecialEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.00016508297994732857,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Stiefel]",
+      "outcome": "passed",
+      "seconds": 0.0002874169731512666,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Stiefel]",
+      "outcome": "passed",
+      "seconds": 2.202151584031526,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[Stiefel]",
+      "outcome": "passed",
+      "seconds": 0.00022708403412252665,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[StiefelEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.0003220840007998049,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[StiefelEuclidean]",
+      "outcome": "passed",
+      "seconds": 2.7736639169743285,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[StiefelEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.00019016599981114268,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[KendallShape]",
+      "outcome": "passed",
+      "seconds": 0.00027179199969395995,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[KendallShape]",
+      "outcome": "passed",
+      "seconds": 1.1515790830017067,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_complete_geometry_protocol_is_jittable[KendallShape]",
+      "outcome": "passed",
+      "seconds": 0.00017145898891612887,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Euclidean]",
+      "outcome": "passed",
+      "seconds": 0.00030574999982491136,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Euclidean]",
+      "outcome": "passed",
+      "seconds": 0.11641854199115187,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Euclidean]",
+      "outcome": "passed",
+      "seconds": 0.00015054200775921345,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Oblique]",
+      "outcome": "passed",
+      "seconds": 0.0002626659697853029,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Oblique]",
+      "outcome": "passed",
+      "seconds": 0.6657497080159374,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Oblique]",
+      "outcome": "passed",
+      "seconds": 0.00015958299627527595,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[ProbabilitySimplex]",
+      "outcome": "passed",
+      "seconds": 0.00027012499049305916,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[ProbabilitySimplex]",
+      "outcome": "passed",
+      "seconds": 0.33004091604379937,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[ProbabilitySimplex]",
+      "outcome": "passed",
+      "seconds": 0.000164708006195724,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[PoincareBall]",
+      "outcome": "passed",
+      "seconds": 0.00023620901629328728,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[PoincareBall]",
+      "outcome": "passed",
+      "seconds": 0.5460397499846295,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[PoincareBall]",
+      "outcome": "passed",
+      "seconds": 0.00014416698832064867,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.00025058299070224166,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.1862122499733232,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.00013762497110292315,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SphereExtrinsic]",
+      "outcome": "passed",
+      "seconds": 0.00022958300542086363,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SphereExtrinsic]",
+      "outcome": "passed",
+      "seconds": 0.03747924999333918,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SphereExtrinsic]",
+      "outcome": "passed",
+      "seconds": 0.0001397909945808351,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Grassmann]",
+      "outcome": "passed",
+      "seconds": 0.00024083303287625313,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Grassmann]",
+      "outcome": "passed",
+      "seconds": 0.5206048749969341,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Grassmann]",
+      "outcome": "passed",
+      "seconds": 0.0001360829919576645,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[GrassmannProjection]",
+      "outcome": "passed",
+      "seconds": 0.00023791601415723562,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[GrassmannProjection]",
+      "outcome": "passed",
+      "seconds": 0.03780791600001976,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[GrassmannProjection]",
+      "outcome": "passed",
+      "seconds": 0.00013104104436933994,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[GeneralizedStiefel]",
+      "outcome": "passed",
+      "seconds": 0.00023683399194851518,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[GeneralizedStiefel]",
+      "outcome": "passed",
+      "seconds": 0.243658667022828,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[GeneralizedStiefel]",
+      "outcome": "passed",
+      "seconds": 0.00014058401575312018,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[GeneralizedGrassmann]",
+      "outcome": "passed",
+      "seconds": 0.0002484999713487923,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[GeneralizedGrassmann]",
+      "outcome": "passed",
+      "seconds": 0.06578537495806813,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[GeneralizedGrassmann]",
+      "outcome": "passed",
+      "seconds": 0.0001437919563613832,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SPDLogEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.0002500839764252305,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SPDLogEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.7780766669893637,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SPDLogEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.00015004194574430585,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 0.00025587499840185046,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 0.0780565410386771,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 0.00014350004494190216,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SPDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.0002436249633319676,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SPDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.07923329097684473,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SPDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.00014941697008907795,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[FixedRank]",
+      "outcome": "passed",
+      "seconds": 0.00024737499188631773,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[FixedRank]",
+      "outcome": "passed",
+      "seconds": 0.6339465000201017,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[FixedRank]",
+      "outcome": "passed",
+      "seconds": 0.0001659159897826612,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[RankKPSD]",
+      "outcome": "passed",
+      "seconds": 0.000247957999818027,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[RankKPSD]",
+      "outcome": "passed",
+      "seconds": 0.4026048749801703,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[RankKPSD]",
+      "outcome": "passed",
+      "seconds": 0.0001420000335201621,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[RankKPSDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.0002519580302760005,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[RankKPSDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.08315208303974941,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[RankKPSDBuresWasserstein]",
+      "outcome": "passed",
+      "seconds": 0.00015170901315286756,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Elliptope]",
+      "outcome": "passed",
+      "seconds": 0.00023999996483325958,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Elliptope]",
+      "outcome": "passed",
+      "seconds": 0.6704259589896537,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Elliptope]",
+      "outcome": "passed",
+      "seconds": 0.00014174997340887785,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Spectrahedron]",
+      "outcome": "passed",
+      "seconds": 0.000248999975156039,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Spectrahedron]",
+      "outcome": "passed",
+      "seconds": 0.1144433330046013,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Spectrahedron]",
+      "outcome": "passed",
+      "seconds": 0.00014329201076179743,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[CorrelationECM]",
+      "outcome": "passed",
+      "seconds": 0.0002423750120215118,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[CorrelationECM]",
+      "outcome": "passed",
+      "seconds": 0.5870498329750262,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[CorrelationECM]",
+      "outcome": "passed",
+      "seconds": 0.00016670901095494628,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[CorrelationLEC]",
+      "outcome": "passed",
+      "seconds": 0.00025691703194752336,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[CorrelationLEC]",
+      "outcome": "passed",
+      "seconds": 0.1405032080365345,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[CorrelationLEC]",
+      "outcome": "passed",
+      "seconds": 0.00017787498654797673,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[CorrelationAffineQuotient]",
+      "outcome": "passed",
+      "seconds": 0.00040491699473932385,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[CorrelationAffineQuotient]",
+      "outcome": "passed",
+      "seconds": 0.11321095802122727,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[CorrelationAffineQuotient]",
+      "outcome": "passed",
+      "seconds": 0.00015620799968019128,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Product]",
+      "outcome": "passed",
+      "seconds": 0.0003678329521790147,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Product]",
+      "outcome": "passed",
+      "seconds": 0.24031866702716798,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Product]",
+      "outcome": "passed",
+      "seconds": 0.00014687498332932591,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Hyperboloid]",
+      "outcome": "passed",
+      "seconds": 0.00025458302116021514,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Hyperboloid]",
+      "outcome": "passed",
+      "seconds": 0.1378752079908736,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Hyperboloid]",
+      "outcome": "passed",
+      "seconds": 0.0001385000068694353,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Torus]",
+      "outcome": "passed",
+      "seconds": 0.00024862500140443444,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Torus]",
+      "outcome": "passed",
+      "seconds": 0.02943799999775365,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Torus]",
+      "outcome": "passed",
+      "seconds": 0.00014062499394640326,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SpecialOrthogonal]",
+      "outcome": "passed",
+      "seconds": 0.00024374999338760972,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SpecialOrthogonal]",
+      "outcome": "passed",
+      "seconds": 0.2792185000143945,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SpecialOrthogonal]",
+      "outcome": "passed",
+      "seconds": 0.00013958301860839128,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SpecialEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.0002482500276528299,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SpecialEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.400951084040571,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[SpecialEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.0001623330172151327,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Stiefel]",
+      "outcome": "passed",
+      "seconds": 0.0002424580161459744,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Stiefel]",
+      "outcome": "passed",
+      "seconds": 0.032911708985920995,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[Stiefel]",
+      "outcome": "passed",
+      "seconds": 0.0001438749604858458,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[StiefelEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.00025100004859268665,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[StiefelEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.032043667044490576,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[StiefelEuclidean]",
+      "outcome": "passed",
+      "seconds": 0.00014954200014472008,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[KendallShape]",
+      "outcome": "passed",
+      "seconds": 0.00025658297818154097,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[KendallShape]",
+      "outcome": "passed",
+      "seconds": 0.4506929580238648,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_geometry_instances_are_valid_static_jit_arguments[KendallShape]",
+      "outcome": "passed",
+      "seconds": 0.00014583300799131393,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.0002560829743742943,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.4739510840154253,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.00016191595932468772,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[Grassmann]",
+      "outcome": "passed",
+      "seconds": 0.0002697909949347377,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[Grassmann]",
+      "outcome": "passed",
+      "seconds": 1.3979684590012766,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[Grassmann]",
+      "outcome": "passed",
+      "seconds": 0.00017549999756738544,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 0.0002918330137617886,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 1.5891761669772677,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[SPDAffineInvariant]",
+      "outcome": "passed",
+      "seconds": 0.0001652499777264893,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[FixedRank]",
+      "outcome": "passed",
+      "seconds": 0.00025812501553446054,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[FixedRank]",
+      "outcome": "passed",
+      "seconds": 1.3986063750344329,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[FixedRank]",
+      "outcome": "passed",
+      "seconds": 0.00017108296742662787,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[SpecialOrthogonal]",
+      "outcome": "passed",
+      "seconds": 0.0002513750223442912,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[SpecialOrthogonal]",
+      "outcome": "passed",
+      "seconds": 1.1142582499887794,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[SpecialOrthogonal]",
+      "outcome": "passed",
+      "seconds": 0.00016675004735589027,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[Stiefel]",
+      "outcome": "passed",
+      "seconds": 0.0002793750027194619,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[Stiefel]",
+      "outcome": "passed",
+      "seconds": 2.929441375017632,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[Stiefel]",
+      "outcome": "passed",
+      "seconds": 0.0003406250034458935,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[KendallShape]",
+      "outcome": "passed",
+      "seconds": 0.000682333018630743,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[KendallShape]",
+      "outcome": "passed",
+      "seconds": 1.8809809999656864,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[KendallShape]",
+      "outcome": "passed",
+      "seconds": 0.0001734999823383987,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[Product]",
+      "outcome": "passed",
+      "seconds": 0.0003224170068278909,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[Product]",
+      "outcome": "passed",
+      "seconds": 0.6106027909554541,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_batch_helpers_compose_with_jit_and_vmap[Product]",
+      "outcome": "passed",
+      "seconds": 0.0001463329535908997,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_autodiff_gradient_and_hessian_vector_products_are_jittable[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.00032179098343476653,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_autodiff_gradient_and_hessian_vector_products_are_jittable[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.1506810410064645,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_autodiff_gradient_and_hessian_vector_products_are_jittable[Sphere]",
+      "outcome": "passed",
+      "seconds": 0.00015324994456022978,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_autodiff_gradient_and_hessian_vector_products_are_jittable[Product]",
+      "outcome": "passed",
+      "seconds": 0.00031445903005078435,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_autodiff_gradient_and_hessian_vector_products_are_jittable[Product]",
+      "outcome": "passed",
+      "seconds": 0.23791191697819158,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_autodiff_gradient_and_hessian_vector_products_are_jittable[Product]",
+      "outcome": "passed",
+      "seconds": 0.0001741250162012875,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_unsupported_automatic_spd_hessian_is_reported_explicitly",
+      "outcome": "passed",
+      "seconds": 0.0004345829947851598,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_unsupported_automatic_spd_hessian_is_reported_explicitly",
+      "outcome": "passed",
+      "seconds": 0.0336723750224337,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_jax_transformations.py::test_unsupported_automatic_spd_hessian_is_reported_explicitly",
+      "outcome": "passed",
+      "seconds": 0.00012974999845027924,
+      "when": "teardown"
+    }
+  ]
+}

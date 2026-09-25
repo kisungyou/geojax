@@ -1,0 +1,78 @@
+{
+  "jax": "0.6.0",
+  "x64": false,
+  "cases": [
+    {
+      "geometry": "Sphere symmetric four points",
+      "converged": true,
+      "gradient_norm": 0.00027381995460018516,
+      "effective_tolerance": 0.0002883277381813959,
+      "reference_error": 0.0001458695624023676,
+      "iterations": 3,
+      "reason": "gradient tolerance reached at floating-point resolution",
+      "seconds": 6.183140375011135,
+      "history": [
+        {
+          "iter": 0,
+          "cost": 0.6973692178726196,
+          "gradnorm": 1.1228671073913574,
+          "alpha": null
+        },
+        {
+          "iter": 1,
+          "cost": 0.36139586567878723,
+          "gradnorm": 0.07238900661468506,
+          "alpha": 0.5
+        },
+        {
+          "iter": 2,
+          "cost": 0.36000528931617737,
+          "gradnorm": 0.004452116787433624,
+          "alpha": 0.5
+        },
+        {
+          "iter": 3,
+          "cost": 0.36000001430511475,
+          "gradnorm": 0.00027381995460018516,
+          "alpha": 0.5
+        }
+      ]
+    },
+    {
+      "geometry": "AffineSPD noncommuting symmetric logarithms",
+      "converged": true,
+      "gradient_norm": 0.00010203535930486396,
+      "effective_tolerance": 0.00018293415345048067,
+      "reference_error": 5.0338421715423465e-05,
+      "iterations": 3,
+      "reason": "gradient tolerance reached at floating-point resolution",
+      "seconds": 6.4701939999940805,
+      "history": [
+        {
+          "iter": 0,
+          "cost": 0.2807239890098572,
+          "gradnorm": 0.7322636842727661,
+          "alpha": null
+        },
+        {
+          "iter": 1,
+          "cost": 0.1480664610862732,
+          "gradnorm": 0.008182606659829617,
+          "alpha": 0.5
+        },
+        {
+          "iter": 2,
+          "cost": 0.1480645388364792,
+          "gradnorm": 0.007653269916772842,
+          "alpha": 0.5
+        },
+        {
+          "iter": 3,
+          "cost": 0.14805004000663757,
+          "gradnorm": 0.00010203535930486396,
+          "alpha": 0.5
+        }
+      ]
+    }
+  ]
+}

@@ -101,13 +101,18 @@ def test_supported_python_matrix_is_consistent():
     assert "PYTHONHASHSEED=0" in parser["testenv"]["set_env"]
     commands = parser["testenv"]["commands"]
     assert "scripts/assert_installed_package.py" in commands
-    assert "-o pythonpath=" in commands
+    assert "python -I {tox_root}/scripts/run_test_suite.py" in commands
 
     workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
-    assert "jax: latest" in workflow
+    assert "jax: latest" not in workflow
     assert "scripts/smoke_package.py" in workflow
-    assert workflow.count("suite: full") == 4
-    assert workflow.count("suite: smoke") == 2
+    assert workflow.count("precision: float32") == 5
+    assert workflow.count("precision: float64") == 5
+    assert "suite: smoke" not in workflow
+    assert '"pytest==9.0.3" "pytest-cov==7.1.0" "coverage==7.13.5"' in workflow
+    assert "python -I scripts/run_test_suite.py" in workflow
+    assert "python -m pip install --no-deps dist/*.whl" in workflow
+    assert "if: always()" in workflow
     assert "python -m pip check" in workflow
     for version in supported:
         assert f'python: "{version}"' in workflow

@@ -206,8 +206,9 @@ Before a release, `make test-matrix` provisions and exercises Python
 both JAX precision modes. Missing interpreters are downloaded and managed by
 `tox-uv` rather than skipped or inherited from the active base environment.
 `make test-matrix-parallel` provides a coverage-safe two-worker alternative.
-Every tox run imports the installed wheel from an isolated working directory;
-GitHub CI additionally tracks the latest compatible JAX release.
+Every tox run imports the installed wheel from an isolated working directory
+and runs each test file in a fresh process to bound compilation memory.
+GitHub CI runs the same ten pinned combinations and retains their test reports.
 See the
 [testing guide](https://www.kisungyou.com/geojax/development/testing.html)
 for the exact matrix.

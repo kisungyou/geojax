@@ -1,0 +1,30 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.11.15, JAX 0.6.0, NumPy 1.26.4, float32
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 8 items
+
+tests/test_learning_edge_contracts.py::test_classifier_weight_prior_and_optimizer_contracts PASSED [ 12%]
+tests/test_learning_edge_contracts.py::test_tangent_feature_controls_empty_basis_and_covariance_guard PASSED [ 25%]
+tests/test_learning_edge_contracts.py::test_response_regression_alternate_paths_and_validation PASSED [ 37%]
+tests/test_learning_edge_contracts.py::test_uncertainty_tests_cover_small_sample_and_kernel_contracts PASSED [ 50%]
+tests/test_learning_edge_contracts.py::test_scalable_methods_cover_initialization_zero_weights_and_convergence PASSED [ 62%]
+tests/test_learning_edge_contracts.py::test_robust_location_explicit_initialization_scale_and_center PASSED [ 75%]
+tests/test_learning_edge_contracts.py::test_dictionary_and_semisupervised_alternate_contracts PASSED [ 87%]
+tests/test_learning_edge_contracts.py::test_operation_kind_handles_declared_unknown_and_attribute_fallbacks PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/diagnostics/default_mean_consumers/test_learning_edge_contracts.xml -
+============================= slowest 20 durations =============================
+4.11s call     tests/test_learning_edge_contracts.py::test_tangent_feature_controls_empty_basis_and_covariance_guard
+3.98s call     tests/test_learning_edge_contracts.py::test_classifier_weight_prior_and_optimizer_contracts
+3.84s call     tests/test_learning_edge_contracts.py::test_dictionary_and_semisupervised_alternate_contracts
+3.51s call     tests/test_learning_edge_contracts.py::test_response_regression_alternate_paths_and_validation
+2.16s call     tests/test_learning_edge_contracts.py::test_scalable_methods_cover_initialization_zero_weights_and_convergence
+1.90s call     tests/test_learning_edge_contracts.py::test_robust_location_explicit_initialization_scale_and_center
+1.07s call     tests/test_learning_edge_contracts.py::test_uncertainty_tests_cover_small_sample_and_kernel_contracts
+
+(13 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================== 8 passed in 20.65s ==============================

@@ -8,6 +8,8 @@ from typing import Any, Protocol, Sequence, Tuple, Union, runtime_checkable
 
 import jax.numpy as jnp
 
+from ._numerics import nonnegative
+
 Array = Any
 Shape = Union[int, Sequence[int], Tuple[int, ...]]
 
@@ -420,7 +422,7 @@ class GeometryMixin:
         semantics of ``log`` and ``dist``.
         """
         tangent = self.log(x, y)
-        return jnp.maximum(self.inner(x, tangent, tangent), 0.0)
+        return nonnegative(self.inner(x, tangent, tangent))
 
     def retr(self, x: Array, u: Array, t: float | Array = 1.0) -> Array:
         """Default retraction: use the exponential map."""

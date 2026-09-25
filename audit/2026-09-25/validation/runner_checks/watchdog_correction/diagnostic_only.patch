@@ -1,0 +1,121 @@
+--- a/scripts/run_test_suite.py
++++ b/scripts/run_test_suite.py
+@@ -189,7 +189,10 @@
+             "-o",
+             "addopts=",
+             "-o",
+-            f"faulthandler_timeout={arguments.trace_after}",
++            # CPython's background traceback watchdog can block its own cancellation.
++            # The parent enforces the wall deadline and requests a snapshot only
++            # after timeout; no diagnostic thread runs during a valid test.
++            "faulthandler_timeout=0",
+             "--maxfail=1",
+             "-v",
+             "--durations=0",
+@@ -337,8 +340,6 @@
+                 str(manifest_path),
+                 "--junit",
+                 str(junit),
+-                "--trace-after",
+-                str(arguments.trace_after),
+             ]
+             print(f"[{index}/{len(tests)}] {test.name}", flush=True)
+             summary["active_file"] = str(test.relative_to(repository))
+@@ -440,19 +441,13 @@
+         help="preserve prior runs in unique timestamped output subdirectories",
+     )
+     parser.add_argument("--timeout", type=float, default=600, help="wall seconds per test file")
+-    parser.add_argument(
+-        "--trace-after",
+-        type=float,
+-        default=90,
+-        help="seconds per test before dumping thread stacks",
+-    )
+     parser.add_argument("--worker", type=Path, help=argparse.SUPPRESS)
+     parser.add_argument("--manifest", type=Path, help=argparse.SUPPRESS)
+     parser.add_argument("--junit", type=Path, help=argparse.SUPPRESS)
+     arguments = parser.parse_args()
+     arguments.repository = arguments.repository.resolve()
+-    if arguments.timeout <= 0 or arguments.trace_after <= 0:
+-        parser.error("timeouts must be positive")
++    if arguments.timeout <= 0:
++        parser.error("timeout must be positive")
+     if arguments.worker:
+         if arguments.manifest is None or arguments.junit is None:
+             parser.error("worker requires manifest and JUnit paths")
+--- a/tests/test_test_suite_runner.py
++++ b/tests/test_test_suite_runner.py
+@@ -138,3 +138,62 @@
+     )
+     with pytest.raises(RuntimeError, match="expected installed wheel"):
+         runner._installed_package(repository)
++
++
++def test_runner_disables_background_watchdog_even_if_configured(tmp_path):
++    (tmp_path / "pyproject.toml").write_text(
++        "[tool.pytest.ini_options]\nfaulthandler_timeout = 0.001\n"
++    )
++    (tmp_path / "conftest.py").write_text(
++        "import faulthandler\n"
++        "def pytest_configure(config):\n"
++        "    def forbidden_watchdog(*args, **kwargs):\n"
++        "        raise AssertionError('background traceback watchdog must remain disabled')\n"
++        "    faulthandler.dump_traceback_later = forbidden_watchdog\n"
++    )
++    test_file = tmp_path / "test_synthetic.py"
++    test_file.write_text(
++        "import faulthandler, time\n"
++        "def test_success():\n"
++        "    assert faulthandler.is_enabled()\n"
++        "    time.sleep(0.02)\n"
++    )
++    manifest_path = tmp_path / "collection.json"
++    junit = tmp_path / "tests.xml"
++    program = (
++        "import importlib.util; from argparse import Namespace; from pathlib import Path; "
++        f"spec=importlib.util.spec_from_file_location('runner', {str(ROOT / 'scripts' / 'run_test_suite.py')!r}); "
++        "module=importlib.util.module_from_spec(spec); spec.loader.exec_module(module); "
++        # Isolate diagnostic behavior; installed-wheel validation has its own tests.
++        "module._installed_package=lambda repository: (repository, {}); "
++        "module._check_loaded_modules=lambda package: None; "
++        f"raise SystemExit(module._worker(Namespace(repository=Path({str(tmp_path)!r}), "
++        f"worker=Path({str(test_file)!r}), manifest=Path({str(manifest_path)!r}), "
++        f"junit=Path({str(junit)!r}))))"
++    )
++    environment = dict(os.environ, COVERAGE_FILE=str(tmp_path / ".coverage"))
++    environment.pop("PYTEST_ADDOPTS", None)
++    result = runner._run_process(
++        [sys.executable, "-I", "-c", program], tmp_path, environment, tmp_path / "pytest.log", 30
++    )
++    assert result["returncode"] == 0, (tmp_path / "pytest.log").read_text()
++    assert not result["timed_out"]
++    validated = runner._validate_result(0, json.loads(manifest_path.read_text()), junit)
++    assert validated["passed"] == 1
++
++
++@pytest.mark.skipif(os.name != "posix", reason="signal snapshots are supported on POSIX")
++def test_runner_requests_snapshot_only_after_wall_timeout(tmp_path):
++    program = (
++        "import faulthandler, signal, time; "
++        "faulthandler.register(signal.SIGUSR1, all_threads=True); "
++        "time.sleep(30)"
++    )
++    log = tmp_path / "timeout.log"
++    result = runner._run_process(
++        [sys.executable, "-I", "-c", program, "--worker"], tmp_path, dict(os.environ), log, 0.5
++    )
++    assert result["timed_out"] and result["returncode"] != 0
++    text = log.read_text()
++    assert text.index("Wall timeout") < text.index("Current thread")
++    assert result["seconds"] < 10
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -115,7 +115,7 @@
+           python -I scripts/run_test_suite.py
+           --repository "$GITHUB_WORKSPACE"
+           --output "$RUNNER_TEMP/geojax-tests"
+-          --timeout 600 --trace-after 90
++          --timeout 600
+       - uses: actions/upload-artifact@v4
+         if: always()
+         with:

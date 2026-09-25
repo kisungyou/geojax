@@ -1,0 +1,32 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py313-stable-float32/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_learning_geometry_audit.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py313-stable-float32/016-test_learning_geometry_audit.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py313-stable-float32/016-test_learning_geometry_audit.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.13.14, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py313-stable-float32/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.13.14, JAX 0.11.0, NumPy 2.4.4, float32
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 8 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_geometry_audit.py::test_pairwise_kernels_accept_closed_constants_and_traced_data[False] PASSED [ 12%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_geometry_audit.py::test_pairwise_kernels_accept_closed_constants_and_traced_data[True] PASSED [ 25%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_geometry_audit.py::test_sinkhorn_quadratic_cost_preserves_hessian_at_coincidence PASSED [ 37%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_geometry_audit.py::test_barycentric_objective_resolves_near_exact_reconstructions[0.001] PASSED [ 50%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_geometry_audit.py::test_barycentric_objective_resolves_near_exact_reconstructions[1.0] PASSED [ 62%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_geometry_audit.py::test_barycentric_objective_resolves_near_exact_reconstructions[1000.0] PASSED [ 75%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_geometry_audit.py::test_barycentric_ridge_survives_large_canceling_tangent_vectors[False] PASSED [ 87%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_geometry_audit.py::test_barycentric_ridge_survives_large_canceling_tangent_vectors[True] PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py313-stable-float32/016-test_learning_geometry_audit.xml -
+============================== slowest durations ===============================
+2.50s call     tests/test_learning_geometry_audit.py::test_barycentric_objective_resolves_near_exact_reconstructions[0.001]
+0.29s call     tests/test_learning_geometry_audit.py::test_barycentric_ridge_survives_large_canceling_tangent_vectors[True]
+0.16s call     tests/test_learning_geometry_audit.py::test_pairwise_kernels_accept_closed_constants_and_traced_data[False]
+0.14s call     tests/test_learning_geometry_audit.py::test_sinkhorn_quadratic_cost_preserves_hessian_at_coincidence
+0.03s call     tests/test_learning_geometry_audit.py::test_pairwise_kernels_accept_closed_constants_and_traced_data[True]
+0.03s call     tests/test_learning_geometry_audit.py::test_barycentric_ridge_survives_large_canceling_tangent_vectors[False]
+0.02s call     tests/test_learning_geometry_audit.py::test_barycentric_objective_resolves_near_exact_reconstructions[1.0]
+0.02s call     tests/test_learning_geometry_audit.py::test_barycentric_objective_resolves_near_exact_reconstructions[1000.0]
+
+(16 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================== 8 passed in 3.33s ===============================

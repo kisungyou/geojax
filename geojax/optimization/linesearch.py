@@ -33,6 +33,10 @@ def _trial_point(M: Any, x: Any, direction: Any, alpha: float) -> Any | None:
         return None
 
 
+class _RetractionDerivativeError(TypeError):
+    """The scalar retraction curve cannot be traced by JAX."""
+
+
 def _trial_curve(
     M: Any,
     x: Any,
@@ -47,8 +51,12 @@ def _trial_curve(
             (alpha_array,),
             (jnp.ones_like(alpha_array),),
         )
-    except jax.errors.ConcretizationTypeError as exc:
-        raise TypeError(
+    except (
+        jax.errors.ConcretizationTypeError,
+        jax.errors.TracerArrayConversionError,
+        jax.errors.TracerIntegerConversionError,
+    ) as exc:
+        raise _RetractionDerivativeError(
             "StrongWolfe requires a JAX-differentiable retraction in its scalar multiplier."
         ) from exc
     try:
@@ -356,6 +364,13 @@ class StrongWolfe:
     ``alpha -> retr(x, direction, alpha)``. Pairing that velocity with the
     trial gradient gives the actual derivative used by the curvature test,
     including for nonlinear retractions.
+
+    ``approximate_wolfe`` optionally permits Hager--Zhang approximate-Wolfe
+    acceptance when objective changes are within ``roundoff_factor`` times
+    the cost dtype's machine epsilon times ``abs(cost)``. The exact curve
+    derivative must satisfy both the approximate-Wolfe inequalities and the
+    usual strong-curvature bound. This never relaxes a solver's gradient
+    stopping criterion; ordinary strong Wolfe remains the default.
     """
 
     sufficient_decrease: float = 1e-4
@@ -366,6 +381,8 @@ class StrongWolfe:
     max_steps: int = 20
     max_zoom_steps: int = 25
     normalize_step: bool = True
+    approximate_wolfe: bool = False
+    roundoff_factor: float = 8.0
 
     def search(
         self,
@@ -407,6 +424,18 @@ class StrongWolfe:
             raise ValueError("max_steps and max_zoom_steps must be positive.")
         if not isinstance(self.normalize_step, bool):
             raise TypeError("normalize_step must be a boolean.")
+        if not isinstance(self.approximate_wolfe, bool):
+            raise TypeError("approximate_wolfe must be a boolean.")
+        roundoff_budget = 0.0
+        if self.approximate_wolfe:
+            factor = validate_positive(self.roundoff_factor, name="roundoff_factor")
+            if self.sufficient_decrease >= 0.5:
+                raise ValueError("Approximate-Wolfe acceptance requires sufficient_decrease < 0.5.")
+            cost_dtype = jnp.asarray(cost).dtype
+            if jnp.issubdtype(cost_dtype, jnp.floating):
+                roundoff_budget = factor * float(jnp.finfo(cost_dtype).eps) * abs(f0)
+            if not math.isfinite(roundoff_budget):
+                raise ValueError("The approximate-Wolfe objective roundoff budget must be finite.")
 
         base_alpha = (
             float(self.initial_stepsize) / norm_d
@@ -469,6 +498,38 @@ class StrongWolfe:
                 state=_state(f0, df0, a, step),
             )
 
+        def rounded_success(
+            point: Any,
+            value: Array,
+            grad: Any | None,
+            a: float,
+            derivative: float,
+        ) -> LineSearchResult | None:
+            phi = as_float(value)
+            if (
+                not self.approximate_wolfe
+                or not math.isfinite(phi)
+                or not math.isfinite(derivative)
+                or abs(phi - f0) > roundoff_budget
+                or abs(derivative) > -self.curvature * df0
+            ):
+                return None
+            # Prefer ordinary Wolfe whenever the rounded value still certifies it.
+            if phi <= f0 + self.sufficient_decrease * a * df0:
+                return success(point, value, grad, a)
+            # Hager--Zhang (2005), equations (4.1)--(4.3), restricted further
+            # to a symmetric objective-roundoff budget and strong curvature.
+            # In particular an unchanged point with derivative == df0 fails.
+            if self.curvature * df0 <= derivative <= (2.0 * self.sufficient_decrease - 1.0) * df0:
+                return success(
+                    point,
+                    value,
+                    grad,
+                    a,
+                    reason="approximate-Wolfe conditions satisfied within objective roundoff",
+                )
+            return None
+
         def zoom(
             lo: float,
             hi: float,
@@ -483,6 +544,9 @@ class StrongWolfe:
                     or phi > f0 + self.sufficient_decrease * a * df0
                     or phi >= phi_lo
                 ):
+                    rounded = rounded_success(point, value, grad, a, derivative)
+                    if rounded is not None:
+                        return rounded
                     hi = a
                     continue
                 if not math.isfinite(derivative):
@@ -506,6 +570,9 @@ class StrongWolfe:
                 or phi > f0 + self.sufficient_decrease * alpha * df0
                 or (iteration > 0 and phi >= previous_phi)
             ):
+                rounded = rounded_success(point, value, grad, alpha, derivative)
+                if rounded is not None:
+                    return rounded
                 result = zoom(previous_alpha, alpha, previous_phi)
                 if result is not None:
                     return result

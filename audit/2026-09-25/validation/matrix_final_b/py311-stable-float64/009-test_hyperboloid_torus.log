@@ -1,0 +1,28 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float64/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_hyperboloid_torus.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_b/py311-stable-float64/009-test_hyperboloid_torus.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_b/py311-stable-float64/009-test_hyperboloid_torus.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float64/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.11.15, JAX 0.10.2, NumPy 2.4.4, float64
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 6 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_hyperboloid_torus.py::test_hyperboloid_lorentz_model PASSED [ 16%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_hyperboloid_torus.py::test_torus_wrap_and_short_log PASSED [ 33%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_hyperboloid_torus.py::test_torus_log_rejects_antipodal_coordinates_but_distance_is_defined PASSED [ 50%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_hyperboloid_torus.py::test_open_ball_repairs_keep_a_float32_interior_margin PASSED [ 66%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_hyperboloid_torus.py::test_open_ball_operations_preserve_valid_points_near_the_boundary PASSED [ 83%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_hyperboloid_torus.py::test_hyperboloid_distance_resists_near_boundary_lorentz_cancellation PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_b/py311-stable-float64/009-test_hyperboloid_torus.xml -
+============================== slowest durations ===============================
+1.24s call     tests/test_hyperboloid_torus.py::test_hyperboloid_lorentz_model
+0.78s call     tests/test_hyperboloid_torus.py::test_open_ball_repairs_keep_a_float32_interior_margin
+0.24s call     tests/test_hyperboloid_torus.py::test_hyperboloid_distance_resists_near_boundary_lorentz_cancellation
+0.24s call     tests/test_hyperboloid_torus.py::test_open_ball_operations_preserve_valid_points_near_the_boundary
+0.23s call     tests/test_hyperboloid_torus.py::test_torus_wrap_and_short_log
+0.08s call     tests/test_hyperboloid_torus.py::test_torus_log_rejects_antipodal_coordinates_but_distance_is_defined
+
+(12 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================== 6 passed in 2.95s ===============================

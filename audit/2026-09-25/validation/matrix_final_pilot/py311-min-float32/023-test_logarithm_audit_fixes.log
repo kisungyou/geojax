@@ -1,0 +1,56 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_logarithm_audit_fixes.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_pilot/py311-min-float32/023-test_logarithm_audit_fixes.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_pilot/py311-min-float32/023-test_logarithm_audit_fixes.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.11.15, JAX 0.6.0, NumPy 1.26.4, float32
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 20 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_logarithm_audit_fixes.py::test_grassmann_log_repeated_angles_forward_reverse_and_jit[1] PASSED [  5%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_logarithm_audit_fixes.py::test_grassmann_log_repeated_angles_forward_reverse_and_jit[2] PASSED [ 10%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_logarithm_audit_fixes.py::test_grassmann_log_repeated_angles_forward_reverse_and_jit[3] PASSED [ 15%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_logarithm_audit_fixes.py::test_grassmann_log_noncommuting_feature_hessian_at_repeated_angles PASSED [ 20%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_logarithm_audit_fixes.py::test_grassmann_arctan_derivative_is_basis_equivariant_and_adjoint PASSED [ 25%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_logarithm_audit_fixes.py::test_grassmann_log_near_cut_and_at_cut PASSED [ 30%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_logarithm_audit_fixes.py::test_grassmann_mixed_near_cut_angles_do_not_square_conditioning PASSED [ 35%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_logarithm_audit_fixes.py::test_rotation_squared_distance_hessians_general_dimension_and_repeated_angles[2] PASSED [ 40%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_logarithm_audit_fixes.py::test_rotation_squared_distance_hessians_general_dimension_and_repeated_angles[3] PASSED [ 45%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_logarithm_audit_fixes.py::test_rotation_squared_distance_hessians_general_dimension_and_repeated_angles[4] PASSED [ 50%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_logarithm_audit_fixes.py::test_rotation_squared_distance_hessians_general_dimension_and_repeated_angles[6] PASSED [ 55%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_logarithm_audit_fixes.py::test_rotation_squared_distance_noncommuting_hessian_has_analytic_value[0.7] PASSED [ 60%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_logarithm_audit_fixes.py::test_rotation_squared_distance_noncommuting_hessian_has_analytic_value[2.4] PASSED [ 65%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_logarithm_audit_fixes.py::test_rotation_log_inverse_differential_and_basis_equivariance PASSED [ 70%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_logarithm_audit_fixes.py::test_rotation_log_native_batch_and_vmap_hessians PASSED [ 75%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_logarithm_audit_fixes.py::test_rotation_cut_has_finite_distance_but_undefined_log_and_gradient PASSED [ 80%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_logarithm_audit_fixes.py::test_rotation_projection_repeated_singular_values_have_analytic_two_derivatives[1.0] PASSED [ 85%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_logarithm_audit_fixes.py::test_rotation_projection_repeated_singular_values_have_analytic_two_derivatives[2.0] PASSED [ 90%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_logarithm_audit_fixes.py::test_rotation_projection_unique_reflection_and_rank_deficiency PASSED [ 95%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_logarithm_audit_fixes.py::test_rotation_projection_native_batch_and_adjoint_at_repeated_spectra PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_pilot/py311-min-float32/023-test_logarithm_audit_fixes.xml -
+============================== slowest durations ===============================
+16.40s call     tests/test_logarithm_audit_fixes.py::test_grassmann_log_noncommuting_feature_hessian_at_repeated_angles
+5.78s call     tests/test_logarithm_audit_fixes.py::test_rotation_log_native_batch_and_vmap_hessians
+5.76s call     tests/test_logarithm_audit_fixes.py::test_grassmann_log_repeated_angles_forward_reverse_and_jit[1]
+5.41s call     tests/test_logarithm_audit_fixes.py::test_grassmann_log_repeated_angles_forward_reverse_and_jit[2]
+5.27s call     tests/test_logarithm_audit_fixes.py::test_grassmann_log_repeated_angles_forward_reverse_and_jit[3]
+3.88s call     tests/test_logarithm_audit_fixes.py::test_rotation_squared_distance_noncommuting_hessian_has_analytic_value[0.7]
+3.81s call     tests/test_logarithm_audit_fixes.py::test_rotation_squared_distance_hessians_general_dimension_and_repeated_angles[2]
+3.78s call     tests/test_logarithm_audit_fixes.py::test_grassmann_log_near_cut_and_at_cut
+3.34s call     tests/test_logarithm_audit_fixes.py::test_rotation_squared_distance_hessians_general_dimension_and_repeated_angles[6]
+3.25s call     tests/test_logarithm_audit_fixes.py::test_rotation_log_inverse_differential_and_basis_equivariance
+2.91s call     tests/test_logarithm_audit_fixes.py::test_rotation_squared_distance_hessians_general_dimension_and_repeated_angles[3]
+2.71s call     tests/test_logarithm_audit_fixes.py::test_rotation_squared_distance_hessians_general_dimension_and_repeated_angles[4]
+2.38s call     tests/test_logarithm_audit_fixes.py::test_rotation_squared_distance_noncommuting_hessian_has_analytic_value[2.4]
+2.27s call     tests/test_logarithm_audit_fixes.py::test_grassmann_mixed_near_cut_angles_do_not_square_conditioning
+2.22s call     tests/test_logarithm_audit_fixes.py::test_rotation_projection_unique_reflection_and_rank_deficiency
+2.01s call     tests/test_logarithm_audit_fixes.py::test_grassmann_arctan_derivative_is_basis_equivariant_and_adjoint
+1.31s call     tests/test_logarithm_audit_fixes.py::test_rotation_projection_native_batch_and_adjoint_at_repeated_spectra
+0.86s call     tests/test_logarithm_audit_fixes.py::test_rotation_projection_repeated_singular_values_have_analytic_two_derivatives[1.0]
+0.80s call     tests/test_logarithm_audit_fixes.py::test_rotation_projection_repeated_singular_values_have_analytic_two_derivatives[2.0]
+0.41s call     tests/test_logarithm_audit_fixes.py::test_rotation_cut_has_finite_distance_but_undefined_log_and_gradient
+
+(40 durations < 0.005s hidden.  Use -vv to show these durations.)
+======================== 20 passed in 74.76s (0:01:14) =========================

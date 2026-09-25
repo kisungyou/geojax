@@ -11,6 +11,7 @@ from geojax.geometry.base import validate_integer, validate_nonnegative, validat
 
 from ._tangent_cg import tangent_conjugate_gradient
 from .gaussnewton import _least_squares_method, _residual_norm_from_cost
+from .linesearch import _trial_point
 from .minimize import (
     Array,
     InfoEntry,
@@ -26,7 +27,6 @@ from .minimize import (
     print_iteration,
     print_iteration_header,
     require,
-    retract,
     stopping_reason,
     tree_neg,
 )
@@ -150,8 +150,8 @@ class LevenbergMarquardt:
                 tree_vdot(jacobian_direction, jacobian_direction)
             )
             damping_penalty = 0.5 * damping_used * stepnorm * stepnorm
-            trial = retract(M, x, direction, 1.0)
-            trial_cost = cost_value(problem, trial)
+            trial = _trial_point(M, x, direction, 1.0)
+            trial_cost = math.inf if trial is None else cost_value(problem, trial)
             actual = as_float(f) - as_float(trial_cost)
             rho = actual / predicted if predicted > 0.0 else -math.inf
             accepted = bool(math.isfinite(rho) and rho > acceptance_threshold)

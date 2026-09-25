@@ -1,0 +1,47 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float64/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_grassmann.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_after_watchdog_fix/py311-stable-float64/008-test_grassmann.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_after_watchdog_fix/py311-stable-float64/008-test_grassmann.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float64/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.11.15, JAX 0.10.2, NumPy 2.4.4, float64
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 16 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_grassmann.py::test_grassmann_constructor_projector PASSED [  6%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_grassmann.py::test_grassmann_rejects_invalid_size PASSED [ 12%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_grassmann.py::test_projection_embedding_is_basis_invariant PASSED [ 18%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_grassmann.py::test_projection_embedding_returns_frame_from_symmetric_matrix PASSED [ 25%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_grassmann.py::test_projection_geometry_matches_canonical_intrinsic_geometry PASSED [ 31%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_grassmann.py::test_projection_gradient_conversion_matches_canonical_frame_gradient PASSED [ 37%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_grassmann.py::test_chordal_distance_matches_sines_of_principal_angles PASSED [ 43%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_grassmann.py::test_nearby_geodesic_distance_is_numerically_stable PASSED [ 50%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_grassmann.py::test_projector_decomposition_aligns_to_reference_frame PASSED [ 56%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_grassmann.py::test_projection_extrinsic_mean_is_frame_valued_and_basis_invariant PASSED [ 62%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_grassmann.py::test_projection_extrinsic_mean_marks_a_nonunique_eigenspace PASSED [ 68%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_grassmann.py::test_projection_extrinsic_mean_validates_points_and_weights PASSED [ 75%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_grassmann.py::test_grassmann_exact_ambient_hessian_conversion PASSED [ 81%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_grassmann.py::test_projection_geometry_optimizes_with_frame_valued_points PASSED [ 87%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_grassmann.py::test_grassmann_transport_is_equivariant_to_endpoint_frame_gauge PASSED [ 93%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_grassmann.py::test_grassmann_log_detects_numerically_orthogonal_subspaces PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_after_watchdog_fix/py311-stable-float64/008-test_grassmann.xml -
+============================== slowest durations ===============================
+32.77s call     tests/test_grassmann.py::test_projection_geometry_optimizes_with_frame_valued_points
+1.60s call     tests/test_grassmann.py::test_grassmann_transport_is_equivariant_to_endpoint_frame_gauge
+1.15s call     tests/test_grassmann.py::test_projection_geometry_matches_canonical_intrinsic_geometry
+1.12s call     tests/test_grassmann.py::test_projection_extrinsic_mean_validates_points_and_weights
+1.11s call     tests/test_grassmann.py::test_projection_extrinsic_mean_is_frame_valued_and_basis_invariant
+0.83s call     tests/test_grassmann.py::test_chordal_distance_matches_sines_of_principal_angles
+0.75s call     tests/test_grassmann.py::test_grassmann_log_detects_numerically_orthogonal_subspaces
+0.73s call     tests/test_grassmann.py::test_projection_extrinsic_mean_marks_a_nonunique_eigenspace
+0.63s call     tests/test_grassmann.py::test_grassmann_constructor_projector
+0.44s call     tests/test_grassmann.py::test_projection_embedding_returns_frame_from_symmetric_matrix
+0.39s call     tests/test_grassmann.py::test_nearby_geodesic_distance_is_numerically_stable
+0.29s call     tests/test_grassmann.py::test_grassmann_exact_ambient_hessian_conversion
+0.26s call     tests/test_grassmann.py::test_projection_embedding_is_basis_invariant
+0.14s call     tests/test_grassmann.py::test_projector_decomposition_aligns_to_reference_frame
+0.03s call     tests/test_grassmann.py::test_projection_gradient_conversion_matches_canonical_frame_gradient
+
+(33 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================= 16 passed in 42.40s ==============================

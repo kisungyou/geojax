@@ -26,6 +26,7 @@ jobs:
 
   tests:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     strategy:
       fail-fast: false
       matrix:
@@ -35,38 +36,62 @@ jobs:
             x64: "0"
             jax: "0.6.0"
             numpy: "1.26.4"
-            suite: full
+            dependencies: min
           - python: "3.11"
             precision: float64
             x64: "1"
             jax: "0.6.0"
             numpy: "1.26.4"
-            suite: full
+            dependencies: min
+          - python: "3.11"
+            precision: float32
+            x64: "0"
+            jax: "0.10.2"
+            numpy: "2.4.4"
+            dependencies: stable
+          - python: "3.11"
+            precision: float64
+            x64: "1"
+            jax: "0.10.2"
+            numpy: "2.4.4"
+            dependencies: stable
           - python: "3.12"
             precision: float32
             x64: "0"
             jax: "0.11.0"
             numpy: "2.4.4"
-            suite: smoke
+            dependencies: stable
+          - python: "3.12"
+            precision: float64
+            x64: "1"
+            jax: "0.11.0"
+            numpy: "2.4.4"
+            dependencies: stable
+          - python: "3.13"
+            precision: float32
+            x64: "0"
+            jax: "0.11.0"
+            numpy: "2.4.4"
+            dependencies: stable
           - python: "3.13"
             precision: float64
             x64: "1"
             jax: "0.11.0"
             numpy: "2.4.4"
-            suite: smoke
+            dependencies: stable
           - python: "3.14"
             precision: float32
             x64: "0"
-            jax: latest
-            numpy: latest
-            suite: full
+            jax: "0.11.0"
+            numpy: "2.4.4"
+            dependencies: stable
           - python: "3.14"
             precision: float64
             x64: "1"
-            jax: latest
-            numpy: latest
-            suite: full
-    name: tests-py${{ matrix.python }}-${{ matrix.precision }}-${{ matrix.jax }}-${{ matrix.suite }}
+            jax: "0.11.0"
+            numpy: "2.4.4"
+            dependencies: stable
+    name: tests-py${{ matrix.python }}-${{ matrix.precision }}-${{ matrix.dependencies }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -74,28 +99,30 @@ jobs:
           python-version: ${{ matrix.python }}
           cache: pip
       - run: python -m pip install --upgrade pip
-      - run: python -m pip install -e ".[dev,examples]"
-      - if: matrix.jax != 'latest'
-        run: python -m pip install "jax==${{ matrix.jax }}" "jaxlib==${{ matrix.jax }}" "numpy==${{ matrix.numpy }}"
-      - if: matrix.jax == 'latest'
-        run: python -m pip install --upgrade jax jaxlib numpy
+      - run: >-
+          python -m pip install build
+          "jax==${{ matrix.jax }}" "jaxlib==${{ matrix.jax }}"
+          "numpy==${{ matrix.numpy }}" "scipy==1.17.1"
+          "ml-dtypes==0.5.4" "opt-einsum==3.4.0"
+          "pytest==9.0.3" "pytest-cov==7.1.0" "coverage==7.13.5"
+      - run: python -m build --wheel --outdir dist
+      - run: python -m pip install --no-deps dist/*.whl
       - run: python -m pip check
-      - if: matrix.suite == 'full'
-        env:
+      - env:
           GEOJAX_TEST_X64: ${{ matrix.x64 }}
-        run: python -m pytest --cov=geojax --cov-report=term-missing
-      - if: matrix.suite == 'full'
-        run: python -m coverage report --include='*/geojax/learning/*' --fail-under=95
-      - if: matrix.suite == 'smoke'
-        env:
-          GEOJAX_TEST_X64: ${{ matrix.x64 }}
+          PYTHONHASHSEED: "0"
         run: >-
-          python -m pytest -q
-          tests/test_release_contract.py
-          tests/test_geometry_interface.py
-          tests/test_jax_transformations.py
-          tests/test_optimization_extended.py
-          tests/test_learning.py
+          python -I scripts/run_test_suite.py
+          --repository "$GITHUB_WORKSPACE"
+          --output "$RUNNER_TEMP/geojax-tests"
+          --timeout 600
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tests-py${{ matrix.python }}-${{ matrix.precision }}-${{ matrix.dependencies }}
+          path: ${{ runner.temp }}/geojax-tests
+          include-hidden-files: true
+          if-no-files-found: warn
 
   package:
     runs-on: ubuntu-latest

@@ -34,7 +34,7 @@ from geojax.geometry import (
     SphereExtrinsic,
     Torus,
 )
-from geojax.geometry._numerics import stable_norm
+from geojax.geometry._numerics import power_of_two_rescale, stable_norm
 
 from ._utils import (
     as_real_array,
@@ -329,8 +329,7 @@ def _convert_representation(manifold: Any, values: Any, representation: str) -> 
                 raise ValueError("positive weights must be finite and strictly positive.")
             total = jnp.sum(array, axis=-1, keepdims=True)
             if not bool(jnp.all(jnp.isfinite(total))) or bool(jnp.any(total <= 0.0)):
-                scale = jnp.max(array, axis=-1, keepdims=True)
-                scaled = array / scale
+                scaled = power_of_two_rescale(array, axis=-1)
                 total = jnp.sum(scaled, axis=-1, keepdims=True)
                 return scaled / total
             return array / total

@@ -1,0 +1,98 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_b/py312-stable-float32/025-test_low_rank_audit_fixes.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_b/py312-stable-float32/025-test_low_rank_audit_fixes.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.12.13, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.12.13, JAX 0.11.0, NumPy 2.4.4, float32
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 41 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_repeated_positive_and_zero_distance_gradient_and_hessian[1] PASSED [  2%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_repeated_positive_and_zero_distance_gradient_and_hessian[2] PASSED [  4%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_projector_and_projection_derivatives_are_basis_independent[1] PASSED [  7%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_projector_and_projection_derivatives_are_basis_independent[2] PASSED [  9%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_log_jvp_vjp_and_hessian_of_distance_along_horizontal_geodesic[1] PASSED [ 12%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_log_jvp_vjp_and_hessian_of_distance_along_horizontal_geodesic[2] PASSED [ 14%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_bures_distance_directional_derivative_and_adjoint_identity[1] PASSED [ 17%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_bures_distance_directional_derivative_and_adjoint_identity[2] PASSED [ 19%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_sylvester_differentiation_preserves_equation_and_null_constraint[1] PASSED [ 21%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_sylvester_differentiation_preserves_equation_and_null_constraint[2] PASSED [ 24%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_ordinary_frechet_mean_at_repeated_spectra[1] PASSED [ 26%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_ordinary_frechet_mean_at_repeated_spectra[2] PASSED [ 29%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_jit_vmap_and_direct_batch_agree_for_regular_log_and_gradient PASSED [ 31%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_rotated_support_hessian_matches_finite_difference_and_analytic_geodesic PASSED [ 34%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_exp_accepts_regular_horizontal_path_beyond_positive_overlap[1] PASSED [ 36%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_exp_accepts_regular_horizontal_path_beyond_positive_overlap[2] PASSED [ 39%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_exp_rejects_rank_loss_in_repeated_compressed_eigenspace[False] PASSED [ 41%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_exp_rejects_rank_loss_in_repeated_compressed_eigenspace[True] PASSED [ 43%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_exp_domain_certificate_is_rotation_invariant_and_batched PASSED [ 46%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_exp_positive_horizontal_generator_with_large_dynamic_range PASSED [ 48%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[rectangular] PASSED [ 51%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[psd] PASSED [ 53%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[elliptope] PASSED [ 56%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[spectrahedron] PASSED [ 58%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[rectangular] PASSED [ 60%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[psd] PASSED [ 63%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[elliptope] PASSED [ 65%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[spectrahedron] PASSED [ 68%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_rectangular_projection_nested_derivative_with_discarded_spectrum[False] PASSED [ 70%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_rectangular_projection_nested_derivative_with_discarded_spectrum[True] PASSED [ 73%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_tall_rectangular_projection_keeps_thin_matrix_working_shapes PASSED [ 75%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_bures_sylvester_and_metric_broadcast_base_and_tangent_batches PASSED [ 78%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[-1-1] PASSED [ 80%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[-1-2] PASSED [ 82%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[1-1] PASSED [ 85%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[1-2] PASSED [ 87%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_bures_log_scaling_preserves_inputs_at_opposite_extreme_scales PASSED [ 90%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_bures_finite_range_endpoints_preserve_points_metric_and_distance_gradient[1] PASSED [ 92%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_bures_finite_range_endpoints_preserve_points_metric_and_distance_gradient[2] PASSED [ 95%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_low_rank_projection_extreme_spectrum_keeps_rotating_support_derivative PASSED [ 97%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank_audit_fixes.py::test_low_rank_projection_preserves_the_smallest_normal_positive_spectrum PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_b/py312-stable-float32/025-test_low_rank_audit_fixes.xml -
+============================== slowest durations ===============================
+9.87s call     tests/test_low_rank_audit_fixes.py::test_jit_vmap_and_direct_batch_agree_for_regular_log_and_gradient
+7.45s call     tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[1-2]
+7.35s call     tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[1-1]
+6.43s call     tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[-1-1]
+6.33s call     tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[-1-2]
+6.12s call     tests/test_low_rank_audit_fixes.py::test_ordinary_frechet_mean_at_repeated_spectra[1]
+6.11s call     tests/test_low_rank_audit_fixes.py::test_log_jvp_vjp_and_hessian_of_distance_along_horizontal_geodesic[1]
+5.68s call     tests/test_low_rank_audit_fixes.py::test_log_jvp_vjp_and_hessian_of_distance_along_horizontal_geodesic[2]
+5.49s call     tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[psd]
+4.62s call     tests/test_low_rank_audit_fixes.py::test_bures_distance_directional_derivative_and_adjoint_identity[1]
+4.43s call     tests/test_low_rank_audit_fixes.py::test_ordinary_frechet_mean_at_repeated_spectra[2]
+3.88s call     tests/test_low_rank_audit_fixes.py::test_bures_distance_directional_derivative_and_adjoint_identity[2]
+3.81s call     tests/test_low_rank_audit_fixes.py::test_rotated_support_hessian_matches_finite_difference_and_analytic_geodesic
+3.69s call     tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[rectangular]
+3.66s call     tests/test_low_rank_audit_fixes.py::test_bures_log_scaling_preserves_inputs_at_opposite_extreme_scales
+3.44s call     tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[elliptope]
+3.34s call     tests/test_low_rank_audit_fixes.py::test_repeated_positive_and_zero_distance_gradient_and_hessian[1]
+3.30s call     tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[psd]
+2.98s call     tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[rectangular]
+2.69s call     tests/test_low_rank_audit_fixes.py::test_repeated_positive_and_zero_distance_gradient_and_hessian[2]
+1.98s call     tests/test_low_rank_audit_fixes.py::test_rectangular_projection_nested_derivative_with_discarded_spectrum[False]
+1.85s call     tests/test_low_rank_audit_fixes.py::test_bures_finite_range_endpoints_preserve_points_metric_and_distance_gradient[1]
+1.82s call     tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[elliptope]
+1.70s call     tests/test_low_rank_audit_fixes.py::test_bures_finite_range_endpoints_preserve_points_metric_and_distance_gradient[2]
+1.67s call     tests/test_low_rank_audit_fixes.py::test_projector_and_projection_derivatives_are_basis_independent[2]
+1.62s call     tests/test_low_rank_audit_fixes.py::test_bures_sylvester_and_metric_broadcast_base_and_tangent_batches
+1.60s call     tests/test_low_rank_audit_fixes.py::test_projector_and_projection_derivatives_are_basis_independent[1]
+1.07s call     tests/test_low_rank_audit_fixes.py::test_rectangular_projection_nested_derivative_with_discarded_spectrum[True]
+0.82s call     tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[spectrahedron]
+0.80s call     tests/test_low_rank_audit_fixes.py::test_exp_accepts_regular_horizontal_path_beyond_positive_overlap[2]
+0.75s call     tests/test_low_rank_audit_fixes.py::test_exp_accepts_regular_horizontal_path_beyond_positive_overlap[1]
+0.65s call     tests/test_low_rank_audit_fixes.py::test_tall_rectangular_projection_keeps_thin_matrix_working_shapes
+0.63s call     tests/test_low_rank_audit_fixes.py::test_sylvester_differentiation_preserves_equation_and_null_constraint[1]
+0.56s call     tests/test_low_rank_audit_fixes.py::test_sylvester_differentiation_preserves_equation_and_null_constraint[2]
+0.54s call     tests/test_low_rank_audit_fixes.py::test_exp_domain_certificate_is_rotation_invariant_and_batched
+0.54s call     tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[spectrahedron]
+0.44s call     tests/test_low_rank_audit_fixes.py::test_exp_positive_horizontal_generator_with_large_dynamic_range
+0.43s call     tests/test_low_rank_audit_fixes.py::test_exp_rejects_rank_loss_in_repeated_compressed_eigenspace[True]
+0.36s call     tests/test_low_rank_audit_fixes.py::test_low_rank_projection_extreme_spectrum_keeps_rotating_support_derivative
+0.34s call     tests/test_low_rank_audit_fixes.py::test_exp_rejects_rank_loss_in_repeated_compressed_eigenspace[False]
+0.28s call     tests/test_low_rank_audit_fixes.py::test_low_rank_projection_preserves_the_smallest_normal_positive_spectrum
+
+(82 durations < 0.005s hidden.  Use -vv to show these durations.)
+======================== 41 passed in 121.38s (0:02:01) ========================

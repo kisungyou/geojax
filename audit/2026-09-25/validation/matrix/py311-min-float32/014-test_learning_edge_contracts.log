@@ -1,0 +1,31 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_learning_edge_contracts.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py311-min-float32/014-test_learning_edge_contracts.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py311-min-float32/014-test_learning_edge_contracts.xml", "--trace-after", "90.0"]
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.11.15, JAX 0.6.0, NumPy 1.26.4, float32
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 8 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_edge_contracts.py::test_classifier_weight_prior_and_optimizer_contracts PASSED [ 12%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_edge_contracts.py::test_tangent_feature_controls_empty_basis_and_covariance_guard PASSED [ 25%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_edge_contracts.py::test_response_regression_alternate_paths_and_validation PASSED [ 37%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_edge_contracts.py::test_uncertainty_tests_cover_small_sample_and_kernel_contracts PASSED [ 50%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_edge_contracts.py::test_scalable_methods_cover_initialization_zero_weights_and_convergence PASSED [ 62%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_edge_contracts.py::test_robust_location_explicit_initialization_scale_and_center PASSED [ 75%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_edge_contracts.py::test_dictionary_and_semisupervised_alternate_contracts PASSED [ 87%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_edge_contracts.py::test_operation_kind_handles_declared_unknown_and_attribute_fallbacks PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py311-min-float32/014-test_learning_edge_contracts.xml -
+============================== slowest durations ===============================
+5.87s call     tests/test_learning_edge_contracts.py::test_dictionary_and_semisupervised_alternate_contracts
+5.09s call     tests/test_learning_edge_contracts.py::test_tangent_feature_controls_empty_basis_and_covariance_guard
+4.65s call     tests/test_learning_edge_contracts.py::test_classifier_weight_prior_and_optimizer_contracts
+4.17s call     tests/test_learning_edge_contracts.py::test_response_regression_alternate_paths_and_validation
+2.60s call     tests/test_learning_edge_contracts.py::test_scalable_methods_cover_initialization_zero_weights_and_convergence
+2.15s call     tests/test_learning_edge_contracts.py::test_robust_location_explicit_initialization_scale_and_center
+1.33s call     tests/test_learning_edge_contracts.py::test_uncertainty_tests_cover_small_sample_and_kernel_contracts
+
+(17 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================== 8 passed in 26.02s ==============================

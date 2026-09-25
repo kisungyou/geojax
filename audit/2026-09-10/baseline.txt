@@ -1,0 +1,7 @@
+Initial commit: 488890e
+Python 3.12.13 / JAX 0.11.0 / float64
+Command: python -m pytest -q
+Result: 1 failed, 938 passed in 748.08s (0:12:28).
+Failure: tests/test_learning_data.py::test_coordinate_adapter_covers_overflow_safe_simplex_and_se3_twists
+Error: ValueError: Manifold data contain NaN or infinite values.
+Cause: normalization of equal maximum-finite simplex weights.

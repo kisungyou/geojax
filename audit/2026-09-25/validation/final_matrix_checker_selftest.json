@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "checks": [
+    {
+      "check": "valid collection/runtime/JUnit evidence accepted",
+      "passed": true
+    },
+    {
+      "check": "missing call phase rejected",
+      "passed": true,
+      "rejection": "incomplete test execution: tests/test_benchmarks.py::test_benchmark_modules_return_solver_rows"
+    },
+    {
+      "check": "JUnit identity mismatch rejected",
+      "passed": true,
+      "rejection": "JUnit identities differ from collection: tests/test_benchmarks.py"
+    },
+    {
+      "check": "omitted core coverage module rejected",
+      "passed": true,
+      "rejection": "coverage omits core modules or includes unexpected modules"
+    },
+    {
+      "check": "unproven harness migration rejected",
+      "passed": true,
+      "rejection": "control migration hash mismatch: scripts/run_test_suite.py"
+    }
+  ],
+  "verifier_sha256": "271ea565d521d3ef82762413f7cbfbcd8ca46cada504ec3748bd3e192ed4e793",
+  "notes": "Read-only evidence validation with isolated temporary corrupt copies; no numerical tests or package changes."
+}

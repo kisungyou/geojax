@@ -1,0 +1,66 @@
+{
+  "status": "partial_completed_before_watchdog_fix",
+  "reason": "Dispatcher paused to prevent further jobs starting; terminated only after all active workers completed or hit their existing timeout. Original dispatcher snapshot retained unchanged.",
+  "runs": {
+    "py311-stable-float32": {
+      "status": "passed",
+      "results": "audit/2026-09-25/validation/matrix/py311-stable-float32/results.json",
+      "totals": {
+        "collected": 1124,
+        "junit_cases": 1125,
+        "passed": 1123,
+        "skipped": 2
+      },
+      "seconds": 1164.646,
+      "error": null,
+      "source_unchanged": true
+    },
+    "py311-min-float64": {
+      "status": "passed",
+      "results": "audit/2026-09-25/validation/matrix/py311-min-float64/results.json",
+      "totals": {
+        "collected": 1124,
+        "junit_cases": 1125,
+        "passed": 1124,
+        "skipped": 1
+      },
+      "seconds": 2586.057,
+      "error": null,
+      "source_unchanged": true
+    },
+    "py314-stable-float32": {
+      "status": "passed",
+      "results": "audit/2026-09-25/validation/matrix/py314-stable-float32/results.json",
+      "totals": {
+        "collected": 1124,
+        "junit_cases": 1125,
+        "passed": 1123,
+        "skipped": 2
+      },
+      "seconds": 1995.054,
+      "error": null,
+      "source_unchanged": true
+    },
+    "py311-min-float32": {
+      "status": "failed",
+      "results": "audit/2026-09-25/validation/matrix/py311-min-float32/results.json",
+      "totals": {
+        "collected": 607,
+        "junit_cases": 607,
+        "passed": 606,
+        "skipped": 1
+      },
+      "seconds": 1279.539,
+      "error": "test_learning_statistics_clustering.py exceeded its 600-second wall timeout",
+      "source_unchanged": true
+    }
+  },
+  "retained_complete_environments": [
+    "py311-stable-float32",
+    "py311-min-float64",
+    "py314-stable-float32"
+  ],
+  "rerun_required": [
+    "py311-min-float32"
+  ]
+}

@@ -1,0 +1,655 @@
+{
+  "collection_reports": [],
+  "deselected": [],
+  "exitstatus": 0,
+  "nodeids": [
+    "tests/test_learning_uncertainty_scalable.py::test_bootstrap_mean_is_reproducible_and_returns_a_geodesic_ball",
+    "tests/test_learning_uncertainty_scalable.py::test_energy_mmd_and_paired_tests_detect_large_location_changes",
+    "tests/test_learning_uncertainty_scalable.py::test_uncertainty_methods_validate_keys_sizes_and_bandwidths",
+    "tests/test_learning_uncertainty_scalable.py::test_streaming_mean_is_exact_for_weighted_euclidean_data",
+    "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_is_reproducible_and_improves_a_bad_initial_point",
+    "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_uses_an_unbiased_unequal_weight_batch_direction",
+    "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_does_not_confuse_decayed_steps_with_stationarity",
+    "tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_respects_global_sample_weight_mass",
+    "tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_separates_clusters_and_supports_product_points",
+    "tests/test_learning_uncertainty_scalable.py::test_scalable_methods_validate_controls_and_exact_capabilities",
+    "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs0-TypeError-check_psd must be a boolean]",
+    "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs1-TypeError-kernel must be callable]",
+    "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs2-ValueError-bandwidth is only defined]",
+    "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs3-ValueError-real-valued]",
+    "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs4-ValueError-square matrix matching]",
+    "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_can_explicitly_disable_the_psd_gate",
+    "tests/test_learning_uncertainty_scalable.py::test_rbf_mmd_uses_a_finite_default_when_all_distances_are_zero",
+    "tests/test_learning_uncertainty_scalable.py::test_two_sample_uncertainty_methods_require_two_observations_per_group[energy_two_sample_test]",
+    "tests/test_learning_uncertainty_scalable.py::test_two_sample_uncertainty_methods_require_two_observations_per_group[kernel_mmd_two_sample_test]",
+    "tests/test_learning_uncertainty_scalable.py::test_bootstrap_rejects_original_and_replicate_nonconvergence",
+    "tests/test_learning_uncertainty_scalable.py::test_bootstrap_rejects_nonfinite_replicate_points",
+    "tests/test_learning_uncertainty_scalable.py::test_paired_test_rejects_nonconvergence_and_undefined_logarithms",
+    "tests/test_learning_uncertainty_scalable.py::test_energy_test_rejects_nonfinite_distance_statistics",
+    "tests/test_learning_uncertainty_scalable.py::test_streaming_mean_makes_prior_mass_and_initialization_explicit",
+    "tests/test_learning_uncertainty_scalable.py::test_streaming_mean_defensively_rejects_zero_mass",
+    "tests/test_learning_uncertainty_scalable.py::test_streaming_mean_guards_logarithm_and_exponential_domains[manifold0-undefined logarithm]",
+    "tests/test_learning_uncertainty_scalable.py::test_streaming_mean_guards_logarithm_and_exponential_domains[manifold1-exponential-map domain]",
+    "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_guards_logarithm_and_exponential_domains[manifold0-undefined logarithm]",
+    "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_guards_logarithm_and_exponential_domains[manifold1-exponential-map domain]",
+    "tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_guards_logarithm_and_exponential_domains[manifold0-undefined logarithm]",
+    "tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_guards_logarithm_and_exponential_domains[manifold1-exponential-map domain]",
+    "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_skips_batches_with_zero_sample_mass",
+    "tests/test_learning_uncertainty_scalable.py::test_scalable_mean_diagnostics_reject_undefined_geometry_values",
+    "tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_rejects_a_nonfinite_initial_objective"
+  ],
+  "runtime_reports": [
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_bootstrap_mean_is_reproducible_and_returns_a_geodesic_ball",
+      "outcome": "passed",
+      "seconds": 0.00019874999998137355,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_bootstrap_mean_is_reproducible_and_returns_a_geodesic_ball",
+      "outcome": "passed",
+      "seconds": 3.622654207982123,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_bootstrap_mean_is_reproducible_and_returns_a_geodesic_ball",
+      "outcome": "passed",
+      "seconds": 0.0002282909699715674,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_energy_mmd_and_paired_tests_detect_large_location_changes",
+      "outcome": "passed",
+      "seconds": 0.00010387500515207648,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_energy_mmd_and_paired_tests_detect_large_location_changes",
+      "outcome": "passed",
+      "seconds": 3.6649322920129634,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_energy_mmd_and_paired_tests_detect_large_location_changes",
+      "outcome": "passed",
+      "seconds": 0.00012137496378272772,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_uncertainty_methods_validate_keys_sizes_and_bandwidths",
+      "outcome": "passed",
+      "seconds": 9.037501877173781e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_uncertainty_methods_validate_keys_sizes_and_bandwidths",
+      "outcome": "passed",
+      "seconds": 2.1716287920135073,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_uncertainty_methods_validate_keys_sizes_and_bandwidths",
+      "outcome": "passed",
+      "seconds": 0.00010941701475530863,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_streaming_mean_is_exact_for_weighted_euclidean_data",
+      "outcome": "passed",
+      "seconds": 9.029201464727521e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_streaming_mean_is_exact_for_weighted_euclidean_data",
+      "outcome": "passed",
+      "seconds": 0.9758106250083074,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_streaming_mean_is_exact_for_weighted_euclidean_data",
+      "outcome": "passed",
+      "seconds": 0.00010437500895932317,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_is_reproducible_and_improves_a_bad_initial_point",
+      "outcome": "passed",
+      "seconds": 9.208300616592169e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_is_reproducible_and_improves_a_bad_initial_point",
+      "outcome": "passed",
+      "seconds": 1.4648710840265267,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_is_reproducible_and_improves_a_bad_initial_point",
+      "outcome": "passed",
+      "seconds": 9.549997048452497e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_uses_an_unbiased_unequal_weight_batch_direction",
+      "outcome": "passed",
+      "seconds": 8.229201193898916e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_uses_an_unbiased_unequal_weight_batch_direction",
+      "outcome": "passed",
+      "seconds": 0.31260191701585427,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_uses_an_unbiased_unequal_weight_batch_direction",
+      "outcome": "passed",
+      "seconds": 9.550002869218588e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_does_not_confuse_decayed_steps_with_stationarity",
+      "outcome": "passed",
+      "seconds": 8.170801447704434e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_does_not_confuse_decayed_steps_with_stationarity",
+      "outcome": "passed",
+      "seconds": 0.9486147919669747,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_does_not_confuse_decayed_steps_with_stationarity",
+      "outcome": "passed",
+      "seconds": 0.00010554201435297728,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_respects_global_sample_weight_mass",
+      "outcome": "passed",
+      "seconds": 8.895795326679945e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_respects_global_sample_weight_mass",
+      "outcome": "passed",
+      "seconds": 1.586648290976882,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_respects_global_sample_weight_mass",
+      "outcome": "passed",
+      "seconds": 9.879202116280794e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_separates_clusters_and_supports_product_points",
+      "outcome": "passed",
+      "seconds": 8.933298522606492e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_separates_clusters_and_supports_product_points",
+      "outcome": "passed",
+      "seconds": 13.088634125015233,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_separates_clusters_and_supports_product_points",
+      "outcome": "passed",
+      "seconds": 0.00015237496700137854,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_scalable_methods_validate_controls_and_exact_capabilities",
+      "outcome": "passed",
+      "seconds": 0.00010004203068092465,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_scalable_methods_validate_controls_and_exact_capabilities",
+      "outcome": "passed",
+      "seconds": 0.46152545901713893,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_scalable_methods_validate_controls_and_exact_capabilities",
+      "outcome": "passed",
+      "seconds": 0.00012049998622387648,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs0-TypeError-check_psd must be a boolean]",
+      "outcome": "passed",
+      "seconds": 0.00043474999256432056,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs0-TypeError-check_psd must be a boolean]",
+      "outcome": "passed",
+      "seconds": 0.27770129195414484,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs0-TypeError-check_psd must be a boolean]",
+      "outcome": "passed",
+      "seconds": 0.00013591599417850375,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs1-TypeError-kernel must be callable]",
+      "outcome": "passed",
+      "seconds": 0.0002590420190244913,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs1-TypeError-kernel must be callable]",
+      "outcome": "passed",
+      "seconds": 0.003904750046785921,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs1-TypeError-kernel must be callable]",
+      "outcome": "passed",
+      "seconds": 0.00011837499914690852,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs2-ValueError-bandwidth is only defined]",
+      "outcome": "passed",
+      "seconds": 0.00025295797968283296,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs2-ValueError-bandwidth is only defined]",
+      "outcome": "passed",
+      "seconds": 0.003834082977846265,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs2-ValueError-bandwidth is only defined]",
+      "outcome": "passed",
+      "seconds": 0.00010400003520771861,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs3-ValueError-real-valued]",
+      "outcome": "passed",
+      "seconds": 0.00047391600674018264,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs3-ValueError-real-valued]",
+      "outcome": "passed",
+      "seconds": 0.25112537504173815,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs3-ValueError-real-valued]",
+      "outcome": "passed",
+      "seconds": 0.00034433399559929967,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs4-ValueError-square matrix matching]",
+      "outcome": "passed",
+      "seconds": 0.00076374999480322,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs4-ValueError-square matrix matching]",
+      "outcome": "passed",
+      "seconds": 0.007544749998487532,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs4-ValueError-square matrix matching]",
+      "outcome": "passed",
+      "seconds": 0.0005352500011213124,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_can_explicitly_disable_the_psd_gate",
+      "outcome": "passed",
+      "seconds": 0.0002798339701257646,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_can_explicitly_disable_the_psd_gate",
+      "outcome": "passed",
+      "seconds": 0.8402568329474889,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_can_explicitly_disable_the_psd_gate",
+      "outcome": "passed",
+      "seconds": 0.00010666699381545186,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_rbf_mmd_uses_a_finite_default_when_all_distances_are_zero",
+      "outcome": "passed",
+      "seconds": 9.433302329853177e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_rbf_mmd_uses_a_finite_default_when_all_distances_are_zero",
+      "outcome": "passed",
+      "seconds": 0.23466016701422632,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_rbf_mmd_uses_a_finite_default_when_all_distances_are_zero",
+      "outcome": "passed",
+      "seconds": 0.00010616600047796965,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_two_sample_uncertainty_methods_require_two_observations_per_group[energy_two_sample_test]",
+      "outcome": "passed",
+      "seconds": 0.00020175002282485366,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_two_sample_uncertainty_methods_require_two_observations_per_group[energy_two_sample_test]",
+      "outcome": "passed",
+      "seconds": 0.013892500021029264,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_two_sample_uncertainty_methods_require_two_observations_per_group[energy_two_sample_test]",
+      "outcome": "passed",
+      "seconds": 0.000128875020891428,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_two_sample_uncertainty_methods_require_two_observations_per_group[kernel_mmd_two_sample_test]",
+      "outcome": "passed",
+      "seconds": 0.00019270804477855563,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_two_sample_uncertainty_methods_require_two_observations_per_group[kernel_mmd_two_sample_test]",
+      "outcome": "passed",
+      "seconds": 0.0012289999867789447,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_two_sample_uncertainty_methods_require_two_observations_per_group[kernel_mmd_two_sample_test]",
+      "outcome": "passed",
+      "seconds": 8.587498450651765e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_bootstrap_rejects_original_and_replicate_nonconvergence",
+      "outcome": "passed",
+      "seconds": 0.00013379199663177133,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_bootstrap_rejects_original_and_replicate_nonconvergence",
+      "outcome": "passed",
+      "seconds": 0.20197458303300664,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_bootstrap_rejects_original_and_replicate_nonconvergence",
+      "outcome": "passed",
+      "seconds": 0.00014416599879041314,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_bootstrap_rejects_nonfinite_replicate_points",
+      "outcome": "passed",
+      "seconds": 0.00014766701497137547,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_bootstrap_rejects_nonfinite_replicate_points",
+      "outcome": "passed",
+      "seconds": 0.04277983302017674,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_bootstrap_rejects_nonfinite_replicate_points",
+      "outcome": "passed",
+      "seconds": 0.00013516598846763372,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_paired_test_rejects_nonconvergence_and_undefined_logarithms",
+      "outcome": "passed",
+      "seconds": 0.00014520803233608603,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_paired_test_rejects_nonconvergence_and_undefined_logarithms",
+      "outcome": "passed",
+      "seconds": 0.12863395898602903,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_paired_test_rejects_nonconvergence_and_undefined_logarithms",
+      "outcome": "passed",
+      "seconds": 0.00013458303874358535,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_energy_test_rejects_nonfinite_distance_statistics",
+      "outcome": "passed",
+      "seconds": 8.73749959282577e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_energy_test_rejects_nonfinite_distance_statistics",
+      "outcome": "passed",
+      "seconds": 0.09363741701235995,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_energy_test_rejects_nonfinite_distance_statistics",
+      "outcome": "passed",
+      "seconds": 0.00010570796439424157,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_streaming_mean_makes_prior_mass_and_initialization_explicit",
+      "outcome": "passed",
+      "seconds": 8.458300726488233e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_streaming_mean_makes_prior_mass_and_initialization_explicit",
+      "outcome": "passed",
+      "seconds": 0.05589791701640934,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_streaming_mean_makes_prior_mass_and_initialization_explicit",
+      "outcome": "passed",
+      "seconds": 0.00010795897105708718,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_streaming_mean_defensively_rejects_zero_mass",
+      "outcome": "passed",
+      "seconds": 0.00014224997721612453,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_streaming_mean_defensively_rejects_zero_mass",
+      "outcome": "passed",
+      "seconds": 0.0014934999635443091,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_streaming_mean_defensively_rejects_zero_mass",
+      "outcome": "passed",
+      "seconds": 8.741696365177631e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_streaming_mean_guards_logarithm_and_exponential_domains[manifold0-undefined logarithm]",
+      "outcome": "passed",
+      "seconds": 0.00019641703693196177,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_streaming_mean_guards_logarithm_and_exponential_domains[manifold0-undefined logarithm]",
+      "outcome": "passed",
+      "seconds": 0.0479661250137724,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_streaming_mean_guards_logarithm_and_exponential_domains[manifold0-undefined logarithm]",
+      "outcome": "passed",
+      "seconds": 0.00013208301970735192,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_streaming_mean_guards_logarithm_and_exponential_domains[manifold1-exponential-map domain]",
+      "outcome": "passed",
+      "seconds": 0.0002279590116813779,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_streaming_mean_guards_logarithm_and_exponential_domains[manifold1-exponential-map domain]",
+      "outcome": "passed",
+      "seconds": 0.0030404169810935855,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_streaming_mean_guards_logarithm_and_exponential_domains[manifold1-exponential-map domain]",
+      "outcome": "passed",
+      "seconds": 0.00010629196185618639,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_guards_logarithm_and_exponential_domains[manifold0-undefined logarithm]",
+      "outcome": "passed",
+      "seconds": 0.00021204195218160748,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_guards_logarithm_and_exponential_domains[manifold0-undefined logarithm]",
+      "outcome": "passed",
+      "seconds": 0.015496250009164214,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_guards_logarithm_and_exponential_domains[manifold0-undefined logarithm]",
+      "outcome": "passed",
+      "seconds": 0.00012187502579763532,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_guards_logarithm_and_exponential_domains[manifold1-exponential-map domain]",
+      "outcome": "passed",
+      "seconds": 0.00022212497424334288,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_guards_logarithm_and_exponential_domains[manifold1-exponential-map domain]",
+      "outcome": "passed",
+      "seconds": 0.008236124995164573,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_guards_logarithm_and_exponential_domains[manifold1-exponential-map domain]",
+      "outcome": "passed",
+      "seconds": 0.00012441701255738735,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_guards_logarithm_and_exponential_domains[manifold0-undefined logarithm]",
+      "outcome": "passed",
+      "seconds": 0.0002185420016758144,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_guards_logarithm_and_exponential_domains[manifold0-undefined logarithm]",
+      "outcome": "passed",
+      "seconds": 0.10043429199140519,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_guards_logarithm_and_exponential_domains[manifold0-undefined logarithm]",
+      "outcome": "passed",
+      "seconds": 0.00017274997662752867,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_guards_logarithm_and_exponential_domains[manifold1-exponential-map domain]",
+      "outcome": "passed",
+      "seconds": 0.0002793750027194619,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_guards_logarithm_and_exponential_domains[manifold1-exponential-map domain]",
+      "outcome": "passed",
+      "seconds": 0.01629050000337884,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_guards_logarithm_and_exponential_domains[manifold1-exponential-map domain]",
+      "outcome": "passed",
+      "seconds": 0.0001313330139964819,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_skips_batches_with_zero_sample_mass",
+      "outcome": "passed",
+      "seconds": 9.941600728780031e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_skips_batches_with_zero_sample_mass",
+      "outcome": "passed",
+      "seconds": 0.36188800004310906,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_skips_batches_with_zero_sample_mass",
+      "outcome": "passed",
+      "seconds": 0.00011079199612140656,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_scalable_mean_diagnostics_reject_undefined_geometry_values",
+      "outcome": "passed",
+      "seconds": 9.095901623368263e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_scalable_mean_diagnostics_reject_undefined_geometry_values",
+      "outcome": "passed",
+      "seconds": 0.002979750046506524,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_scalable_mean_diagnostics_reject_undefined_geometry_values",
+      "outcome": "passed",
+      "seconds": 7.833301788195968e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_rejects_a_nonfinite_initial_objective",
+      "outcome": "passed",
+      "seconds": 8.529203478246927e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_rejects_a_nonfinite_initial_objective",
+      "outcome": "passed",
+      "seconds": 0.017366999993100762,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_rejects_a_nonfinite_initial_objective",
+      "outcome": "passed",
+      "seconds": 0.00010258401744067669,
+      "when": "teardown"
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+Processing ./dist/geojax-0.2.0-py3-none-any.whl
+Collecting jax==0.11.1
+  Using cached jax-0.11.1-py3-none-any.whl.metadata (13 kB)
+Collecting jaxlib==0.11.1
+  Using cached jaxlib-0.11.1-cp312-cp312-macosx_11_0_arm64.whl.metadata (1.3 kB)
+Collecting numpy==2.5.3
+  Using cached numpy-2.5.3-cp312-cp312-macosx_14_0_arm64.whl.metadata (6.6 kB)
+Collecting scipy==1.18.1
+  Using cached scipy-1.18.1-cp312-cp312-macosx_14_0_arm64.whl.metadata (62 kB)
+Collecting ott-jax==0.6.0
+  Downloading ott_jax-0.6.0-py3-none-any.whl.metadata (21 kB)
+Collecting pytest
+  Downloading pytest-9.1.1-py3-none-any.whl.metadata (7.6 kB)
+Collecting ml_dtypes>=0.5.0 (from jax==0.11.1)
+  Using cached ml_dtypes-0.6.0-cp312-cp312-macosx_10_13_universal2.whl.metadata (8.8 kB)
+Collecting opt_einsum (from jax==0.11.1)
+  Using cached opt_einsum-3.4.0-py3-none-any.whl.metadata (6.3 kB)
+Collecting jaxopt>=0.8 (from ott-jax==0.6.0)
+  Downloading jaxopt-0.8.5-py3-none-any.whl.metadata (3.3 kB)
+Collecting lineax>=0.0.7 (from ott-jax==0.6.0)
+  Downloading lineax-0.1.1-py3-none-any.whl.metadata (17 kB)
+Collecting optax>=0.2.4 (from ott-jax==0.6.0)
+  Downloading optax-0.2.8-py3-none-any.whl.metadata (7.9 kB)
+Collecting iniconfig>=1.0.1 (from pytest)
+  Downloading iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting packaging>=22 (from pytest)
+  Using cached packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+Collecting pluggy<2,>=1.5 (from pytest)
+  Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+Collecting pygments>=2.7.2 (from pytest)
+  Downloading pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting equinox>=0.11.10 (from lineax>=0.0.7->ott-jax==0.6.0)
+  Downloading equinox-0.13.8-py3-none-any.whl.metadata (18 kB)
+Collecting jaxtyping>=0.2.24 (from lineax>=0.0.7->ott-jax==0.6.0)
+  Downloading jaxtyping-0.3.11-py3-none-any.whl.metadata (6.2 kB)
+Collecting typing-extensions>=4.5.0 (from lineax>=0.0.7->ott-jax==0.6.0)
+  Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting absl-py>=0.7.1 (from optax>=0.2.4->ott-jax==0.6.0)
+  Downloading absl_py-2.5.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting wadler-lindig>=0.1.0 (from equinox>=0.11.10->lineax>=0.0.7->ott-jax==0.6.0)
+  Downloading wadler_lindig-0.1.7-py3-none-any.whl.metadata (17 kB)
+Using cached jax-0.11.1-py3-none-any.whl (3.3 MB)
+Using cached jaxlib-0.11.1-cp312-cp312-macosx_11_0_arm64.whl (63.2 MB)
+Using cached numpy-2.5.3-cp312-cp312-macosx_14_0_arm64.whl (5.4 MB)
+Using cached scipy-1.18.1-cp312-cp312-macosx_14_0_arm64.whl (20.5 MB)
+Downloading ott_jax-0.6.0-py3-none-any.whl (309 kB)
+Downloading pytest-9.1.1-py3-none-any.whl (386 kB)
+Downloading iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+Downloading jaxopt-0.8.5-py3-none-any.whl (172 kB)
+Downloading lineax-0.1.1-py3-none-any.whl (77 kB)
+Using cached ml_dtypes-0.6.0-cp312-cp312-macosx_10_13_universal2.whl (565 kB)
+Downloading optax-0.2.8-py3-none-any.whl (402 kB)
+Using cached packaging-26.3-py3-none-any.whl (129 kB)
+Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 37.6 MB/s eta 0:00:00
+Using cached opt_einsum-3.4.0-py3-none-any.whl (71 kB)
+Downloading absl_py-2.5.0-py3-none-any.whl (137 kB)
+Downloading equinox-0.13.8-py3-none-any.whl (185 kB)
+Downloading jaxtyping-0.3.11-py3-none-any.whl (56 kB)
+Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Downloading wadler_lindig-0.1.7-py3-none-any.whl (20 kB)
+Installing collected packages: wadler-lindig, typing-extensions, pygments, pluggy, packaging, opt_einsum, numpy, iniconfig, absl-py, scipy, pytest, ml_dtypes, jaxtyping, jaxlib, jax, optax, jaxopt, geojax, equinox, lineax, ott-jax
+Successfully installed absl-py-2.5.0 equinox-0.13.8 geojax-0.2.0 iniconfig-2.3.0 jax-0.11.1 jaxlib-0.11.1 jaxopt-0.8.5 jaxtyping-0.3.11 lineax-0.1.1 ml_dtypes-0.6.0 numpy-2.5.3 opt_einsum-3.4.0 optax-0.2.8 ott-jax-0.6.0 packaging-26.3 pluggy-1.6.0 pygments-2.21.0 pytest-9.1.1 scipy-1.18.1 typing-extensions-4.16.0 wadler-lindig-0.1.7
+WARNING: The directory '/Users/kisung/Library/Caches/pip' or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.
+No broken requirements found.

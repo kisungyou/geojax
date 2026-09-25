@@ -24,15 +24,23 @@ accounts and tokens.
    numbers cannot be replaced.
 2. Update the version in `pyproject.toml`, `docs/conf.py`, `CITATION.cff`, the
    README release note, and `CHANGELOG.md`.
-3. Commit the release metadata, require a clean working tree, and create the
-   signed or annotated tag `v0.2.0` locally. Do not push it yet. Build only from
-   that exact tagged revision so the immutable package artifacts have an
-   unambiguous source.
-4. Install every supported Python interpreter and run the complete local
-   release gate:
+3. Install the development and documentation dependencies, execute the tutorials,
+   and review any regenerated tracked figures before tagging:
 
    ```bash
    python -m pip install -e ".[dev,docs,examples]"
+   make website
+   ```
+
+4. Commit the release metadata and reviewed figure updates, require a clean
+   working tree, and create the
+   signed or annotated tag `v0.2.0` locally. Do not push it yet. Build only from
+   that exact tagged revision so the immutable package artifacts have an
+   unambiguous source.
+5. Install every supported Python interpreter and run the complete local
+   release gate:
+
+   ```bash
    make release-check
    ```
 
@@ -40,8 +48,11 @@ accounts and tokens.
    executes and audits every tutorial, removes transient notebooks, builds
    clean wheel and source archives, applies Twine's strict metadata check, and
    installs both artifacts outside the source tree. Missing Python interpreters
-   fail the matrix rather than being skipped.
-5. After every gate succeeds, push the commit and tag, record the SHA-256 hashes
+   fail the matrix rather than being skipped. The gate checks the clean tagged
+   source again after tutorial execution and before building artifacts. If the
+   tutorials change tracked files, review and commit those changes, update the
+   still-unpublished local tag, and rerun the gate.
+6. After every gate succeeds, push the commit and tag, record the SHA-256 hashes
    printed by the package smoke test, and keep the exact artifacts in
    `dist/0.2.0` for both TestPyPI and PyPI.
    If building manually instead, remove `build`, `dist`, and `geojax.egg-info`

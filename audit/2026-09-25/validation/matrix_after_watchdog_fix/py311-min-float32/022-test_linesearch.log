@@ -1,0 +1,46 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_linesearch.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_after_watchdog_fix/py311-min-float32/022-test_linesearch.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_after_watchdog_fix/py311-min-float32/022-test_linesearch.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.11.15, JAX 0.6.0, NumPy 1.26.4, float32
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 22 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_linesearch.py::test_line_search_protocol_and_fixed_step PASSED [  4%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_linesearch.py::test_backtracking_armijo_satisfies_sufficient_decrease PASSED [  9%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_linesearch.py::test_adaptive_armijo_carries_state_between_searches PASSED [ 13%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_linesearch.py::test_strong_wolfe_conditions_hold_on_quadratic PASSED [ 18%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_linesearch.py::test_strong_wolfe_uses_the_nonlinear_retraction_curve_derivative PASSED [ 22%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy0-direction0-0.0-zero or non-finite direction] PASSED [ 27%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy1-direction1-0.0-zero or non-finite direction] PASSED [ 31%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy2-direction2-1.0-direction is not descending] PASSED [ 36%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy3-direction3-0.0-zero or non-finite direction] PASSED [ 40%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_linesearch.py::test_line_search_rejects_invalid_directions[strategy4-direction4-1.0-direction is not descending] PASSED [ 45%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_linesearch.py::test_constant_step_rejects_invalid_configuration PASSED [ 50%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_linesearch.py::test_armijo_validates_parameters[strategy0] PASSED [ 54%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_linesearch.py::test_armijo_validates_parameters[strategy1] PASSED [ 59%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_linesearch.py::test_armijo_validates_parameters[strategy2] PASSED [ 63%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_linesearch.py::test_strong_wolfe_validates_parameters[strategy0] PASSED [ 68%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_linesearch.py::test_strong_wolfe_validates_parameters[strategy1] PASSED [ 72%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_linesearch.py::test_strong_wolfe_validates_parameters[strategy2] PASSED [ 77%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_linesearch.py::test_strong_wolfe_validates_parameters[strategy3] PASSED [ 81%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_linesearch.py::test_armijo_failure_and_adaptive_state_fallbacks PASSED [ 86%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_linesearch.py::test_strong_wolfe_reports_unsatisfied_conditions PASSED [ 90%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_linesearch.py::test_armijo_backtracks_when_a_trial_leaves_the_manifold_domain PASSED [ 95%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_linesearch.py::test_strong_wolfe_does_not_differentiate_nonfinite_trial_costs PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_after_watchdog_fix/py311-min-float32/022-test_linesearch.xml -
+============================== slowest durations ===============================
+0.60s call     tests/test_linesearch.py::test_line_search_protocol_and_fixed_step
+0.57s call     tests/test_linesearch.py::test_strong_wolfe_uses_the_nonlinear_retraction_curve_derivative
+0.24s call     tests/test_linesearch.py::test_strong_wolfe_conditions_hold_on_quadratic
+0.12s call     tests/test_linesearch.py::test_strong_wolfe_does_not_differentiate_nonfinite_trial_costs
+0.12s call     tests/test_linesearch.py::test_armijo_backtracks_when_a_trial_leaves_the_manifold_domain
+0.05s call     tests/test_linesearch.py::test_backtracking_armijo_satisfies_sufficient_decrease
+0.03s call     tests/test_linesearch.py::test_adaptive_armijo_carries_state_between_searches
+0.01s call     tests/test_linesearch.py::test_strong_wolfe_reports_unsatisfied_conditions
+
+(58 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================== 22 passed in 2.00s ==============================

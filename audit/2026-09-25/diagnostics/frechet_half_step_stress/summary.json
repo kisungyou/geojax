@@ -1,0 +1,153 @@
+{
+  "status": "passed",
+  "cases": 20,
+  "converged": 20,
+  "jax": "0.6.0",
+  "precision": "float32",
+  "initial_stepsize": 0.5,
+  "numerical_tolerances_changed": false,
+  "package_source_changed": false,
+  "interpretation": "All20 non-Kendall cases satisfy the existing effective gradient threshold. This is not sufficient to recommend a step-only fix: the independent shape stress test has an m4 rank3 counterexample.",
+  "geometry_cases": [
+    {
+      "geometry": "Euclidean",
+      "scale_or_angle": 1e-05,
+      "gradient_norm": 5.084230020498126e-13,
+      "effective_tolerance": 9.45552525961049e-10,
+      "iterations": 1
+    },
+    {
+      "geometry": "Euclidean",
+      "scale_or_angle": 1.0,
+      "gradient_norm": 9.064022066240796e-08,
+      "effective_tolerance": 9.455524911426792e-05,
+      "iterations": 1
+    },
+    {
+      "geometry": "Euclidean",
+      "scale_or_angle": 100000.0,
+      "gradient_norm": 0.0009765625,
+      "effective_tolerance": 9.455525267370092,
+      "iterations": 1
+    },
+    {
+      "geometry": "Sphere",
+      "scale_or_angle": 0.1,
+      "gradient_norm": 1.7659548490200905e-08,
+      "effective_tolerance": 1.8911051880805135e-05,
+      "iterations": 1
+    },
+    {
+      "geometry": "Sphere",
+      "scale_or_angle": 0.8,
+      "gradient_norm": 1.1778029573861204e-07,
+      "effective_tolerance": 0.00015128840475668332,
+      "iterations": 1
+    },
+    {
+      "geometry": "Sphere",
+      "scale_or_angle": 1.6,
+      "gradient_norm": 1.4710975904108636e-07,
+      "effective_tolerance": 0.00030257683009288217,
+      "iterations": 1
+    },
+    {
+      "geometry": "SPDAffineInvariant",
+      "scale_or_angle": 1e-06,
+      "gradient_norm": 1.287213962086753e-07,
+      "effective_tolerance": 8.407302143421773e-05,
+      "iterations": 1
+    },
+    {
+      "geometry": "SPDAffineInvariant",
+      "scale_or_angle": 1.0,
+      "gradient_norm": 3.2275343642140797e-07,
+      "effective_tolerance": 8.407300599958109e-05,
+      "iterations": 1
+    },
+    {
+      "geometry": "SPDAffineInvariant",
+      "scale_or_angle": 1000000.0,
+      "gradient_norm": 3.3222062256754725e-07,
+      "effective_tolerance": 8.40730008547022e-05,
+      "iterations": 1
+    },
+    {
+      "geometry": "SPDLogEuclidean",
+      "scale_or_angle": 1e-06,
+      "gradient_norm": 9.62625222200586e-07,
+      "effective_tolerance": 8.407299056494445e-05,
+      "iterations": 1
+    },
+    {
+      "geometry": "SPDLogEuclidean",
+      "scale_or_angle": 1.0,
+      "gradient_norm": 9.424320523976348e-08,
+      "effective_tolerance": 8.407299570982333e-05,
+      "iterations": 1
+    },
+    {
+      "geometry": "SPDLogEuclidean",
+      "scale_or_angle": 1000000.0,
+      "gradient_norm": 9.626251085137483e-07,
+      "effective_tolerance": 8.407299056494445e-05,
+      "iterations": 1
+    },
+    {
+      "geometry": "SPDBuresWasserstein",
+      "scale_or_angle": 1e-06,
+      "gradient_norm": 2.2598174720389608e-10,
+      "effective_tolerance": 4.957792193114689e-08,
+      "iterations": 1
+    },
+    {
+      "geometry": "SPDBuresWasserstein",
+      "scale_or_angle": 1.0,
+      "gradient_norm": 2.1337545774713362e-07,
+      "effective_tolerance": 4.957792048414971e-05,
+      "iterations": 1
+    },
+    {
+      "geometry": "SPDBuresWasserstein",
+      "scale_or_angle": 1000000.0,
+      "gradient_norm": 0.0003315633803140372,
+      "effective_tolerance": 0.04957790603732981,
+      "iterations": 1
+    },
+    {
+      "geometry": "RankKPSDBuresWasserstein",
+      "scale_or_angle": 1e-06,
+      "gradient_norm": 2.2050339332224667e-10,
+      "effective_tolerance": 4.957792193114689e-08,
+      "iterations": 1
+    },
+    {
+      "geometry": "RankKPSDBuresWasserstein",
+      "scale_or_angle": 1.0,
+      "gradient_norm": 2.959941802771482e-08,
+      "effective_tolerance": 4.957792048414971e-05,
+      "iterations": 1
+    },
+    {
+      "geometry": "RankKPSDBuresWasserstein",
+      "scale_or_angle": 1000000.0,
+      "gradient_norm": 0.00019087785040028393,
+      "effective_tolerance": 0.04957790603732981,
+      "iterations": 1
+    },
+    {
+      "geometry": "Sphere symmetric four points",
+      "scale_or_angle": null,
+      "gradient_norm": 0.0002292340504936874,
+      "effective_tolerance": 0.0002883277381813959,
+      "iterations": 5
+    },
+    {
+      "geometry": "AffineSPD noncommuting symmetric logarithms",
+      "scale_or_angle": null,
+      "gradient_norm": 2.0032581232953817e-05,
+      "effective_tolerance": 0.00018293415345048067,
+      "iterations": 9
+    }
+  ]
+}

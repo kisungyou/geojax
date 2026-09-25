@@ -13,6 +13,7 @@ from geojax.geometry.base import (
     validate_positive,
 )
 
+from .linesearch import _trial_point
 from .minimize import (
     Array,
     InfoEntry,
@@ -27,7 +28,6 @@ from .minimize import (
     precondition,
     print_iteration,
     print_iteration_header,
-    retract,
     require,
     stopping_reason,
     tree_lincomb,
@@ -118,8 +118,8 @@ class TrustRegions:
             pred = -inner(M, x, g, eta) - 0.5 * inner(M, x, eta, Heta)
             pred_f = max(as_float(pred), 0.0)
             stepnorm = as_float(M.norm(x, eta))
-            x_trial = retract(M, x, eta, 1.0)
-            f_trial = cost_value(problem, x_trial)
+            x_trial = _trial_point(M, x, eta, 1.0)
+            f_trial = math.inf if x_trial is None else cost_value(problem, x_trial)
             actual = as_float(f) - as_float(f_trial)
             rho = actual / pred_f if pred_f > 0.0 else -math.inf
             if not math.isfinite(rho):

@@ -28,7 +28,8 @@ from .base import (
 )
 from ._numerics import (
     acos_over_sin,
-    acos_squared,
+    power_of_two_rescale,
+    spherical_squared_dist,
     cos_from_squared_norm,
     sinc_from_squared_norm,
     stable_metric_norm,
@@ -190,8 +191,7 @@ class Sphere(ExactGeometryMixin):
         """Squared geodesic distance with a finite coincident-point gradient."""
         x = self.project(x)
         y = self.project(y)
-        dot = jnp.clip(self._dot(x, y), -1.0, 1.0)
-        return acos_squared(dot)
+        return spherical_squared_dist(x, y, axis=-1)
 
     def dist(self, x: Array, y: Array) -> Array:
         """Geodesic distance on the unit sphere."""
@@ -361,10 +361,10 @@ class SphereExtrinsic(Sphere):
                 raise ValueError(f"weights must have shape ({points.shape[0]},).")
             if not bool(jnp.all(jnp.isfinite(weights))) or bool(jnp.any(weights < 0.0)):
                 raise ValueError("weights must be finite and nonnegative.")
-            total = jnp.sum(weights)
-            if float(total) <= 0.0:
+            if float(jnp.max(weights)) <= 0.0:
                 raise ValueError("weights must contain positive total mass.")
-            weights = weights / total
+            weights = power_of_two_rescale(weights, axis=0)
+            weights = weights / jnp.sum(weights)
             ambient_mean = jnp.sum(weights[..., None] * points, axis=0)
         norm = stable_norm(ambient_mean, axis=-1)
         dtype = jnp.result_type(points, float)

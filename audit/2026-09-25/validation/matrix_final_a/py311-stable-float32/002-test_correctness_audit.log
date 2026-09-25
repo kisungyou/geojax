@@ -1,0 +1,98 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float32/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py311-stable-float32/002-test_correctness_audit.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py311-stable-float32/002-test_correctness_audit.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float32/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.11.15, JAX 0.10.2, NumPy 2.4.4, float32
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 41 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_squared_distance_has_the_metric_hessian_at_coincidence[Euclidean-ArrayImpl-ArrayImpl] PASSED [  2%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_squared_distance_has_the_metric_hessian_at_coincidence[Sphere-ArrayImpl-ArrayImpl] PASSED [  4%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_squared_distance_has_the_metric_hessian_at_coincidence[Torus-ArrayImpl-ArrayImpl] PASSED [  7%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_squared_distance_has_the_metric_hessian_at_coincidence[Hyperboloid-ArrayImpl-ArrayImpl] PASSED [  9%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_squared_distance_has_the_metric_hessian_at_coincidence[PoincareBall-ArrayImpl-ArrayImpl] PASSED [ 12%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_squared_distance_has_the_metric_hessian_at_coincidence[ProbabilitySimplex-ArrayImpl-ArrayImpl] PASSED [ 14%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_squared_distance_has_the_metric_hessian_at_coincidence[Oblique-ArrayImpl-ArrayImpl] PASSED [ 17%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_squared_distance_has_the_metric_hessian_at_coincidence[CorrelationECM-ArrayImpl-ArrayImpl] PASSED [ 19%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_squared_distance_has_the_metric_hessian_at_coincidence[CorrelationLEC-ArrayImpl-ArrayImpl] PASSED [ 21%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_squared_distance_has_the_metric_hessian_at_coincidence[Grassmann-ArrayImpl-ArrayImpl] PASSED [ 24%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_squared_distance_has_the_metric_hessian_at_coincidence[Product-tuple-tuple] PASSED [ 26%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_spherical_distances_resolve_small_angles[0.001] PASSED [ 29%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_spherical_distances_resolve_small_angles[1e-05] PASSED [ 31%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_spherical_distances_resolve_small_angles[1e-07] PASSED [ 34%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_spherical_distances_resolve_small_angles[1e-09] PASSED [ 36%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_correlation_identity_gradient_matches_scalar_chart[CorrelationECM] PASSED [ 39%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_correlation_identity_gradient_matches_scalar_chart[CorrelationLEC] PASSED [ 41%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_least_squares_respects_explicit_adjoint_with_opaque_residual[GaussNewton] PASSED [ 43%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_least_squares_respects_explicit_adjoint_with_opaque_residual[LevenbergMarquardt] PASSED [ 46%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_zero_mass_antipodes_do_not_affect_intrinsic_summaries[frechet_mean-False] PASSED [ 48%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_zero_mass_antipodes_do_not_affect_intrinsic_summaries[frechet_mean-True] PASSED [ 51%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_zero_mass_antipodes_do_not_affect_intrinsic_summaries[frechet_median-False] PASSED [ 53%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_zero_mass_antipodes_do_not_affect_intrinsic_summaries[frechet_median-True] PASSED [ 56%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_zero_mass_antipodes_do_not_affect_intrinsic_summaries[streaming_frechet_mean-False] PASSED [ 58%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_zero_mass_antipodes_do_not_affect_intrinsic_summaries[streaming_frechet_mean-True] PASSED [ 60%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_zero_mass_antipodes_do_not_affect_intrinsic_summaries[minibatch_frechet_mean-False] PASSED [ 63%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_zero_mass_antipodes_do_not_affect_intrinsic_summaries[minibatch_frechet_mean-True] PASSED [ 65%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_transport_initialization_preserves_mass_smaller_than_solver_tolerance PASSED [ 68%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_sample_weights_normalize_at_the_floating_point_limit PASSED [ 70%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_spherical_extrinsic_mean_is_invariant_to_large_weight_scaling PASSED [ 73%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_biswas_ghosh_rejects_nonrepresentable_statistics PASSED [ 75%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_local_linear_regression_reproduces_affine_extrapolation[1e-05] PASSED [ 78%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_local_linear_regression_reproduces_affine_extrapolation[1.0] PASSED [ 80%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_local_linear_regression_reproduces_affine_extrapolation[100000.0] PASSED [ 82%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_transport_matches_independent_linear_programs PASSED [ 85%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_distance_kernel_is_invariant_to_large_unit_changes PASSED [ 87%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_hyperboloid_exponential_acceleration_at_origin PASSED [ 90%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_torus_retains_sub_epsilon_angular_displacements PASSED [ 92%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_model_based_solvers_recover_from_invalid_trial_steps[TrustRegions] PASSED [ 95%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_model_based_solvers_recover_from_invalid_trial_steps[AdaptiveRegularizationCubics] PASSED [ 97%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_correctness_audit.py::test_model_based_solvers_recover_from_invalid_trial_steps[LevenbergMarquardt] PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py311-stable-float32/002-test_correctness_audit.xml -
+============================== slowest durations ===============================
+3.41s call     tests/test_correctness_audit.py::test_transport_matches_independent_linear_programs
+3.34s call     tests/test_correctness_audit.py::test_zero_mass_antipodes_do_not_affect_intrinsic_summaries[frechet_mean-False]
+2.82s call     tests/test_correctness_audit.py::test_squared_distance_has_the_metric_hessian_at_coincidence[CorrelationECM-ArrayImpl-ArrayImpl]
+2.46s call     tests/test_correctness_audit.py::test_squared_distance_has_the_metric_hessian_at_coincidence[Grassmann-ArrayImpl-ArrayImpl]
+2.24s call     tests/test_correctness_audit.py::test_hyperboloid_exponential_acceleration_at_origin
+1.88s call     tests/test_correctness_audit.py::test_spherical_distances_resolve_small_angles[0.001]
+1.77s call     tests/test_correctness_audit.py::test_correlation_identity_gradient_matches_scalar_chart[CorrelationECM]
+1.75s call     tests/test_correctness_audit.py::test_local_linear_regression_reproduces_affine_extrapolation[1e-05]
+1.45s call     tests/test_correctness_audit.py::test_biswas_ghosh_rejects_nonrepresentable_statistics
+1.43s call     tests/test_correctness_audit.py::test_squared_distance_has_the_metric_hessian_at_coincidence[CorrelationLEC-ArrayImpl-ArrayImpl]
+1.17s call     tests/test_correctness_audit.py::test_squared_distance_has_the_metric_hessian_at_coincidence[PoincareBall-ArrayImpl-ArrayImpl]
+0.90s call     tests/test_correctness_audit.py::test_squared_distance_has_the_metric_hessian_at_coincidence[Sphere-ArrayImpl-ArrayImpl]
+0.76s call     tests/test_correctness_audit.py::test_squared_distance_has_the_metric_hessian_at_coincidence[Hyperboloid-ArrayImpl-ArrayImpl]
+0.65s call     tests/test_correctness_audit.py::test_squared_distance_has_the_metric_hessian_at_coincidence[ProbabilitySimplex-ArrayImpl-ArrayImpl]
+0.60s call     tests/test_correctness_audit.py::test_zero_mass_antipodes_do_not_affect_intrinsic_summaries[frechet_median-False]
+0.54s call     tests/test_correctness_audit.py::test_distance_kernel_is_invariant_to_large_unit_changes
+0.47s call     tests/test_correctness_audit.py::test_squared_distance_has_the_metric_hessian_at_coincidence[Oblique-ArrayImpl-ArrayImpl]
+0.41s call     tests/test_correctness_audit.py::test_zero_mass_antipodes_do_not_affect_intrinsic_summaries[minibatch_frechet_mean-False]
+0.36s call     tests/test_correctness_audit.py::test_least_squares_respects_explicit_adjoint_with_opaque_residual[GaussNewton]
+0.30s call     tests/test_correctness_audit.py::test_model_based_solvers_recover_from_invalid_trial_steps[TrustRegions]
+0.25s call     tests/test_correctness_audit.py::test_transport_initialization_preserves_mass_smaller_than_solver_tolerance
+0.20s call     tests/test_correctness_audit.py::test_model_based_solvers_recover_from_invalid_trial_steps[LevenbergMarquardt]
+0.19s call     tests/test_correctness_audit.py::test_zero_mass_antipodes_do_not_affect_intrinsic_summaries[frechet_mean-True]
+0.18s call     tests/test_correctness_audit.py::test_model_based_solvers_recover_from_invalid_trial_steps[AdaptiveRegularizationCubics]
+0.13s call     tests/test_correctness_audit.py::test_zero_mass_antipodes_do_not_affect_intrinsic_summaries[frechet_median-True]
+0.12s call     tests/test_correctness_audit.py::test_correlation_identity_gradient_matches_scalar_chart[CorrelationLEC]
+0.12s call     tests/test_correctness_audit.py::test_spherical_extrinsic_mean_is_invariant_to_large_weight_scaling
+0.12s call     tests/test_correctness_audit.py::test_squared_distance_has_the_metric_hessian_at_coincidence[Euclidean-ArrayImpl-ArrayImpl]
+0.10s call     tests/test_correctness_audit.py::test_sample_weights_normalize_at_the_floating_point_limit
+0.10s call     tests/test_correctness_audit.py::test_squared_distance_has_the_metric_hessian_at_coincidence[Torus-ArrayImpl-ArrayImpl]
+0.07s call     tests/test_correctness_audit.py::test_squared_distance_has_the_metric_hessian_at_coincidence[Product-tuple-tuple]
+0.06s call     tests/test_correctness_audit.py::test_local_linear_regression_reproduces_affine_extrapolation[1.0]
+0.06s call     tests/test_correctness_audit.py::test_local_linear_regression_reproduces_affine_extrapolation[100000.0]
+0.05s call     tests/test_correctness_audit.py::test_zero_mass_antipodes_do_not_affect_intrinsic_summaries[minibatch_frechet_mean-True]
+0.05s call     tests/test_correctness_audit.py::test_zero_mass_antipodes_do_not_affect_intrinsic_summaries[streaming_frechet_mean-False]
+0.05s call     tests/test_correctness_audit.py::test_torus_retains_sub_epsilon_angular_displacements
+0.04s call     tests/test_correctness_audit.py::test_spherical_distances_resolve_small_angles[1e-09]
+0.04s call     tests/test_correctness_audit.py::test_spherical_distances_resolve_small_angles[1e-05]
+0.04s call     tests/test_correctness_audit.py::test_spherical_distances_resolve_small_angles[1e-07]
+0.02s call     tests/test_correctness_audit.py::test_least_squares_respects_explicit_adjoint_with_opaque_residual[LevenbergMarquardt]
+0.01s call     tests/test_correctness_audit.py::test_zero_mass_antipodes_do_not_affect_intrinsic_summaries[streaming_frechet_mean-True]
+
+(82 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================= 41 passed in 31.26s ==============================

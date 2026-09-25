@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections import deque
 from typing import Any
 
+import jax
 import jax.numpy as jnp
 
 from ._capabilities import require_exact_operations
@@ -83,8 +84,8 @@ def _northwest_corner(a: Any, b: Any, costs: Any, tolerance: float) -> tuple[Any
         plan = plan.at[row, column].set(mass)
         supply[row] -= mass
         demand[column] -= mass
-        row_done = supply[row] <= tolerance
-        column_done = demand[column] <= tolerance
+        row_done = supply[row] <= 0.0
+        column_done = demand[column] <= 0.0
         if row_done:
             row += 1
         if column_done:
@@ -243,7 +244,7 @@ def _transportation_simplex(
         plus_edges = path[1::2]
         theta = min(float(plan[row, column]) for row, column in minus_edges)
         leaving = min(
-            (edge for edge in minus_edges if float(plan[edge]) <= theta + tolerance),
+            (edge for edge in minus_edges if float(plan[edge]) == theta),
             key=lambda edge: (edge[0], edge[1]),
         )
         plan = plan.at[entering].add(theta)
@@ -419,11 +420,18 @@ def sinkhorn_divergence(
     p = positive_control(p, name="p")
     if p < 1.0:
         raise ValueError("p must be at least 1.")
-    a = normalize_weights(left.n_samples, weights_x)
-    b = normalize_weights(right.n_samples, weights_y)
-    cross = pairwise_distances(manifold, left, right) ** p
-    left_cost = pairwise_distances(manifold, left, left) ** p
-    right_cost = pairwise_distances(manifold, right, right) ** p
+    with jax.ensure_compile_time_eval():
+        a = normalize_weights(left.n_samples, weights_x)
+        b = normalize_weights(right.n_samples, weights_y)
+
+    def costs(first, second):
+        if p == 2.0:
+            return pairwise_distances(manifold, first, second, squared=True)
+        return pairwise_distances(manifold, first, second) ** p
+
+    cross = costs(left, right)
+    left_cost = costs(left, left)
+    right_cost = costs(right, right)
     return (
         _ott_cost(cross, a, b, epsilon)
         - 0.5 * _ott_cost(left_cost, a, a, epsilon)

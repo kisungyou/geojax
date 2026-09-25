@@ -1,0 +1,59 @@
+/Users/kisung/miniconda3/bin/python scripts/check_release_source.py
+release source verified at v0.2.0 (9150353396a8fab9cf68665f2454f4295ae36570)
+/Library/Developer/CommandLineTools/usr/bin/make quality
+/Users/kisung/miniconda3/bin/python mock_target.py quality 1
+/Library/Developer/CommandLineTools/usr/bin/make test-matrix
+/Users/kisung/miniconda3/bin/python mock_target.py test-matrix 1
+/Library/Developer/CommandLineTools/usr/bin/make website
+/Users/kisung/miniconda3/bin/python mock_target.py website 1
+/Library/Developer/CommandLineTools/usr/bin/make release-source-check
+/Users/kisung/miniconda3/bin/python scripts/check_release_source.py
+Makefile:3: warning: overriding commands for target `quality'
+Makefile.production:57: warning: ignoring old commands for target `quality'
+Makefile:3: warning: overriding commands for target `test-matrix'
+Makefile.production:69: warning: ignoring old commands for target `test-matrix'
+Makefile:3: warning: overriding commands for target `website'
+Makefile.production:75: warning: ignoring old commands for target `website'
+Makefile:3: warning: overriding commands for target `package-check'
+Makefile.production:86: warning: ignoring old commands for target `package-check'
+Makefile:3: warning: overriding commands for target `quality'
+Makefile.production:57: warning: ignoring old commands for target `quality'
+Makefile:3: warning: overriding commands for target `test-matrix'
+Makefile.production:69: warning: ignoring old commands for target `test-matrix'
+Makefile:3: warning: overriding commands for target `website'
+Makefile.production:75: warning: ignoring old commands for target `website'
+Makefile:3: warning: overriding commands for target `package-check'
+Makefile.production:86: warning: ignoring old commands for target `package-check'
+Makefile:3: warning: overriding commands for target `quality'
+Makefile.production:57: warning: ignoring old commands for target `quality'
+Makefile:3: warning: overriding commands for target `test-matrix'
+Makefile.production:69: warning: ignoring old commands for target `test-matrix'
+Makefile:3: warning: overriding commands for target `website'
+Makefile.production:75: warning: ignoring old commands for target `website'
+Makefile:3: warning: overriding commands for target `package-check'
+Makefile.production:86: warning: ignoring old commands for target `package-check'
+Makefile:3: warning: overriding commands for target `quality'
+Makefile.production:57: warning: ignoring old commands for target `quality'
+Makefile:3: warning: overriding commands for target `test-matrix'
+Makefile.production:69: warning: ignoring old commands for target `test-matrix'
+Makefile:3: warning: overriding commands for target `website'
+Makefile.production:75: warning: ignoring old commands for target `website'
+Makefile:3: warning: overriding commands for target `package-check'
+Makefile.production:86: warning: ignoring old commands for target `package-check'
+Makefile:3: warning: overriding commands for target `quality'
+Makefile.production:57: warning: ignoring old commands for target `quality'
+Makefile:3: warning: overriding commands for target `test-matrix'
+Makefile.production:69: warning: ignoring old commands for target `test-matrix'
+Makefile:3: warning: overriding commands for target `website'
+Makefile.production:75: warning: ignoring old commands for target `website'
+Makefile:3: warning: overriding commands for target `package-check'
+Makefile.production:86: warning: ignoring old commands for target `package-check'
+Traceback (most recent call last):
+  File "/private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-release-guard-final-dirty-_7a2lnn3/scripts/check_release_source.py", line 46, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-release-guard-final-dirty-_7a2lnn3/scripts/check_release_source.py", line 27, in main
+    raise RuntimeError("release builds require a clean working tree")
+RuntimeError: release builds require a clean working tree
+make[1]: *** [release-source-check] Error 1
+make: *** [release-check] Error 2

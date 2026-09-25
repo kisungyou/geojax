@@ -1,0 +1,63 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py314-stable-float32/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_learning.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py314-stable-float32/011-test_learning.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py314-stable-float32/011-test_learning.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.14.6, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py314-stable-float32/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.14.6, JAX 0.11.0, NumPy 2.4.4, float32
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 26 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_pairwise_distances_squared_matches_explicit_sphere_computation PASSED [  3%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_pairwise_distances_supports_product_pytrees PASSED [  7%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_pairwise_distances_supports_nested_product_containers PASSED [ 11%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_pairwise_distances_validates_eager_inputs_but_remains_jittable PASSED [ 15%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_pairwise_distances_uses_the_requested_distance_kernel_without_overflow PASSED [ 19%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_geodesic_interpolation_is_batched_jittable_and_has_correct_endpoints[M0] PASSED [ 23%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_geodesic_interpolation_is_batched_jittable_and_has_correct_endpoints[M1] PASSED [ 26%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_geodesic_interpolation_combines_time_and_endpoint_batch_axes PASSED [ 30%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_geodesic_interpolation_rejects_invalid_points_and_times_eagerly PASSED [ 34%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_learning_helpers_reject_retraction_proxy_geometry PASSED [ 38%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_geodesic_interpolation_rejects_numerical_local_logarithm PASSED [ 42%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_tangent_space_map_keeps_framework_parameters_outside_geojax PASSED [ 46%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_tangent_space_map_rejects_a_malformed_transform_output PASSED [ 50%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_pairwise_distances_requires_an_actual_boolean_flag[0] PASSED [ 53%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_pairwise_distances_requires_an_actual_boolean_flag[1] PASSED [ 57%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_pairwise_distances_requires_an_actual_boolean_flag[None] PASSED [ 61%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_pairwise_distances_requires_an_actual_boolean_flag[yes] PASSED [ 65%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_tangent_space_map_requires_a_callable_transform PASSED [ 69%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_nearest_neighbors_validates_flags_layout_and_requested_count PASSED [ 73%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_geometry_helpers_reject_nonfinite_and_nontangent_intermediate_values PASSED [ 76%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_geodesic_interpolation_rejects_complex_times PASSED [ 80%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_compiled_deterministic_autoencoder_step_decreases_loss_and_preserves_latents[M0] PASSED [ 84%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_compiled_deterministic_autoencoder_step_decreases_loss_and_preserves_latents[M1] PASSED [ 88%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_intrinsic_graph_aggregation_is_compiled_differentiable_and_permutation_equivariant[M0] PASSED [ 92%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_intrinsic_graph_aggregation_is_compiled_differentiable_and_permutation_equivariant[M1] PASSED [ 96%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning.py::test_intrinsic_graph_aggregation_is_compiled_differentiable_and_permutation_equivariant[M2] PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py314-stable-float32/011-test_learning.xml -
+============================== slowest durations ===============================
+6.47s call     tests/test_learning.py::test_intrinsic_graph_aggregation_is_compiled_differentiable_and_permutation_equivariant[M1]
+4.83s call     tests/test_learning.py::test_pairwise_distances_squared_matches_explicit_sphere_computation
+4.32s call     tests/test_learning.py::test_compiled_deterministic_autoencoder_step_decreases_loss_and_preserves_latents[M0]
+3.77s call     tests/test_learning.py::test_intrinsic_graph_aggregation_is_compiled_differentiable_and_permutation_equivariant[M2]
+3.50s call     tests/test_learning.py::test_pairwise_distances_supports_product_pytrees
+2.76s call     tests/test_learning.py::test_pairwise_distances_supports_nested_product_containers
+2.29s call     tests/test_learning.py::test_tangent_space_map_keeps_framework_parameters_outside_geojax
+1.91s call     tests/test_learning.py::test_geodesic_interpolation_is_batched_jittable_and_has_correct_endpoints[M0]
+1.51s call     tests/test_learning.py::test_compiled_deterministic_autoencoder_step_decreases_loss_and_preserves_latents[M1]
+1.34s call     tests/test_learning.py::test_geodesic_interpolation_combines_time_and_endpoint_batch_axes
+1.29s call     tests/test_learning.py::test_intrinsic_graph_aggregation_is_compiled_differentiable_and_permutation_equivariant[M0]
+1.28s call     tests/test_learning.py::test_geodesic_interpolation_is_batched_jittable_and_has_correct_endpoints[M1]
+0.93s call     tests/test_learning.py::test_nearest_neighbors_validates_flags_layout_and_requested_count
+0.71s call     tests/test_learning.py::test_geodesic_interpolation_rejects_numerical_local_logarithm
+0.68s call     tests/test_learning.py::test_pairwise_distances_uses_the_requested_distance_kernel_without_overflow
+0.52s call     tests/test_learning.py::test_learning_helpers_reject_retraction_proxy_geometry
+0.18s call     tests/test_learning.py::test_pairwise_distances_validates_eager_inputs_but_remains_jittable
+0.16s call     tests/test_learning.py::test_geodesic_interpolation_rejects_invalid_points_and_times_eagerly
+0.07s call     tests/test_learning.py::test_geometry_helpers_reject_nonfinite_and_nontangent_intermediate_values
+0.05s call     tests/test_learning.py::test_tangent_space_map_rejects_a_malformed_transform_output
+0.01s call     tests/test_learning.py::test_geodesic_interpolation_rejects_complex_times
+
+(57 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================= 26 passed in 38.78s ==============================

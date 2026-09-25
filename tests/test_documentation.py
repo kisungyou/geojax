@@ -1,16 +1,25 @@
 from __future__ import annotations
 
 import inspect
+import importlib.util
 from pathlib import Path
 import re
 
 import numpy as np
 
 import geojax.learning as learning
-from docs.audit_html import audit_site, tex_syntax_errors
 
 
 DOCS = Path(__file__).resolve().parents[1] / "docs"
+# The release matrix intentionally imports GeoJAX only from its installed
+# wheel. Load the repository's documentation checker by path, without adding
+# the checkout to sys.path and accidentally shadowing that installed package.
+_audit_spec = importlib.util.spec_from_file_location("geojax_docs_audit", DOCS / "audit_html.py")
+assert _audit_spec is not None and _audit_spec.loader is not None
+_audit_module = importlib.util.module_from_spec(_audit_spec)
+_audit_spec.loader.exec_module(_audit_module)
+audit_site = _audit_module.audit_site
+tex_syntax_errors = _audit_module.tex_syntax_errors
 LEGACY_MATH_DELIMITERS = (r"\(", r"\)", r"\[", r"\]")
 SCIENTIFIC_GUIDES = {
     Path("guide/foundations.md"),

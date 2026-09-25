@@ -1,0 +1,153 @@
+....FFF..FF                                                              [100%]
+=================================== FAILURES ===================================
+____ test_scaled_repeated_exp_preserves_second_and_third_derivatives[-1.0] _____
+
+sign = -1.0
+
+    @pytest.mark.parametrize("sign", [-1.0, 0.0, 1.0])
+    def test_scaled_repeated_exp_preserves_second_and_third_derivatives(sign):
+        limit = 700.0 if jax.config.x64_enabled else 80.0
+        shift = sign * limit
+        matrix = shift * jnp.eye(2)
+        direction = jnp.array([[0.2, 0.3], [0.3, -0.1]])
+        manifold = SPDLogEuclidean((2, 2))
+    
+        def objective(time):
+            return jnp.trace(manifold.expm(matrix + time * direction)) / jnp.exp(shift)
+    
+        expected_second = np.trace(np.asarray(direction) @ np.asarray(direction))
+        expected_third = np.trace(np.linalg.matrix_power(np.asarray(direction), 3))
+        forward = jax.jit(jax.jacfwd(jax.jacfwd(objective)))(0.0)
+        reverse = jax.jit(jax.grad(jax.grad(objective)))(0.0)
+        third = jax.jit(jax.grad(jax.grad(jax.grad(objective))))(0.0)
+>       np.testing.assert_allclose([forward, reverse], expected_second, rtol=8e-6, atol=0.0)
+E       AssertionError: 
+E       Not equal to tolerance rtol=8e-06, atol=0
+E       
+E       nan location mismatch:
+E        ACTUAL: array([0.23,  nan], dtype=float32)
+E        DESIRED: array(0.23, dtype=float32)
+
+tests/test_spd_exponential_audit.py:63: AssertionError
+_____ test_scaled_repeated_exp_preserves_second_and_third_derivatives[0.0] _____
+
+sign = 0.0
+
+    @pytest.mark.parametrize("sign", [-1.0, 0.0, 1.0])
+    def test_scaled_repeated_exp_preserves_second_and_third_derivatives(sign):
+        limit = 700.0 if jax.config.x64_enabled else 80.0
+        shift = sign * limit
+        matrix = shift * jnp.eye(2)
+        direction = jnp.array([[0.2, 0.3], [0.3, -0.1]])
+        manifold = SPDLogEuclidean((2, 2))
+    
+        def objective(time):
+            return jnp.trace(manifold.expm(matrix + time * direction)) / jnp.exp(shift)
+    
+        expected_second = np.trace(np.asarray(direction) @ np.asarray(direction))
+        expected_third = np.trace(np.linalg.matrix_power(np.asarray(direction), 3))
+        forward = jax.jit(jax.jacfwd(jax.jacfwd(objective)))(0.0)
+        reverse = jax.jit(jax.grad(jax.grad(objective)))(0.0)
+        third = jax.jit(jax.grad(jax.grad(jax.grad(objective))))(0.0)
+        np.testing.assert_allclose([forward, reverse], expected_second, rtol=8e-6, atol=0.0)
+>       np.testing.assert_allclose(third, expected_third, rtol=8e-6, atol=0.0)
+E       AssertionError: 
+E       Not equal to tolerance rtol=8e-06, atol=0
+E       
+E       nan location mismatch:
+E        ACTUAL: array(nan, dtype=float32)
+E        DESIRED: array(0.034, dtype=float32)
+
+tests/test_spd_exponential_audit.py:64: AssertionError
+_____ test_scaled_repeated_exp_preserves_second_and_third_derivatives[1.0] _____
+
+sign = 1.0
+
+    @pytest.mark.parametrize("sign", [-1.0, 0.0, 1.0])
+    def test_scaled_repeated_exp_preserves_second_and_third_derivatives(sign):
+        limit = 700.0 if jax.config.x64_enabled else 80.0
+        shift = sign * limit
+        matrix = shift * jnp.eye(2)
+        direction = jnp.array([[0.2, 0.3], [0.3, -0.1]])
+        manifold = SPDLogEuclidean((2, 2))
+    
+        def objective(time):
+            return jnp.trace(manifold.expm(matrix + time * direction)) / jnp.exp(shift)
+    
+        expected_second = np.trace(np.asarray(direction) @ np.asarray(direction))
+        expected_third = np.trace(np.linalg.matrix_power(np.asarray(direction), 3))
+        forward = jax.jit(jax.jacfwd(jax.jacfwd(objective)))(0.0)
+        reverse = jax.jit(jax.grad(jax.grad(objective)))(0.0)
+        third = jax.jit(jax.grad(jax.grad(jax.grad(objective))))(0.0)
+>       np.testing.assert_allclose([forward, reverse], expected_second, rtol=8e-6, atol=0.0)
+E       AssertionError: 
+E       Not equal to tolerance rtol=8e-06, atol=0
+E       
+E       nan location mismatch:
+E        ACTUAL: array([0.23,  nan], dtype=float32)
+E        DESIRED: array(0.23, dtype=float32)
+
+tests/test_spd_exponential_audit.py:63: AssertionError
+_ test_gradients_through_vmapped_exp_keep_inactive_scaling_steps_finite[shifts0] _
+
+shifts = (0.1, 26.0)
+
+    @pytest.mark.parametrize("shifts", [(0.1, 26.0), (-80.0, 80.0)])
+    def test_gradients_through_vmapped_exp_keep_inactive_scaling_steps_finite(shifts):
+        bases = jnp.asarray(shifts)[:, None, None] * jnp.eye(2)
+        direction = jnp.array([[0.2, 0.3], [0.3, -0.1]])
+        manifold = SPDLogEuclidean((2, 2))
+    
+        def single(base, time):
+            return jnp.trace(manifold.expm(base + time * direction)) / jnp.exp(jnp.trace(base) / 2)
+    
+        def objective(time):
+            return jnp.sum(jax.vmap(single, in_axes=(0, None))(bases, time))
+    
+        gradient = jax.jit(jax.grad(objective))(0.0)
+        hessian = jax.jit(jax.grad(jax.grad(objective)))(0.0)
+        np.testing.assert_allclose(gradient, 2 * jnp.trace(direction), rtol=8e-6, atol=0.0)
+>       np.testing.assert_allclose(hessian, 2 * jnp.trace(direction @ direction), rtol=8e-6, atol=0.0)
+E       AssertionError: 
+E       Not equal to tolerance rtol=8e-06, atol=0
+E       
+E       nan location mismatch:
+E        ACTUAL: array(nan, dtype=float32)
+E        DESIRED: array(0.46, dtype=float32)
+
+tests/test_spd_exponential_audit.py:108: AssertionError
+_ test_gradients_through_vmapped_exp_keep_inactive_scaling_steps_finite[shifts1] _
+
+shifts = (-80.0, 80.0)
+
+    @pytest.mark.parametrize("shifts", [(0.1, 26.0), (-80.0, 80.0)])
+    def test_gradients_through_vmapped_exp_keep_inactive_scaling_steps_finite(shifts):
+        bases = jnp.asarray(shifts)[:, None, None] * jnp.eye(2)
+        direction = jnp.array([[0.2, 0.3], [0.3, -0.1]])
+        manifold = SPDLogEuclidean((2, 2))
+    
+        def single(base, time):
+            return jnp.trace(manifold.expm(base + time * direction)) / jnp.exp(jnp.trace(base) / 2)
+    
+        def objective(time):
+            return jnp.sum(jax.vmap(single, in_axes=(0, None))(bases, time))
+    
+        gradient = jax.jit(jax.grad(objective))(0.0)
+        hessian = jax.jit(jax.grad(jax.grad(objective)))(0.0)
+        np.testing.assert_allclose(gradient, 2 * jnp.trace(direction), rtol=8e-6, atol=0.0)
+>       np.testing.assert_allclose(hessian, 2 * jnp.trace(direction @ direction), rtol=8e-6, atol=0.0)
+E       AssertionError: 
+E       Not equal to tolerance rtol=8e-06, atol=0
+E       
+E       nan location mismatch:
+E        ACTUAL: array(nan, dtype=float32)
+E        DESIRED: array(0.46, dtype=float32)
+
+tests/test_spd_exponential_audit.py:108: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_spd_exponential_audit.py::test_scaled_repeated_exp_preserves_second_and_third_derivatives[-1.0]
+FAILED tests/test_spd_exponential_audit.py::test_scaled_repeated_exp_preserves_second_and_third_derivatives[0.0]
+FAILED tests/test_spd_exponential_audit.py::test_scaled_repeated_exp_preserves_second_and_third_derivatives[1.0]
+FAILED tests/test_spd_exponential_audit.py::test_gradients_through_vmapped_exp_keep_inactive_scaling_steps_finite[shifts0]
+FAILED tests/test_spd_exponential_audit.py::test_gradients_through_vmapped_exp_keep_inactive_scaling_steps_finite[shifts1]
+5 failed, 6 passed in 6.02s

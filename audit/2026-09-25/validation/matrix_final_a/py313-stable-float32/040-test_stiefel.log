@@ -1,0 +1,35 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py313-stable-float32/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_stiefel.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py313-stable-float32/040-test_stiefel.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py313-stable-float32/040-test_stiefel.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.13.14, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py313-stable-float32/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.13.14, JAX 0.11.0, NumPy 2.4.4, float32
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 10 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_stiefel.py::test_stiefel_constraints_projection_and_sampling[Stiefel] PASSED [ 10%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_stiefel.py::test_stiefel_constraints_projection_and_sampling[StiefelEuclidean] PASSED [ 20%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_stiefel.py::test_stiefel_local_exp_log_and_batch_roundtrip[Stiefel] PASSED [ 30%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_stiefel.py::test_stiefel_local_exp_log_and_batch_roundtrip[StiefelEuclidean] PASSED [ 40%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_stiefel.py::test_canonical_and_euclidean_metrics_differ_on_vertical_tangents PASSED [ 50%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_stiefel.py::test_stiefel_euclidean_exponential_satisfies_geodesic_equation PASSED [ 60%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_stiefel.py::test_stiefel_gradient_conversion_and_isometric_transport[Stiefel] PASSED [ 70%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_stiefel.py::test_stiefel_gradient_conversion_and_isometric_transport[StiefelEuclidean] PASSED [ 80%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_stiefel.py::test_stiefel_optimization_smoke[Stiefel] PASSED [ 90%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_stiefel.py::test_stiefel_optimization_smoke[StiefelEuclidean] PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py313-stable-float32/040-test_stiefel.xml -
+============================== slowest durations ===============================
+5.87s call     tests/test_stiefel.py::test_stiefel_local_exp_log_and_batch_roundtrip[Stiefel]
+4.54s call     tests/test_stiefel.py::test_stiefel_local_exp_log_and_batch_roundtrip[StiefelEuclidean]
+2.34s call     tests/test_stiefel.py::test_stiefel_euclidean_exponential_satisfies_geodesic_equation
+1.22s call     tests/test_stiefel.py::test_stiefel_gradient_conversion_and_isometric_transport[Stiefel]
+0.84s call     tests/test_stiefel.py::test_stiefel_constraints_projection_and_sampling[Stiefel]
+0.74s call     tests/test_stiefel.py::test_stiefel_optimization_smoke[Stiefel]
+0.51s call     tests/test_stiefel.py::test_stiefel_gradient_conversion_and_isometric_transport[StiefelEuclidean]
+0.39s call     tests/test_stiefel.py::test_stiefel_optimization_smoke[StiefelEuclidean]
+0.22s call     tests/test_stiefel.py::test_canonical_and_euclidean_metrics_differ_on_vertical_tangents
+
+(21 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================= 10 passed in 16.91s ==============================

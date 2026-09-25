@@ -19,6 +19,8 @@ from .base import (
 from ._numerics import (
     acos_over_sin,
     cos_from_squared_norm,
+    nonnegative,
+    spherical_squared_dist,
     sinc_from_squared_norm,
     stable_metric_norm,
     stable_norm,
@@ -33,6 +35,79 @@ def _transpose(A: Array) -> Array:
 
 def _trace_inner(A: Array, B: Array) -> Array:
     return jnp.sum(jnp.asarray(A) * jnp.asarray(B), axis=(-2, -1))
+
+
+def _skew(A: Array) -> Array:
+    return 0.5 * (A - _transpose(A))
+
+
+def _symmetric(A: Array) -> Array:
+    return 0.5 * (A + _transpose(A))
+
+
+def _skew_sylvester(gram: Array, right_hand_side: Array) -> Array:
+    """Solve ``gram @ omega + omega @ gram = rhs`` on skew matrices.
+
+    Only sums of *distinct* eigenvalue indices enter this equation. It is
+    therefore nonsingular on the regular stratum even when ``gram`` has one
+    zero eigenvalue. Extend the operator by the identity on symmetric matrices
+    to give ``custom_linear_solve`` an invertible, self-adjoint ambient
+    operator. Its implicit derivatives do not differentiate an eigenbasis and
+    remain valid at repeated eigenvalues, including under nested autodiff.
+    The same solve applies to a signed polar factor whenever its distinct-index
+    eigenvalue sums are nonzero, as at a unique proper Procrustes optimum.
+    """
+    gram = _symmetric(gram)
+    if gram.shape[-1] == 1:
+        return jnp.zeros_like(right_hand_side)
+
+    def operator(value):
+        skew = _skew(value)
+        return gram @ skew + skew @ gram + _symmetric(value)
+
+    def solve(_operator, value):
+        eigenvalues, eigenvectors = jnp.linalg.eigh(gram)
+        rotated = _transpose(eigenvectors) @ _skew(value) @ eigenvectors
+        denominator = eigenvalues[..., :, None] + eigenvalues[..., None, :]
+        off_diagonal = ~jnp.eye(gram.shape[-1], dtype=bool)
+        # Diagonal entries are identically zero in the skew subspace; guarding
+        # them preserves rank-(m-1) points without regularizing the equation.
+        denominator = jnp.where(off_diagonal, denominator, 1.0)
+        solution = jnp.where(off_diagonal, rotated / denominator, 0.0)
+        return _skew(eigenvectors @ solution @ _transpose(eigenvectors)) + _symmetric(value)
+
+    result = jax.lax.custom_linear_solve(
+        operator, _skew(right_hand_side), solve=solve, symmetric=True
+    )
+    return _skew(result)
+
+
+@jax.custom_jvp
+def _proper_procrustes(cross: Array) -> Array:
+    """Orientation-preserving polar factor, smooth when the optimum is unique.
+
+    The primal still selects an optimal rotation at a nonunique alignment;
+    derivatives there are undefined. Public log/transport methods separately
+    reject those cut-locus pairs using their uniqueness certificate.
+    """
+    if cross.shape[-1] == 1:
+        return jnp.ones_like(cross)
+    left, _, right_t = jnp.linalg.svd(cross, full_matrices=False)
+    provisional = left @ right_t
+    last_sign = jnp.where(jnp.linalg.det(provisional) < 0.0, -1.0, 1.0)
+    signs = jnp.ones(left.shape[:-1], dtype=left.dtype)
+    signs = signs.at[..., -1].set(last_sign)
+    return (left * signs[..., None, :]) @ right_t
+
+
+@_proper_procrustes.defjvp
+def _proper_procrustes_jvp(primals, tangents):
+    (cross,), (cross_dot,) = primals, tangents
+    rotation = _proper_procrustes(cross)
+    signed_polar = _symmetric(_transpose(rotation) @ cross)
+    rhs = _transpose(rotation) @ cross_dot - _transpose(cross_dot) @ rotation
+    omega = _skew_sylvester(signed_polar, rhs)
+    return rotation, rotation @ omega
 
 
 def _parse_size(size: int | Sequence[int]) -> tuple[int, int]:
@@ -134,12 +209,10 @@ class KendallShape(ExactGeometryMixin):
         """Return an optimal alignment and whether that optimizer is unique."""
         Y, X = self._check_shapes(("Y", Y), ("X", X))
         cross = _transpose(Y) @ X
-        left, singular_values, right_t = jnp.linalg.svd(cross, full_matrices=False)
-        provisional = left @ right_t
-        last_sign = jnp.where(jnp.linalg.det(provisional) < 0.0, -1.0, 1.0)
-        signs = jnp.ones(left.shape[:-1], dtype=left.dtype)
-        signs = signs.at[..., -1].set(last_sign)
-        rotation = (left * signs[..., None, :]) @ right_t
+        rotation = _proper_procrustes(cross)
+        # These values certify uniqueness only. The differentiable rotation
+        # uses the implicit stationarity equation, not SVD-vector derivatives.
+        singular_values = jnp.linalg.svd(jax.lax.stop_gradient(cross), compute_uv=False)
         dtype = jnp.result_type(cross, float)
         # A cross-covariance can be zero through cancellation, so its own norm
         # is not an adequate roundoff scale. Bound the matrix product error by
@@ -151,7 +224,7 @@ class KendallShape(ExactGeometryMixin):
         else:
             rank_at_least_m_minus_one = singular_values[..., -2] > threshold
             full_rank = singular_values[..., -1] > threshold
-            reflected = jnp.linalg.det(cross) < 0.0
+            reflected = jnp.linalg.slogdet(cross)[0] < 0.0
             smallest_is_tied = (singular_values[..., -2] - singular_values[..., -1]) <= threshold
             unique = rank_at_least_m_minus_one & ~(reflected & full_rank & smallest_is_tied)
         return jnp.asarray(Y) @ rotation, rotation, unique
@@ -159,15 +232,7 @@ class KendallShape(ExactGeometryMixin):
     def _vertical_generator(self, X: Array, U: Array) -> Array:
         gram = _transpose(X) @ X
         right_hand_side = _transpose(X) @ U - _transpose(U) @ X
-        eigenvalues, eigenvectors = jnp.linalg.eigh(gram)
-        rotated = _transpose(eigenvectors) @ right_hand_side @ eigenvectors
-        denominator = eigenvalues[..., :, None] + eigenvalues[..., None, :]
-        off_diagonal = ~jnp.eye(self.ambient_dim, dtype=bool)
-        active = off_diagonal & (denominator > 0.0)
-        safe_denominator = jnp.where(active, denominator, 1.0)
-        solution = jnp.where(active, rotated / safe_denominator, 0.0)
-        generator = eigenvectors @ solution @ _transpose(eigenvectors)
-        return 0.5 * (generator - _transpose(generator))
+        return _skew_sylvester(gram, right_hand_side)
 
     def tangent_project(self, X: Array, U: Array) -> Array:
         X = self.project(X)
@@ -201,7 +266,7 @@ class KendallShape(ExactGeometryMixin):
     def exp(self, X: Array, U: Array) -> Array:
         X = self.project(X)
         U = self.tangent_project(X, U)
-        length_squared = jnp.maximum(self.inner(X, U, U), 0.0)[..., None, None]
+        length_squared = nonnegative(self.inner(X, U, U))[..., None, None]
         result = (
             cos_from_squared_norm(length_squared) * X + sinc_from_squared_norm(length_squared) * U
         )
@@ -233,8 +298,9 @@ class KendallShape(ExactGeometryMixin):
         return jnp.arctan2(tangent_norm, cosine)
 
     def squared_dist(self, X: Array, Y: Array) -> Array:
-        distance = self.dist(X, Y)
-        return distance * distance
+        X = self.project(X)
+        aligned, _ = self.align(self.project(Y), X)
+        return spherical_squared_dist(X, aligned, axis=(-2, -1))
 
     def transport(self, X: Array, Y: Array, U: Array) -> Array:
         X = self.project(X)

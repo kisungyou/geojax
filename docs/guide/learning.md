@@ -117,7 +117,15 @@ target tangent spaces. These wrappers are compatible with `jax.jit`,
 ## Statistical algorithms
 
 Fréchet means minimize weighted squared distance and use GeoJAX's manifold
-optimizer. Medians use a guarded Riemannian Weiszfeld iteration for a
+optimizer. Their default line search starts with a half-gradient step and
+uses retraction-curve derivatives to check progress when objective changes
+are comparable to floating-point rounding. Convergence still requires the
+reported gradient tolerance; a small step alone does not certify a mean.
+An explicitly supplied solver retains its own line-search settings.
+Custom retractions that encounter JAX tracing errors from Python or NumPy
+scalar conversions use the previous Armijo strategy without the derivative-based
+safeguard; unrelated errors still propagate.
+Medians use a guarded Riemannian Weiszfeld iteration for a
 Huber-smoothed distance objective; the returned diagnostics distinguish that
 objective from the unsmoothed median loss. The minimum enclosing ball uses a
 farthest-point approximation, so its convergence flag certifies stabilization

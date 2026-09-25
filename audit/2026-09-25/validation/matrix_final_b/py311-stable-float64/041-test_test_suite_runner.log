@@ -1,0 +1,35 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float64/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_test_suite_runner.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_b/py311-stable-float64/041-test_test_suite_runner.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_b/py311-stable-float64/041-test_test_suite_runner.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float64/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.11.15, JAX 0.10.2, NumPy 2.4.4, float64
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 9 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_test_suite_runner.py::test_runner_rejects_empty_collection_without_skip PASSED [ 11%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_test_suite_runner.py::test_runner_requires_every_collected_test_to_run PASSED [ 22%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_test_suite_runner.py::test_runner_records_real_pytest_collection_and_skips[def test_success():\n    assert True\n-0-1] PASSED [ 33%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_test_suite_runner.py::test_runner_records_real_pytest_collection_and_skips[import pytest\npytest.skip('optional backend unavailable', allow_module_level=True)\n-5-0] PASSED [ 44%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_test_suite_runner.py::test_runner_records_real_pytest_collection_and_skips[import pytest\n@pytest.mark.skip(reason='precision contract')\ndef test_skip(): pass\n-0-1] PASSED [ 55%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_test_suite_runner.py::test_runner_terminates_a_timed_out_process PASSED [ 66%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_test_suite_runner.py::test_runner_verifies_wheel_bytes_inside_tox_directory PASSED [ 77%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_test_suite_runner.py::test_runner_disables_background_watchdog_even_if_configured PASSED [ 88%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_test_suite_runner.py::test_runner_requests_snapshot_only_after_wall_timeout PASSED [100%]/Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float64/lib/python3.11/site-packages/coverage/inorout.py:561: CoverageWarning: Module geojax was never imported. (module-not-imported); see https://coverage.readthedocs.io/en/7.13.5/messages.html#warning-module-not-imported
+  self.warn(f"Module {pkg} was never imported.", slug="module-not-imported")
+/Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float64/lib/python3.11/site-packages/coverage/control.py:958: CoverageWarning: No data was collected. (no-data-collected); see https://coverage.readthedocs.io/en/7.13.5/messages.html#warning-no-data-collected
+  self._warn("No data was collected.", slug="no-data-collected")
+
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_b/py311-stable-float64/041-test_test_suite_runner.xml -
+============================== slowest durations ===============================
+0.62s call     tests/test_test_suite_runner.py::test_runner_requests_snapshot_only_after_wall_timeout
+0.30s call     tests/test_test_suite_runner.py::test_runner_records_real_pytest_collection_and_skips[import pytest\npytest.skip('optional backend unavailable', allow_module_level=True)\n-5-0]
+0.25s call     tests/test_test_suite_runner.py::test_runner_disables_background_watchdog_even_if_configured
+0.21s call     tests/test_test_suite_runner.py::test_runner_records_real_pytest_collection_and_skips[import pytest\n@pytest.mark.skip(reason='precision contract')\ndef test_skip(): pass\n-0-1]
+0.14s call     tests/test_test_suite_runner.py::test_runner_records_real_pytest_collection_and_skips[def test_success():\n    assert True\n-0-1]
+0.11s call     tests/test_test_suite_runner.py::test_runner_terminates_a_timed_out_process
+
+(21 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================== 9 passed in 1.69s ===============================

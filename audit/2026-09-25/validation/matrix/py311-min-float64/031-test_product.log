@@ -1,0 +1,25 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float64/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_product.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py311-min-float64/031-test_product.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py311-min-float64/031-test_product.xml", "--trace-after", "90.0"]
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py311-min-float64/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.11.15, JAX 0.6.0, NumPy 1.26.4, float64
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 5 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_product.py::test_product_accepts_nested_pytrees PASSED [ 20%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_product.py::test_product_accepts_product_geometries_as_nested_factors PASSED [ 40%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_product.py::test_product_rejects_wrong_tree_structure PASSED [ 60%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_product.py::test_product_inner_is_sum_of_factor_inners PASSED [ 80%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_product.py::test_product_combines_operation_capabilities_conservatively PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py311-min-float64/031-test_product.xml -
+============================== slowest durations ===============================
+10.61s call     tests/test_product.py::test_product_accepts_product_geometries_as_nested_factors
+6.60s call     tests/test_product.py::test_product_accepts_nested_pytrees
+0.15s call     tests/test_product.py::test_product_inner_is_sum_of_factor_inners
+0.01s call     tests/test_product.py::test_product_rejects_wrong_tree_structure
+
+(11 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================== 5 passed in 17.64s ==============================

@@ -1,0 +1,34 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py314-stable-float32/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_spd_exponential_audit.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py314-stable-float32/037-test_spd_exponential_audit.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py314-stable-float32/037-test_spd_exponential_audit.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.14.6, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py314-stable-float32/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.14.6, JAX 0.11.0, NumPy 2.4.4, float32
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 11 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_exponential_audit.py::test_exp_frechet_matches_diagonal_divided_differences[small_covariance] PASSED [  9%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_exponential_audit.py::test_exp_frechet_matches_diagonal_divided_differences[wide] PASSED [ 18%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_exponential_audit.py::test_exp_frechet_matches_diagonal_divided_differences[large] PASSED [ 27%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_exponential_audit.py::test_exp_frechet_matches_diagonal_divided_differences[smallest_normal] PASSED [ 36%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_exponential_audit.py::test_scaled_repeated_exp_preserves_second_and_third_derivatives[-1.0] PASSED [ 45%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_exponential_audit.py::test_scaled_repeated_exp_preserves_second_and_third_derivatives[0.0] PASSED [ 54%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_exponential_audit.py::test_scaled_repeated_exp_preserves_second_and_third_derivatives[1.0] PASSED [ 63%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_exponential_audit.py::test_exp_frechet_keeps_small_tangents_before_amplification PASSED [ 72%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_exponential_audit.py::test_exp_frechet_broadcasting_vmap_and_transpose PASSED [ 81%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_exponential_audit.py::test_gradients_through_vmapped_exp_keep_inactive_scaling_steps_finite[shifts0] PASSED [ 90%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_exponential_audit.py::test_gradients_through_vmapped_exp_keep_inactive_scaling_steps_finite[shifts1] PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py314-stable-float32/037-test_spd_exponential_audit.xml -
+============================== slowest durations ===============================
+2.73s call     tests/test_spd_exponential_audit.py::test_scaled_repeated_exp_preserves_second_and_third_derivatives[-1.0]
+2.05s call     tests/test_spd_exponential_audit.py::test_scaled_repeated_exp_preserves_second_and_third_derivatives[1.0]
+2.05s call     tests/test_spd_exponential_audit.py::test_scaled_repeated_exp_preserves_second_and_third_derivatives[0.0]
+1.11s call     tests/test_spd_exponential_audit.py::test_gradients_through_vmapped_exp_keep_inactive_scaling_steps_finite[shifts0]
+0.93s call     tests/test_spd_exponential_audit.py::test_gradients_through_vmapped_exp_keep_inactive_scaling_steps_finite[shifts1]
+0.88s call     tests/test_spd_exponential_audit.py::test_exp_frechet_broadcasting_vmap_and_transpose
+0.45s call     tests/test_spd_exponential_audit.py::test_exp_frechet_matches_diagonal_divided_differences[small_covariance]
+
+(26 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================= 11 passed in 10.34s ==============================

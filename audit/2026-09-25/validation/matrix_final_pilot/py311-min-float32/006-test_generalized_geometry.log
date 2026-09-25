@@ -1,0 +1,30 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_generalized_geometry.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_pilot/py311-min-float32/006-test_generalized_geometry.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_pilot/py311-min-float32/006-test_generalized_geometry.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.11.15, JAX 0.6.0, NumPy 1.26.4, float32
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 8 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_generalized_geometry.py::test_generalized_orthogonality_and_pullback_metric[GeneralizedStiefel] PASSED [ 12%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_generalized_geometry.py::test_generalized_orthogonality_and_pullback_metric[GeneralizedGrassmann] PASSED [ 25%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_generalized_geometry.py::test_generalized_gradient_conversion_is_metric_dual[GeneralizedStiefel] PASSED [ 37%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_generalized_geometry.py::test_generalized_gradient_conversion_is_metric_dual[GeneralizedGrassmann] PASSED [ 50%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_generalized_geometry.py::test_generalized_metric_validation_is_invariant_to_positive_rescaling[GeneralizedStiefel] PASSED [ 62%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_generalized_geometry.py::test_generalized_metric_validation_is_invariant_to_positive_rescaling[GeneralizedGrassmann] PASSED [ 75%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_generalized_geometry.py::test_generalized_metric_rejects_complex_input_instead_of_discarding_it[GeneralizedStiefel] PASSED [ 87%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_generalized_geometry.py::test_generalized_metric_rejects_complex_input_instead_of_discarding_it[GeneralizedGrassmann] PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_pilot/py311-min-float32/006-test_generalized_geometry.xml -
+============================== slowest durations ===============================
+4.99s call     tests/test_generalized_geometry.py::test_generalized_orthogonality_and_pullback_metric[GeneralizedStiefel]
+0.77s call     tests/test_generalized_geometry.py::test_generalized_metric_validation_is_invariant_to_positive_rescaling[GeneralizedStiefel]
+0.46s call     tests/test_generalized_geometry.py::test_generalized_orthogonality_and_pullback_metric[GeneralizedGrassmann]
+0.11s call     tests/test_generalized_geometry.py::test_generalized_metric_rejects_complex_input_instead_of_discarding_it[GeneralizedStiefel]
+0.05s call     tests/test_generalized_geometry.py::test_generalized_gradient_conversion_is_metric_dual[GeneralizedStiefel]
+0.02s call     tests/test_generalized_geometry.py::test_generalized_metric_validation_is_invariant_to_positive_rescaling[GeneralizedGrassmann]
+
+(18 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================== 8 passed in 6.55s ===============================

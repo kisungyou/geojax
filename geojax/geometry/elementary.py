@@ -8,6 +8,8 @@ from typing import Any, Sequence
 import jax
 import jax.numpy as jnp
 
+from ._numerics import nonnegative
+
 from .base import (
     ExactGeometryMixin,
     Shape,
@@ -19,7 +21,7 @@ from .base import (
 )
 from ._numerics import (
     acos_over_sin,
-    acos_squared,
+    spherical_squared_dist,
     atanhc_from_squared_norm,
     cos_from_squared_norm,
     sinc_from_squared_norm,
@@ -136,8 +138,7 @@ class Oblique(ExactGeometryMixin):
 
     def squared_dist(self, X: Array, Y: Array) -> Array:
         X, Y = self._check_shapes(("X", X), ("Y", Y))
-        dots = jnp.clip(jnp.sum(X * Y, axis=-2), -1.0, 1.0)
-        return jnp.sum(acos_squared(dots), axis=-1)
+        return jnp.sum(spherical_squared_dist(X, Y, axis=-2), axis=-1)
 
     def dist(self, X: Array, Y: Array) -> Array:
         return sqrt_nonnegative(self.squared_dist(X, Y))
@@ -256,7 +257,7 @@ class ProbabilitySimplex(ExactGeometryMixin):
     def exp(self, p: Array, u: Array) -> Array:
         p = self.project(p)
         u = self.tangent_project(p, u)
-        length_squared = jnp.maximum(self.inner(p, u, u), 0.0)[..., None]
+        length_squared = nonnegative(self.inner(p, u, u))[..., None]
         root = jnp.sqrt(p)
         half_length_squared = 0.25 * length_squared
         next_root = cos_from_squared_norm(
@@ -295,8 +296,9 @@ class ProbabilitySimplex(ExactGeometryMixin):
         return self.tangent_project(p, scale * root_p * (root_q - cosine * root_p))
 
     def squared_dist(self, p: Array, q: Array) -> Array:
-        affinity = jnp.sum(jnp.sqrt(self.project(p) * self.project(q)), axis=-1)
-        return 4.0 * acos_squared(jnp.clip(affinity, -1.0, 1.0))
+        return 4.0 * spherical_squared_dist(
+            jnp.sqrt(self.project(p)), jnp.sqrt(self.project(q)), axis=-1
+        )
 
     def dist(self, p: Array, q: Array) -> Array:
         return sqrt_nonnegative(self.squared_dist(p, q))

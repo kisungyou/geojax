@@ -1,0 +1,90 @@
+{
+  "status": "passed",
+  "scope": "Complete final-package tutorial execution, strict rendering and local HTML audit, followed by strict rendering of one precisely verified compatibility-prose clarification without new notebook execution.",
+  "complete_execution": {
+    "result": "result.json",
+    "notebooks": 25,
+    "code_cells": 97,
+    "cell_timeout_seconds": 300,
+    "mode": "force",
+    "elapsed_seconds": 495.2692618750152,
+    "cpu_seconds": 587.453357,
+    "html_audit": {
+      "content_pages": 45,
+      "math_nodes": 551,
+      "local_references": 5309
+    },
+    "source_inputs": 162,
+    "original_inputs_unchanged_during_run": true,
+    "sphinx_warning_count": 0,
+    "notebook_error_outputs": 0,
+    "nonfinite_text_findings": 0
+  },
+  "final_prose_delta": {
+    "result": "prose_delta_result.json",
+    "exact_diff": "prose_delta.patch",
+    "changed_files": [
+      "docs/guide/learning.md"
+    ],
+    "all_package_and_tutorial_inputs_identical_to_complete_execution": true,
+    "temporary_only_language_headers": 4,
+    "tutorials_reexecuted": false,
+    "html_audit": {
+      "content_pages": 45,
+      "math_nodes": 551,
+      "local_references": 5273
+    },
+    "sphinx_warning_count": 0,
+    "original_inputs_unchanged_during_render": true
+  },
+  "historical_provenance": {
+    "compared_to": "audit/2026-09-10/corrections/docs-source-manifest.json",
+    "recorded_execution_date": "2026-09-11",
+    "input_count": 162,
+    "changed_files": [
+      "README.md",
+      "docs/development/testing.md",
+      "docs/guide/learning.md",
+      "docs/guide/optimization.md",
+      "docs/references.bib",
+      "geojax/learning/_statistics.py",
+      "geojax/optimization/linesearch.py"
+    ],
+    "new_inputs": [],
+    "missing_inputs": [],
+    "note": "Seven distinct inputs differ from September 11; the additional post-execution clarification changes the learning guide, already one of those seven."
+  },
+  "outputs": {
+    "full_notebook_directory": "/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-docs-final-20260925-xslj4h_o/jupyter_execute/tutorials",
+    "notebook_hashes_execution_counts_and_metadata": "executed_notebooks.json",
+    "complete_text_outputs": "text_outputs.json",
+    "automatic_output_audit": "notebook_output_audit.json"
+  },
+  "manual_output_review": {
+    "reviewed": "Printed numerical summaries and termination/validity reports in all 25 notebooks. Error/nonfinite screening does not claim a tensor-level finiteness proof.",
+    "conclusion": "No unexplained numerical output or falsely reported convergence was found. Rigid registration truthfully prints a minimum-step termination; cubic regularization truthfully reports its configured 100-iteration run. These are tutorial outputs, not extra convergence certificates.",
+    "nonfatal_diagnostics": [
+      {
+        "kind": "kernel transport warning",
+        "count": 25,
+        "effect": "Jupyter startup notes unencrypted local TCP; no execution failure or Sphinx warning."
+      },
+      {
+        "kind": "Matplotlib layout warning",
+        "tutorial": "spd_eeg_classifier",
+        "cell": 9,
+        "effect": "subplots_adjust is ignored with the active layout engine. The actual executed figure was visually inspected: all three panels, labels and shared legend are present and readable. No source or figure edits were made."
+      }
+    ]
+  },
+  "current_package_hashes": {
+    "geojax/learning/_statistics.py": "316b5a40b99505c172cec263aabd90878efa5ca47729601db30102d342f95f2b",
+    "geojax/optimization/linesearch.py": "74a8c616512b38120fa404b790ffda7fa372f32610dad39717866692eac29834"
+  },
+  "supplemental_release_workflow_guard": {
+    "evidence": "release_guard_input_delta.json",
+    "guard_regression": "audit/2026-09-25/validation/release_source_guard/result.json",
+    "scope": "After both documented checks, Makefile gained a second clean-tag source check between website and package-check. The website recipe, package and all tutorial inputs are unchanged; no additional rendering or execution is claimed. RELEASING.md and CHANGELOG.md also explain this release-only correction and are outside the 162 documentation-input manifest.",
+    "historical_note": "The earlier seven-file comparison describes the executed/prose-rendered snapshots. The final release-workflow addition makes Makefile the eighth distinct changed input relative to September 11."
+  }
+}

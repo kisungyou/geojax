@@ -2,6 +2,37 @@
 
 ## 0.2.0 - Unreleased
 
+- Prevented float32 Fréchet means from stalling when rounding hides a
+  decreasing objective. The default solver uses a half-gradient initial step
+  and a narrowly bounded approximate-Wolfe safeguard, while retaining the
+  gradient convergence tolerance and explicitly supplied solver settings.
+- Made the complete ten-environment compatibility matrix use isolated
+  installed-wheel test processes, durable collection and coverage records,
+  and an external timeout without a background traceback timer.
+- Rechecked clean tagged release inputs after tutorial generation so regenerated
+  figures cannot silently enter release artifacts.
+- Corrected the September correctness-audit findings with analytic regression
+  tests: coincident squared-distance Hessians, small spherical angles,
+  extreme-scale weights and kernels, zero-mass observations, transport
+  marginals, explicit least-squares adjoints, and domain-aware solver trials.
+- Replaced differentiated eigenvector and singular-vector choices with
+  implicit matrix equations for regular SPD, low-rank Bures, Kendall-shape,
+  Grassmann-logarithm, and rotation-group computations, including repeated
+  spectra and nested differentiation.
+- Expanded fixed-rank Bures exponentials to the full regular horizontal-path
+  domain, retained explicit cut and rank-loss checks, and stabilized related
+  low-rank retraction derivatives.
+- Preserved SPD derivative broadcasting and mixed repair batches, stabilized
+  nearly equal matrix-logarithm eigenvalues across scales, and corrected
+  zero-coordinate derivatives in power-of-two rescaling.
+- Restarted conjugate gradient when cancellation destroys meaningful descent,
+  restored compiled pairwise kernels with captured/adapted data, and verified
+  the real optional Sinkhorn backend's costs and gradients.
+- Preserved covariance projections at both ends of the normal floating-point
+  range, added smooth orientation-preserving polar derivatives, and evaluated
+  dictionary objectives from their residuals to prevent cancellation into
+  negative squared errors. Reused compiled SPD repair derivatives in repeated
+  optimization calls.
 - Corrected leading-batch tangent scaling across every geometry, made
   compatibility aliases preserve subclass dispatch, enabled static-JIT use of
   generalized and Product geometries, and qualified squared-distance

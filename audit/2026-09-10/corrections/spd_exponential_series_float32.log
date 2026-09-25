@@ -1,0 +1,86 @@
+.......F.FF                                                              [100%]
+=================================== FAILURES ===================================
+__________ test_exp_frechet_keeps_small_tangents_before_amplification __________
+
+    def test_exp_frechet_keeps_small_tangents_before_amplification():
+        shift = 700.0 if jax.config.x64_enabled else 80.0
+        coefficient = 1e-300 if jax.config.x64_enabled else 1e-36
+        matrix = shift * jnp.eye(2)
+        tangent = coefficient * jnp.eye(2)
+        expected = float(np.asarray(tangent)[0, 0]) * np.exp(shift)
+        result = jax.jit(_dexp)(matrix, tangent)
+>       np.testing.assert_allclose(jnp.diag(result), expected, rtol=3e-6, atol=0.0)
+E       AssertionError: 
+E       Not equal to tolerance rtol=3e-06, atol=0
+E       
+E       Mismatched elements: 2 / 2 (100%)
+E       Mismatch at indices:
+E        [0]: 0.05518287420272827 (ACTUAL), 0.05540622583518657 (DESIRED)
+E        [1]: 0.05518287420272827 (ACTUAL), 0.05540622583518657 (DESIRED)
+E       Max absolute difference among violations: 0.00022335
+E       Max relative difference among violations: 0.00403116
+E        ACTUAL: array([0.055183, 0.055183], dtype=float32)
+E        DESIRED: array(0.055406)
+
+tests/test_spd_exponential_audit.py:74: AssertionError
+_ test_gradients_through_vmapped_exp_keep_inactive_scaling_steps_finite[shifts0] _
+
+shifts = (0.1, 26.0)
+
+    @pytest.mark.parametrize("shifts", [(0.1, 26.0), (-80.0, 80.0)])
+    def test_gradients_through_vmapped_exp_keep_inactive_scaling_steps_finite(shifts):
+        bases = jnp.asarray(shifts)[:, None, None] * jnp.eye(2)
+        direction = jnp.array([[0.2, 0.3], [0.3, -0.1]])
+        manifold = SPDLogEuclidean((2, 2))
+    
+        def single(base, time):
+            return jnp.trace(manifold.expm(base + time * direction)) / jnp.exp(jnp.trace(base) / 2)
+    
+        def objective(time):
+            return jnp.sum(jax.vmap(single, in_axes=(0, None))(bases, time))
+    
+        gradient = jax.jit(jax.grad(objective))(0.0)
+        hessian = jax.jit(jax.grad(jax.grad(objective)))(0.0)
+        np.testing.assert_allclose(gradient, 2 * jnp.trace(direction), rtol=8e-6, atol=0.0)
+>       np.testing.assert_allclose(hessian, 2 * jnp.trace(direction @ direction), rtol=8e-6, atol=0.0)
+E       AssertionError: 
+E       Not equal to tolerance rtol=8e-06, atol=0
+E       
+E       nan location mismatch:
+E        ACTUAL: array(nan, dtype=float32)
+E        DESIRED: array(0.46, dtype=float32)
+
+tests/test_spd_exponential_audit.py:108: AssertionError
+_ test_gradients_through_vmapped_exp_keep_inactive_scaling_steps_finite[shifts1] _
+
+shifts = (-80.0, 80.0)
+
+    @pytest.mark.parametrize("shifts", [(0.1, 26.0), (-80.0, 80.0)])
+    def test_gradients_through_vmapped_exp_keep_inactive_scaling_steps_finite(shifts):
+        bases = jnp.asarray(shifts)[:, None, None] * jnp.eye(2)
+        direction = jnp.array([[0.2, 0.3], [0.3, -0.1]])
+        manifold = SPDLogEuclidean((2, 2))
+    
+        def single(base, time):
+            return jnp.trace(manifold.expm(base + time * direction)) / jnp.exp(jnp.trace(base) / 2)
+    
+        def objective(time):
+            return jnp.sum(jax.vmap(single, in_axes=(0, None))(bases, time))
+    
+        gradient = jax.jit(jax.grad(objective))(0.0)
+        hessian = jax.jit(jax.grad(jax.grad(objective)))(0.0)
+        np.testing.assert_allclose(gradient, 2 * jnp.trace(direction), rtol=8e-6, atol=0.0)
+>       np.testing.assert_allclose(hessian, 2 * jnp.trace(direction @ direction), rtol=8e-6, atol=0.0)
+E       AssertionError: 
+E       Not equal to tolerance rtol=8e-06, atol=0
+E       
+E       nan location mismatch:
+E        ACTUAL: array(nan, dtype=float32)
+E        DESIRED: array(0.46, dtype=float32)
+
+tests/test_spd_exponential_audit.py:108: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_spd_exponential_audit.py::test_exp_frechet_keeps_small_tangents_before_amplification
+FAILED tests/test_spd_exponential_audit.py::test_gradients_through_vmapped_exp_keep_inactive_scaling_steps_finite[shifts0]
+FAILED tests/test_spd_exponential_audit.py::test_gradients_through_vmapped_exp_keep_inactive_scaling_steps_finite[shifts1]
+3 failed, 8 passed in 6.51s

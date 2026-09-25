@@ -1,0 +1,554 @@
+[
+  {
+    "cell": 1,
+    "text": "data shape: (7, 2, 2)\nall observations are SPD: True\n",
+    "tutorial": "barycentric_dictionary",
+    "type": "stream"
+  },
+  {
+    "cell": 1,
+    "text": "all observations are SPD: True\n",
+    "tutorial": "barycentric_dictionary",
+    "type": "stream"
+  },
+  {
+    "cell": 2,
+    "text": "initial coding objective: 0.0948966\nlearned dictionary objective: 0.0577330\nsimplex sums: [1. 1. 1. 1. 1. 1. 1.]\nouter dictionary updates: 1\n",
+    "tutorial": "barycentric_dictionary",
+    "type": "stream"
+  },
+  {
+    "cell": 3,
+    "text": "<Figure size 2970x924 with 4 Axes>",
+    "tutorial": "barycentric_dictionary",
+    "type": "display_data"
+  },
+  {
+    "cell": 1,
+    "text": "Intrinsic k-means         clusters= 3  iterations=  2  objective=0.05035\nk-medoids                 clusters= 3  iterations=  2  objective=0.20311\nAverage linkage           clusters= 3  iterations= 41  objective=11.88972\nSpectral                  clusters= 3  iterations= 40  objective=0.05035\nMean shift                clusters= 3  iterations= 11  objective=0.05044\nCompetitive quantization  clusters= 3  iterations= 12  objective=0.05405\nCoreset k-means           clusters= 3  iterations=  2  objective=0.05490\n",
+    "tutorial": "clustering_comparison",
+    "type": "stream"
+  },
+  {
+    "cell": 2,
+    "text": "<Figure size 2860x1540 with 8 Axes>",
+    "tutorial": "clustering_comparison",
+    "type": "display_data"
+  },
+  {
+    "cell": 1,
+    "text": "Classical MDS    objective=0.36379  reason=eigendecomposition completed\nKernel PCA       objective=-8.89371  reason=centered-kernel eigendecomposition completed\nIsomap           objective=0.16379  reason=all-pairs graph distances computed\nSammon mapping   objective=0.12269  reason=Gradient norm tolerance reached: 9.26534e-07 <= 1e-06.\nt-SNE            objective=0.39088  reason=requested iterations completed\nPHATE            objective=0.23151  reason=diffusion potential embedded\n",
+    "tutorial": "dimension_reduction",
+    "type": "stream"
+  },
+  {
+    "cell": 2,
+    "text": "<Figure size 3256x1584 with 8 Axes>",
+    "tutorial": "dimension_reduction",
+    "type": "display_data"
+  },
+  {
+    "cell": 2,
+    "text": "nodes: 34 edges: 78\ntrain / validation / test labels: 4 8 22\n",
+    "tutorial": "graph_curvature",
+    "type": "stream"
+  },
+  {
+    "cell": 3,
+    "text": "<Figure size 1806x1302 with 1 Axes>",
+    "tutorial": "graph_curvature",
+    "type": "display_data"
+  },
+  {
+    "cell": 8,
+    "text": "geometry         train   validation     test     step    valid\n---------------------------------------------------------------\nEuclidean        1.000        1.000    0.955    0.515     True\nSphere           1.000        1.000    0.955    0.516     True\nHyperboloid      1.000        1.000    0.955    0.515     True\n",
+    "tutorial": "graph_curvature",
+    "type": "stream"
+  },
+  {
+    "cell": 8,
+    "text": "Sphere           1.000        1.000    0.955    0.516     True\n",
+    "tutorial": "graph_curvature",
+    "type": "stream"
+  },
+  {
+    "cell": 8,
+    "text": "Hyperboloid      1.000        1.000    0.955    0.515     True\n",
+    "tutorial": "graph_curvature",
+    "type": "stream"
+  },
+  {
+    "cell": 9,
+    "text": "<Figure size 2604x924 with 2 Axes>",
+    "tutorial": "graph_curvature",
+    "type": "display_data"
+  },
+  {
+    "cell": 10,
+    "text": "<Figure size 3402x1113 with 3 Axes>",
+    "tutorial": "graph_curvature",
+    "type": "display_data"
+  },
+  {
+    "cell": 11,
+    "text": "<Figure size 3318x1008 with 3 Axes>",
+    "tutorial": "graph_curvature",
+    "type": "display_data"
+  },
+  {
+    "cell": 12,
+    "text": "<Figure size 3318x966 with 3 Axes>",
+    "tutorial": "graph_curvature",
+    "type": "display_data"
+  },
+  {
+    "cell": 1,
+    "text": "metric shape: (9, 9)\nmetric eigenvalues: [1.     1.     1.     1.     1.     1.     1.0005 1.0021 1.601 ]\nintrinsic 1-NN accuracy: 0.896\nlearned   1-NN accuracy: 0.938\nsimilar pairs: 552\ndissimilar pairs: 576\n",
+    "tutorial": "grassmann_metric_learning",
+    "type": "stream"
+  },
+  {
+    "cell": 3,
+    "text": "<Figure size 3080x880 with 4 Axes>",
+    "tutorial": "grassmann_metric_learning",
+    "type": "display_data"
+  },
+  {
+    "cell": 2,
+    "text": "principal angle error : 4.120e-09 radians\nvariance explained    : 89.226%\niterations            : 38\n",
+    "tutorial": "grassmann_pca",
+    "type": "stream"
+  },
+  {
+    "cell": 3,
+    "text": "public point shape: (3, 1)\nembedded shape    : (3, 3)\ngeodesic distance : 4.120e-09\nchordal distance  : 4.120e-09\n",
+    "tutorial": "grassmann_pca",
+    "type": "stream"
+  },
+  {
+    "cell": 3,
+    "text": "geodesic distance : 4.120e-09\nchordal distance  : 4.120e-09\n",
+    "tutorial": "grassmann_pca",
+    "type": "stream"
+  },
+  {
+    "cell": 4,
+    "text": "<Figure size 2160x650 with 6 Axes>",
+    "tutorial": "grassmann_pca",
+    "type": "display_data"
+  },
+  {
+    "cell": 5,
+    "text": "<Figure size 2300x880 with 3 Axes>",
+    "tutorial": "grassmann_pca",
+    "type": "display_data"
+  },
+  {
+    "cell": 2,
+    "text": "Base point belongs to H^2: True\nMaximum tangency residual: 1.1102230246251565e-16\nTangent norms: [1. 1. 1. 1. 1. 1.]\n",
+    "tutorial": "hyperbolic_geodesics",
+    "type": "stream"
+  },
+  {
+    "cell": 3,
+    "text": "Expected endpoint distance: 2.3\nComputed endpoint distances: [2.3 2.3 2.3 2.3 2.3 2.3]\n",
+    "tutorial": "hyperbolic_geodesics",
+    "type": "stream"
+  },
+  {
+    "cell": 4,
+    "text": "<Figure size 2300x960 with 2 Axes>",
+    "tutorial": "hyperbolic_geodesics",
+    "type": "display_data"
+  },
+  {
+    "cell": 1,
+    "text": "number of observations: 54\nall points lie on H^2: True\n",
+    "tutorial": "hyperbolic_kmeans",
+    "type": "stream"
+  },
+  {
+    "cell": 1,
+    "text": "all points lie on H^2: True\n",
+    "tutorial": "hyperbolic_kmeans",
+    "type": "stream"
+  },
+  {
+    "cell": 2,
+    "text": "estimated centers in the Poincare disk:\n[[ 0.431 -0.409]\n [-0.51  -0.103]\n [ 0.296  0.482]]\ncluster sizes: [18 18 18]\nfinal mean squared distance: 0.0961343603354514\ntermination: objective tolerance reached\n",
+    "tutorial": "hyperbolic_kmeans",
+    "type": "stream"
+  },
+  {
+    "cell": 3,
+    "text": "<Figure size 2728x836 with 3 Axes>",
+    "tutorial": "hyperbolic_kmeans",
+    "type": "display_data"
+  },
+  {
+    "cell": 2,
+    "text": "landmark array: (52, 22, 3)\nGrab  : 25 poses\nExpand: 27 poses\n",
+    "tutorial": "kendall_hand_shapes",
+    "type": "stream"
+  },
+  {
+    "cell": 3,
+    "text": "All projected hands are regular pre-shapes: True\nLargest centroid norm: 7.135e-16\nLargest unit-norm error: 2.220e-16\nIntrinsic dimension: 59\n",
+    "tutorial": "kendall_hand_shapes",
+    "type": "stream"
+  },
+  {
+    "cell": 4,
+    "text": "Grab  : 18 training poses,  7 iterations, final norm 2.214e-07 (gradient tolerance reached)\nExpand: 21 training poses,  4 iterations, final norm 2.164e-08 (gradient tolerance reached)\nDistance between group means: 0.2602\n",
+    "tutorial": "kendall_hand_shapes",
+    "type": "stream"
+  },
+  {
+    "cell": 5,
+    "text": "Held-out poses: 13\nCorrect predictions: 11\nHeld-out accuracy: 84.6%\n\nHeld-out confusion counts (truth -> prediction)\nGrab  : Grab= 5, Expand= 2\nExpand: Grab= 0, Expand= 6\n",
+    "tutorial": "kendall_hand_shapes",
+    "type": "stream"
+  },
+  {
+    "cell": 6,
+    "text": "Fr\u00e9chet ANOVA statistic: 41.7976\nasymptotic p-value: 1.012e-10\ngroup Fr\u00e9chet variances: [0.15582 0.03582]\n",
+    "tutorial": "kendall_hand_shapes",
+    "type": "stream"
+  },
+  {
+    "cell": 7,
+    "text": "<Figure size 2400x1440 with 6 Axes>",
+    "tutorial": "kendall_hand_shapes",
+    "type": "display_data"
+  },
+  {
+    "cell": 2,
+    "text": "Training images: (1347, 64)\nTest images:     (450, 64)\n",
+    "tutorial": "manifold_autoencoder",
+    "type": "stream"
+  },
+  {
+    "cell": 4,
+    "text": "latent geometry    test MSE   geodesic 1-NN    valid\n-------------------------------------------------------\nEuclidean            0.0574           0.498     True\nSphere               0.0537           0.569     True\nHyperboloid          0.0622           0.436     True\n",
+    "tutorial": "manifold_autoencoder",
+    "type": "stream"
+  },
+  {
+    "cell": 4,
+    "text": "Hyperboloid          0.0622           0.436     True\n",
+    "tutorial": "manifold_autoencoder",
+    "type": "stream"
+  },
+  {
+    "cell": 5,
+    "text": "<Figure size 2300x800 with 2 Axes>",
+    "tutorial": "manifold_autoencoder",
+    "type": "display_data"
+  },
+  {
+    "cell": 6,
+    "text": "<Figure size 2640x880 with 3 Axes>",
+    "tutorial": "manifold_autoencoder",
+    "type": "display_data"
+  },
+  {
+    "cell": 7,
+    "text": "<Figure size 2640x1060 with 40 Axes>",
+    "tutorial": "manifold_autoencoder",
+    "type": "display_data"
+  },
+  {
+    "cell": 8,
+    "text": "<Figure size 2560x840 with 27 Axes>",
+    "tutorial": "manifold_autoencoder",
+    "type": "display_data"
+  },
+  {
+    "cell": 1,
+    "text": "centroid  : test accuracy = 1.000\n3-NN      : test accuracy = 1.000\nlogistic  : test accuracy = 1.000\nLDA       : test accuracy = 1.000\n",
+    "tutorial": "manifold_classification",
+    "type": "stream"
+  },
+  {
+    "cell": 2,
+    "text": "<Figure size 2948x880 with 3 Axes>",
+    "tutorial": "manifold_classification",
+    "type": "display_data"
+  },
+  {
+    "cell": 1,
+    "text": "geodesic fit MSE:    0.008941\nlocal-linear MSE:    0.005898\n",
+    "tutorial": "manifold_response_regression",
+    "type": "stream"
+  },
+  {
+    "cell": 2,
+    "text": "90% bootstrap radius: 0.2154 radians\n",
+    "tutorial": "manifold_response_regression",
+    "type": "stream"
+  },
+  {
+    "cell": 3,
+    "text": "<Figure size 2948x880 with 3 Axes>",
+    "tutorial": "manifold_response_regression",
+    "type": "display_data"
+  },
+  {
+    "cell": 1,
+    "text": "W2 distance: 0.605448\nsimplex pivots: 5\ntermination: optimality, feasibility, and duality certificates satisfied\nlargest row residual: 2.78e-17\nlargest column residual: 2.78e-17\nduality gap: 2.78e-17\n",
+    "tutorial": "optimal_transport",
+    "type": "stream"
+  },
+  {
+    "cell": 2,
+    "text": "<Figure size 2288x968 with 3 Axes>",
+    "tutorial": "optimal_transport",
+    "type": "display_data"
+  },
+  {
+    "cell": 1,
+    "text": "sample count: 24\nbatch shape: ()\nfactor tree: PyTreeDef({'direction': *, 'state': (*, *)})\nall product points valid: True\n",
+    "tutorial": "product_adapter",
+    "type": "stream"
+  },
+  {
+    "cell": 2,
+    "text": "mean direction: [0.3624 0.932 ]\nmean phase: 0.3190\nmean amplitude: 1.0918\nFr\u00e9chet termination: gradient tolerance reached\n",
+    "tutorial": "product_adapter",
+    "type": "stream"
+  },
+  {
+    "cell": 3,
+    "text": "<Figure size 2882x836 with 4 Axes>",
+    "tutorial": "product_adapter",
+    "type": "display_data"
+  },
+  {
+    "cell": 2,
+    "text": "estimated angle      :  0.61407 rad\nestimated translation: [ 0.84973703 -0.29919311]\nfinal mean loss      : 2.060113e-04\ndistance from truth  : 8.428e-03\niterations           : 35\ntermination          : Last stepsize smaller than options.minstepsize = 1e-10.\n",
+    "tutorial": "rigid_registration",
+    "type": "stream"
+  },
+  {
+    "cell": 2,
+    "text": "distance from truth  : 8.428e-03\niterations           : 35\ntermination          : Last stepsize smaller than options.minstepsize = 1e-10.\n",
+    "tutorial": "rigid_registration",
+    "type": "stream"
+  },
+  {
+    "cell": 3,
+    "text": "<Figure size 2640x800 with 3 Axes>",
+    "tutorial": "rigid_registration",
+    "type": "display_data"
+  },
+  {
+    "cell": 1,
+    "text": "full mean      : angle =  0.1184\nstream forward : angle =  0.1184\nstream reverse : angle =  0.2466\nmini-batch     : angle =  0.1506\ntrimmed        : angle = -0.0117\nHuber          : angle =  0.0919\nCauchy         : angle =  0.0821\n",
+    "tutorial": "robust_scalable_learning",
+    "type": "stream"
+  },
+  {
+    "cell": 2,
+    "text": "<Figure size 2926x880 with 3 Axes>",
+    "tutorial": "robust_scalable_learning",
+    "type": "display_data"
+  },
+  {
+    "cell": 1,
+    "text": "Fr\u00e9chet mean angle:    0.4068\nFr\u00e9chet median angle:  0.3861\nenclosing center:      0.3500\nenclosing radius:      1.7700\nnearest sample indices: [ 5 18  3  1 21]\n",
+    "tutorial": "robust_spherical_summaries",
+    "type": "stream"
+  },
+  {
+    "cell": 3,
+    "text": "<Figure size 2948x880 with 3 Axes>",
+    "tutorial": "robust_spherical_summaries",
+    "type": "display_data"
+  },
+  {
+    "cell": 1,
+    "text": "label-propagation accuracy: 0.981\ngraph-regression MSE:       0.05520\n",
+    "tutorial": "semi_supervised_circle",
+    "type": "stream"
+  },
+  {
+    "cell": 2,
+    "text": "<Figure size 2948x880 with 3 Axes>",
+    "tutorial": "semi_supervised_circle",
+    "type": "display_data"
+  },
+  {
+    "cell": 2,
+    "text": "solver                    iter    final cost     grad norm\n-----------------------------------------------------------\nSteepest descent           133     8.521e-12     1.772e-06\nConjugate gradient          46     3.255e-13     1.907e-06\nL-BFGS                      15     4.661e-14     6.648e-07\nTrust regions                7     4.921e-14     3.034e-07\nNewton-CG                   20     4.145e-13     1.188e-06\nCubic regularization       100     4.502e-11     6.045e-06\nGauss-Newton                15     2.242e-13     1.540e-06\nLevenberg-Marquardt         13     1.492e-12     7.193e-07\n",
+    "tutorial": "solver_comparison",
+    "type": "stream"
+  },
+  {
+    "cell": 3,
+    "text": "<Figure size 2440x1700 with 4 Axes>",
+    "tutorial": "solver_comparison",
+    "type": "display_data"
+  },
+  {
+    "cell": 2,
+    "text": "epoch array: (225, 8, 480)\nsubjects: [1, 2, 3, 4, 5]\nchannels: Fc3., Fc4., C3.., C1.., C2.., C4.., Cp3., Cp4.\nR04:  75 trials (38 left, 37 right)\nR08:  75 trials (37 left, 38 right)\nR12:  75 trials (38 left, 37 right)\n",
+    "tutorial": "spd_eeg_classifier",
+    "type": "stream"
+  },
+  {
+    "cell": 3,
+    "text": "covariance array: (225, 8, 8)\nall matrices are SPD: True\nsmallest eigenvalue: 6.522e-03\n",
+    "tutorial": "spd_eeg_classifier",
+    "type": "stream"
+  },
+  {
+    "cell": 3,
+    "text": "all matrices are SPD: True\nsmallest eigenvalue: 6.522e-03\n",
+    "tutorial": "spd_eeg_classifier",
+    "type": "stream"
+  },
+  {
+    "cell": 4,
+    "text": "<Figure size 2772x861 with 4 Axes>",
+    "tutorial": "spd_eeg_classifier",
+    "type": "display_data"
+  },
+  {
+    "cell": 7,
+    "text": "geometry               epoch   fit accuracy   test accuracy   valid SPD\n--------------------------------------------------------------------------\nLog-Euclidean             80          0.767           0.613        True\nAffine-invariant          80          0.773           0.600        True\nBures-Wasserstein        120          0.793           0.613        True\n",
+    "tutorial": "spd_eeg_classifier",
+    "type": "stream"
+  },
+  {
+    "cell": 7,
+    "text": "Log-Euclidean             80          0.767           0.613        True\nAffine-invariant          80          0.773           0.600        True\nBures-Wasserstein        120          0.793           0.613        True\n",
+    "tutorial": "spd_eeg_classifier",
+    "type": "stream"
+  },
+  {
+    "cell": 8,
+    "text": "<Figure size 2436x861 with 2 Axes>",
+    "tutorial": "spd_eeg_classifier",
+    "type": "display_data"
+  },
+  {
+    "cell": 9,
+    "text": "/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/ipykernel_91230/3891900132.py:82: UserWarning: This figure was using a layout engine that is incompatible with subplots_adjust and/or tight_layout; not calling subplots_adjust.\n  fig.subplots_adjust(bottom=0.22)\n",
+    "tutorial": "spd_eeg_classifier",
+    "type": "stream"
+  },
+  {
+    "cell": 9,
+    "text": "<Figure size 2751x871.5 with 3 Axes>",
+    "tutorial": "spd_eeg_classifier",
+    "type": "display_data"
+  },
+  {
+    "cell": 10,
+    "text": "<Figure size 2268x1470 with 6 Axes>",
+    "tutorial": "spd_eeg_classifier",
+    "type": "display_data"
+  },
+  {
+    "cell": 2,
+    "text": "Number of observations: 6\nLog-Euclidean       : all observations valid = True\nAffine-invariant    : all observations valid = True\nBures-Wasserstein   : all observations valid = True\n",
+    "tutorial": "spd_frechet_mean",
+    "type": "stream"
+  },
+  {
+    "cell": 2,
+    "text": "Log-Euclidean       : all observations valid = True\nAffine-invariant    : all observations valid = True\nBures-Wasserstein   : all observations valid = True\n",
+    "tutorial": "spd_frechet_mean",
+    "type": "stream"
+  },
+  {
+    "cell": 3,
+    "text": "geometry              iter         cost    grad norm    det(mean)\n--------------------------------------------------------------------\nLog-Euclidean            1     2.733541    1.819e-15     1.242951\nAffine-invariant         6     2.735411    5.737e-10     1.242951\nBures-Wasserstein        7     0.892222    1.272e-10     2.376709\n",
+    "tutorial": "spd_frechet_mean",
+    "type": "stream"
+  },
+  {
+    "cell": 4,
+    "text": "Closed-form log-Euclidean mean:\n [[1.06239834 0.07742265]\n [0.07742265 1.17559048]]\nGeoJAX learning error: 8.962e-16\n",
+    "tutorial": "spd_frechet_mean",
+    "type": "stream"
+  },
+  {
+    "cell": 5,
+    "text": "<Figure size 2300x1440 with 6 Axes>",
+    "tutorial": "spd_frechet_mean",
+    "type": "display_data"
+  },
+  {
+    "cell": 1,
+    "text": "observations: 54\nall matrices are SPD: True\n",
+    "tutorial": "spd_pga_regression",
+    "type": "stream"
+  },
+  {
+    "cell": 1,
+    "text": "all matrices are SPD: True\n",
+    "tutorial": "spd_pga_regression",
+    "type": "stream"
+  },
+  {
+    "cell": 2,
+    "text": "PGA explained variance: [0.9842 0.0093]\n|correlation(parameter, PC1)|: 0.9935\nselected bandwidth: 0.22\ncross-validation MSE: [0.01802 0.02369 0.04745 0.11324 0.21139]\ntraining RMSE: 0.1274\n",
+    "tutorial": "spd_pga_regression",
+    "type": "stream"
+  },
+  {
+    "cell": 2,
+    "text": "training RMSE: 0.1274\n",
+    "tutorial": "spd_pga_regression",
+    "type": "stream"
+  },
+  {
+    "cell": 3,
+    "text": "<Figure size 2904x858 with 3 Axes>",
+    "tutorial": "spd_pga_regression",
+    "type": "display_data"
+  },
+  {
+    "cell": 2,
+    "text": "largest eigenvalue : 3.4142135624\nestimated vector   : [-0.92387954 -0.38268342]\nangular error      : 0.000e+00 radians\niterations         : 13\n",
+    "tutorial": "sphere_eigenvector",
+    "type": "stream"
+  },
+  {
+    "cell": 3,
+    "text": "<Figure size 2760x880 with 3 Axes>",
+    "tutorial": "sphere_eigenvector",
+    "type": "display_data"
+  },
+  {
+    "cell": 1,
+    "text": "shortest wrapped displacement: [0.93318531 1.63318531]\nintrinsic distance: 1.8809915111778515\nunwrapped Euclidean difference: 7.088370757797591\nendpoint error: 4.440892098500626e-16\n",
+    "tutorial": "torus_geodesics",
+    "type": "stream"
+  },
+  {
+    "cell": 1,
+    "text": "endpoint error: 4.440892098500626e-16\n",
+    "tutorial": "torus_geodesics",
+    "type": "stream"
+  },
+  {
+    "cell": 2,
+    "text": "<Figure size 2300x960 with 2 Axes>",
+    "tutorial": "torus_geodesics",
+    "type": "display_data"
+  },
+  {
+    "cell": 1,
+    "text": "test                       statistic    p-value\n------------------------------------------------\nFr\u00e9chet ANOVA              124.44356     0.0000\nBiswas-Ghosh                 0.33964     0.0100\nEnergy distance              0.86783     0.0100\nKernel MMD                   0.42540     0.0100\nWasserstein                  0.70228     0.0500\n",
+    "tutorial": "two_sample_inference",
+    "type": "stream"
+  },
+  {
+    "cell": 2,
+    "text": "<Figure size 2948x1584 with 7 Axes>",
+    "tutorial": "two_sample_inference",
+    "type": "display_data"
+  }
+]

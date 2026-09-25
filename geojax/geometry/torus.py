@@ -17,7 +17,9 @@ Shape = Union[int, Sequence[int], Tuple[int, ...]]
 
 def wrap_angles(x: Array) -> Array:
     """Wrap angles to ``[-pi, pi)``."""
-    return (jnp.asarray(x) + jnp.pi) % (2.0 * jnp.pi) - jnp.pi
+    x = jnp.asarray(x)
+    wrapped = (x + jnp.pi) % (2.0 * jnp.pi) - jnp.pi
+    return jnp.where((x >= -jnp.pi) & (x < jnp.pi), x, wrapped)
 
 
 @dataclass(frozen=True, init=False)
@@ -102,8 +104,9 @@ class Torus(ExactGeometryMixin):
         return stable_norm(self.wrap(y - x), axis=-1)
 
     def squared_dist(self, x: Array, y: Array) -> Array:
-        distance = self.dist(x, y)
-        return distance * distance
+        x, y = self._check_shapes(("x", x), ("y", y))
+        displacement = self.wrap(y - x)
+        return jnp.sum(displacement * displacement, axis=-1)
 
     def transport(self, x: Array, y: Array, u: Array) -> Array:
         _, _, u = self._check_shapes(("x", x), ("y", y), ("u", u))

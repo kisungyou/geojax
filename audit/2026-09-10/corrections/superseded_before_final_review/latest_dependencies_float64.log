@@ -1,0 +1,70 @@
+{
+  "python": "3.12.13",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "environment": "/private/tmp/geojax-corrections/latest-dependencies",
+  "installed_package": "/private/tmp/geojax-corrections/latest-dependencies/lib/python3.12/site-packages/geojax",
+  "versions": {
+    "geojax": "0.2.0",
+    "jax": "0.11.1",
+    "jaxlib": "0.11.1",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "pytest": "9.1.1",
+    "ott-jax": "0.6.0",
+    "equinox": "0.13.8",
+    "lineax": "0.1.1",
+    "optax": "0.2.8",
+    "jaxopt": "0.8.5",
+    "ml_dtypes": "0.6.0",
+    "opt_einsum": "3.4.0"
+  },
+  "installed_source_hashes_match_frozen_source": true,
+  "installed_python_files": 66,
+  "test_files": [
+    "test_correctness_audit.py",
+    "test_learning_geometry_audit.py",
+    "test_logarithm_audit_fixes.py",
+    "test_low_rank_audit_fixes.py",
+    "test_optimizer_audit_fixes.py",
+    "test_optional_transport.py",
+    "test_shape_audit_fixes.py",
+    "test_spd_audit_fixes.py",
+    "test_spd_projection_audit.py",
+    "test_jax_transformations.py"
+  ]
+}
+........................................................................ [ 32%]
+........................................................................ [ 64%]
+........................................................................ [ 96%]
+........                                                                 [100%]
+============================= slowest 10 durations =============================
+50.43s call     tests/test_spd_audit_fixes.py::test_log_euclidean_maps_and_metric_have_finite_second_derivatives
+35.43s call     tests/test_shape_audit_fixes.py::test_default_mean_of_balanced_shapes_is_geodesic_midpoint[3-True]
+32.28s call     tests/test_logarithm_audit_fixes.py::test_grassmann_log_noncommuting_feature_hessian_at_repeated_angles
+29.35s call     tests/test_shape_audit_fixes.py::test_default_mean_of_balanced_shapes_is_geodesic_midpoint[2-False]
+21.19s call     tests/test_shape_audit_fixes.py::test_original_balanced_planar_audit_mean
+17.81s call     tests/test_logarithm_audit_fixes.py::test_grassmann_log_repeated_angles_forward_reverse_and_jit[2]
+15.69s call     tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[2-False]
+15.20s call     tests/test_logarithm_audit_fixes.py::test_grassmann_log_repeated_angles_forward_reverse_and_jit[1]
+15.08s call     tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[3-False]
+15.05s call     tests/test_logarithm_audit_fixes.py::test_rotation_log_native_batch_and_vmap_hessians
+224 passed in 849.89s (0:14:09)
+{
+  "precision": "float64",
+  "exit_code": 0,
+  "seconds": 853.29,
+  "installed_package": "/private/tmp/geojax-corrections/latest-dependencies/lib/python3.12/site-packages/geojax",
+  "source_shadowing": false,
+  "test_files": [
+    "test_correctness_audit.py",
+    "test_learning_geometry_audit.py",
+    "test_logarithm_audit_fixes.py",
+    "test_low_rank_audit_fixes.py",
+    "test_optimizer_audit_fixes.py",
+    "test_optional_transport.py",
+    "test_shape_audit_fixes.py",
+    "test_spd_audit_fixes.py",
+    "test_spd_projection_audit.py",
+    "test_jax_transformations.py"
+  ]
+}

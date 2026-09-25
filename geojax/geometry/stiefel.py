@@ -8,6 +8,8 @@ from typing import Any, NamedTuple, Sequence
 import jax
 import jax.numpy as jnp
 
+from ._numerics import nonnegative
+
 from .base import (
     ExactGeometryMixin,
     Shape,
@@ -327,11 +329,11 @@ class _StiefelBase(ExactGeometryMixin):
 
         def local(_: None) -> Array:
             tangent = self.tangent_project(X, difference)
-            return jnp.maximum(self.inner(X, tangent, tangent), 0.0)
+            return nonnegative(self.inner(X, tangent, tangent))
 
         def shooting(_: None) -> Array:
             tangent = self.log(X, Y)
-            return jnp.maximum(self.inner(X, tangent, tangent), 0.0)
+            return nonnegative(self.inner(X, tangent, tangent))
 
         return jax.lax.cond(
             jnp.linalg.norm(difference) <= threshold,

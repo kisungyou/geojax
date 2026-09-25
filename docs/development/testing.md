@@ -79,6 +79,18 @@ Each tox environment builds a wheel, changes to an isolated temporary working
 directory, clears pytest's source-tree `pythonpath`, and asserts that
 `import geojax` resolves inside that environment. The matrix therefore tests
 the installed artifact rather than accidentally importing the checkout.
+Installed module contents must also match the source exactly.
+
+The runner starts a fresh process for each test file, so JAX compilation caches
+cannot accumulate across the complete suite. It records the collected tests,
+execution results, timings, and source hashes, then combines coverage before
+enforcing the global and learning thresholds. Every test file is required;
+an unexplained empty collection, incomplete run, failure, or timeout fails the
+environment. Each file has a 600-second wall limit enforced by its parent
+process. A timed-out worker receives a stack-snapshot request before
+termination. Background traceback timers are disabled: a CPython watchdog
+was observed blocking pytest after a completed test. Reports are retained in
+timestamped subdirectories under `.tox/verification/<environment>/`.
 
 For a faster laptop run with bounded and coverage-safe concurrency:
 
@@ -104,14 +116,13 @@ The lower-bound environments guard the oldest runtime versions promised by
 `ml-dtypes`, `opt-einsum`, pytest, and coverage tooling, preventing a new
 upstream release from changing an otherwise identical release check. Update
 these pins deliberately, then run the complete matrix before merging the
-change. Tox also fixes the Python hash seed and stores coverage data inside
-each environment, so sequential and modestly parallel runs have the same
-isolation guarantees.
+change. Coverage data is stored separately for every environment and run, so
+sequential and modestly parallel runs have the same isolation guarantees.
 
-GitHub CI complements the reproducible release matrix with the declared
-minimum stack and a continuously updated latest-JAX lane, split across float32
-and float64. It also runs quality checks, rebuilds the documentation, and
-installs both generated package formats outside the checkout.
+GitHub CI runs all ten pinned combinations above with the same complete-suite
+runner and uploads the reports even when a job fails. It also runs quality
+checks, rebuilds the documentation, and installs both generated package
+formats outside the checkout.
 
 ## Documentation
 

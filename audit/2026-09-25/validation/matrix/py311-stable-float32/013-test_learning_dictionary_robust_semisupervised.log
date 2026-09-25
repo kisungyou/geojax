@@ -1,0 +1,53 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float32/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_learning_dictionary_robust_semisupervised.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py311-stable-float32/013-test_learning_dictionary_robust_semisupervised.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py311-stable-float32/013-test_learning_dictionary_robust_semisupervised.xml", "--trace-after", "90.0"]
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float32/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.11.15, JAX 0.10.2, NumPy 2.4.4, float32
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 19 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_dictionary_robust_semisupervised.py::test_barycentric_codes_reconstruct_points_between_euclidean_atoms PASSED [  5%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_dictionary_robust_semisupervised.py::test_barycentric_coding_supports_nested_product_atoms PASSED [ 10%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_dictionary_robust_semisupervised.py::test_dictionary_learning_has_nonincreasing_objective_and_valid_atoms PASSED [ 15%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_dictionary_robust_semisupervised.py::test_dictionary_learning_optimizes_nested_product_atoms_end_to_end PASSED [ 21%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_dictionary_robust_semisupervised.py::test_dictionary_methods_validate_atom_and_iteration_contracts PASSED [ 26%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_dictionary_robust_semisupervised.py::test_trimmed_mean_and_m_estimators_resist_a_large_outlier PASSED [ 31%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_dictionary_robust_semisupervised.py::test_m_estimator_diagnostics_match_the_returned_point PASSED [ 36%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_dictionary_robust_semisupervised.py::test_spatial_depth_and_metric_ranks_have_expected_ordering PASSED [ 42%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_dictionary_robust_semisupervised.py::test_robust_methods_validate_controls PASSED [ 47%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_dictionary_robust_semisupervised.py::test_label_propagation_recovers_two_geodesic_clusters PASSED [ 52%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_dictionary_robust_semisupervised.py::test_graph_neighbors_exclude_self_even_with_duplicate_points PASSED [ 57%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_dictionary_robust_semisupervised.py::test_manifold_regularized_regression_interpolates_unlabeled_targets PASSED [ 63%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_dictionary_robust_semisupervised.py::test_semisupervised_methods_validate_labels_masks_and_graph_controls PASSED [ 68%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_dictionary_robust_semisupervised.py::test_label_propagation_validates_sentinels_label_types_and_decodes_strings PASSED [ 73%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_dictionary_robust_semisupervised.py::test_regularized_regression_validates_masks_and_solver_certificates PASSED [ 78%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_dictionary_robust_semisupervised.py::test_semisupervised_nonfinite_affinity_and_score_guards PASSED [ 84%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_dictionary_robust_semisupervised.py::test_barycentric_coding_rejects_nonfinite_and_indefinite_geometry PASSED [ 89%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_dictionary_robust_semisupervised.py::test_dictionary_interpolation_checks_logarithm_and_exponential_domains PASSED [ 94%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_dictionary_robust_semisupervised.py::test_robust_summaries_reject_nonfinite_geometry_and_unconverged_centers PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py311-stable-float32/013-test_learning_dictionary_robust_semisupervised.xml -
+============================== slowest durations ===============================
+17.48s call     tests/test_learning_dictionary_robust_semisupervised.py::test_barycentric_coding_supports_nested_product_atoms
+9.63s call     tests/test_learning_dictionary_robust_semisupervised.py::test_dictionary_learning_has_nonincreasing_objective_and_valid_atoms
+5.54s call     tests/test_learning_dictionary_robust_semisupervised.py::test_trimmed_mean_and_m_estimators_resist_a_large_outlier
+3.68s call     tests/test_learning_dictionary_robust_semisupervised.py::test_barycentric_codes_reconstruct_points_between_euclidean_atoms
+2.38s call     tests/test_learning_dictionary_robust_semisupervised.py::test_manifold_regularized_regression_interpolates_unlabeled_targets
+2.27s call     tests/test_learning_dictionary_robust_semisupervised.py::test_dictionary_learning_optimizes_nested_product_atoms_end_to_end
+2.13s call     tests/test_learning_dictionary_robust_semisupervised.py::test_label_propagation_recovers_two_geodesic_clusters
+1.97s call     tests/test_learning_dictionary_robust_semisupervised.py::test_graph_neighbors_exclude_self_even_with_duplicate_points
+1.20s call     tests/test_learning_dictionary_robust_semisupervised.py::test_spatial_depth_and_metric_ranks_have_expected_ordering
+0.93s call     tests/test_learning_dictionary_robust_semisupervised.py::test_semisupervised_methods_validate_labels_masks_and_graph_controls
+0.75s call     tests/test_learning_dictionary_robust_semisupervised.py::test_robust_summaries_reject_nonfinite_geometry_and_unconverged_centers
+0.42s call     tests/test_learning_dictionary_robust_semisupervised.py::test_semisupervised_nonfinite_affinity_and_score_guards
+0.37s call     tests/test_learning_dictionary_robust_semisupervised.py::test_m_estimator_diagnostics_match_the_returned_point
+0.34s call     tests/test_learning_dictionary_robust_semisupervised.py::test_regularized_regression_validates_masks_and_solver_certificates
+0.22s call     tests/test_learning_dictionary_robust_semisupervised.py::test_barycentric_coding_rejects_nonfinite_and_indefinite_geometry
+0.12s call     tests/test_learning_dictionary_robust_semisupervised.py::test_label_propagation_validates_sentinels_label_types_and_decodes_strings
+0.08s call     tests/test_learning_dictionary_robust_semisupervised.py::test_dictionary_methods_validate_atom_and_iteration_contracts
+0.02s call     tests/test_learning_dictionary_robust_semisupervised.py::test_robust_methods_validate_controls
+
+(39 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================= 19 passed in 49.75s ==============================

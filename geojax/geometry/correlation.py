@@ -29,6 +29,7 @@ import jax
 import jax.numpy as jnp
 
 from ._numerics import stable_metric_norm, sqrt_nonnegative
+from .spd import _spd_project_differentiable
 
 from .base import (
     ExactGeometryMixin,
@@ -212,15 +213,19 @@ class _CorrelationCholeskyBase(ExactGeometryMixin):
 
     def project(self, C: Array) -> Array:
         C = self._check_shape(C, name="C")
-        vals, Q = jnp.linalg.eigh(_sym(C))
         floor = dtype_margin(C, configured=self.eps)
         # Projection repairs the closed boundary but is the identity on every
         # representable positive-definite input, including ill-conditioned
         # correlations near the open boundary.
-        scale = jnp.max(jnp.abs(vals), axis=-1, keepdims=True)
+        vals = jnp.linalg.eigvalsh(jax.lax.stop_gradient(_sym(C)))
+        scale = jnp.max(jnp.abs(vals), axis=-1)
         scale = jnp.where(scale > 0.0, scale, jnp.ones_like(scale))
-        repaired = jnp.where(vals > 0.0, vals, floor * scale)
-        P = (Q * repaired[..., None, :]) @ jnp.swapaxes(Q, -1, -2)
+        # Rescale before repairing so the static floor preserves the existing
+        # relative repair policy, while the SPD custom JVP removes spurious
+        # eigenvector singularities at repeated positive eigenvalues.
+        P = scale[..., None, None] * _spd_project_differentiable(
+            _sym(C) / scale[..., None, None], floor
+        )
         return _corr_normalize(P, floor)
 
     def is_tangent(self, C: Array, U: Array, atol: float | None = None) -> Array:
@@ -281,7 +286,7 @@ class _CorrelationCholeskyBase(ExactGeometryMixin):
 
     def squared_dist(self, C: Array, D: Array) -> Array:
         Delta = self.chart(self.project(D)) - self.chart(self.project(C))
-        return jnp.maximum(_trace_inner(Delta, Delta), 0.0)
+        return _trace_inner(Delta, Delta)
 
     def transport(self, C: Array, D: Array, U: Array) -> Array:
         C = self.project(C)

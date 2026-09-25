@@ -1,0 +1,13 @@
+{
+  "issue": "NumPy float64 reference weights were a read-only zero-copy view of a JAX array, then normalized in place. No library computation or test assertion failed.",
+  "fix": "Use an explicit writable NumPy copy before reference normalization.",
+  "before_sha256": "2120e7a39b570d147bce128770d3ef96c9dffc01ac89e99dfd9816c55e255950",
+  "after_sha256": "3750d594df58c6302bd5c162c9efea3083bfaefb5f1db5734eec00fcc27ae576",
+  "preserved_probe": [
+    "float64_default_stress.json",
+    "float64_default_stress.log",
+    "stress_default_mean_before_copy_fix.py"
+  ],
+  "rerun": "../shape_solver_fix_reference_copy/float64_default_stress.json",
+  "float32_retest_unnecessary": "Original float32-to-float64 conversion already made a writable copy; mathematical reference computation is unchanged."
+}

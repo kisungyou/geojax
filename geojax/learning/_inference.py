@@ -111,6 +111,10 @@ def biswas_ghosh_two_sample_test(
         order = jax.random.permutation(permutation_key, pooled.n_samples)
         null.append(_bg_statistic(distances, order[: left.n_samples], order[left.n_samples :]))
     null_distribution = jnp.asarray(null)
+    if not bool(jnp.isfinite(observed)) or not bool(jnp.all(jnp.isfinite(null_distribution))):
+        raise FloatingPointError(
+            "biswas_ghosh_two_sample_test produced a nonfinite statistic; rescale the observations."
+        )
     pvalue = (1.0 + jnp.sum(null_distribution >= observed)) / (count + 1.0)
     return HypothesisTestResult(
         statistic=observed,

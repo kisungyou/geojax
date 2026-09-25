@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "tests": 40,
+  "python_environment": "py311-min-float32",
+  "jax": "0.6.0",
+  "command": "GEOJAX_TEST_X64=0 .tox/py311-min-float32/bin/python -m pytest tests/test_linesearch.py -o faulthandler_timeout=0 -q",
+  "source_hashes": {
+    "geojax/optimization/linesearch.py": "74a8c616512b38120fa404b790ffda7fa372f32610dad39717866692eac29834",
+    "geojax/learning/_statistics.py": "316b5a40b99505c172cec263aabd90878efa5ca47729601db30102d342f95f2b",
+    "tests/test_linesearch.py": "b727d4692a980902f95f9f93fdd8b83363957459efa2420cb022d1ae15a3fc8c"
+  },
+  "design": {
+    "opt_in": "approximate_wolfe",
+    "default": false,
+    "roundoff_factor": 8.0,
+    "budget": "roundoff_factor * eps(cost.dtype) * abs(f0)",
+    "slope_checks": "Hager-Zhang approximate Wolfe plus ordinary strong curvature",
+    "custom_retraction_fallback": "Private typed failure for JAX concretization/array/integer tracer conversion only; prior AdaptiveArmijo for default Frechet mean",
+    "stopping_tolerances_changed": false
+  }
+}

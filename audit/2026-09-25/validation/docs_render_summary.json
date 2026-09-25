@@ -1,0 +1,37 @@
+{
+  "date": "2026-09-25",
+  "scope": "Render and audit the amended testing guide and site without executing any tutorials. September 11 notebook execution remains separate evidence.",
+  "historical_doc_inputs": 162,
+  "changed_since_september_11": [
+    "docs/development/testing.md",
+    "README.md"
+  ],
+  "missing_inputs": [],
+  "authored_inputs_unchanged_during_validation": true,
+  "unchanged_source_strict_build": {
+    "exit_code": 1,
+    "warning_count": 13,
+    "reason": "Four tutorials omit Python language metadata normally supplied by kernel execution; execution-off rendering emitted 13 source-lexer warnings. No other warnings were recorded.",
+    "evidence": "docs_render_result.json"
+  },
+  "temporary_metadata_strict_build": {
+    "exit_code": 0,
+    "warning_count": 0,
+    "scope": "Only kernelspec.language=python was added to temporary copies of four tutorial headers. All code, prose, and authored files were unchanged.",
+    "evidence": "docs_render_metadata_result.json"
+  },
+  "html_audit": {
+    "command": [
+      "/Users/kisung/miniconda3/bin/python",
+      "/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-docs-render-metadata-20260925-6o7nijz6/source/docs/audit_html.py",
+      "/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-docs-render-metadata-20260925-6o7nijz6/site"
+    ],
+    "returncode": 0,
+    "pages": 45,
+    "math_nodes": 551,
+    "local_references": 5271
+  },
+  "notebooks_executed": 0,
+  "original_guide_matches_rendered_input": true,
+  "historical_execution_evidence": "audit/2026-09-10/corrections/docs-validation.json"
+}

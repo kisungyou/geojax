@@ -1,0 +1,138 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___________ test_response_regression_alternate_paths_and_validation ____________
+
+    def test_response_regression_alternate_paths_and_validation():
+        manifold = Euclidean(1)
+        predictors = jnp.linspace(-1.0, 1.0, 7)
+        responses = (2.0 + predictors)[:, None]
+    
+        with pytest.raises(ValueError, match="shape"):
+            geodesic_regression(manifold, predictors[:-1], responses)
+        with pytest.raises(ValueError, match="finite"):
+            geodesic_regression(manifold, predictors.at[0].set(jnp.nan), responses)
+        with pytest.raises(ValueError, match="maxiter"):
+            geodesic_regression(manifold, predictors, responses, maxiter=0)
+        with pytest.raises(ValueError, match="maxiter"):
+            local_polynomial_regression(manifold, predictors, responses, bandwidth=0.4, maxiter=0)
+    
+        geodesic = geodesic_regression(
+            manifold,
+            predictors,
+            responses,
+            initial_point=jnp.array([2.0]),
+            maxiter=20,
+        )
+        with pytest.raises(ValueError, match="finite scalar"):
+            geodesic.predict(jnp.array([jnp.nan]))
+    
+        compact = local_polynomial_regression(
+            manifold,
+            predictors,
+            responses,
+            bandwidth=0.1,
+            degree=1,
+            kernel=lambda distances, bandwidth: (distances <= bandwidth).astype(float),
+            maxiter=20,
+        )
+        assert compact.predict(4.0).shape == (1,)
+    
+        local_linear = local_polynomial_regression(
+            manifold,
+            predictors,
+            responses,
+            bandwidth=0.8,
+            degree=1,
+            maxiter=20,
+        )
+>       assert jnp.allclose(local_linear.predict(1.5), jnp.array([3.5]), atol=2e-2)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_learning_edge_contracts.py:146: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+geojax/learning/_results.py:274: in predict
+    return _predict_local_polynomial_regression(self, predictors)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+geojax/learning/_response.py:380: in _predict_local_polynomial_regression
+    points = [_predict_one_local_polynomial(model, query) for query in vector]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+model = LocalPolynomialRegressionModel(manifold=Euclidean(size=(1,), atol=1e-06), predictors=Array([-1.0000000e+00, -6.6666663..._count=0, repaired_count=0, messages=())), bandwidth=0.8, degree=1, kernel=None, maxiter=20, tol=1e-06, diagnostics={})
+query = Array(1.5, dtype=float32)
+
+    def _predict_one_local_polynomial(model: LocalPolynomialRegressionModel, query: Any) -> Any:
+        weights, initialization_weights = _local_weights(model, query)
+        initial_fit = frechet_mean(
+            model.manifold,
+            model.training_data,
+            sample_weight=initialization_weights,
+            maxiter=model.maxiter,
+            tol=model.tol,
+        )
+        if not initial_fit.converged:
+            raise RuntimeError(
+                "The local-regression initialization mean did not converge; "
+                "increase maxiter or bandwidth."
+            )
+        initial = initial_fit.point
+        if model.degree == 0 or bool(jnp.all(weights >= 0.0)):
+            fit = frechet_mean(
+                model.manifold,
+                model.training_data,
+                sample_weight=weights,
+                initial_point=initial,
+                maxiter=model.maxiter,
+                tol=model.tol,
+            )
+            if not fit.converged:
+                raise RuntimeError(
+                    "The local Frechet-mean solve did not converge; increase maxiter or bandwidth."
+                )
+            return fit.point
+    
+        def objective(point: Any) -> Any:
+            return jnp.sum(weights * model.manifold.squared_dist(point, model.training_data.values))
+    
+        initial_radius = jnp.sqrt(
+            jnp.maximum(
+                jnp.sum(
+                    initialization_weights
+                    * model.manifold.squared_dist(initial, model.training_data.values)
+                ),
+                0.0,
+            )
+        )
+        _, effective_tol = _gradient_tolerances(
+            initial,
+            initial_radius,
+            model.tol,
+        )
+        point, value, history = Minimize(
+            M=model.manifold,
+            cost=objective,
+            x0=initial,
+            solver=ConjugateGradient(
+                maxiter=model.maxiter,
+                tolgradnorm=effective_tol,
+                verbosity=0,
+            ),
+        ).solve()
+        final = history[-1]
+        if (
+            not tree_all_finite(point)
+            or not bool(jnp.isfinite(value))
+            or not bool(jnp.isfinite(final.gradnorm))
+        ):
+            raise FloatingPointError("Local-linear Frechet regression produced a nonfinite minimizer.")
+        if final.gradnorm > effective_tol:
+>           raise RuntimeError(
+                "The signed local-linear Frechet solve did not converge; its "
+                "objective may be ill-conditioned or unbounded at this query."
+            )
+E           RuntimeError: The signed local-linear Frechet solve did not converge; its objective may be ill-conditioned or unbounded at this query.
+
+geojax/learning/_response.py:360: RuntimeError
+=========================== short test summary info ============================
+FAILED tests/test_learning_edge_contracts.py::test_response_regression_alternate_paths_and_validation
+1 failed in 3.36s

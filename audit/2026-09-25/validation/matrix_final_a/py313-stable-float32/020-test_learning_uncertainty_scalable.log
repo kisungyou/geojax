@@ -1,0 +1,77 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py313-stable-float32/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py313-stable-float32/020-test_learning_uncertainty_scalable.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py313-stable-float32/020-test_learning_uncertainty_scalable.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.13.14, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py313-stable-float32/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.13.14, JAX 0.11.0, NumPy 2.4.4, float32
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 34 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_bootstrap_mean_is_reproducible_and_returns_a_geodesic_ball PASSED [  2%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_energy_mmd_and_paired_tests_detect_large_location_changes PASSED [  5%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_uncertainty_methods_validate_keys_sizes_and_bandwidths PASSED [  8%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_streaming_mean_is_exact_for_weighted_euclidean_data PASSED [ 11%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_is_reproducible_and_improves_a_bad_initial_point PASSED [ 14%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_uses_an_unbiased_unequal_weight_batch_direction PASSED [ 17%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_does_not_confuse_decayed_steps_with_stationarity PASSED [ 20%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_respects_global_sample_weight_mass PASSED [ 23%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_separates_clusters_and_supports_product_points PASSED [ 26%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_scalable_methods_validate_controls_and_exact_capabilities PASSED [ 29%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs0-TypeError-check_psd must be a boolean] PASSED [ 32%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs1-TypeError-kernel must be callable] PASSED [ 35%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs2-ValueError-bandwidth is only defined] PASSED [ 38%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs3-ValueError-real-valued] PASSED [ 41%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs4-ValueError-square matrix matching] PASSED [ 44%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_can_explicitly_disable_the_psd_gate PASSED [ 47%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_rbf_mmd_uses_a_finite_default_when_all_distances_are_zero PASSED [ 50%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_two_sample_uncertainty_methods_require_two_observations_per_group[energy_two_sample_test] PASSED [ 52%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_two_sample_uncertainty_methods_require_two_observations_per_group[kernel_mmd_two_sample_test] PASSED [ 55%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_bootstrap_rejects_original_and_replicate_nonconvergence PASSED [ 58%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_bootstrap_rejects_nonfinite_replicate_points PASSED [ 61%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_paired_test_rejects_nonconvergence_and_undefined_logarithms PASSED [ 64%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_energy_test_rejects_nonfinite_distance_statistics PASSED [ 67%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_streaming_mean_makes_prior_mass_and_initialization_explicit PASSED [ 70%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_streaming_mean_defensively_rejects_zero_mass PASSED [ 73%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_streaming_mean_guards_logarithm_and_exponential_domains[manifold0-undefined logarithm] PASSED [ 76%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_streaming_mean_guards_logarithm_and_exponential_domains[manifold1-exponential-map domain] PASSED [ 79%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_guards_logarithm_and_exponential_domains[manifold0-undefined logarithm] PASSED [ 82%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_guards_logarithm_and_exponential_domains[manifold1-exponential-map domain] PASSED [ 85%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_guards_logarithm_and_exponential_domains[manifold0-undefined logarithm] PASSED [ 88%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_guards_logarithm_and_exponential_domains[manifold1-exponential-map domain] PASSED [ 91%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_skips_batches_with_zero_sample_mass PASSED [ 94%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_scalable_mean_diagnostics_reject_undefined_geometry_values PASSED [ 97%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_rejects_a_nonfinite_initial_objective PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py313-stable-float32/020-test_learning_uncertainty_scalable.xml -
+============================== slowest durations ===============================
+12.07s call     tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_separates_clusters_and_supports_product_points
+3.38s call     tests/test_learning_uncertainty_scalable.py::test_energy_mmd_and_paired_tests_detect_large_location_changes
+3.25s call     tests/test_learning_uncertainty_scalable.py::test_bootstrap_mean_is_reproducible_and_returns_a_geodesic_ball
+2.12s call     tests/test_learning_uncertainty_scalable.py::test_uncertainty_methods_validate_keys_sizes_and_bandwidths
+1.48s call     tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_respects_global_sample_weight_mass
+1.37s call     tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_is_reproducible_and_improves_a_bad_initial_point
+0.90s call     tests/test_learning_uncertainty_scalable.py::test_streaming_mean_is_exact_for_weighted_euclidean_data
+0.82s call     tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_does_not_confuse_decayed_steps_with_stationarity
+0.64s call     tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_can_explicitly_disable_the_psd_gate
+0.49s call     tests/test_learning_uncertainty_scalable.py::test_scalable_methods_validate_controls_and_exact_capabilities
+0.30s call     tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_uses_an_unbiased_unequal_weight_batch_direction
+0.26s call     tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs0-TypeError-check_psd must be a boolean]
+0.25s call     tests/test_learning_uncertainty_scalable.py::test_bootstrap_rejects_original_and_replicate_nonconvergence
+0.22s call     tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_skips_batches_with_zero_sample_mass
+0.21s call     tests/test_learning_uncertainty_scalable.py::test_rbf_mmd_uses_a_finite_default_when_all_distances_are_zero
+0.13s call     tests/test_learning_uncertainty_scalable.py::test_custom_mmd_kernel_contracts_are_explicit[kwargs3-ValueError-real-valued]
+0.11s call     tests/test_learning_uncertainty_scalable.py::test_paired_test_rejects_nonconvergence_and_undefined_logarithms
+0.09s call     tests/test_learning_uncertainty_scalable.py::test_energy_test_rejects_nonfinite_distance_statistics
+0.07s call     tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_guards_logarithm_and_exponential_domains[manifold0-undefined logarithm]
+0.05s call     tests/test_learning_uncertainty_scalable.py::test_streaming_mean_makes_prior_mass_and_initialization_explicit
+0.05s call     tests/test_learning_uncertainty_scalable.py::test_streaming_mean_guards_logarithm_and_exponential_domains[manifold0-undefined logarithm]
+0.04s call     tests/test_learning_uncertainty_scalable.py::test_bootstrap_rejects_nonfinite_replicate_points
+0.01s call     tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_rejects_a_nonfinite_initial_objective
+0.01s call     tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_guards_logarithm_and_exponential_domains[manifold0-undefined logarithm]
+0.01s call     tests/test_learning_uncertainty_scalable.py::test_two_sample_uncertainty_methods_require_two_observations_per_group[energy_two_sample_test]
+0.01s call     tests/test_learning_uncertainty_scalable.py::test_minibatch_kmeans_guards_logarithm_and_exponential_domains[manifold1-exponential-map domain]
+0.01s call     tests/test_learning_uncertainty_scalable.py::test_minibatch_mean_guards_logarithm_and_exponential_domains[manifold1-exponential-map domain]
+
+(75 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================= 34 passed in 28.55s ==============================

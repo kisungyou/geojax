@@ -1,0 +1,112 @@
+[
+  {
+    "script": "reproduce_limitations.py",
+    "script_sha256": "1e393c43bb5fd9fceed5883a7290f8d215fbf1a67dbdcd3a24bcde7bb0931e57",
+    "output": "original_reproductions.json",
+    "stderr": "original_reproductions.stderr",
+    "precision": 1,
+    "returncode": 0,
+    "elapsed_seconds": 32.41621300000406,
+    "command": [
+      "/private/tmp/geojax-corrections/latest-dependencies/bin/python",
+      "-I",
+      "/private/tmp/geojax-corrections/final-formulas/isolated_replay.py",
+      "/private/tmp/geojax-corrections/final-formulas/scripts/reproduce_limitations.py",
+      "/Users/kisung/Desktop/develop/geojax/audit/2026-09-10/corrections/original_reproductions.json.validation.json"
+    ],
+    "isolation": {
+      "exit_code": 0,
+      "package": "/private/tmp/geojax-corrections/latest-dependencies/lib/python3.12/site-packages/geojax",
+      "modules_verified": 66,
+      "checkout_absent_from_import_path": true
+    }
+  },
+  {
+    "script": "first_variation_crosscheck.py",
+    "script_sha256": "24e9ea0893abee3744e837ebf175b417d53ebee72ff5a1eaa8a93fa2dbfd5fe8",
+    "output": "first_variation_results.json",
+    "stderr": "first_variation.stderr",
+    "precision": 1,
+    "returncode": 0,
+    "elapsed_seconds": 30.801987291997648,
+    "command": [
+      "/private/tmp/geojax-corrections/latest-dependencies/bin/python",
+      "-I",
+      "/private/tmp/geojax-corrections/final-formulas/isolated_replay.py",
+      "/private/tmp/geojax-corrections/final-formulas/scripts/first_variation_crosscheck.py",
+      "/Users/kisung/Desktop/develop/geojax/audit/2026-09-10/corrections/first_variation_results.json.validation.json"
+    ],
+    "isolation": {
+      "exit_code": 0,
+      "package": "/private/tmp/geojax-corrections/latest-dependencies/lib/python3.12/site-packages/geojax",
+      "modules_verified": 66,
+      "checkout_absent_from_import_path": true
+    }
+  },
+  {
+    "script": "statistical_crosscheck.py",
+    "script_sha256": "af15f310eff180467f7030345123e876bb1c0bb95cf07c79afbf091986923e0b",
+    "output": "statistical_results.json",
+    "stderr": "statistical.stderr",
+    "precision": 1,
+    "returncode": 0,
+    "elapsed_seconds": 9.877661416991032,
+    "command": [
+      "/private/tmp/geojax-corrections/latest-dependencies/bin/python",
+      "-I",
+      "/private/tmp/geojax-corrections/final-formulas/isolated_replay.py",
+      "/private/tmp/geojax-corrections/final-formulas/scripts/statistical_crosscheck.py",
+      "/Users/kisung/Desktop/develop/geojax/audit/2026-09-10/corrections/statistical_results.json.validation.json"
+    ],
+    "isolation": {
+      "exit_code": 0,
+      "package": "/private/tmp/geojax-corrections/latest-dependencies/lib/python3.12/site-packages/geojax",
+      "modules_verified": 66,
+      "checkout_absent_from_import_path": true
+    }
+  },
+  {
+    "script": "recheck_extreme_scaling.py",
+    "script_sha256": "4ba96407607afd1350926b178931f2d68877185a60bcb56af9733269b91e8724",
+    "output": "recheck_extreme_scaling_float64.log",
+    "stderr": "recheck_extreme_scaling_float64.stderr",
+    "precision": 1,
+    "returncode": 0,
+    "elapsed_seconds": 8.494518958992558,
+    "command": [
+      "/private/tmp/geojax-corrections/latest-dependencies/bin/python",
+      "-I",
+      "/private/tmp/geojax-corrections/final-formulas/isolated_replay.py",
+      "/private/tmp/geojax-corrections/final-formulas/scripts/recheck_extreme_scaling.py",
+      "/Users/kisung/Desktop/develop/geojax/audit/2026-09-10/corrections/recheck_extreme_scaling_float64.log.validation.json"
+    ],
+    "isolation": {
+      "exit_code": 0,
+      "package": "/private/tmp/geojax-corrections/latest-dependencies/lib/python3.12/site-packages/geojax",
+      "modules_verified": 66,
+      "checkout_absent_from_import_path": true
+    }
+  },
+  {
+    "script": "recheck_extreme_scaling.py",
+    "script_sha256": "4ba96407607afd1350926b178931f2d68877185a60bcb56af9733269b91e8724",
+    "output": "recheck_extreme_scaling_float32.log",
+    "stderr": "recheck_extreme_scaling_float32.stderr",
+    "precision": 0,
+    "returncode": 0,
+    "elapsed_seconds": 8.28278649999993,
+    "command": [
+      "/private/tmp/geojax-corrections/latest-dependencies/bin/python",
+      "-I",
+      "/private/tmp/geojax-corrections/final-formulas/isolated_replay.py",
+      "/private/tmp/geojax-corrections/final-formulas/scripts/recheck_extreme_scaling.py",
+      "/Users/kisung/Desktop/develop/geojax/audit/2026-09-10/corrections/recheck_extreme_scaling_float32.log.validation.json"
+    ],
+    "isolation": {
+      "exit_code": 0,
+      "package": "/private/tmp/geojax-corrections/latest-dependencies/lib/python3.12/site-packages/geojax",
+      "modules_verified": 66,
+      "checkout_absent_from_import_path": true
+    }
+  }
+]

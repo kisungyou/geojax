@@ -9,6 +9,7 @@ import jax
 import jax.numpy as jnp
 
 from geojax.geometry import Product
+from geojax.geometry._numerics import power_of_two_rescale
 from geojax.geometry.base import validate_integer, validate_nonnegative, validate_positive
 
 
@@ -137,7 +138,7 @@ def normalize_weights(n_samples: int, sample_weight: Any | None) -> Any:
         raise ValueError("sample_weight must have positive total mass.")
     # Scaling before summation avoids overflow while preserving every relative
     # weight that is representable in the input dtype.
-    scaled = weights / maximum
+    scaled = power_of_two_rescale(weights, axis=0)
     total = jnp.sum(scaled)
     if not bool(jnp.isfinite(total)) or float(total) <= 0.0:
         raise ValueError("sample_weight could not be normalized safely.")

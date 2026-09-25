@@ -1,0 +1,87 @@
+{
+  "original_findings": {
+    "passed": 11,
+    "total": 11
+  },
+  "first_variation": {
+    "passed": 18,
+    "total": 18
+  },
+  "statistical_checks": {
+    "fanova": {
+      "package": 9.17874383405389,
+      "independent_reference": 9.178743834053881,
+      "package_pvalue": 0.010159237213852765,
+      "scipy_pvalue": 0.010159237213852812
+    },
+    "permutation_checks": [
+      {
+        "statistic": "Biswas-Ghosh",
+        "partitions": 70,
+        "exact_conditional_rejection_rates": {
+          "0.01": 0.0,
+          "0.05": 0.02857142857142857,
+          "0.1": 0.05714285714285714,
+          "0.2": 0.2
+        }
+      },
+      {
+        "statistic": "energy",
+        "partitions": 70,
+        "exact_conditional_rejection_rates": {
+          "0.01": 0.0,
+          "0.05": 0.02857142857142857,
+          "0.1": 0.08571428571428572,
+          "0.2": 0.2
+        }
+      }
+    ]
+  },
+  "range_probe": {
+    "float64": {
+      "smallest_normal": {
+        "sylvester derivative": -1.0,
+        "logderiv": 2.0,
+        "loghess": -2.0000000000001097
+      },
+      "large": {
+        "sylvester derivative": 0.0,
+        "logderiv": 0.0,
+        "loghess": 0.0
+      },
+      "analytic_reference": {
+        "sylvester derivative": -1.0,
+        "logderiv": 2.0,
+        "loghess": -2.0
+      },
+      "large_scale_derivatives_match_analytic_reference": false,
+      "note": "The print-only probe exposes the retained flush-to-zero limitation when reverse-mode ambient adjoints are subnormal. Successful process exit is not an assertion that these large-scale derivatives pass."
+    },
+    "float32": {
+      "smallest_normal": {
+        "sylvester derivative": -1.0,
+        "logderiv": 2.0,
+        "loghess": -1.9999875
+      },
+      "large": {
+        "sylvester derivative": 0.0,
+        "logderiv": 0.0,
+        "loghess": 0.0
+      },
+      "analytic_reference": {
+        "sylvester derivative": -1.0,
+        "logderiv": 2.0,
+        "loghess": -2.0
+      },
+      "large_scale_derivatives_match_analytic_reference": false,
+      "note": "The print-only probe exposes the retained flush-to-zero limitation when reverse-mode ambient adjoints are subnormal. Successful process exit is not an assertion that these large-scale derivatives pass."
+    }
+  },
+  "installed_package": {
+    "module_count": 66,
+    "all_modules_match_tested_source_hashes": true,
+    "checkout_excluded": true
+  },
+  "environment": "independent_formulas_environment.json",
+  "execution_evidence": "independent_formula_replays.json"
+}

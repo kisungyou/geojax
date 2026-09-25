@@ -1,0 +1,126 @@
+{
+  "started_utc": "2026-09-25T06:05:06.405010+00:00",
+  "source_hashes": {
+    "scripts/run_test_suite.py": "7a0afc08e8acb610384df200e6d33a6faf606a949d8fbc777a30455da5a0d3bb",
+    "tests/test_test_suite_runner.py": "15e431dead08866e520764401b0e0558129689b8a0beee12b9bd67af00b8a973",
+    "tests/test_release_contract.py": "6c159c916fcad316baf58593e2c6060f6ad2a2328d65b70d4af22bfecdcfc9ba",
+    "tox.ini": "2d4f2a09ac6f5442a22f4a44e8bde58081fb2678ef2b6d4c0991f9b5d52fb42b",
+    ".github/workflows/ci.yml": "8f396dc1407b65e7176f6bc19f0081bd3a526ed85a53040a0a80b149129215e8"
+  },
+  "runs": [
+    {
+      "environment": "py311-min-float64",
+      "command": [
+        "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float64/bin/python",
+        "-I",
+        "-m",
+        "pytest",
+        "/Users/kisung/Desktop/develop/geojax/tests/test_test_suite_runner.py",
+        "/Users/kisung/Desktop/develop/geojax/tests/test_release_contract.py",
+        "--rootdir=/Users/kisung/Desktop/develop/geojax",
+        "-o",
+        "pythonpath=",
+        "-o",
+        "addopts=",
+        "-o",
+        "faulthandler_timeout=0",
+        "--junitxml=/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/runner_checks/watchdog_correction/py311-min-float64.xml",
+        "-q"
+      ],
+      "working_directory": "/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-corrected-runner-checks-peeprqzc",
+      "GEOJAX_TEST_X64": "1",
+      "returncode": 0,
+      "seconds": 2.058,
+      "metadata": {
+        "python": "3.11.15 (main, Jul 18 2026, 16:57:24) [Clang 22.1.3 ]",
+        "platform": "macOS-26.6.2-arm64-arm-64bit",
+        "geojax": "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float64/lib/python3.11/site-packages/geojax/__init__.py",
+        "versions": {
+          "pytest": "9.0.3",
+          "pytest-cov": "7.1.0",
+          "jax": "0.6.0",
+          "jaxlib": "0.6.0",
+          "numpy": "1.26.4",
+          "coverage": "7.13.5"
+        }
+      }
+    },
+    {
+      "environment": "py314-stable-float32",
+      "command": [
+        "/Users/kisung/Desktop/develop/geojax/.tox/py314-stable-float32/bin/python",
+        "-I",
+        "-m",
+        "pytest",
+        "/Users/kisung/Desktop/develop/geojax/tests/test_test_suite_runner.py",
+        "/Users/kisung/Desktop/develop/geojax/tests/test_release_contract.py",
+        "--rootdir=/Users/kisung/Desktop/develop/geojax",
+        "-o",
+        "pythonpath=",
+        "-o",
+        "addopts=",
+        "-o",
+        "faulthandler_timeout=0",
+        "--junitxml=/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/runner_checks/watchdog_correction/py314-stable-float32.xml",
+        "-q"
+      ],
+      "working_directory": "/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-corrected-runner-checks-peeprqzc",
+      "GEOJAX_TEST_X64": "0",
+      "returncode": 0,
+      "seconds": 2.176,
+      "metadata": {
+        "python": "3.14.6 (main, Jul 18 2026, 17:05:49) [Clang 22.1.3 ]",
+        "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+        "geojax": "/Users/kisung/Desktop/develop/geojax/.tox/py314-stable-float32/lib/python3.14/site-packages/geojax/__init__.py",
+        "versions": {
+          "pytest": "9.0.3",
+          "pytest-cov": "7.1.0",
+          "jax": "0.11.0",
+          "jaxlib": "0.11.0",
+          "numpy": "2.4.4",
+          "coverage": "7.13.5"
+        }
+      }
+    },
+    {
+      "environment": "py311-stable-float32",
+      "command": [
+        "/Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float32/bin/python",
+        "-I",
+        "-m",
+        "pytest",
+        "/Users/kisung/Desktop/develop/geojax/tests/test_test_suite_runner.py",
+        "/Users/kisung/Desktop/develop/geojax/tests/test_release_contract.py",
+        "--rootdir=/Users/kisung/Desktop/develop/geojax",
+        "-o",
+        "pythonpath=",
+        "-o",
+        "addopts=",
+        "-o",
+        "faulthandler_timeout=0",
+        "--junitxml=/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/runner_checks/watchdog_correction/py311-stable-float32.xml",
+        "-q"
+      ],
+      "working_directory": "/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-corrected-runner-checks-peeprqzc",
+      "GEOJAX_TEST_X64": "0",
+      "returncode": 0,
+      "seconds": 1.967,
+      "metadata": {
+        "python": "3.11.15 (main, Jul 18 2026, 16:57:24) [Clang 22.1.3 ]",
+        "platform": "macOS-26.6.2-arm64-arm-64bit",
+        "geojax": "/Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float32/lib/python3.11/site-packages/geojax/__init__.py",
+        "versions": {
+          "pytest": "9.0.3",
+          "pytest-cov": "7.1.0",
+          "jax": "0.10.2",
+          "jaxlib": "0.10.2",
+          "numpy": "2.4.4",
+          "coverage": "7.13.5"
+        }
+      }
+    }
+  ],
+  "source_unchanged": true,
+  "status": "passed",
+  "finished_utc": "2026-09-25T06:05:15.825316+00:00"
+}

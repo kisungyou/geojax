@@ -1,0 +1,98 @@
+.........FF                                                              [100%]
+=================================== FAILURES ===================================
+_ test_gradients_through_vmapped_exp_keep_inactive_scaling_steps_finite[shifts0] _
+
+p = stop_gradient
+
+    def get_primitive_transpose(p):
+      try:
+>       return primitive_transposes[p]
+               ^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: stop_gradient
+
+.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/interpreters/ad.py:350: KeyError
+
+The above exception was the direct cause of the following exception:
+
+>   return lax.cond(i < n_squarings, _squaring_precise, _identity, c), None
+E   jax._src.source_info_util.JaxStackTraceBeforeTransformation: NotImplementedError: Transpose rule (for reverse-mode differentiation) for 'stop_gradient' not implemented
+E   
+E   The preceding stack trace is the source of the JAX operation that, once transformed by JAX, triggered the following exception.
+E   
+E   --------------------
+
+.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/scipy/linalg.py:1496: JaxStackTraceBeforeTransformation
+
+The above exception was the direct cause of the following exception:
+
+shifts = (0.1, 26.0)
+
+    @pytest.mark.parametrize("shifts", [(0.1, 26.0), (-80.0, 80.0)])
+    def test_gradients_through_vmapped_exp_keep_inactive_scaling_steps_finite(shifts):
+        bases = jnp.asarray(shifts)[:, None, None] * jnp.eye(2)
+        direction = jnp.array([[0.2, 0.3], [0.3, -0.1]])
+        manifold = SPDLogEuclidean((2, 2))
+    
+        def single(base, time):
+            return jnp.trace(manifold.expm(base + time * direction)) / jnp.exp(jnp.trace(base) / 2)
+    
+        def objective(time):
+            return jnp.sum(jax.vmap(single, in_axes=(0, None))(bases, time))
+    
+>       gradient = jax.jit(jax.grad(objective))(0.0)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       NotImplementedError: Transpose rule (for reverse-mode differentiation) for 'stop_gradient' not implemented
+E       --------------------
+E       For simplicity, JAX has removed its internal frames from the traceback of the following exception. Set JAX_TRACEBACK_FILTERING=off to include these.
+
+tests/test_spd_exponential_audit.py:105: NotImplementedError
+_ test_gradients_through_vmapped_exp_keep_inactive_scaling_steps_finite[shifts1] _
+
+p = stop_gradient
+
+    def get_primitive_transpose(p):
+      try:
+>       return primitive_transposes[p]
+               ^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: stop_gradient
+
+.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/interpreters/ad.py:350: KeyError
+
+The above exception was the direct cause of the following exception:
+
+>   return lax.cond(i < n_squarings, _squaring_precise, _identity, c), None
+E   jax._src.source_info_util.JaxStackTraceBeforeTransformation: NotImplementedError: Transpose rule (for reverse-mode differentiation) for 'stop_gradient' not implemented
+E   
+E   The preceding stack trace is the source of the JAX operation that, once transformed by JAX, triggered the following exception.
+E   
+E   --------------------
+
+.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/scipy/linalg.py:1496: JaxStackTraceBeforeTransformation
+
+The above exception was the direct cause of the following exception:
+
+shifts = (-80.0, 80.0)
+
+    @pytest.mark.parametrize("shifts", [(0.1, 26.0), (-80.0, 80.0)])
+    def test_gradients_through_vmapped_exp_keep_inactive_scaling_steps_finite(shifts):
+        bases = jnp.asarray(shifts)[:, None, None] * jnp.eye(2)
+        direction = jnp.array([[0.2, 0.3], [0.3, -0.1]])
+        manifold = SPDLogEuclidean((2, 2))
+    
+        def single(base, time):
+            return jnp.trace(manifold.expm(base + time * direction)) / jnp.exp(jnp.trace(base) / 2)
+    
+        def objective(time):
+            return jnp.sum(jax.vmap(single, in_axes=(0, None))(bases, time))
+    
+>       gradient = jax.jit(jax.grad(objective))(0.0)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       NotImplementedError: Transpose rule (for reverse-mode differentiation) for 'stop_gradient' not implemented
+E       --------------------
+E       For simplicity, JAX has removed its internal frames from the traceback of the following exception. Set JAX_TRACEBACK_FILTERING=off to include these.
+
+tests/test_spd_exponential_audit.py:105: NotImplementedError
+=========================== short test summary info ============================
+FAILED tests/test_spd_exponential_audit.py::test_gradients_through_vmapped_exp_keep_inactive_scaling_steps_finite[shifts0]
+FAILED tests/test_spd_exponential_audit.py::test_gradients_through_vmapped_exp_keep_inactive_scaling_steps_finite[shifts1]
+2 failed, 9 passed in 13.80s

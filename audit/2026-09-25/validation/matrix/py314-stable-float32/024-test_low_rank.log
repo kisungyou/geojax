@@ -1,0 +1,43 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py314-stable-float32/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_low_rank.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py314-stable-float32/024-test_low_rank.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py314-stable-float32/024-test_low_rank.xml", "--trace-after", "90.0"]
+============================= test session starts ==============================
+platform darwin -- Python 3.14.6, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py314-stable-float32/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.14.6, JAX 0.11.0, NumPy 2.4.4, float32
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 16 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank.py::test_svd_based_geometries_advertise_retraction_proxies[M0] PASSED [  6%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank.py::test_svd_based_geometries_advertise_retraction_proxies[M1] PASSED [ 12%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank.py::test_svd_based_geometries_advertise_retraction_proxies[M2] PASSED [ 18%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank.py::test_svd_based_geometries_advertise_retraction_proxies[M3] PASSED [ 25%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank.py::test_fixed_rank_projection_and_tangent_constraint PASSED [ 31%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank.py::test_fixed_rank_psd_constraints PASSED [ 37%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank.py::test_rank_one_bures_distance_matches_factor_procrustes_distance PASSED [ 43%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank.py::test_rank_k_bures_exponential_rejects_rank_losing_lift PASSED [ 50%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank.py::test_rank_k_bures_exponential_rejects_leave_and_reenter_lift PASSED [ 56%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank.py::test_rank_k_bures_log_exp_accepts_orthogonal_supports PASSED [ 62%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank.py::test_fixed_rank_repairs_preserve_small_positive_spectrum[M0-point0] PASSED [ 68%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank.py::test_fixed_rank_repairs_preserve_small_positive_spectrum[M1-point1] PASSED [ 75%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank.py::test_fixed_rank_repairs_preserve_small_positive_spectrum[M2-point2] PASSED [ 81%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank.py::test_elliptope_and_spectrahedron_constraints_and_tangents PASSED [ 87%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank.py::test_specialized_low_rank_aliases_preserve_subclass_constraints[M0] PASSED [ 93%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_low_rank.py::test_specialized_low_rank_aliases_preserve_subclass_constraints[M1] PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py314-stable-float32/024-test_low_rank.xml -
+============================== slowest durations ===============================
+3.18s call     tests/test_low_rank.py::test_elliptope_and_spectrahedron_constraints_and_tangents
+2.62s call     tests/test_low_rank.py::test_fixed_rank_psd_constraints
+2.19s call     tests/test_low_rank.py::test_specialized_low_rank_aliases_preserve_subclass_constraints[M0]
+2.13s call     tests/test_low_rank.py::test_rank_k_bures_exponential_rejects_rank_losing_lift
+1.57s call     tests/test_low_rank.py::test_fixed_rank_projection_and_tangent_constraint
+1.33s call     tests/test_low_rank.py::test_rank_one_bures_distance_matches_factor_procrustes_distance
+0.18s call     tests/test_low_rank.py::test_rank_k_bures_log_exp_accepts_orthogonal_supports
+0.14s call     tests/test_low_rank.py::test_specialized_low_rank_aliases_preserve_subclass_constraints[M1]
+0.12s call     tests/test_low_rank.py::test_fixed_rank_repairs_preserve_small_positive_spectrum[M1-point1]
+0.12s call     tests/test_low_rank.py::test_rank_k_bures_exponential_rejects_leave_and_reenter_lift
+0.10s call     tests/test_low_rank.py::test_fixed_rank_repairs_preserve_small_positive_spectrum[M0-point0]
+
+(37 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================= 16 passed in 14.18s ==============================

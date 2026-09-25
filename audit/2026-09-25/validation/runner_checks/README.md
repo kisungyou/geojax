@@ -1,0 +1,5 @@
+# Verification-runner checks
+
+`selftests.log` and `selftests.json` record the 13 focused harness and release-contract tests, including the exact command, environment, and relevant source hashes. This is a lightweight rerun made solely to retain durable evidence; no source changed.
+
+`synthetic_smoke/` preserves the real-worker integration check from a temporary repository containing one passing import test and one explicitly skipped optional-dependency module. Its `results.json` intentionally records `status: failed`: successful coverage combination is followed by the required rejection of its deliberately inadequate global coverage. The gate rejection is the expected outcome of this harness check, not a numerical package failure. The two synthetic input modules are retained in `fixtures/`. All source hashes were unchanged during the check. Original absolute paths in the records are preserved for provenance; logs and JUnit/collection records are copied alongside them. Raw coverage databases and the large line-by-line coverage JSON are omitted.

@@ -13,7 +13,7 @@ from ._clustering import _initial_indices, _kmeans_stationarity
 from ._data import ManifoldData, as_manifold_data
 from ._geometry import pairwise_distances
 from ._results import ClusteringResult, FrechetMeanResult
-from ._statistics import _gradient_tolerances
+from ._statistics import _gradient_tolerances, _positive_weight_data
 from ._utils import (
     as_key,
     integer_control,
@@ -38,6 +38,7 @@ def _prepare(manifold: Any, data: Any, method: str) -> ManifoldData:
 def _mean_diagnostics(
     manifold: Any, point: Any, data: ManifoldData, weights: Any
 ) -> tuple[Any, Any]:
+    data, weights = _positive_weight_data(manifold, data, weights)
     objective = jnp.sum(weights * manifold.squared_dist(point, data.values))
     logs = manifold.log(point, data.values)
     if not tree_all_finite(logs):
@@ -171,6 +172,8 @@ def minibatch_frechet_mean(
         maximum_movement = 0.0
         for start in range(0, adapted.n_samples, batch_size):
             indices = order[start : start + batch_size]
+            drawn_size = int(indices.shape[0])
+            indices = indices[weights[indices] > 0.0]
             batch = take_samples(manifold, adapted.values, indices)
             batch_weights = weights[indices]
             if float(jnp.sum(batch_weights)) <= 0.0:
@@ -187,7 +190,7 @@ def minibatch_frechet_mean(
             direction = weighted_tangent_sum(
                 manifold,
                 logs,
-                batch_weights * adapted.n_samples / int(indices.shape[0]),
+                batch_weights * adapted.n_samples / drawn_size,
             )
             step = learning_rate / (1.0 + decay * update)
             movement = manifold.lincomb(point, step, direction)
@@ -319,7 +322,9 @@ def minibatch_kmeans(
             distances = pairwise_distances(manifold, batch, center_tree, squared=True)
             assignments = jnp.argmin(distances, axis=1)
             for cluster in range(n_clusters):
-                positions = jnp.flatnonzero(assignments == cluster)
+                positions = jnp.flatnonzero(
+                    (assignments == cluster) & (weights[batch_indices] > 0.0)
+                )
                 if positions.size == 0:
                     continue
                 cluster_points = take_samples(manifold, batch, positions)

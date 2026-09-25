@@ -20,10 +20,14 @@ separately as ``chordal_dist``; it is not a Riemannian geodesic distance.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import partial
 from typing import Any, Sequence, Tuple, Union
 
 import jax
 import jax.numpy as jnp
+
+from ._numerics import nonnegative
+from .lie_groups import _principal_orthogonal_log
 
 from .base import (
     ExactGeometryMixin,
@@ -75,21 +79,83 @@ def _parse_grassmann_size(size: int | Sequence[int]) -> tuple[int, int]:
     return n, k
 
 
+def _matrix_tan_polar(M: Array) -> Array:
+    """Evaluate ``U tan(S) V.T`` by a basis-independent block exponential.
+
+    This is the local inverse of the arctangent polar map when every singular
+    value is below pi/2. Its Gram matrix therefore has bounded eigenvalues;
+    no large-angle tangent Gram matrix is ever formed.
+    """
+    rank = M.shape[-1]
+    identity = jnp.eye(rank, dtype=M.dtype)
+    zero = jnp.zeros_like(identity)
+    gram = jnp.swapaxes(M, -1, -2) @ M
+    generator = jnp.concatenate(
+        [jnp.concatenate([zero, identity], axis=-1), jnp.concatenate([-gram, zero], axis=-1)],
+        axis=-2,
+    )
+    exponential = matrix_expm(generator)
+    cosine = exponential[:rank, :rank]
+    sinc = exponential[:rank, rank:]
+    return M @ jnp.linalg.solve(cosine, sinc)
+
+
+def _matrix_arctan_polar_frechet(M: Array, E: Array) -> Array:
+    """Self-adjoint Frechet map, used only as an implicit-solve callback.
+
+    The two divided differences act respectively on the symmetric and skew
+    parts in singular coordinates. Their confluent limits cover repeated and
+    zero singular values without choosing differentiable singular vectors.
+    """
+    left, singular, right_t = jnp.linalg.svd(M, full_matrices=False)
+    right = jnp.swapaxes(right_t, -1, -2)
+    angles = jnp.arctan(singular)
+    first, second = singular[:, None], singular[None, :]
+    difference = first - second
+    product = 1.0 + first * second
+    separated = jnp.abs(difference) > 32.0 * jnp.finfo(M.dtype).eps * jnp.maximum(
+        jnp.maximum(first, second), 1.0
+    )
+    safe_difference = jnp.where(separated, difference, 1.0)
+    minus_divided = jnp.where(
+        separated, jnp.arctan2(difference, product) / safe_difference, 1.0 / product
+    )
+    total = first + second
+    plus_divided = jnp.where(
+        total > 0.0, (angles[:, None] + angles[None, :]) / jnp.where(total > 0.0, total, 1.0), 1.0
+    )
+    rotated = jnp.swapaxes(left, -1, -2) @ E @ right
+    symmetric = _sym(rotated)
+    skew = 0.5 * (rotated - jnp.swapaxes(rotated, -1, -2))
+    derivative = left @ (minus_divided * symmetric + plus_divided * skew)
+    if M.shape[0] > M.shape[1]:
+        normal = E @ right - left @ rotated
+        ratio = jnp.where(singular > 0.0, angles / jnp.where(singular > 0.0, singular, 1.0), 1.0)
+        derivative = derivative + normal * ratio[None, :]
+    return derivative @ right_t
+
+
+@jax.custom_jvp
 def _matrix_arctan_polar_single(M: Array) -> Array:
-    """Evaluate ``U atan(S) V.T`` for ``M = U S V.T`` smoothly near zero."""
-    squared_norm = jnp.sum(M * M)
-    cutoff = 32.0 * jnp.sqrt(jnp.finfo(M.dtype).eps)
+    """Evaluate ``U atan(S) V.T`` without differentiating singular vectors."""
+    left, singular_values, right_t = jnp.linalg.svd(M, full_matrices=False)
+    return (left * jnp.arctan(singular_values)[None, :]) @ right_t
 
-    def series(_: None) -> Array:
-        gram = jnp.swapaxes(M, -1, -2) @ M
-        # atan(s) / s = 1 - s^2 / 3 + s^4 / 5 + O(s^6).
-        return M @ (jnp.eye(M.shape[-1], dtype=M.dtype) - gram / 3.0 + (gram @ gram) / 5.0)
 
-    def spectral(_: None) -> Array:
-        left, singular_values, right_t = jnp.linalg.svd(M, full_matrices=False)
-        return (left * jnp.arctan(singular_values)[None, :]) @ right_t
-
-    return jax.lax.cond(squared_norm <= cutoff * cutoff, series, spectral, operand=None)
+@_matrix_arctan_polar_single.defjvp
+def _matrix_arctan_polar_single_jvp(primals, tangents):
+    (M,), (E,) = primals, tangents
+    value = _matrix_arctan_polar_single(M)
+    # The tangent-polar map is the gradient of -sum(log(cos(s_i))). Its
+    # differential is self-adjoint and invertible on singular values < pi/2.
+    # Implicit AD differentiates this equation, never the spectral inverse.
+    derivative = jax.lax.custom_linear_solve(
+        lambda H: jax.jvp(_matrix_tan_polar, (value,), (H,))[1],
+        E,
+        solve=lambda _, rhs: _matrix_arctan_polar_frechet(M, rhs),
+        symmetric=True,
+    )
+    return value, derivative
 
 
 def _matrix_arctan_polar(M: Array) -> Array:
@@ -99,6 +165,28 @@ def _matrix_arctan_polar(M: Array) -> Array:
     shape = M.shape
     flat = M.reshape((-1, shape[-2], shape[-1]))
     return jax.vmap(_matrix_arctan_polar_single)(flat).reshape(shape)
+
+
+@partial(jax.custom_jvp, nondiff_argnums=(0,))
+def _grassmann_squared_distance(manifold, X: Array, Y: Array) -> Array:
+    return manifold._squared_dist_single(X, Y)
+
+
+@_grassmann_squared_distance.defjvp
+def _grassmann_squared_distance_jvp(manifold, primals, tangents):
+    X, Y = primals
+    E, F = tangents
+    value = _grassmann_squared_distance(manifold, X, Y)
+    projected_X, projected_E = jax.jvp(manifold.project, (X,), (E,))
+    projected_Y, projected_F = jax.jvp(manifold.project, (Y,), (F,))
+    # First variation avoids differentiating separate principal singular
+    # values, including repeated nonzero angles. At the cut, the finite
+    # distance receives an undefined (NaN) derivative through its logs.
+    derivative = -2.0 * (
+        _trace_inner(manifold.log(projected_X, projected_Y), projected_E)
+        + _trace_inner(manifold.log(projected_Y, projected_X), projected_F)
+    )
+    return value, derivative
 
 
 @dataclass(frozen=True, init=False)
@@ -212,6 +300,11 @@ class Grassmann(ExactGeometryMixin):
 
         This is well defined away from the cut locus; numerically this requires
         X^T Y to be nonsingular, i.e. no principal angle equal to pi/2.
+        The usual chart uses thin matrix factorizations. Near the cut, a
+        reflection-based ambient matrix logarithm avoids the loss of accuracy
+        from differentiating an ill-conditioned inverse overlap; that fallback
+        has cubic cost in the ambient dimension. Derivatives remain intrinsically
+        ill-conditioned on approach to the cut locus.
         """
         X = self.project(X)
         Y = self.project(Y)
@@ -220,12 +313,35 @@ class Grassmann(ExactGeometryMixin):
         dtype = jnp.result_type(X, Y, float)
         cutoff = 32.0 * self.ambient_dim * jnp.finfo(dtype).eps
         at_cut_locus = jnp.min(singular_values, axis=-1) <= cutoff
-        Z = self.tangent_project(X, Y)
-        # M = (I - X X^T) Y (X^T Y)^{-1} without forming an inverse.
-        M = jnp.swapaxes(
-            jnp.linalg.solve(jnp.swapaxes(XtY, -1, -2), jnp.swapaxes(Z, -1, -2)), -1, -2
+
+        def thin_chart(points):
+            base, target = points
+            overlap = jnp.swapaxes(base, -1, -2) @ target
+            normal = self.tangent_project(base, target)
+            chart = jnp.swapaxes(
+                jnp.linalg.solve(jnp.swapaxes(overlap, -1, -2), jnp.swapaxes(normal, -1, -2)),
+                -1,
+                -2,
+            )
+            return self.tangent_project(base, _matrix_arctan_polar(chart))
+
+        def reflection_chart(points):
+            base, target = points
+            identity = jnp.eye(self.ambient_dim, dtype=dtype)
+            reflection_x = 2.0 * (base @ jnp.swapaxes(base, -1, -2)) - identity
+            reflection_y = 2.0 * (target @ jnp.swapaxes(target, -1, -2)) - identity
+            generator = 0.5 * _principal_orthogonal_log(reflection_y @ reflection_x)
+            return self.tangent_project(base, generator @ base)
+
+        # Differentiating the inverse-overlap chart amplifies roundoff like
+        # eps / sigma_min(X.T Y)^2. Near the cut use the product of subspace
+        # reflections instead, whose angles are twice the principal angles.
+        # The fallback costs an ambient-size matrix logarithm, while the usual
+        # chart retains thin-SVD complexity. It changes no mathematical domain.
+        ill_conditioned = jnp.any(
+            jnp.min(singular_values, axis=-1) < 4.0 * jnp.finfo(dtype).eps ** 0.25
         )
-        tangent = self.tangent_project(X, _matrix_arctan_polar(M))
+        tangent = jax.lax.cond(ill_conditioned, reflection_chart, thin_chart, (X, Y))
         return jnp.where(at_cut_locus[..., None, None], jnp.nan, tangent)
 
     def _squared_dist_single(self, X: Array, Y: Array) -> Array:
@@ -236,7 +352,7 @@ class Grassmann(ExactGeometryMixin):
 
         def local(_: None) -> Array:
             tangent = self.log(X, Y)
-            return jnp.maximum(self.inner(X, tangent, tangent), 0.0)
+            return nonnegative(self.inner(X, tangent, tangent))
 
         def principal_angles(_: None) -> Array:
             XtY = jnp.swapaxes(X, -1, -2) @ Y
@@ -252,7 +368,7 @@ class Grassmann(ExactGeometryMixin):
                 jnp.clip(sine, 0.0, 1.0),
                 jnp.clip(cosine, 0.0, 1.0),
             )
-            return jnp.maximum(jnp.sum(angles * angles), 0.0)
+            return jnp.sum(angles * angles)
 
         return jax.lax.cond(
             jnp.linalg.norm(projector_difference) <= threshold,
@@ -267,10 +383,10 @@ class Grassmann(ExactGeometryMixin):
         X = jnp.broadcast_to(X, batch_shape + self.shape)
         Y = jnp.broadcast_to(Y, batch_shape + self.shape)
         if not batch_shape:
-            return self._squared_dist_single(X, Y)
+            return _grassmann_squared_distance(self, X, Y)
         flat_X = X.reshape((-1,) + self.shape)
         flat_Y = Y.reshape((-1,) + self.shape)
-        values = jax.vmap(self._squared_dist_single)(flat_X, flat_Y)
+        values = jax.vmap(lambda x, y: _grassmann_squared_distance(self, x, y))(flat_X, flat_Y)
         return values.reshape(batch_shape)
 
     def dist(self, X: Array, Y: Array) -> Array:
@@ -549,7 +665,7 @@ class GrassmannProjection(ExactGeometryMixin):
     def squared_chordal_dist(self, X: Array, Y: Array) -> Array:
         """Squared extrinsic distance ``0.5 * ||j(X) - j(Y)||_F^2``."""
         difference = self.embed(X) - self.embed(Y)
-        return jnp.maximum(0.5 * _trace_inner(difference, difference), 0.0)
+        return 0.5 * _trace_inner(difference, difference)
 
     def chordal_dist(self, X: Array, Y: Array) -> Array:
         """Extrinsic projection distance ``||j(X) - j(Y)||_F / sqrt(2)``."""

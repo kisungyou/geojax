@@ -1,0 +1,51 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float64/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_learning_transport_inference.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py311-min-float64/019-test_learning_transport_inference.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py311-min-float64/019-test_learning_transport_inference.xml", "--trace-after", "90.0"]
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py311-min-float64/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.11.15, JAX 0.6.0, NumPy 1.26.4, float64
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 17 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_transport_inference.py::test_exact_weighted_wasserstein_has_feasible_known_plan PASSED [  5%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_transport_inference.py::test_exact_wasserstein_certificates_are_invariant_to_distance_units PASSED [ 11%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_transport_inference.py::test_transportation_simplex_matches_scipy_oracle_on_random_tiny_problems PASSED [ 17%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_transport_inference.py::test_transportation_simplex_respects_pivot_budget_and_refreshes_duals PASSED [ 23%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_transport_inference.py::test_biswas_ghosh_test_is_seed_reproducible_and_detects_separation PASSED [ 29%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_transport_inference.py::test_frechet_anova_asymptotic_and_permutation_paths_are_finite PASSED [ 35%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_transport_inference.py::test_frechet_anova_matches_dubey_mueller_scaling PASSED [ 41%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_transport_inference.py::test_frechet_anova_is_scale_invariant_and_handles_degenerate_samples PASSED [ 47%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_transport_inference.py::test_wasserstein_permutation_test_uses_exact_transport_statistic PASSED [ 52%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_transport_inference.py::test_transport_handles_zero_weights_ties_and_explicit_data_objects PASSED [ 58%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_transport_inference.py::test_sinkhorn_contract_without_requiring_optional_ott PASSED [ 64%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_transport_inference.py::test_inference_rejects_small_samples_bad_groups_and_bad_permutations PASSED [ 70%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_transport_inference.py::test_two_sample_null_case_is_seeded_and_calibrated_at_identity PASSED [ 76%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_transport_inference.py::test_transportation_simplex_rejects_all_malformed_marginal_contracts PASSED [ 82%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_transport_inference.py::test_transport_tree_helpers_reject_disconnected_bases PASSED [ 88%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_transport_inference.py::test_inference_group_validation_and_nonconvergence_are_explicit PASSED [ 94%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_transport_inference.py::test_wasserstein_permutation_and_negative_cost_guards PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py311-min-float64/019-test_learning_transport_inference.xml -
+============================== slowest durations ===============================
+30.01s call     tests/test_learning_transport_inference.py::test_frechet_anova_asymptotic_and_permutation_paths_are_finite
+10.73s call     tests/test_learning_transport_inference.py::test_transportation_simplex_matches_scipy_oracle_on_random_tiny_problems
+10.30s call     tests/test_learning_transport_inference.py::test_frechet_anova_matches_dubey_mueller_scaling
+7.22s call     tests/test_learning_transport_inference.py::test_exact_weighted_wasserstein_has_feasible_known_plan
+4.08s call     tests/test_learning_transport_inference.py::test_biswas_ghosh_test_is_seed_reproducible_and_detects_separation
+3.29s call     tests/test_learning_transport_inference.py::test_frechet_anova_is_scale_invariant_and_handles_degenerate_samples
+2.62s call     tests/test_learning_transport_inference.py::test_two_sample_null_case_is_seeded_and_calibrated_at_identity
+1.63s call     tests/test_learning_transport_inference.py::test_transportation_simplex_respects_pivot_budget_and_refreshes_duals
+1.48s call     tests/test_learning_transport_inference.py::test_wasserstein_permutation_test_uses_exact_transport_statistic
+1.12s call     tests/test_learning_transport_inference.py::test_transport_handles_zero_weights_ties_and_explicit_data_objects
+0.58s call     tests/test_learning_transport_inference.py::test_inference_group_validation_and_nonconvergence_are_explicit
+0.52s call     tests/test_learning_transport_inference.py::test_exact_wasserstein_certificates_are_invariant_to_distance_units
+0.34s call     tests/test_learning_transport_inference.py::test_sinkhorn_contract_without_requiring_optional_ott
+0.20s call     tests/test_learning_transport_inference.py::test_inference_rejects_small_samples_bad_groups_and_bad_permutations
+0.10s call     tests/test_learning_transport_inference.py::test_transportation_simplex_rejects_all_malformed_marginal_contracts
+0.04s call     tests/test_learning_transport_inference.py::test_transport_tree_helpers_reject_disconnected_bases
+0.04s call     tests/test_learning_transport_inference.py::test_wasserstein_permutation_and_negative_cost_guards
+0.01s teardown tests/test_learning_transport_inference.py::test_frechet_anova_matches_dubey_mueller_scaling
+
+(33 durations < 0.005s hidden.  Use -vv to show these durations.)
+======================== 17 passed in 74.75s (0:01:14) =========================

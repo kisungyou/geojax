@@ -216,7 +216,7 @@ def kernel_mmd_two_sample_test(
         positive = distances[distances > 0.0]
         scale = float(jnp.median(positive)) if bandwidth is None and positive.size else bandwidth
         scale = positive_control(1.0 if scale is None else scale, name="bandwidth")
-        kernel_matrix = jnp.exp(-(distances**2) / (2.0 * scale**2))
+        kernel_matrix = jnp.exp(-0.5 * (distances / scale) ** 2)
     else:
         if not callable(kernel):
             raise TypeError("kernel must be callable or None.")

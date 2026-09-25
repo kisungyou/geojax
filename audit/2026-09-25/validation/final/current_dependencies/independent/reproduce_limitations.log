@@ -1,0 +1,245 @@
+Command: ["/private/tmp/geojax-validation-sep25/current-optional-env/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/run_independent_final_replays.py", "--worker", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-10/reproduce_limitations.py", "--evidence", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/final/current_dependencies/independent/reproduce_limitations.integrity.json"]
+{
+  "jax": "0.11.2",
+  "x64": true,
+  "results": [
+    {
+      "name": "SPDLogEuclidean: squared-distance Hessian at identity",
+      "passed": true,
+      "actual": [
+        [
+          1.015888308335967,
+          0.677258872223978
+        ],
+        [
+          0.677258872223978,
+          -0.338629436111989
+        ]
+      ],
+      "expected": [
+        [
+          1.015888308335967,
+          0.6772588722239782
+        ],
+        [
+          0.6772588722239782,
+          -0.3386294361119891
+        ]
+      ]
+    },
+    {
+      "name": "SPDAffineInvariant: squared-distance Hessian at identity",
+      "passed": true,
+      "actual": [
+        [
+          1.0158883083359673,
+          0.6772588722239784
+        ],
+        [
+          0.6772588722239784,
+          -0.3386294361119892
+        ]
+      ],
+      "expected": [
+        [
+          1.015888308335967,
+          0.6772588722239782
+        ],
+        [
+          0.6772588722239782,
+          -0.3386294361119891
+        ]
+      ]
+    },
+    {
+      "name": "SPDBuresWasserstein: squared-distance Hessian at identity",
+      "passed": true,
+      "actual": [
+        [
+          0.2121320343559643,
+          0.1414213562373095
+        ],
+        [
+          0.1414213562373095,
+          -0.07071067811865475
+        ]
+      ],
+      "expected": [
+        [
+          0.21213203435596423,
+          0.1414213562373095
+        ],
+        [
+          0.1414213562373095,
+          -0.07071067811865475
+        ]
+      ]
+    },
+    {
+      "name": "RankKPSDBuresWasserstein: scalar distance gradient on fixed support",
+      "passed": true,
+      "actual": -0.41421356237309515,
+      "expected": -0.41421356237309515
+    },
+    {
+      "name": "RankKPSDBuresWasserstein: Frechet mean of two commuting rank-one matrices",
+      "passed": true,
+      "actual": [
+        [
+          1.4571067811865475,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "expected": [
+        [
+          1.4571067811865475,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "name": "SpecialOrthogonal: squared-distance second derivative away from cut locus",
+      "passed": true,
+      "actual": 3.999999999999997,
+      "expected": 4.0
+    },
+    {
+      "name": "Grassmann: derivative of log at equal nonzero principal angles",
+      "passed": true,
+      "actual": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0
+        ],
+        [
+          1.0000000000000002,
+          0.0
+        ],
+        [
+          0.0,
+          1.0000000000000002
+        ]
+      ],
+      "expected": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "name": "KendallShape: squared-distance derivative from balanced regular shape",
+      "passed": true,
+      "actual": 0.19999999999999984,
+      "expected": 0.2
+    },
+    {
+      "name": "KendallShape: Frechet mean of two nearby regular shapes",
+      "passed": true,
+      "actual": [
+        [
+          0.49937513019748375,
+          0.024989584635327168
+        ],
+        [
+          -0.49937513019748375,
+          0.024989584635327168
+        ],
+        [
+          8.386999576723866e-20,
+          0.47438554556215656
+        ],
+        [
+          -9.898940020056515e-20,
+          -0.5243647148328109
+        ]
+      ],
+      "expected": [
+        [
+          0.49937513019748314,
+          0.024989584635339165
+        ],
+        [
+          -0.49937513019748314,
+          0.024989584635339165
+        ],
+        [
+          0.0,
+          0.47438554556214396
+        ],
+        [
+          0.0,
+          -0.5243647148328223
+        ]
+      ]
+    },
+    {
+      "name": "RankKPSDBuresWasserstein: regular geodesic beyond positive-overlap certificate",
+      "passed": true,
+      "actual": [
+        [
+          1.0,
+          -1.0
+        ],
+        [
+          -1.0,
+          1.0
+        ]
+      ],
+      "expected": [
+        [
+          1.0,
+          -1.0
+        ],
+        [
+          -1.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "name": "Euclidean: distance at largest representable finite coordinate",
+      "passed": true,
+      "actual": 1.7976931348623157e+308,
+      "expected": 1.7976931348623157e+308
+    }
+  ]
+}

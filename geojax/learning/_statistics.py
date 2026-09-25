@@ -8,7 +8,8 @@ from typing import Any
 import jax
 import jax.numpy as jnp
 
-from geojax.optimization import AdaptiveArmijo, ConjugateGradient, Minimize
+from geojax.optimization import AdaptiveArmijo, ConjugateGradient, Minimize, StrongWolfe
+from geojax.optimization.linesearch import _RetractionDerivativeError
 
 from ._capabilities import require_exact_operations
 from ._data import ManifoldData, as_manifold_data
@@ -22,6 +23,7 @@ from ._utils import (
     require_unbatched,
     stack_points,
     take_point,
+    take_samples,
     tree_all_finite,
     weighted_tangent_sum,
 )
@@ -37,6 +39,19 @@ def _weighted_medoid(manifold: Any, data: ManifoldData, weights: Any, *, squared
     distances = pairwise_distances(manifold, data, squared=squared)
     index = int(jnp.argmin(distances @ weights))
     return take_point(manifold, data.values, index)
+
+
+def _positive_weight_data(
+    manifold: Any, data: ManifoldData, weights: Any
+) -> tuple[ManifoldData, Any]:
+    """Remove zero-mass observations before evaluating geometric derivatives."""
+    indices = jnp.flatnonzero(weights > 0.0)
+    if indices.size == data.n_samples:
+        return data, weights
+    return (
+        as_manifold_data(manifold, take_samples(manifold, data.values, indices)),
+        weights[indices],
+    )
 
 
 def _validated_point(manifold: Any, point: Any, *, name: str) -> Any:
@@ -72,6 +87,22 @@ def _gradient_tolerances(
     return requested, attainable
 
 
+class _FrechetMeanLineSearch(StrongWolfe):
+    """Use curvature when available without requiring custom retractions to trace."""
+
+    def search(self, *args: Any, **kwargs: Any) -> Any:
+        try:
+            return super().search(*args, **kwargs)
+        except _RetractionDerivativeError:
+            # The previous default required only a value-level retraction.
+            # Preserve that contract for custom geometries with Python guards;
+            # unrelated objective, derivative, and validation errors propagate.
+            return AdaptiveArmijo(
+                initial_stepsize=self.initial_stepsize,
+                normalize_step=self.normalize_step,
+            ).search(*args, **kwargs)
+
+
 def frechet_mean(
     manifold: Any,
     data: Any,
@@ -93,6 +124,8 @@ def frechet_mean(
     maxiter = integer_control(maxiter, name="maxiter", minimum=1)
     tol = nonnegative_control(tol, name="tol")
     weights = normalize_weights(adapted.n_samples, sample_weight)
+    original_weights = weights
+    adapted, weights = _positive_weight_data(manifold, adapted, weights)
     x0 = (
         _weighted_medoid(manifold, adapted, weights, squared=True)
         if initial_point is None
@@ -120,7 +153,14 @@ def frechet_mean(
             maxiter=maxiter,
             tolgradnorm=effective_tol,
             verbosity=0,
-            line_search=AdaptiveArmijo(normalize_step=False),
+            # Half a gradient step is the averaged-log update for sum(w*d^2).
+            # Curvature certification still makes progress when objective
+            # differences round away near a stationary point.
+            line_search=_FrechetMeanLineSearch(
+                initial_stepsize=0.5,
+                normalize_step=False,
+                approximate_wolfe=True,
+            ),
         )
     )
     point, value, history = Minimize(
@@ -157,7 +197,7 @@ def frechet_mean(
         converged=bool(converged),
         reason=reason,
         diagnostics={
-            "weights": weights,
+            "weights": original_weights,
             "history": tuple(history),
             "requested_tolerance": tol,
             "requested_gradient_tolerance": requested_gradient_tol,
@@ -187,6 +227,8 @@ def frechet_median(
     require_exact_operations(manifold, "frechet_median", "dist", "log", "exp")
     adapted = _prepare(manifold, data, "frechet_median")
     weights = normalize_weights(adapted.n_samples, sample_weight)
+    original_weights = weights
+    adapted, weights = _positive_weight_data(manifold, adapted, weights)
     smoothing = positive_control(smoothing, name="smoothing")
     maxiter = integer_control(maxiter, name="maxiter", minimum=1)
     tol = nonnegative_control(tol, name="tol")
@@ -340,7 +382,7 @@ def frechet_median(
         converged=converged,
         reason=reason,
         diagnostics={
-            "weights": weights,
+            "weights": original_weights,
             "smoothing": float(smoothing),
             "objective_history": jnp.asarray(objective_history),
             "step_fractions": jnp.asarray(step_history),

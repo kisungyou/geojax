@@ -1,0 +1,170 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py311-min-float64/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.11.15, JAX 0.6.0, NumPy 1.26.4, float64
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 22 items
+
+tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[1-False] PASSED [  4%]
+tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[2-False] PASSED [  9%]
+tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[2-True] PASSED [ 13%]
+tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[3-False] PASSED [ 18%]
+tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[3-True] PASSED [ 22%]
+tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[4-True] PASSED [ 27%]
+tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[1-False] PASSED [ 31%]
+tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[2-False] PASSED [ 36%]
+tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[2-True] PASSED [ 40%]
+tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[3-False] PASSED [ 45%]
+tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[3-True] PASSED [ 50%]
+tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[4-True] PASSED [ 54%]
+tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[2-False] PASSED [ 59%]
+tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[3-False] PASSED [ 63%]
+tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[3-True] PASSED [ 68%]
+tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[4-True] PASSED [ 72%]
+tests/test_shape_audit_fixes.py::test_unique_reflected_alignment_repeated_positive_singular_values PASSED [ 77%]
+tests/test_shape_audit_fixes.py::test_default_mean_of_balanced_shapes_is_geodesic_midpoint[2-False] PASSED [ 81%]
+tests/test_shape_audit_fixes.py::test_default_mean_of_balanced_shapes_is_geodesic_midpoint[3-True] PASSED [ 86%]
+tests/test_shape_audit_fixes.py::test_original_balanced_planar_audit_mean PASSED [ 90%]
+tests/test_shape_audit_fixes.py::test_nonunique_reflection_and_singular_shapes_remain_outside_log_domain PASSED [ 95%]
+tests/test_shape_audit_fixes.py::test_reflection_uniqueness_certificate_survives_determinant_underflow PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/diagnostics/shape_min_float64.xml -
+================================ tests coverage ================================
+______________ coverage: platform darwin, python 3.11.15-final-0 _______________
+
+Name                                                  Stmts   Miss Branch BrPart  Cover   Missing
+-------------------------------------------------------------------------------------------------
+geojax/benchmarks/__init__.py                             1      1      0      0     0%   3
+geojax/benchmarks/common.py                              54     54     16      0     0%   3-199
+geojax/benchmarks/correlation_frechet.py                 19     19      2      0     0%   3-39
+geojax/benchmarks/grassmann_subspace.py                  19     19      2      0     0%   3-39
+geojax/benchmarks/product_model.py                       18     18      2      0     0%   3-39
+geojax/benchmarks/spd_frechet.py                         19     19      2      0     0%   3-39
+geojax/benchmarks/sphere_eigen.py                        19     19      2      0     0%   3-38
+geojax/geometry/_numerics.py                            233    141      6      1    40%   22-48, 68-69, 78-87, 173-178, 183-189, 194-199, 204-210, 215-221, 226-235, 240-248, 253-271, 286, 305-316, 321-339, 345-346, 351-362, 368-369, 374-379, 390-395, 400-405
+geojax/geometry/base.py                                 246     87     58     20    60%   19-31, 37, 40, 47, 50, 57, 60-61, 64, 71, 93-96, 103, 106, 125, 127, 132, 134, 140-141, 161-166, 312, 319, 323-324, 329, 341-345, 360, 364, 368, 372, 376, 380, 385-389, 391, 393, 398, 401, 406, 410, 414, 424-425, 429, 433, 437-445, 453, 457-458, 477, 481, 485, 489-490
+geojax/geometry/correlation.py                          316    222     34      0    27%   49, 53-60, 64, 68, 72, 76, 80-81, 85, 89-90, 94-95, 100-101, 105-109, 114-120, 124-126, 131-140, 145-152, 163, 167, 171, 183-188, 191-196, 204-212, 215-229, 232-238, 241-244, 247-249, 252, 259-267, 270-273, 276, 279-282, 285, 288-289, 292-294, 297-303, 308-313, 318-326, 330-332, 344-349, 352, 355-356, 369-374, 377, 380-381, 399-408, 416, 420, 424, 428, 431, 434, 437, 440, 444-451, 454-458, 461, 468, 471, 474-481, 484-503, 512, 522-527
+geojax/geometry/elementary.py                           340    246     22      0    26%   39-44, 63-65, 69, 73, 77, 81, 84-88, 91-95, 98-103, 106-107, 110-111, 114, 121-124, 129-137, 140-141, 144, 147-161, 164, 167-174, 177-178, 188-193, 205-208, 212, 216, 219-223, 226-229, 232-236, 239-243, 246-248, 251, 258-283, 287, 290-296, 299, 304, 307-317, 320-322, 325-326, 336-341, 353-356, 360, 364, 367-370, 373-378, 381-385, 388-389, 392-401, 404-406, 409, 416-428, 435-442, 445-451, 454-457, 460, 463-477, 484-488, 491-493, 496-508, 518-524
+geojax/geometry/euclidean.py                            108     66     18      0    33%   28-35, 57-60, 64, 68, 71-76, 79-86, 89, 92-93, 96-98, 101, 108-116, 119-120, 123-124, 127-128, 131, 134-135, 138-139, 142-143, 146-152, 155-156, 166-172
+geojax/geometry/generalized.py                          254    153     26      0    36%   27, 31, 35-40, 46-78, 119-135, 139, 143, 147, 151, 155, 164, 167, 170-175, 178-179, 182-187, 190-191, 194-195, 198, 205-206, 210-212, 215-216, 223, 226, 229-231, 234-235, 244-251, 254, 266-271, 297-307, 311, 315, 319, 323, 327, 330, 333, 336-341, 344-345, 348-352, 355-356, 359-360, 363, 370-371, 374-375, 378, 381, 384-386, 389-390, 400-406, 409, 421-426
+geojax/geometry/grassmann.py                            440    329     52      0    23%   47, 51, 55, 60-63, 67-79, 89-100, 110-135, 141-142, 147-158, 162-167, 172, 177-189, 213-217, 221, 225, 229, 232-238, 241-246, 249-250, 253-255, 258-259, 262, 269-277, 290-293, 296, 309-345, 348-373, 381-390, 393, 402-422, 425, 429-432, 435-437, 447-453, 457-458, 507-513, 517, 521, 525, 528, 531, 534, 538, 541-546, 550-556, 559-561, 564, 572-573, 583-598, 604, 608-612, 616-619, 622, 625-630, 634-639, 642, 645-648, 652-654, 657, 661, 667-668, 672, 678-686, 689-693, 697-700, 703, 713-720, 724-764
+geojax/geometry/hyperboloid.py                          142    103      6      0    26%   46-49, 53, 57, 60-62, 65-76, 79-90, 93-102, 105-107, 110-111, 114, 121-125, 128-132, 136-152, 155, 158-164, 167-177, 181-182, 186-197, 200-202, 205-209, 219-225
+geojax/geometry/lie_groups.py                           365    258     14      0    28%   27, 31, 35, 39, 50-56, 66-81, 86-117, 122-125, 131-135, 140-149, 169-172, 176, 180, 184, 188, 191-204, 214-218, 221-226, 229-230, 233-234, 237, 244-247, 250-253, 256, 261-262, 265, 268-270, 274-280, 283, 286-287, 290-291, 294, 298, 302, 305-307, 310-319, 329-335, 356-359, 363, 367, 371, 375, 379, 382-393, 396-406, 409, 412, 415-423, 426-427, 430-436, 439-440, 446-449, 452, 459-464, 467, 470-471, 477-482, 488-490, 493-496, 502, 505-511, 514-518, 521-523, 526-532, 536-541, 545-549, 552-553, 556-560, 570-576
+geojax/geometry/low_rank.py                             597    444     44      0    24%   28, 33-39, 46-49, 53, 63-65, 70-100, 104-106, 116-139, 144-147, 152-155, 159-165, 169-175, 183-208, 213-215, 220-225, 229-231, 236-237, 242-244, 249-250, 255-260, 265-269, 274-277, 282-322, 327-328, 335-342, 346-347, 352-356, 361-405, 410-415, 420-438, 443-450, 455-463, 467-473, 477-480, 508-512, 516, 520, 524, 528, 531-533, 536-549, 552-559, 562-567, 570-576, 579-580, 583, 590, 593, 596, 599-608, 618-623, 648-656, 664, 668, 672, 675-677, 680, 683-698, 701-706, 710, 713-715, 719, 723, 727, 730-737, 740-741, 744, 751, 754, 757, 760-762, 772-777, 806-807, 810-811, 814, 817-856, 859, 862-864, 867, 870-872, 875-877, 880, 883-885, 898, 901-904, 909-910, 913-924, 927-937, 945, 948-951, 956-957, 960-963
+geojax/geometry/product.py                              220    160     50      0    22%   31-45, 48-54, 57, 61-76, 80-84, 88, 94, 98, 102, 106, 110, 114, 118, 122, 128, 133-152, 155-160, 163-169, 172-173, 176-178, 183-190, 193-198, 201-211, 214-216, 219-224, 227-229, 232-238, 241-246, 249-255, 258-263, 266-268, 273-280, 283-285, 297-311
+geojax/geometry/shape.py                                219     21     18      4    89%   115, 120, 159-161, 186, 247, 267-274, 329-330, 340-345
+geojax/geometry/spd.py                                  588    437     46      0    24%   48, 52-59, 63, 67, 71, 75, 80-83, 93-109, 113, 117, 121, 125, 136-153, 158-167, 173-174, 179-184, 192-202, 206-212, 218-223, 228-261, 274-278, 283-286, 292-295, 300-302, 308-311, 316-320, 325-341, 351-365, 384-418, 423-428, 434-436, 441-445, 465-467, 471, 475, 479, 482-489, 492-496, 499-501, 504-505, 508, 511, 514, 517, 520-522, 525, 532-536, 539, 542-546, 549, 553-554, 557-559, 562-568, 571-579, 582-585, 595-601, 622-624, 628, 632, 636, 639-646, 649-653, 656-658, 661-662, 665-669, 672, 679-684, 687, 690-695, 699-704, 707, 710-718, 721-723, 726-734, 737-740, 750-756, 782-786, 790, 794, 798, 801-808, 811-813, 816-820, 823-824, 828-830, 833-835, 838, 845-856, 859, 863-868, 871-874, 880-882, 885, 889-895, 898-906, 914, 917-919, 922-930, 933-936, 946-952
+geojax/geometry/sphere.py                               180    130     24      0    25%   67-70, 75, 80, 86, 89, 93-94, 101-105, 109-113, 121-125, 135-136, 141-142, 146, 161-165, 179-188, 192-194, 198, 209-225, 235-247, 254, 264-267, 274-276, 291-297, 318, 324, 330-331, 335, 341-374
+geojax/geometry/stiefel.py                              277    200     28      0    25%   27, 31, 35, 39, 43-53, 97-104, 113, 118, 122, 126, 130, 133-138, 142-144, 147-152, 156-157, 160, 167-170, 174-190, 193, 197-279, 283-295, 308-309, 313-314, 321, 327-338, 346-355, 363-368, 371-376, 386-396, 415, 418-419, 423-430, 434-435, 451, 454-455, 459-471, 474, 477-478
+geojax/geometry/torus.py                                 92     53      6      0    40%   20-22, 36-38, 42, 46, 49, 52-56, 62-67, 70, 73-74, 77-78, 81, 88-89, 92-93, 96-100, 103-104, 107-109, 112-113, 116, 119-120, 123-124, 139-144
+geojax/learning/_capabilities.py                         20      6      4      2    67%   26-28, 39-41
+geojax/learning/_classification.py                      216    189     56      0    10%   34-52, 56-60, 73-98, 113-116, 120-125, 129-130, 142-151, 162-180, 184, 200-271, 305-349, 369-385, 389, 393-394
+geojax/learning/_clustering.py                          458    433    174      0     4%   38-40, 51-64, 75-122, 135-176, 193-301, 313-340, 362-418, 440-488, 512-618, 656-713, 731-734, 753-861
+geojax/learning/_data.py                                434    324    232     25    21%   103-116, 123, 128-129, 138, 145-146, 150-159, 163-166, 170-173, 177-187, 191-206, 210-223, 228-231, 235-261, 265-272, 291, 295-482, 489-495, 504-520, 525-528, 538, 545, 547, 549, 570, 573, 578, 581, 584, 586, 588, 590-594, 597, 600, 603-604, 616, 617->644, 621, 627-638, 640, 672-681
+geojax/learning/_dictionary.py                          209    189     46      0     8%   34-41, 53-109, 130-199, 226-241, 245-246, 259-300, 323-450
+geojax/learning/_embedding.py                           462    410    132      0     9%   39-41, 45-47, 51-54, 58-106, 125-130, 141-146, 159-173, 176-204, 217-302, 340-357, 361, 383-452, 474-477, 490-536, 555-605, 629-682, 699-790, 828-898
+geojax/learning/_features.py                             76     63     22      0    13%   27-30, 44-138, 143-158
+geojax/learning/_geometry.py                             95     55     26      5    37%   34, 51-55, 81, 99, 103-108, 113-123, 136-165, 178-198
+geojax/learning/_inference.py                           191    168     48      0    10%   31-33, 37-40, 44-45, 53-72, 76-83, 95-119, 139-238, 278-320, 340-378
+geojax/learning/_metric.py                               99     83     38      0    12%   27-35, 39-40, 44-63, 91-183
+geojax/learning/_regression.py                           86     71     26      0    13%   25-34, 42-56, 68-75, 85-97, 111-169
+geojax/learning/_response.py                            158    135     42      0    12%   36-43, 53-56, 60-66, 70-81, 102-191, 222-232, 251-263, 276-296, 300-369, 380-389
+geojax/learning/_results.py                             269     37      4      0    85%   105-107, 138-140, 145-147, 165-167, 172-174, 192-194, 221-223, 228-230, 250-252, 272-274, 401-414, 419-424
+geojax/learning/_robust.py                              209    194     52      0     6%   35-37, 52-155, 181-213, 229-333, 367-393, 406-434
+geojax/learning/_scalable.py                            204    185     54      0     7%   33-35, 41-50, 54-58, 75-112, 141-220, 263-395
+geojax/learning/_semisupervised.py                      138    123     42      0     8%   32-52, 56-62, 68-72, 88-159, 191-262
+geojax/learning/_statistics.py                          206    137     56      5    29%   50, 59-60, 74->72, 82, 154, 167, 203-353, 387-448
+geojax/learning/_transport.py                           263    244     92      0     5%   27-73, 77-93, 97-118, 126-152, 164-291, 330-367, 386-397, 411-435
+geojax/learning/_uncertainty.py                         168    150     50      0     8%   43-108, 124-127, 145-173, 183-186, 202-274, 312-365
+geojax/learning/_utils.py                               189    135     74      7    23%   18, 26-30, 36, 41-46, 60, 64-66, 72-83, 88-102, 106-112, 117-123, 129-145, 150, 157-169, 184, 197-208, 224-234, 245-258, 263-267, 271-285
+geojax/optimization/_conjugate_gradient.py              178     59     56     21    62%   80, 93-94, 114, 121, 125, 132, 135-137, 140-143, 151-185, 191, 225, 227, 232, 235-237, 239, 273, 278-279, 287, 294-298, 364
+geojax/optimization/_steepest_descent.py                 55     33      6      0    36%   46, 55-124
+geojax/optimization/_tangent_cg.py                       81     64     28      0    16%   53-164
+geojax/optimization/adaptiveregularizationcubics.py     149    118     46      0    16%   67-193, 209-294
+geojax/optimization/alternatinggradient.py               88     66     16      0    21%   55-176
+geojax/optimization/barzilaiborwein.py                   81     56     20      0    25%   56-151
+geojax/optimization/gaussnewton.py                       72     45     12      0    32%   36-39, 44, 67-174
+geojax/optimization/lbfgs.py                            103     77     26      0    20%   57-152, 156-172, 191-202
+geojax/optimization/levenbergmarquardt.py               100     68     22      0    26%   59-200
+geojax/optimization/linesearch.py                       261    150     96     13    36%   32-33, 43-59, 127-136, 165-202, 225, 237, 257, 259, 261, 263, 267, 269, 273, 279->293, 282-283, 294, 343, 346->348, 381-531
+geojax/optimization/minimize.py                         435    192    202     55    49%   77, 79, 88, 107-110, 121, 123, 133-142, 146-204, 208, 246-256, 268-278, 298, 304, 310, 319, 321, 323, 328, 333, 337, 345, 348, 355, 363, 374-380, 390, 392, 394, 396, 402-405, 413, 415, 419, 430-438, 447-454, 460-467, 473, 475, 489-491, 494-496, 499-502, 520, 522-523, 547, 558, 561, 564, 566, 568, 570, 584, 613->615, 629-634, 649, 651, 653, 659, 663, 675, 677, 681, 683, 685, 689-698, 706-712, 719-727
+geojax/optimization/neldermead.py                       128     96     42      0    19%   56-197, 201-202, 206-208, 212-214, 218-224, 228-237
+geojax/optimization/newtoncg.py                          75     49     16      0    29%   61-183
+geojax/optimization/particleswarm.py                     95     69     26      0    21%   56-204
+geojax/optimization/problems.py                         169    137     66      0    14%   22-40, 44, 49-61, 66-76, 81-88, 112-121, 133, 137-138, 142-149, 158-167, 176-179, 183-193, 201-202, 205-212, 234-241, 251-256, 259, 264-279, 283-294
+geojax/optimization/stochasticgradient.py               177    130     60      0    20%   56-57, 70-78, 90-98, 122-290, 299-325
+geojax/optimization/trustregions.py                     177    149     52      0    12%   65-163, 167-190, 196-282
+-------------------------------------------------------------------------------------------------
+TOTAL                                                 11398   8088   2540    158    25%
+
+4 files skipped due to complete coverage.
+============================== slowest durations ===============================
+23.27s call     tests/test_shape_audit_fixes.py::test_default_mean_of_balanced_shapes_is_geodesic_midpoint[2-False]
+22.15s call     tests/test_shape_audit_fixes.py::test_original_balanced_planar_audit_mean
+18.63s call     tests/test_shape_audit_fixes.py::test_default_mean_of_balanced_shapes_is_geodesic_midpoint[3-True]
+11.49s call     tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[2-False]
+10.02s call     tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[4-True]
+9.22s call     tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[3-False]
+6.63s call     tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[4-True]
+6.04s call     tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[2-False]
+6.02s call     tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[3-False]
+6.00s call     tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[3-False]
+5.97s call     tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[1-False]
+5.20s call     tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[4-True]
+4.75s call     tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[2-False]
+3.74s call     tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[1-False]
+2.26s call     tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[2-True]
+2.06s call     tests/test_shape_audit_fixes.py::test_reflection_uniqueness_certificate_survives_determinant_underflow
+2.00s call     tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[3-True]
+1.79s call     tests/test_shape_audit_fixes.py::test_unique_reflected_alignment_repeated_positive_singular_values
+1.51s call     tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[2-True]
+1.49s call     tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[3-True]
+1.09s call     tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[3-True]
+0.53s call     tests/test_shape_audit_fixes.py::test_nonunique_reflection_and_singular_shapes_remain_outside_log_domain
+0.00s setup    tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[4-True]
+0.00s setup    tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[2-False]
+0.00s setup    tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[2-False]
+0.00s teardown tests/test_shape_audit_fixes.py::test_default_mean_of_balanced_shapes_is_geodesic_midpoint[3-True]
+0.00s teardown tests/test_shape_audit_fixes.py::test_original_balanced_planar_audit_mean
+0.00s setup    tests/test_shape_audit_fixes.py::test_default_mean_of_balanced_shapes_is_geodesic_midpoint[2-False]
+0.00s teardown tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[3-False]
+0.00s setup    tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[3-False]
+0.00s setup    tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[3-True]
+0.00s setup    tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[3-True]
+0.00s teardown tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[4-True]
+0.00s teardown tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[2-True]
+0.00s setup    tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[2-True]
+0.00s setup    tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[4-True]
+0.00s setup    tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[3-True]
+0.00s setup    tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[3-False]
+0.00s teardown tests/test_shape_audit_fixes.py::test_reflection_uniqueness_certificate_survives_determinant_underflow
+0.00s setup    tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[3-False]
+0.00s setup    tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[2-True]
+0.00s setup    tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[1-False]
+0.00s setup    tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[2-False]
+0.00s setup    tests/test_shape_audit_fixes.py::test_default_mean_of_balanced_shapes_is_geodesic_midpoint[3-True]
+0.00s setup    tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[1-False]
+0.00s teardown tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[2-True]
+0.00s teardown tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[3-False]
+0.00s setup    tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[4-True]
+0.00s teardown tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[1-False]
+0.00s teardown tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[2-False]
+0.00s teardown tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[2-False]
+0.00s teardown tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[3-False]
+0.00s teardown tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[3-True]
+0.00s teardown tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[1-False]
+0.00s teardown tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[4-True]
+0.00s teardown tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[4-True]
+0.00s setup    tests/test_shape_audit_fixes.py::test_original_balanced_planar_audit_mean
+0.00s setup    tests/test_shape_audit_fixes.py::test_nonunique_reflection_and_singular_shapes_remain_outside_log_domain
+0.00s teardown tests/test_shape_audit_fixes.py::test_default_mean_of_balanced_shapes_is_geodesic_midpoint[2-False]
+0.00s teardown tests/test_shape_audit_fixes.py::test_balanced_shape_log_forward_reverse_and_jit[2-False]
+0.00s setup    tests/test_shape_audit_fixes.py::test_reflection_uniqueness_certificate_survives_determinant_underflow
+0.00s teardown tests/test_shape_audit_fixes.py::test_procrustes_rotation_and_horizontal_projection_equivariance_derivatives[3-True]
+0.00s teardown tests/test_shape_audit_fixes.py::test_balanced_shape_squared_distance_derivatives[3-True]
+0.00s teardown tests/test_shape_audit_fixes.py::test_unique_reflected_alignment_repeated_positive_singular_values
+0.00s teardown tests/test_shape_audit_fixes.py::test_nonunique_reflection_and_singular_shapes_remain_outside_log_domain
+0.00s setup    tests/test_shape_audit_fixes.py::test_unique_reflected_alignment_repeated_positive_singular_values
+======================== 22 passed in 154.49s (0:02:34) ========================

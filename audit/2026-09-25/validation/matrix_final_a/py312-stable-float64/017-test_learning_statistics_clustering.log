@@ -1,0 +1,72 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float64/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py312-stable-float64/017-test_learning_statistics_clustering.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py312-stable-float64/017-test_learning_statistics_clustering.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.12.13, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float64/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.12.13, JAX 0.11.0, NumPy 2.4.4, float64
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 28 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_pairwise_distances_blocking_nearest_neighbors_and_gradients PASSED [  3%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_weighted_frechet_mean_and_median_match_euclidean_targets PASSED [  7%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_frechet_median_diagnostics_are_evaluated_at_returned_point PASSED [ 10%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_smoothed_frechet_median_handles_coincident_samples_monotonically PASSED [ 14%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_minimum_enclosing_ball_contains_all_euclidean_samples PASSED [ 17%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_kernel_regression_and_cross_validation_validate_sample_targets PASSED [ 21%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_clustering_methods_separate_a_simple_two_cluster_problem[<lambda>0] PASSED [ 25%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_clustering_methods_separate_a_simple_two_cluster_problem[<lambda>1] PASSED [ 28%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_clustering_methods_separate_a_simple_two_cluster_problem[<lambda>2] PASSED [ 32%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_clustering_methods_separate_a_simple_two_cluster_problem[<lambda>3] PASSED [ 35%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_clustering_methods_separate_a_simple_two_cluster_problem[<lambda>4] PASSED [ 39%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_hierarchical_clustering_linkages_and_invalid_ward_request PASSED [ 42%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_lightweight_coreset_is_reproducible_and_usable_by_weighted_kmeans PASSED [ 46%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_center_based_methods_support_nested_product_points PASSED [ 50%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_proxy_geometry_fails_with_a_precise_capability_error PASSED [ 53%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_kmeans_initialization_contract_and_empty_cluster_recovery PASSED [ 57%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_converged_kmeans_returns_centers_consistent_with_returned_labels PASSED [ 60%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_clustering_edge_contracts_and_distance_only_spectral_path PASSED [ 64%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_random_walk_spectral_embedding_solves_nonsymmetric_eigenproblem PASSED [ 67%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_mean_shift_and_quantization_validate_iteration_controls PASSED [ 71%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_statistics_and_regression_reject_degenerate_controls PASSED [ 75%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_competitive_quantization_does_not_confuse_decay_with_stationarity PASSED [ 78%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_weight_validation_is_shared_across_learning_methods PASSED [ 82%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_regression_rejects_remaining_target_kernel_and_cv_contracts PASSED [ 85%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_statistics_fail_loudly_for_nonfinite_solver_and_geometry_outputs PASSED [ 89%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_intrinsic_location_guards_cover_nonfinite_distance_log_norm_and_exp PASSED [ 92%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_clustering_internal_recovery_and_stationarity_guards PASSED [ 96%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_clustering_rejects_nonfinite_geometry_updates_and_remaining_modes PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py312-stable-float64/017-test_learning_statistics_clustering.xml -
+============================== slowest durations ===============================
+21.52s call     tests/test_learning_statistics_clustering.py::test_center_based_methods_support_nested_product_points
+6.05s call     tests/test_learning_statistics_clustering.py::test_kmeans_initialization_contract_and_empty_cluster_recovery
+5.41s call     tests/test_learning_statistics_clustering.py::test_lightweight_coreset_is_reproducible_and_usable_by_weighted_kmeans
+3.01s call     tests/test_learning_statistics_clustering.py::test_minimum_enclosing_ball_contains_all_euclidean_samples
+2.51s call     tests/test_learning_statistics_clustering.py::test_weighted_frechet_mean_and_median_match_euclidean_targets
+2.32s call     tests/test_learning_statistics_clustering.py::test_kernel_regression_and_cross_validation_validate_sample_targets
+2.03s call     tests/test_learning_statistics_clustering.py::test_clustering_methods_separate_a_simple_two_cluster_problem[<lambda>0]
+1.60s call     tests/test_learning_statistics_clustering.py::test_pairwise_distances_blocking_nearest_neighbors_and_gradients
+1.45s call     tests/test_learning_statistics_clustering.py::test_statistics_and_regression_reject_degenerate_controls
+1.44s call     tests/test_learning_statistics_clustering.py::test_hierarchical_clustering_linkages_and_invalid_ward_request
+1.43s call     tests/test_learning_statistics_clustering.py::test_clustering_methods_separate_a_simple_two_cluster_problem[<lambda>2]
+1.17s call     tests/test_learning_statistics_clustering.py::test_clustering_edge_contracts_and_distance_only_spectral_path
+1.07s call     tests/test_learning_statistics_clustering.py::test_clustering_rejects_nonfinite_geometry_updates_and_remaining_modes
+0.88s call     tests/test_learning_statistics_clustering.py::test_clustering_methods_separate_a_simple_two_cluster_problem[<lambda>3]
+0.83s call     tests/test_learning_statistics_clustering.py::test_mean_shift_and_quantization_validate_iteration_controls
+0.74s call     tests/test_learning_statistics_clustering.py::test_clustering_internal_recovery_and_stationarity_guards
+0.59s call     tests/test_learning_statistics_clustering.py::test_competitive_quantization_does_not_confuse_decay_with_stationarity
+0.49s call     tests/test_learning_statistics_clustering.py::test_proxy_geometry_fails_with_a_precise_capability_error
+0.45s call     tests/test_learning_statistics_clustering.py::test_clustering_methods_separate_a_simple_two_cluster_problem[<lambda>1]
+0.40s call     tests/test_learning_statistics_clustering.py::test_clustering_methods_separate_a_simple_two_cluster_problem[<lambda>4]
+0.30s call     tests/test_learning_statistics_clustering.py::test_random_walk_spectral_embedding_solves_nonsymmetric_eigenproblem
+0.27s call     tests/test_learning_statistics_clustering.py::test_weight_validation_is_shared_across_learning_methods
+0.24s call     tests/test_learning_statistics_clustering.py::test_intrinsic_location_guards_cover_nonfinite_distance_log_norm_and_exp
+0.21s call     tests/test_learning_statistics_clustering.py::test_frechet_median_diagnostics_are_evaluated_at_returned_point
+0.21s call     tests/test_learning_statistics_clustering.py::test_converged_kmeans_returns_centers_consistent_with_returned_labels
+0.14s call     tests/test_learning_statistics_clustering.py::test_smoothed_frechet_median_handles_coincident_samples_monotonically
+0.12s call     tests/test_learning_statistics_clustering.py::test_statistics_fail_loudly_for_nonfinite_solver_and_geometry_outputs
+0.09s call     tests/test_learning_statistics_clustering.py::test_regression_rejects_remaining_target_kernel_and_cv_contracts
+
+(56 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================= 28 passed in 57.17s ==============================

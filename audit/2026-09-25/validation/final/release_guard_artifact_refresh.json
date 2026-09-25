@@ -1,0 +1,64 @@
+{
+  "commands": [
+    {
+      "command": [
+        "/Users/kisung/miniconda3/bin/python",
+        "-m",
+        "build",
+        "--sdist",
+        "--no-isolation",
+        "--outdir",
+        "/Users/kisung/Desktop/develop/geojax/dist/audit-2026-09-25-final",
+        "/Users/kisung/Desktop/develop/geojax"
+      ],
+      "log": "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/final/sdist_build_after_release_guard.log",
+      "returncode": 0,
+      "seconds": 2.268
+    },
+    {
+      "command": [
+        "/Users/kisung/miniconda3/bin/python",
+        "-I",
+        "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/verify_final_artifacts.py"
+      ],
+      "log": "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/final/artifact_provenance_check.log",
+      "returncode": 0,
+      "seconds": 0.832
+    },
+    {
+      "command": [
+        "/Users/kisung/miniconda3/bin/python",
+        "-m",
+        "build",
+        "--wheel",
+        "--no-isolation",
+        "--outdir",
+        "/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-release-sdist-rebuild-btp4seuf/rebuilt",
+        "/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-release-sdist-rebuild-btp4seuf/source/geojax-0.2.0"
+      ],
+      "log": "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/final/sdist_rebuild.log",
+      "returncode": 0,
+      "seconds": 1.012
+    }
+  ],
+  "finished_utc": "2026-09-25T07:42:51.470597+00:00",
+  "frozen_sources_unchanged": true,
+  "identical_package_file_count": 67,
+  "matrix_wheel_sha256": "dd7ea7fc391ec2e0cc9c3a81757a94fb89b09a3f5401ed8ca7f4fbc62b20fc5e",
+  "matrix_wheel_unchanged": true,
+  "preserved_evidence": "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/final/before_release_guard",
+  "prior_evidence_unchanged": true,
+  "release_file_hashes": {
+    "CHANGELOG.md": "1efe316161c7108705224fdfeff73e639f943e4264f145d2ff2b3ac50c835fbb",
+    "Makefile": "f4821342c2dba010a60acd6c86c9b629594904ec190a44619c64bfaef784db5c",
+    "RELEASING.md": "d7681ecbd7645478fabe8659541f5096f6ef066d666d91f431accd4f942074c4"
+  },
+  "sdist_clean_install_evidence": "final_sdist_smoke.json",
+  "sdist_clean_install_exit_code": 0,
+  "sdist_clean_install_seconds": 30.472028749994934,
+  "sdist_sha256": "f12c6a7ca9e61b17fcd6e753be85b299d50223dbf9c559c3c22a632bebe47a94",
+  "source_archive_compared_checkout_file_count": 220,
+  "source_archive_file_count": 222,
+  "started_utc": "2026-09-25T07:40:20.820277+00:00",
+  "status": "passed"
+}

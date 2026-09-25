@@ -28,6 +28,8 @@ from typing import Any, Sequence, Tuple, Union
 import jax
 import jax.numpy as jnp
 
+from ._numerics import matrix_expm, nonnegative, symmetric_part as _sym
+
 from .base import (
     ExactGeometryMixin,
     as_sample_shape,
@@ -57,10 +59,6 @@ def _parse_spd_size(size: int | Sequence[int]) -> tuple[int, int]:
     return shape
 
 
-def _sym(A: Array) -> Array:
-    return 0.5 * (A + jnp.swapaxes(A, -1, -2))
-
-
 def _trace_inner(A: Array, B: Array) -> Array:
     return jnp.sum(A * B, axis=(-2, -1))
 
@@ -70,7 +68,7 @@ def _matmul3(A: Array, B: Array, C: Array) -> Array:
 
 
 def _eigh_sym(A: Array) -> tuple[Array, Array]:
-    return jnp.linalg.eigh(_sym(A))
+    return jnp.linalg.eigh(_sym(A), symmetrize_input=False)
 
 
 def _spd_from_eigh(Q: Array, vals: Array) -> Array:
@@ -78,30 +76,37 @@ def _spd_from_eigh(Q: Array, vals: Array) -> Array:
 
 
 def _sylvester_eigenbasis_impl(P: Array, U: Array) -> Array:
-    """Solve ``P A + A P = U`` in an SPD eigenbasis."""
-    P = _sym(jnp.asarray(P))
-    U = _sym(jnp.asarray(U))
+    """Solve ``P A + A P = U`` for an arbitrary matrix right-hand side."""
     eigenvalues, eigenvectors = _eigh_sym(P)
     rotated = jnp.swapaxes(eigenvectors, -1, -2) @ U @ eigenvectors
     denominator = eigenvalues[..., :, None] + eigenvalues[..., None, :]
-    solution = rotated / denominator
-    return _sym(eigenvectors @ solution @ jnp.swapaxes(eigenvectors, -1, -2))
+    return eigenvectors @ (rotated / denominator) @ jnp.swapaxes(eigenvectors, -1, -2)
 
 
-@jax.custom_jvp
 def _solve_spd_sylvester(P: Array, U: Array) -> Array:
-    """SPD Sylvester solve with an implicit, repeated-spectrum-safe JVP."""
-    return _sylvester_eigenbasis_impl(P, U)
+    """SPD Sylvester solve with implicit derivatives at every order.
 
-
-@_solve_spd_sylvester.defjvp
-def _solve_spd_sylvester_jvp(primals, tangents):
-    P, U = primals
-    P_dot, U_dot = tangents
-    solution = _sylvester_eigenbasis_impl(P, U)
-    right_hand_side = _sym(U_dot - _sym(P_dot) @ solution - solution @ _sym(P_dot))
-    solution_dot = _sylvester_eigenbasis_impl(P, right_hand_side)
-    return solution, solution_dot
+    Only the primal solve uses an eigenbasis. Differentiation acts on the
+    defining equation, including reverse-mode residuals, so repeated
+    eigenvalues never require differentiating a choice of eigenvectors.
+    """
+    P, U = jnp.broadcast_arrays(_sym(jnp.asarray(P)), _sym(jnp.asarray(U)))
+    # A common exact power-of-two scale avoids overflow in eigenvalue sums
+    # and in the defining operator, without changing the solution.
+    maximum = jnp.max(jnp.abs(jax.lax.stop_gradient(P)), axis=(-2, -1), keepdims=True)
+    _, exponent = jnp.frexp(maximum)
+    first = -(exponent // 2)
+    first_scale = jnp.ldexp(jnp.ones_like(maximum), first)
+    second_scale = jnp.ldexp(jnp.ones_like(maximum), -exponent - first)
+    P = jax.lax.optimization_barrier(P * first_scale) * second_scale
+    U = jax.lax.optimization_barrier(U * first_scale) * second_scale
+    solution = jax.lax.custom_linear_solve(
+        lambda X: P @ X + X @ P,
+        U,
+        solve=lambda _, rhs: _sylvester_eigenbasis_impl(P, rhs),
+        symmetric=True,
+    )
+    return _sym(solution)
 
 
 def _spd_logm(P: Array, eps: float) -> Array:
@@ -148,13 +153,74 @@ def _spectral_divided_difference(
     return jnp.where(separated, quotient, repeated)
 
 
+def _projection_eigh(P: Array) -> tuple[Array, Array]:
+    """Resolve signed spectra after exact power scaling, including finite-range extremes."""
+    maximum = jnp.max(jnp.abs(jax.lax.stop_gradient(P)), axis=(-2, -1), keepdims=True)
+    _, exponent = jnp.frexp(maximum)
+    first = -(exponent // 2)
+    first_scale = jnp.ldexp(jnp.ones_like(maximum), first)
+    second_scale = jnp.ldexp(jnp.ones_like(maximum), -exponent - first)
+    normalized = jax.lax.optimization_barrier(P * first_scale) * second_scale
+    values, vectors = _eigh_sym(normalized)
+    undo_second = jnp.ldexp(jnp.ones_like(maximum), exponent + first)[..., 0]
+    undo_first = jnp.ldexp(jnp.ones_like(maximum), -first)[..., 0]
+    return jax.lax.optimization_barrier(values * undo_second) * undo_first, vectors
+
+
+@jax.custom_jvp
+def _symmetric_abs_invertible(P: Array) -> Array:
+    """Absolute value of an invertible symmetric matrix, including derivatives."""
+    values, vectors = _projection_eigh(P)
+    return _spd_from_eigh(vectors, jnp.abs(values))
+
+
+def _normalize_abs_equation(P: Array, absolute: Array) -> tuple[Array, Array]:
+    """Apply a common, derivative-constant power scale to an absolute-value equation."""
+    maximum = jnp.max(jnp.abs(jax.lax.stop_gradient(P)), axis=(-2, -1), keepdims=True)
+    _, exponent = jnp.frexp(maximum)
+    first = -(exponent // 2)
+    first_scale = jnp.ldexp(jnp.ones_like(maximum), first)
+    second_scale = jnp.ldexp(jnp.ones_like(maximum), -exponent - first)
+    return (
+        jax.lax.optimization_barrier(P * first_scale) * second_scale,
+        jax.lax.optimization_barrier(absolute * first_scale) * second_scale,
+    )
+
+
+@_symmetric_abs_invertible.defjvp
+def _symmetric_abs_invertible_jvp(primals, tangents):
+    (P,), (E,) = primals, tangents
+    P, E = _sym(P), _sym(E)
+    absolute = _symmetric_abs_invertible(P)
+    # Differentiate |P|^2=P^2. Unlike sqrt(P@P), this never forms a square
+    # in the primal. Normalize the defining equation to avoid large sums of
+    # eigenvalues in its Sylvester solve.
+    normalized, normalized_absolute = _normalize_abs_equation(P, absolute)
+    normalized = 0.5 * normalized
+    rhs = normalized @ E + E @ normalized
+    derivative = _solve_spd_sylvester(0.5 * normalized_absolute, rhs)
+    return absolute, derivative
+
+
+def _invertible_spd_repair(P: Array, eps: float) -> Array:
+    absolute = _symmetric_abs_invertible(P)
+    normalized, normalized_absolute = _normalize_abs_equation(P, absolute)
+    sign = jnp.linalg.solve(normalized_absolute, normalized)
+    identity = jnp.eye(P.shape[-1], dtype=P.dtype)
+    half_P = jax.lax.optimization_barrier(0.5 * P)
+    half_absolute = jax.lax.optimization_barrier(0.5 * absolute)
+    return _sym(half_P + half_absolute + (0.5 * eps) * (identity - sign))
+
+
 @partial(jax.custom_jvp, nondiff_argnums=(1,))
 def _spd_project_differentiable(P: Array, eps: float) -> Array:
     """Repair nonpositive eigenvalues while preserving every valid SPD point."""
     P = _sym(jnp.asarray(P))
-    eigenvalues, eigenvectors = _eigh_sym(P)
+    eigenvalues, eigenvectors = _projection_eigh(P)
     clipped = jnp.where(eigenvalues > 0.0, eigenvalues, eps)
-    return _spd_from_eigh(eigenvectors, clipped)
+    repaired = _spd_from_eigh(eigenvectors, clipped)
+    valid = jnp.all(eigenvalues > 0.0, axis=-1)
+    return jnp.where(valid[..., None, None], P, repaired)
 
 
 @_spd_project_differentiable.defjvp
@@ -162,18 +228,44 @@ def _spd_project_differentiable_jvp(eps, primals, tangents):
     (P,), (E,) = primals, tangents
     P = _sym(jnp.asarray(P))
     E = _sym(jnp.asarray(E))
-    eigenvalues, eigenvectors = _eigh_sym(P)
-    clipped = jnp.where(eigenvalues > 0.0, eigenvalues, eps)
-    derivatives = (eigenvalues > 0.0).astype(P.dtype)
-    loewner = _spectral_divided_difference(
-        eigenvalues,
-        clipped,
-        derivatives,
-        scale_floor=0.0,
-    )
-    rotated = jnp.swapaxes(eigenvectors, -1, -2) @ E @ eigenvectors
-    derivative = eigenvectors @ (loewner * rotated) @ jnp.swapaxes(eigenvectors, -1, -2)
-    return _spd_from_eigh(eigenvectors, clipped), _sym(derivative)
+    # On the open SPD cone projection is exactly the identity. Keeping that
+    # branch free of eigenvectors also permits higher derivatives there.
+    eigenvalues, eigenvectors = _projection_eigh(jax.lax.stop_gradient(P))
+    positive = jnp.all(eigenvalues > 0.0, axis=-1)
+    invertible = jnp.all(eigenvalues != 0.0, axis=-1)
+
+    def repaired_derivative(_):
+        # Positive inputs retain the exact identity derivative. Every other
+        # invertible input uses a smooth matrix absolute value; masking before
+        # its evaluation also keeps vmap's inactive branches nonsingular.
+        active = invertible & ~positive
+        identity = jnp.eye(P.shape[-1], dtype=P.dtype)
+        safe_P = jnp.where(active[..., None, None], P, identity)
+        safe_E = jnp.where(active[..., None, None], E, jnp.zeros_like(E))
+        _, smooth = jax.jvp(lambda A: _invertible_spd_repair(A, eps), (safe_P,), (safe_E,))
+        smooth = jnp.where(positive[..., None, None], E, smooth)
+
+        # Repair is not differentiable at a zero eigenvalue. Preserve its
+        # previous selected first derivative there, with frozen coefficients:
+        # a boundary item must not introduce eigenvector NaNs into derivatives
+        # of separate, smooth entries of the same batch. No higher-order
+        # mathematical derivative is asserted at this discontinuous boundary.
+        clipped = jnp.where(eigenvalues > 0.0, eigenvalues, eps)
+        derivatives = (eigenvalues > 0.0).astype(P.dtype)
+        loewner = _spectral_divided_difference(eigenvalues, clipped, derivatives, scale_floor=0.0)
+        rotated = jnp.swapaxes(eigenvectors, -1, -2) @ E @ eigenvectors
+        boundary = _sym(eigenvectors @ (loewner * rotated) @ jnp.swapaxes(eigenvectors, -1, -2))
+        return jnp.where(invertible[..., None, None], smooth, boundary)
+
+    derivative = jax.lax.cond(jnp.all(positive), lambda _: E, repaired_derivative, operand=None)
+    return _spd_project_differentiable(P, eps), derivative
+
+
+# Host-driven optimizers repeatedly differentiate this operation. Reuse its
+# compiled conditional and transpose instead of lowering the complete repair
+# branch at every gradient evaluation. The static floor matches its custom-JVP
+# nondifferentiable argument; nested JIT, vmap and higher AD remain supported.
+_spd_project_differentiable = jax.jit(_spd_project_differentiable, static_argnums=(1,))
 
 
 @partial(jax.custom_jvp, nondiff_argnums=(1,))
@@ -189,22 +281,9 @@ def _spd_logm_differentiable(P: Array, eps: float) -> Array:
 @_spd_logm_differentiable.defjvp
 def _spd_logm_differentiable_jvp(eps, primals, tangents):
     (P,), (E,) = primals, tangents
-    P = _sym(jnp.asarray(P))
-    E = _sym(jnp.asarray(E))
-    eigenvalues, eigenvectors = _eigh_sym(P)
-    del eps
-    safe = jnp.maximum(eigenvalues, jnp.finfo(P.dtype).tiny)
-    values = jnp.log(safe)
-    derivatives = jnp.where(eigenvalues > 0.0, 1.0 / safe, 0.0)
-    loewner = _spectral_divided_difference(
-        eigenvalues,
-        values,
-        derivatives,
-        scale_floor=0.0,
-    )
-    rotated = jnp.swapaxes(eigenvectors, -1, -2) @ E @ eigenvectors
-    derivative = eigenvectors @ (loewner * rotated) @ jnp.swapaxes(eigenvectors, -1, -2)
-    return _spd_from_eigh(eigenvectors, values), _sym(derivative)
+    P, E = _sym(jnp.asarray(P)), _sym(jnp.asarray(E))
+    logarithm = _spd_logm_differentiable(P, eps)
+    return logarithm, _sym(_dlog_implicit(P, logarithm, E))
 
 
 @jax.custom_jvp
@@ -219,14 +298,8 @@ def _spd_sqrtm_differentiable(P: Array) -> Array:
 @_spd_sqrtm_differentiable.defjvp
 def _spd_sqrtm_differentiable_jvp(primals, tangents):
     (P,), (E,) = primals, tangents
-    P = _sym(jnp.asarray(P))
-    E = _sym(jnp.asarray(E))
-    vals, eigvecs = _eigh_sym(P)
-    roots = jnp.sqrt(jnp.maximum(vals, jnp.finfo(P.dtype).tiny))
-    rotated = jnp.swapaxes(eigvecs, -1, -2) @ E @ eigvecs
-    denominator = roots[..., :, None] + roots[..., None, :]
-    derivative = eigvecs @ (rotated / denominator) @ jnp.swapaxes(eigvecs, -1, -2)
-    return _spd_from_eigh(eigvecs, roots), _sym(derivative)
+    root = _spd_sqrtm_differentiable(P)
+    return root, _solve_spd_sylvester(root, E)
 
 
 @jax.custom_jvp
@@ -241,51 +314,118 @@ def _spd_invsqrtm_differentiable(P: Array) -> Array:
 @_spd_invsqrtm_differentiable.defjvp
 def _spd_invsqrtm_differentiable_jvp(primals, tangents):
     (P,), (E,) = primals, tangents
-    P = _sym(jnp.asarray(P))
-    E = _sym(jnp.asarray(E))
-    vals, eigvecs = _eigh_sym(P)
-    roots = jnp.sqrt(jnp.maximum(vals, jnp.finfo(P.dtype).tiny))
-    rotated = jnp.swapaxes(eigvecs, -1, -2) @ E @ eigvecs
-    denominator = (
-        roots[..., :, None] * roots[..., None, :] * (roots[..., :, None] + roots[..., None, :])
+    root = _spd_sqrtm_differentiable(P)
+    inverse_root = _spd_invsqrtm_differentiable(P)
+    root_dot = _solve_spd_sylvester(root, E)
+    return inverse_root, -_sym(inverse_root @ root_dot @ inverse_root)
+
+
+def _dlog_eigenbasis_impl(P: Array, E: Array) -> Array:
+    """Spectral Dlog solve, also valid for nonsymmetric right-hand sides."""
+    vals, Q = _eigh_sym(P)
+    safe = jnp.maximum(vals, jnp.finfo(P.dtype).tiny)
+    high = jnp.maximum(safe[..., :, None], safe[..., None, :])
+    low = jnp.minimum(safe[..., :, None], safe[..., None, :])
+    # log(high)-log(low) loses digits for nearly equal eigenvalues whose
+    # common scale is very large or small. Work with their relative gap,
+    # and divide by high only after taking the dimensionless log mean.
+    relative_gap = (high - low) / high
+    close = relative_gap < 0.5
+    gap = jnp.where(relative_gap > 0.0, relative_gap, 1.0)
+    close_gap = jnp.where(close, relative_gap, 0.0)
+    close_ratio = -jnp.log1p(-close_gap) / gap
+    close_ratio = jnp.where(relative_gap > 0.0, close_ratio, 1.0)
+    far_ratio = (jnp.log(high) - jnp.log(low)) / gap
+    loewner = jnp.where(close, close_ratio, far_ratio) / high
+    rotated = jnp.swapaxes(Q, -1, -2) @ E @ Q
+    return Q @ (loewner * rotated) @ jnp.swapaxes(Q, -1, -2)
+
+
+def _dlog_implicit(P: Array, logarithm: Array, E: Array) -> Array:
+    """Invert Dexp at log(P) without differentiating its spectral solve.
+
+    Dexp is self-adjoint and positive definite on the full matrix space
+    when its base is symmetric. Its basis-independent JVP therefore gives
+    an invertible defining operator for Dlog, even at repeated spectra.
+    """
+    P, logarithm, E = jnp.broadcast_arrays(P, logarithm, E)
+    # Dlog_(cP)[cE] = Dlog_P[E]. Keep the defining exponential near unit
+    # scale so higher derivatives do not form products at the underflow
+    # boundary merely because the covariance units are very small.
+    maximum = jnp.max(jnp.abs(jax.lax.stop_gradient(P)), axis=(-2, -1), keepdims=True)
+    _, exponent = jnp.frexp(maximum)
+    first = -(exponent // 2)
+    first_scale = jnp.ldexp(jnp.ones_like(maximum), first)
+    second_scale = jnp.ldexp(jnp.ones_like(maximum), -exponent - first)
+    P = jax.lax.optimization_barrier(P * first_scale) * second_scale
+    E = jax.lax.optimization_barrier(E * first_scale) * second_scale
+    logarithm = logarithm - (exponent * jnp.log(jnp.asarray(2.0, dtype=P.dtype))) * jnp.eye(
+        P.shape[-1], dtype=P.dtype
     )
-    derivative = eigvecs @ (-rotated / denominator) @ jnp.swapaxes(eigvecs, -1, -2)
-    return _spd_from_eigh(eigvecs, 1.0 / roots), _sym(derivative)
+    return jax.lax.custom_linear_solve(
+        lambda X: jax.jvp(matrix_expm, (logarithm,), (X,))[1],
+        E,
+        solve=lambda _, rhs: _dlog_eigenbasis_impl(P, rhs),
+        symmetric=True,
+    )
+
+
+@jax.jit
+def _dexp_scaled(A: Array, E: Array) -> Array:
+    """Symmetric Dexp with accurate scaling factors and smooth higher AD.
+
+    Padé primal errors at a large negative shift are amplified in its JVP.
+    Start with a fixed Padé approximant near zero, then recover larger arguments
+    using Dexp_(2B)(E) = sym(exp(B) Dexp_B(E)).
+    Each exponential factor has the accurate spectral primal and the same
+    basis-independent custom derivative, rather than an accumulated Padé
+    approximation. The fixed loop bound permits reverse differentiation.
+    """
+    norm = jnp.max(jnp.sum(jnp.abs(jax.lax.stop_gradient(A)), axis=-1), initial=0.0)
+    steps = jnp.clip(jnp.ceil(jnp.log2(jnp.maximum(norm, 0.5))) + 1, 0, 16).astype(jnp.int32)
+    one = jnp.asarray(1.0, dtype=A.dtype)
+    scale = jnp.ldexp(one, -steps)
+
+    def small_exponential(matrix):
+        # Fixed Padé7 has ample accuracy at norm <= 1/2. Unlike native expm,
+        # it has no conditional squaring JVP to transpose through vmap.
+        # Keep the common coefficient scale: normalizing each coefficient
+        # would flush needed intermediate products for tiny tangents.
+        identity = jnp.broadcast_to(jnp.eye(A.shape[-1], dtype=A.dtype), A.shape)
+        square = matrix @ matrix
+        fourth = square @ square
+        sixth = fourth @ square
+        odd = matrix @ (sixth + 1512.0 * fourth + 277200.0 * square + 8648640.0 * identity)
+        even = 56.0 * sixth + 25200.0 * fourth + 1995840.0 * square + 17297280.0 * identity
+        return jnp.linalg.solve(even - odd, even + odd)
+
+    derivative = jax.jvp(small_exponential, (A * scale,), (E,))[1]
+
+    indices = jnp.arange(16, dtype=jnp.int32)
+    leading_shape = (16,) + (1,) * A.ndim
+    active = (indices < steps).reshape(leading_shape)
+    powers = jnp.ldexp(one, indices - steps).reshape(leading_shape)
+    arguments = jnp.where(active, A[None, ...] * powers, jnp.zeros_like(A)[None, ...])
+    # Keep nonlinear factors outside scan so higher reverse-mode transforms
+    # preserve their custom derivatives when differentiating scan residuals.
+    factors = _spd_expm(arguments)
+
+    def recover(index, current):
+        # Average after multiplication: separately halved subnormal products
+        # can both flush to zero despite a representable final derivative.
+        return _sym(factors[index] @ current)
+
+    return jax.lax.fori_loop(0, 16, recover, derivative)
 
 
 def _frechet_spectral(A: Array, E: Array, func_name: str, eps: float) -> Array:
-    """Frechet derivative of exp or log at a symmetric matrix A.
-
-    For A = Q diag(lambda) Q^T and symmetric E,
-
-        Df_A[E] = Q (L_f(lambda) * (Q^T E Q)) Q^T,
-
-    where L_f is the divided-difference matrix.
-    """
-    A = _sym(A)
-    E = _sym(E)
-    vals, Q = _eigh_sym(A)
-    Et = jnp.swapaxes(Q, -1, -2) @ E @ Q
-
+    """Frechet derivative of exp or log, including stable higher derivatives."""
+    A, E = jnp.broadcast_arrays(_sym(jnp.asarray(A)), _sym(jnp.asarray(E)))
     if func_name == "exp":
-        function_values = jnp.exp(vals)
-        derivatives = function_values
-    elif func_name == "log":
-        del eps
-        safe = jnp.maximum(vals, jnp.finfo(A.dtype).tiny)
-        function_values = jnp.log(safe)
-        derivatives = jnp.where(vals > 0.0, 1.0 / safe, 0.0)
-    else:
-        raise ValueError("func_name must be 'exp' or 'log'.")
-
-    L = _spectral_divided_difference(
-        vals,
-        function_values,
-        derivatives,
-        scale_floor=0.0 if func_name == "log" else 1.0,
-    )
-    Ft = L * Et
-    return _sym(Q @ Ft @ jnp.swapaxes(Q, -1, -2))
+        return _sym(_dexp_scaled(A, E))
+    if func_name == "log":
+        return _sym(_dlog_implicit(A, _spd_logm_differentiable(A, eps), E))
+    raise ValueError("func_name must be 'exp' or 'log'.")
 
 
 @jax.custom_jvp
@@ -344,7 +484,7 @@ class SPDLogEuclidean(ExactGeometryMixin):
         if not self._shape_matches(P):
             return self._shape_failure(P)
         sym_ok = stable_norm(P - jnp.swapaxes(P, -1, -2), axis=(-2, -1)) <= tol
-        vals = jnp.linalg.eigvalsh(_sym(P))
+        vals, _ = _projection_eigh(_sym(P))
         pd_ok = jnp.min(vals, axis=-1) > 0.0
         return sym_ok & pd_ok
 
@@ -411,7 +551,7 @@ class SPDLogEuclidean(ExactGeometryMixin):
     def squared_dist(self, P: Array, Q: Array) -> Array:
         """Squared Euclidean distance between matrix-log coordinates."""
         D = self.logm(self.project(Q)) - self.logm(self.project(P))
-        return jnp.maximum(_trace_inner(D, D), 0.0)
+        return _trace_inner(D, D)
 
     def transport(self, P: Array, Q: Array, U: Array) -> Array:
         B = self.logm(self.project(Q))
@@ -501,7 +641,7 @@ class SPDAffineInvariant(ExactGeometryMixin):
         if not self._shape_matches(P):
             return self._shape_failure(P)
         sym_ok = stable_norm(P - jnp.swapaxes(P, -1, -2), axis=(-2, -1)) <= tol
-        vals = jnp.linalg.eigvalsh(_sym(P))
+        vals, _ = _projection_eigh(_sym(P))
         pd_ok = jnp.min(vals, axis=-1) > 0.0
         return sym_ok & pd_ok
 
@@ -561,7 +701,7 @@ class SPDAffineInvariant(ExactGeometryMixin):
         Pinvsqrt = _spd_invsqrtm(P, self.eps)
         A = Pinvsqrt @ Q @ Pinvsqrt
         L = _spd_logm(A, self.eps)
-        return jnp.maximum(_trace_inner(L, L), 0.0)
+        return _trace_inner(L, L)
 
     def dist(self, P: Array, Q: Array) -> Array:
         return sqrt_nonnegative(self.squared_dist(P, Q))
@@ -663,7 +803,7 @@ class SPDBuresWasserstein(ExactGeometryMixin):
         if not self._shape_matches(P):
             return self._shape_failure(P)
         sym_ok = stable_norm(P - jnp.swapaxes(P, -1, -2), axis=(-2, -1)) <= tol
-        vals = jnp.linalg.eigvalsh(_sym(P))
+        vals, _ = _projection_eigh(_sym(P))
         pd_ok = jnp.min(vals, axis=-1) > 0.0
         return sym_ok & pd_ok
 
@@ -739,7 +879,7 @@ class SPDBuresWasserstein(ExactGeometryMixin):
         # distance and retains all resolvable first-order displacement.
         P = self.project(P)
         tangent = self.log(P, Q)
-        return jnp.maximum(self.inner(P, tangent, tangent), 0.0)
+        return nonnegative(self.inner(P, tangent, tangent))
 
     def dist(self, P: Array, Q: Array) -> Array:
         return sqrt_nonnegative(self.squared_dist(P, Q))

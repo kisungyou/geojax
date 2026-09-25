@@ -1,0 +1,17 @@
+{
+  "status": "stopped_for_numerical_correction",
+  "reason": "Minimum JAX0.6 float32 balanced rank-deficient Kendall mean failed its unchanged convergence assertion. Two active Python3.12 workers were deliberately terminated before source changes; their incomplete logs are not numerical failures or passing evidence.",
+  "numerical_failure": "py311-min-float32",
+  "completed_before_correction": [
+    "py311-stable-float64"
+  ],
+  "deliberately_interrupted": [
+    "py312-stable-float32",
+    "py312-stable-float64"
+  ],
+  "not_started": [
+    "py313-stable-float32",
+    "py313-stable-float64",
+    "py314-stable-float64"
+  ]
+}

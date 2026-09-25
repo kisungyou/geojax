@@ -1,0 +1,73 @@
+Invalid nan value encountered in the output of a jax.jit function. Calling the de-optimized version.
+Invalid nan value encountered in the backward pass of a jax.jit function. Calling the de-optimized backward pass.
+Traceback (most recent call last):
+  File "/private/tmp/geojax-corrections/probe_exp_vmap_ad.py", line 11, in <module>
+    print(shifts, jax.jit(jax.grad(fn))(0.),jax.jit(jax.grad(jax.grad(fn)))(0.),flush=True)
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/traceback_util.py", line 195, in reraise_with_filtered_traceback
+    return fun(*args, **kwargs)  # pyrefly: ignore[not-callable]
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/pjit.py", line 266, in cache_miss
+    executable, pgle_profiler, const_args) = _run_python_pjit(
+                                             ^^^^^^^^^^^^^^^^^
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/pjit.py", line 178, in _run_python_pjit
+    api_util.maybe_recursive_nan_check(e, fun, args, kwargs)  # should always raise.
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/api_util.py", line 775, in maybe_recursive_nan_check
+    raise e2 from None
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/api_util.py", line 773, in maybe_recursive_nan_check
+    _ = fun(*args, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/traceback_util.py", line 195, in reraise_with_filtered_traceback
+    return fun(*args, **kwargs)  # pyrefly: ignore[not-callable]
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/api.py", line 488, in grad_f
+    _, g = value_and_grad_f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/traceback_util.py", line 195, in reraise_with_filtered_traceback
+    return fun(*args, **kwargs)  # pyrefly: ignore[not-callable]
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/api.py", line 561, in value_and_grad_f
+    g = vjp_py(lax_internal._one_vjp(ans))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/api.py", line 1947, in __call__
+    return self.fun(self.in_tree, self.out_tree, self.args_res,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/tree_util.py", line 498, in __call__
+    return self.fun(*args, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/api.py", line 1789, in _vjp3_bwd
+    ad.backward_pass3(jaxpr, True, residuals, maybe_accums, cts_flat)
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/interpreters/ad.py", line 416, in backward_pass3
+    rule(cts_in, *map(read, eqn.invars), **eqn.params)
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/pjit.py", line 1954, in _pjit_transpose_fancy
+    raise e2 from None  # great
+    ^^^^^^^^^^^^^^^^^^
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/pjit.py", line 1952, in _pjit_transpose_fancy
+    ad.backward_pass3(jaxpr, False, jaxpr.consts, args, cts_in)
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/interpreters/ad.py", line 416, in backward_pass3
+    rule(cts_in, *map(read, eqn.invars), **eqn.params)
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/lax/control_flow/loops.py", line 1133, in _scan_transpose_fancy
+    outs = scan_p.bind(
+           ^^^^^^^^^^^^
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/core.py", line 727, in bind
+    return self.bind_with_trace(prev_trace, args, avals, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/core.py", line 735, in bind_with_trace
+    return trace.process_primitive(self, args, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/core.py", line 1316, in process_primitive
+    return primitive.impl(*args, **params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/dispatch.py", line 88, in apply_primitive
+    outs = fun(*args)
+           ^^^^^^^^^^
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/traceback_util.py", line 195, in reraise_with_filtered_traceback
+    return fun(*args, **kwargs)  # pyrefly: ignore[not-callable]
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/pjit.py", line 266, in cache_miss
+    executable, pgle_profiler, const_args) = _run_python_pjit(
+                                             ^^^^^^^^^^^^^^^^^
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float32/lib/python3.12/site-packages/jax/_src/pjit.py", line 176, in _run_python_pjit
+    raise FloatingPointError(
+FloatingPointError: invalid value (nan) encountered in scan

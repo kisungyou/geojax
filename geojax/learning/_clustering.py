@@ -50,7 +50,7 @@ def _kmeans_stationarity(
     """Return full-data gradient norms for fixed cluster assignments."""
     residuals = []
     for cluster, center in enumerate(centers):
-        positions = jnp.flatnonzero(labels == cluster)
+        positions = jnp.flatnonzero((labels == cluster) & (weights > 0.0))
         if positions.size == 0 or float(jnp.sum(weights[positions])) <= 0.0:
             residuals.append(jnp.asarray(0.0, dtype=weights.dtype))
             continue
@@ -527,7 +527,7 @@ def spectral_clustering(
             bandwidth if bandwidth is not None else scale,
             name="bandwidth",
         )
-        weights = jnp.exp(-(distances**2) / (2.0 * scale**2))
+        weights = jnp.exp(-0.5 * (distances / scale) ** 2)
     elif affinity == "self_tuning":
         if bandwidth is not None:
             raise ValueError("bandwidth is only defined for affinity='rbf'.")
@@ -541,7 +541,7 @@ def spectral_clustering(
             raise ValueError(
                 "self_tuning affinity requires a positive kth-neighbor distance for every sample."
             )
-        weights = jnp.exp(-(distances**2) / (scales[:, None] * scales[None, :]))
+        weights = jnp.exp(-(distances / scales[:, None]) * (distances / scales[None, :]))
     else:
         raise ValueError("affinity must be 'rbf' or 'self_tuning'.")
     weights = weights.at[jnp.diag_indices(adapted.n_samples)].set(0.0)
@@ -730,7 +730,12 @@ def mean_shift(
 def _weighted_logs(manifold: Any, point: Any, values: Any, weights: Any) -> Any:
     from ._utils import weighted_tangent_sum
 
-    return weighted_tangent_sum(manifold, manifold.log(point, values), weights)
+    active = jnp.flatnonzero(weights > 0.0)
+    return weighted_tangent_sum(
+        manifold,
+        manifold.log(point, take_samples(manifold, values, active)),
+        weights[active],
+    )
 
 
 def competitive_quantization(

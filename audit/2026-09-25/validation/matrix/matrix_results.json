@@ -1,0 +1,104 @@
+{
+  "status": "running",
+  "started_utc": "2026-09-25T05:00:52.984875+00:00",
+  "jobs": 2,
+  "runner_sha256": "70476c15ee7814a2c704dd764a3384dce93fb616002bd4fdca40ababfe259939",
+  "environments": [
+    "py311-min-float64",
+    "py314-stable-float32",
+    "py311-min-float32",
+    "py311-stable-float32",
+    "py311-stable-float64",
+    "py312-stable-float32",
+    "py312-stable-float64",
+    "py313-stable-float32",
+    "py313-stable-float64",
+    "py314-stable-float64"
+  ],
+  "runs": {
+    "py311-min-float64": {
+      "status": "passed",
+      "command": [
+        "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float64/bin/python",
+        "-I",
+        "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py",
+        "--repository",
+        "/Users/kisung/Desktop/develop/geojax",
+        "--output",
+        "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py311-min-float64",
+        "--timeout",
+        "600",
+        "--trace-after",
+        "90"
+      ],
+      "returncode": 0,
+      "results": "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py311-min-float64/results.json",
+      "totals": {
+        "collected": 1124,
+        "junit_cases": 1125,
+        "passed": 1124,
+        "skipped": 1
+      },
+      "seconds": 2586.057,
+      "error": null
+    },
+    "py314-stable-float32": {
+      "status": "passed",
+      "command": [
+        "/Users/kisung/Desktop/develop/geojax/.tox/py314-stable-float32/bin/python",
+        "-I",
+        "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py",
+        "--repository",
+        "/Users/kisung/Desktop/develop/geojax",
+        "--output",
+        "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py314-stable-float32",
+        "--timeout",
+        "600",
+        "--trace-after",
+        "90"
+      ],
+      "returncode": 0,
+      "results": "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py314-stable-float32/results.json",
+      "totals": {
+        "collected": 1124,
+        "junit_cases": 1125,
+        "passed": 1123,
+        "skipped": 2
+      },
+      "seconds": 1995.054,
+      "error": null
+    },
+    "py311-min-float32": {
+      "status": "running",
+      "command": [
+        "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/bin/python",
+        "-I",
+        "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py",
+        "--repository",
+        "/Users/kisung/Desktop/develop/geojax",
+        "--output",
+        "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py311-min-float32",
+        "--timeout",
+        "600",
+        "--trace-after",
+        "90"
+      ]
+    },
+    "py311-stable-float32": {
+      "status": "running",
+      "command": [
+        "/Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float32/bin/python",
+        "-I",
+        "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py",
+        "--repository",
+        "/Users/kisung/Desktop/develop/geojax",
+        "--output",
+        "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py311-stable-float32",
+        "--timeout",
+        "600",
+        "--trace-after",
+        "90"
+      ]
+    }
+  }
+}

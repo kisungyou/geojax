@@ -1,0 +1,26 @@
+Command: ["/private/tmp/geojax-validation-sep25/current-optional-env/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_optional_transport.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/final/current_dependencies/float32/001-test_optional_transport.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/final/current_dependencies/float32/001-test_optional_transport.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.13.11, pytest-9.0.3, pluggy-1.6.0 -- /private/tmp/geojax-validation-sep25/current-optional-env/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.13.11, JAX 0.11.2, NumPy 2.5.3, float32
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0, jaxtyping-0.3.11
+collecting ... collected 5 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optional_transport.py::test_sinkhorn_translated_measure_has_exact_squared_translation_cost[0.05] PASSED [ 20%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optional_transport.py::test_sinkhorn_translated_measure_has_exact_squared_translation_cost[0.5] PASSED [ 40%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optional_transport.py::test_sinkhorn_translated_measure_has_exact_squared_translation_cost[2.0] PASSED [ 60%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optional_transport.py::test_sinkhorn_translation_has_the_analytic_compiled_gradient PASSED [ 80%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optional_transport.py::test_sinkhorn_ignores_zero_weight_support_points PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/final/current_dependencies/float32/001-test_optional_transport.xml -
+============================== slowest durations ===============================
+1.90s call     tests/test_optional_transport.py::test_sinkhorn_translated_measure_has_exact_squared_translation_cost[0.05]
+0.51s call     tests/test_optional_transport.py::test_sinkhorn_translated_measure_has_exact_squared_translation_cost[2.0]
+0.50s call     tests/test_optional_transport.py::test_sinkhorn_ignores_zero_weight_support_points
+0.49s call     tests/test_optional_transport.py::test_sinkhorn_translation_has_the_analytic_compiled_gradient
+0.48s call     tests/test_optional_transport.py::test_sinkhorn_translated_measure_has_exact_squared_translation_cost[0.5]
+
+(10 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================== 5 passed in 5.42s ===============================

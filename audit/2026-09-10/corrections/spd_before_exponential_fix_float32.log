@@ -1,0 +1,39 @@
+...................................F...................                  [100%]
+=================================== FAILURES ===================================
+_ test_spd_operations_do_not_clip_valid_small_positive_eigenvalues[manifold0] __
+
+manifold = SPDLogEuclidean(size=(2, 2), atol=1e-06, eps=1e-10)
+
+    @pytest.mark.parametrize(
+        "manifold",
+        [
+            SPDLogEuclidean((2, 2)),
+            SPDAffineInvariant((2, 2)),
+            SPDBuresWasserstein((2, 2)),
+        ],
+    )
+    def test_spd_operations_do_not_clip_valid_small_positive_eigenvalues(manifold):
+        point = jnp.diag(jnp.array([1e-12, 3e-12]))
+        other = jnp.diag(jnp.array([2e-12, 6e-12]))
+    
+        assert bool(manifold.belongs(point))
+        assert jnp.allclose(manifold.project(point), point, rtol=2e-6, atol=0.0)
+        assert bool(jnp.isfinite(manifold.dist(point, other)))
+>       assert jnp.allclose(
+            manifold.exp(point, manifold.log(point, other)),
+            other,
+            rtol=2e-5,
+            atol=1e-20,
+        )
+E       assert Array(False, dtype=bool)
+E        +  where Array(False, dtype=bool) = <PjitFunction of <function allclose at 0x10cc28680>>(Array([[1.9958312e-12, 0.0000000e+00],\n       [0.0000000e+00, 5.9934323e-12]], dtype=float32), Array([[2.e-12, 0.e+00],\n       [0.e+00, 6.e-12]], dtype=float32), rtol=2e-05, atol=1e-20)
+E        +    where <PjitFunction of <function allclose at 0x10cc28680>> = jnp.allclose
+E        +    and   Array([[1.9958312e-12, 0.0000000e+00],\n       [0.0000000e+00, 5.9934323e-12]], dtype=float32) = exp(Array([[1.e-12, 0.e+00],\n       [0.e+00, 3.e-12]], dtype=float32), Array([[6.9106065e-13, 0.0000000e+00],\n       [0.0000000e+00, 2.0761561e-12]], dtype=float32))
+E        +      where exp = SPDLogEuclidean(size=(2, 2), atol=1e-06, eps=1e-10).exp
+E        +      and   Array([[6.9106065e-13, 0.0000000e+00],\n       [0.0000000e+00, 2.0761561e-12]], dtype=float32) = log(Array([[1.e-12, 0.e+00],\n       [0.e+00, 3.e-12]], dtype=float32), Array([[2.e-12, 0.e+00],\n       [0.e+00, 6.e-12]], dtype=float32))
+E        +        where log = SPDLogEuclidean(size=(2, 2), atol=1e-06, eps=1e-10).log
+
+tests/test_spd.py:50: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_spd.py::test_spd_operations_do_not_clip_valid_small_positive_eigenvalues[manifold0]
+1 failed, 54 passed in 105.73s (0:01:45)

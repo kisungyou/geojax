@@ -1,0 +1,30 @@
+{
+  "source_hashes": {
+    "geojax/geometry/spd.py": "09ef4a232b838db19df170e3110fd0bd57e8c83b3da479d919dffb59c3124da8",
+    "tests/test_spd_exponential_audit.py": "876808fc3d52efaeaaab02ecb913035828f7a0830e6316f12088ed1e963957f4"
+  },
+  "runs": [
+    {
+      "environment": "py312-stable-float32",
+      "passed": 66,
+      "log": "spd_exponential_final_float32.log"
+    },
+    {
+      "environment": "py312-stable-float64",
+      "passed": 66,
+      "log": "spd_exponential_final_float64.log"
+    },
+    {
+      "environment": "py311-min-float32",
+      "passed": 42,
+      "log": "spd_exponential_final_min_float32.log"
+    },
+    {
+      "environment": "py311-min-float64",
+      "passed": 42,
+      "log": "spd_exponential_final_min_float64.log"
+    }
+  ],
+  "new_regressions": 11,
+  "source_unchanged": true
+}

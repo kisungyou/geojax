@@ -1,0 +1,62 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float64/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_after_watchdog_fix/py311-stable-float64/036-test_spd_audit_fixes.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_after_watchdog_fix/py311-stable-float64/036-test_spd_audit_fixes.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float64/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.11.15, JAX 0.10.2, NumPy 2.4.4, float64
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 23 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py::test_spectral_trace_hessians_match_analytic_frechet_derivatives[log] PASSED [  4%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py::test_spectral_trace_hessians_match_analytic_frechet_derivatives[sqrt] PASSED [  8%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py::test_spectral_trace_hessians_match_analytic_frechet_derivatives[invsqrt] PASSED [ 13%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py::test_spectral_trace_hessians_match_analytic_frechet_derivatives[exp] PASSED [ 17%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py::test_spd_squared_distance_hessian_at_repeated_spectrum[SPDLogEuclidean-3.386294361119891] PASSED [ 21%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py::test_spd_squared_distance_hessian_at_repeated_spectrum[SPDAffineInvariant-3.386294361119891] PASSED [ 26%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py::test_spd_squared_distance_hessian_at_repeated_spectrum[SPDBuresWasserstein-0.7071067811865475] PASSED [ 30%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py::test_log_euclidean_maps_and_metric_have_finite_second_derivatives PASSED [ 34%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py::test_matrix_functions_support_third_derivatives_at_identity PASSED [ 39%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py::test_spd_sylvester_implicit_derivative_satisfies_differentiated_equation PASSED [ 43%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py::test_spd_logarithm_nested_batch_derivatives PASSED [ 47%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py::test_log_frechet_resolves_nearby_eigenvalues_at_large_and_small_scales[-70.0] PASSED [ 52%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py::test_log_frechet_resolves_nearby_eigenvalues_at_large_and_small_scales[0.0] PASSED [ 56%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py::test_log_frechet_resolves_nearby_eigenvalues_at_large_and_small_scales[70.0] PASSED [ 60%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py::test_spd_frechet_maps_and_sylvester_preserve_broadcasting[False] PASSED [ 65%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py::test_spd_frechet_maps_and_sylvester_preserve_broadcasting[True] PASSED [ 69%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py::test_spd_sylvester_and_symmetrization_avoid_large_scale_overflow PASSED [ 73%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py::test_power_of_two_rescaling_has_the_correct_derivative_at_zero_entries PASSED [ 78%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py::test_spd_logarithm_is_finite_at_the_maximum_diagonal_scale PASSED [ 82%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py::test_spd_membership_and_projection_preserve_normal_range_endpoints[small] PASSED [ 86%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py::test_spd_membership_and_projection_preserve_normal_range_endpoints[large] PASSED [ 91%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py::test_smallest_normal_covariance_keeps_sylvester_and_logarithm_derivatives PASSED [ 95%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_spd_audit_fixes.py::test_safe_symmetrization_keeps_linear_forward_reverse_and_higher_derivatives PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_after_watchdog_fix/py311-stable-float64/036-test_spd_audit_fixes.xml -
+============================== slowest durations ===============================
+17.64s call     tests/test_spd_audit_fixes.py::test_log_euclidean_maps_and_metric_have_finite_second_derivatives
+3.56s call     tests/test_spd_audit_fixes.py::test_spectral_trace_hessians_match_analytic_frechet_derivatives[log]
+3.38s call     tests/test_spd_audit_fixes.py::test_matrix_functions_support_third_derivatives_at_identity
+2.53s call     tests/test_spd_audit_fixes.py::test_spd_logarithm_nested_batch_derivatives
+2.27s call     tests/test_spd_audit_fixes.py::test_spd_squared_distance_hessian_at_repeated_spectrum[SPDBuresWasserstein-0.7071067811865475]
+2.15s call     tests/test_spd_audit_fixes.py::test_spd_squared_distance_hessian_at_repeated_spectrum[SPDLogEuclidean-3.386294361119891]
+2.00s call     tests/test_spd_audit_fixes.py::test_smallest_normal_covariance_keeps_sylvester_and_logarithm_derivatives
+1.94s call     tests/test_spd_audit_fixes.py::test_spectral_trace_hessians_match_analytic_frechet_derivatives[exp]
+1.67s call     tests/test_spd_audit_fixes.py::test_spd_squared_distance_hessian_at_repeated_spectrum[SPDAffineInvariant-3.386294361119891]
+1.50s call     tests/test_spd_audit_fixes.py::test_spd_frechet_maps_and_sylvester_preserve_broadcasting[False]
+0.80s call     tests/test_spd_audit_fixes.py::test_spd_membership_and_projection_preserve_normal_range_endpoints[large]
+0.77s call     tests/test_spd_audit_fixes.py::test_spd_membership_and_projection_preserve_normal_range_endpoints[small]
+0.55s call     tests/test_spd_audit_fixes.py::test_spd_sylvester_implicit_derivative_satisfies_differentiated_equation
+0.53s call     tests/test_spd_audit_fixes.py::test_spectral_trace_hessians_match_analytic_frechet_derivatives[sqrt]
+0.36s call     tests/test_spd_audit_fixes.py::test_spectral_trace_hessians_match_analytic_frechet_derivatives[invsqrt]
+0.26s call     tests/test_spd_audit_fixes.py::test_spd_frechet_maps_and_sylvester_preserve_broadcasting[True]
+0.26s call     tests/test_spd_audit_fixes.py::test_safe_symmetrization_keeps_linear_forward_reverse_and_higher_derivatives
+0.24s call     tests/test_spd_audit_fixes.py::test_power_of_two_rescaling_has_the_correct_derivative_at_zero_entries
+0.14s call     tests/test_spd_audit_fixes.py::test_spd_sylvester_and_symmetrization_avoid_large_scale_overflow
+0.10s call     tests/test_spd_audit_fixes.py::test_spd_logarithm_is_finite_at_the_maximum_diagonal_scale
+0.07s call     tests/test_spd_audit_fixes.py::test_log_frechet_resolves_nearby_eigenvalues_at_large_and_small_scales[-70.0]
+0.01s call     tests/test_spd_audit_fixes.py::test_log_frechet_resolves_nearby_eigenvalues_at_large_and_small_scales[0.0]
+0.01s call     tests/test_spd_audit_fixes.py::test_log_frechet_resolves_nearby_eigenvalues_at_large_and_small_scales[70.0]
+
+(46 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================= 23 passed in 42.95s ==============================

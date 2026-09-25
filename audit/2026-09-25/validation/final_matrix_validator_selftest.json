@@ -1,0 +1,146 @@
+{
+  "baseline": {
+    "counts": {
+      "collected": 1147,
+      "junit_cases": 1148,
+      "passed": 1146,
+      "skipped": 2
+    },
+    "coverage": {
+      "excluded_examples": [
+        "examples/largest_eigenvector.py",
+        "examples/spd_frechet_mean.py"
+      ],
+      "global": {
+        "covered_branches": 2072,
+        "covered_lines": 10778,
+        "module_count": 64,
+        "num_branches": 2560,
+        "num_statements": 11435,
+        "percent": 91.81850660950339,
+        "threshold": 85
+      },
+      "learning": {
+        "covered_branches": 1186,
+        "covered_lines": 4091,
+        "module_count": 21,
+        "num_branches": 1270,
+        "num_statements": 4176,
+        "percent": 96.89680499449138,
+        "threshold": 95
+      }
+    },
+    "status": "passed"
+  },
+  "baseline_validation_passed": true,
+  "cases": [
+    {
+      "case": "changed source hash",
+      "reason": "source changed during py311-min-float32",
+      "rejected": true
+    },
+    {
+      "case": "corrupted installed hash",
+      "reason": "installed-package hash manifest mismatch: py311-min-float32",
+      "rejected": true
+    },
+    {
+      "case": "deselected test",
+      "reason": "deselected tests: tests/test_benchmarks.py",
+      "rejected": true
+    },
+    {
+      "case": "changed aggregate count",
+      "reason": "aggregate test counts differ: py311-min-float32",
+      "rejected": true
+    },
+    {
+      "case": "missing test file",
+      "reason": "incomplete full suite: py311-min-float32",
+      "rejected": true
+    },
+    {
+      "case": "missing runtime call",
+      "reason": "incomplete test execution: tests/test_benchmarks.py::test_benchmark_modules_return_solver_rows",
+      "rejected": true
+    },
+    {
+      "case": "duplicate test phase",
+      "reason": "duplicate execution phase: tests/test_benchmarks.py",
+      "rejected": true
+    },
+    {
+      "case": "JUnit test identity mismatch",
+      "reason": "JUnit identities differ from collection: tests/test_benchmarks.py",
+      "rejected": true
+    },
+    {
+      "case": "wrong skipped test despite correct skip count",
+      "reason": "unexpected skipped test: py311-min-float32",
+      "rejected": true
+    },
+    {
+      "case": "JUnit skip attached to wrong runtime test",
+      "reason": "JUnit skip identities differ from execution: tests/test_learning_embedding_metric.py",
+      "rejected": true
+    },
+    {
+      "case": "wrong recorded SciPy version",
+      "reason": "wrong recorded dependency versions: py311-min-float32",
+      "rejected": true
+    },
+    {
+      "case": "wrong saved ml-dtypes pin",
+      "reason": "installation dependency pins differ: py311-min-float32",
+      "rejected": true
+    },
+    {
+      "case": "changed live opt-einsum metadata",
+      "reason": "installed dependencies changed: py311-min-float32",
+      "rejected": true
+    },
+    {
+      "case": "coverage missing module",
+      "reason": "coverage omits core modules or includes unexpected modules",
+      "rejected": true
+    },
+    {
+      "case": "coverage lacks branches",
+      "reason": "coverage lacks branches",
+      "rejected": true
+    },
+    {
+      "case": "fabricated coverage totals",
+      "reason": "coverage totals mismatch",
+      "rejected": true
+    },
+    {
+      "case": "rounded/fabricated coverage percentage",
+      "reason": "coverage percentage mismatch",
+      "rejected": true
+    },
+    {
+      "case": "learning coverage below 95 despite self-consistent totals",
+      "reason": "learning coverage below 95%",
+      "rejected": true
+    },
+    {
+      "case": "global coverage below 85 despite self-consistent totals",
+      "reason": "global coverage below 85%",
+      "rejected": true
+    },
+    {
+      "case": "lowered coverage gate",
+      "reason": "coverage thresholds were changed",
+      "rejected": true
+    }
+  ],
+  "checked_utc": "2026-09-25T07:21:56.863501+00:00",
+  "environment": "py311-min-float32",
+  "original_evidence_and_source_unchanged": true,
+  "rejected_corruptions": 20,
+  "seconds": 0.929,
+  "selftest_sha256": "d6983207ae47691436eb8320f47e9194731e594af2f7aa618552bcc88c81654b",
+  "status": "passed",
+  "validator_sha256": "7c8ec36beddeb9cefc04b6c8c78a736e18510ae37961d4f9eae2d605932490b7"
+}

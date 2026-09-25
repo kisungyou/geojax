@@ -11,6 +11,7 @@ from ._data import ManifoldData, as_manifold_data
 from ._results import MetricRanksResult, RobustLocationResult
 from ._statistics import (
     _gradient_tolerances,
+    _positive_weight_data,
     _validated_point,
     frechet_mean,
     frechet_median,
@@ -309,10 +310,11 @@ def geodesic_m_estimator(
         base_weights,
         unnormalized_effective_weights / jnp.maximum(effective_mass, mass_floor),
     )
+    active = jnp.flatnonzero(unnormalized_effective_weights > 0.0)
     gradient = weighted_tangent_sum(
         manifold,
-        manifold.log(point, adapted.values),
-        unnormalized_effective_weights,
+        manifold.log(point, take_samples(manifold, adapted.values, active)),
+        unnormalized_effective_weights[active],
     )
     gradient_norm = manifold.norm(point, gradient)
     converged = bool(movement_stopped and inner_converged and gradient_norm <= effective_tol)
@@ -366,6 +368,7 @@ def geodesic_spatial_depth(
     queries = _prepare(manifold, points, "geodesic_spatial_depth")
     reference = _prepare(manifold, reference_data, "geodesic_spatial_depth")
     weights = normalize_weights(reference.n_samples, sample_weight)
+    reference, weights = _positive_weight_data(manifold, reference, weights)
     depths = []
     for index in range(queries.n_samples):
         point = take_point(manifold, queries.values, index)

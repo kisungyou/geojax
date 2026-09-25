@@ -8,6 +8,8 @@ from typing import Any, Sequence, Tuple, Union
 import jax
 import jax.numpy as jnp
 
+from ._numerics import nonnegative
+
 from .base import (
     ExactGeometryMixin,
     as_sample_shape,
@@ -90,8 +92,13 @@ class Hyperboloid(ExactGeometryMixin):
     def project(self, x: Array) -> Array:
         x = self._check_shape(x, name="x")
         spatial = x[..., 1:]
-        spatial_norm = stable_norm(spatial, axis=-1, keepdims=True)
-        time = jnp.hypot(jnp.ones_like(spatial_norm), spatial_norm)
+        # Including the constant coordinate keeps the norm away from its
+        # nonsmooth origin, retaining the correct curvature at spatial zero.
+        time = stable_norm(
+            jnp.concatenate([jnp.ones_like(x[..., :1]), spatial], axis=-1),
+            axis=-1,
+            keepdims=True,
+        )
         return jnp.concatenate([time, spatial], axis=-1)
 
     def tangent_project(self, x: Array, u: Array) -> Array:
@@ -113,7 +120,7 @@ class Hyperboloid(ExactGeometryMixin):
     def exp(self, x: Array, u: Array) -> Array:
         x = self.project(x)
         u = self.tangent_project(x, u)
-        r2 = jnp.maximum(self.inner(x, u, u), 0.0)[..., None]
+        r2 = nonnegative(self.inner(x, u, u))[..., None]
         result = cosh_from_squared_norm(r2) * x + sinhc_from_squared_norm(r2) * u
         return self.project(result)
 
@@ -159,7 +166,7 @@ class Hyperboloid(ExactGeometryMixin):
     def geodesic_flow(self, x: Array, v: Array, t: float | Array = 1.0) -> tuple[Array, Array]:
         x = self.project(x)
         v = self.tangent_project(x, v)
-        r2 = jnp.maximum(self.inner(x, v, v), 0.0)[..., None]
+        r2 = nonnegative(self.inner(x, v, v))[..., None]
         t_array = jnp.asarray(t)
         t_array = jnp.reshape(t_array, t_array.shape + (1,))
         tr2 = t_array * t_array * r2

@@ -1,0 +1,106 @@
+PID 30677
+START CELL 0 09:59:59
+data shape: (7, 2, 2)
+all observations are SPD: True
+END CELL 0 SECONDS 6.237720625002112
+START CELL 1 10:00:05
+INITIAL CODING DONE 10:00:36
+Timeout (0:02:00)!
+Thread 0x00000001efba2180 (most recent call first):
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/interpreters/mlir.py", line 2120 in jaxpr_subcomp
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/lax/control_flow/conditionals.py", line 1039 in _cond_lowering
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/interpreters/mlir.py", line 2468 in lower_per_platform
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/interpreters/mlir.py", line 2343 in _uncached_lowering
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/interpreters/mlir.py", line 2289 in _emit_lowering_rule_as_fun
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/interpreters/mlir.py", line 2204 in _cached_lowering
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/interpreters/mlir.py", line 2129 in jaxpr_subcomp
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/interpreters/mlir.py", line 1948 in lower_jaxpr_to_fun
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/interpreters/mlir.py", line 1364 in lower_jaxpr_to_module
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/interpreters/pxla.py", line 732 in _cached_lowering_to_hlo
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/interpreters/pxla.py", line 1127 in lower_sharding_computation
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/profiler.py", line 384 in wrapper
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/pjit.py", line 1263 in _pjit_lower
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/pjit.py", line 1083 in _resolve_and_lower
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/pjit.py", line 1157 in _pjit_call_impl_python
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/pjit.py", line 140 in _run_python_pjit
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/pjit.py", line 255 in cache_miss
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/traceback_util.py", line 196 in reraise_with_filtered_traceback
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/dispatch.py", line 90 in apply_primitive
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/core.py", line 1220 in process_primitive
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/core.py", line 668 in bind_with_trace
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/core.py", line 660 in bind
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/lax/control_flow/conditionals.py", line 853 in _cond_transpose_fancy
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/interpreters/ad.py", line 441 in backward_pass3
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/api.py", line 1728 in _vjp3_bwd
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/tree_util.py", line 495 in __call__
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/api.py", line 1840 in __call__
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/api.py", line 546 in value_and_grad_f
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/traceback_util.py", line 196 in reraise_with_filtered_traceback
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/api.py", line 465 in grad_f
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/traceback_util.py", line 196 in reraise_with_filtered_traceback
+  File "/private/tmp/geojax-corrections/documentation/geojax/optimization/minimize.py", line 531 in gradient_value
+  File "/private/tmp/geojax-corrections/documentation/geojax/optimization/_conjugate_gradient.py", line 316 in _solve_conjugate_gradient
+  File "/private/tmp/geojax-corrections/documentation/geojax/optimization/_conjugate_gradient.py", line 68 in solve
+  File "/private/tmp/geojax-corrections/documentation/geojax/optimization/minimize.py", line 124 in solve
+  File "/private/tmp/geojax-corrections/documentation/geojax/learning/_dictionary.py", line 285 in _optimize_atoms
+  File "/private/tmp/geojax-corrections/documentation/geojax/learning/_dictionary.py", line 371 in manifold_dictionary_learning
+  File "cell1", line 11 in <module>
+  File "/private/tmp/geojax-corrections/probe_dictionary_docs.py", line 16 in <module>
+Timeout (0:02:00)!
+Thread 0x00000001efba2180 (most recent call first):
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/compiler.py", line 369 in backend_compile_and_load
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/profiler.py", line 384 in wrapper
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/compiler.py", line 753 in _compile_and_write_cache
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/compiler.py", line 485 in compile_or_get_cached
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/interpreters/pxla.py", line 1561 in _cached_compilation
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/interpreters/pxla.py", line 1779 in from_hlo
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/interpreters/pxla.py", line 1246 in compile
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/pjit.py", line 1167 in _pjit_call_impl_python
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/pjit.py", line 140 in _run_python_pjit
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/pjit.py", line 255 in cache_miss
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/traceback_util.py", line 196 in reraise_with_filtered_traceback
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/dispatch.py", line 90 in apply_primitive
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/core.py", line 1220 in process_primitive
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/core.py", line 668 in bind_with_trace
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/core.py", line 660 in bind
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/lax/control_flow/conditionals.py", line 625 in _cond_partial_eval
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/interpreters/partial_eval.py", line 181 in process_primitive
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/core.py", line 668 in bind_with_trace
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/core.py", line 660 in bind
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/lax/control_flow/conditionals.py", line 316 in cond
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/traceback_util.py", line 196 in reraise_with_filtered_traceback
+  File "/private/tmp/geojax-corrections/documentation/geojax/geometry/spd.py", line 268 in _spd_project_differentiable_jvp
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/api_util.py", line 235 in _prepend_static_args
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/custom_derivatives.py", line 311 in _flatten_jvp
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/linear_util.py", line 212 in call_wrapped
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/interpreters/ad.py", line 842 in _f_jvp
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/linear_util.py", line 212 in call_wrapped
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/interpreters/ad.py", line 984 in linearize_from_jvp
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/interpreters/ad.py", line 849 in process_custom_jvp_call
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/custom_derivatives.py", line 391 in bind_with_trace
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/core.py", line 660 in bind
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/custom_derivatives.py", line 301 in __call__
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/traceback_util.py", line 196 in reraise_with_filtered_traceback
+  File "/private/tmp/geojax-corrections/documentation/geojax/geometry/spd.py", line 441 in project
+  File "/private/tmp/geojax-corrections/documentation/geojax/geometry/spd.py", line 448 in logm
+  File "/private/tmp/geojax-corrections/documentation/geojax/geometry/spd.py", line 485 in log
+  File "/private/tmp/geojax-corrections/documentation/geojax/learning/_dictionary.py", line 265 in objective
+  File "/private/tmp/geojax-corrections/documentation/geojax/optimization/minimize.py", line 526 in scalar_cost
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/api_util.py", line 264 in _argnums_partial
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/api_util.py", line 91 in flatten_fun_nokwargs
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/linear_util.py", line 212 in call_wrapped
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/interpreters/ad.py", line 305 in direct_linearize
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/interpreters/ad.py", line 330 in linearize
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/api.py", line 1675 in _vjp
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/api.py", line 542 in value_and_grad_f
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/traceback_util.py", line 196 in reraise_with_filtered_traceback
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/api.py", line 465 in grad_f
+  File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jax/_src/traceback_util.py", line 196 in reraise_with_filtered_traceback
+  File "/private/tmp/geojax-corrections/documentation/geojax/optimization/minimize.py", line 531 in gradient_value
+  File "/private/tmp/geojax-corrections/documentation/geojax/optimization/_conjugate_gradient.py", line 316 in _solve_conjugate_gradient
+  File "/private/tmp/geojax-corrections/documentation/geojax/optimization/_conjugate_gradient.py", line 68 in solve
+  File "/private/tmp/geojax-corrections/documentation/geojax/optimization/minimize.py", line 124 in solve
+  File "/private/tmp/geojax-corrections/documentation/geojax/learning/_dictionary.py", line 285 in _optimize_atoms
+  File "/private/tmp/geojax-corrections/documentation/geojax/learning/_dictionary.py", line 371 in manifold_dictionary_learning
+  File "cell1", line 11 in <module>
+  File "/private/tmp/geojax-corrections/probe_dictionary_docs.py", line 16 in <module>

@@ -1,0 +1,120 @@
+{
+  "runs": [
+    {
+      "name": "final_range_polar_current_float64_shared",
+      "returncode": 0,
+      "elapsed_seconds": 280.0532086670064,
+      "command": [
+        "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float64/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_low_rank.py",
+        "tests/test_low_rank_audit_fixes.py",
+        "tests/test_lie_groups.py",
+        "tests/test_logarithm_audit_fixes.py",
+        "-q",
+        "--durations=5"
+      ],
+      "passed": 85,
+      "pytest_seconds": 273.29,
+      "log": "audit/2026-09-10/corrections/final_range_polar_current_float64_shared.log"
+    },
+    {
+      "name": "final_range_polar_current_float32",
+      "returncode": 0,
+      "elapsed_seconds": 259.25080216600327,
+      "command": [
+        "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float64/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_low_rank.py",
+        "tests/test_low_rank_audit_fixes.py",
+        "tests/test_lie_groups.py",
+        "tests/test_logarithm_audit_fixes.py",
+        "-q",
+        "--durations=5"
+      ],
+      "passed": 85,
+      "pytest_seconds": 246.55,
+      "log": "audit/2026-09-10/corrections/final_range_polar_current_float32.log"
+    },
+    {
+      "name": "final_range_polar_minimum_float64",
+      "returncode": 0,
+      "elapsed_seconds": 204.49687237499893,
+      "command": [
+        "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float64/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_low_rank.py",
+        "tests/test_low_rank_audit_fixes.py",
+        "tests/test_lie_groups.py",
+        "tests/test_logarithm_audit_fixes.py",
+        "-q",
+        "--durations=5"
+      ],
+      "passed": 85,
+      "pytest_seconds": 198.68,
+      "log": "audit/2026-09-10/corrections/final_range_polar_minimum_float64.log"
+    },
+    {
+      "name": "final_range_polar_minimum_float32",
+      "returncode": 0,
+      "elapsed_seconds": 156.006268834004,
+      "command": [
+        "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float64/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_low_rank.py",
+        "tests/test_low_rank_audit_fixes.py",
+        "tests/test_lie_groups.py",
+        "tests/test_logarithm_audit_fixes.py",
+        "-q",
+        "--durations=5"
+      ],
+      "passed": 85,
+      "pytest_seconds": 151.76,
+      "log": "audit/2026-09-10/corrections/final_range_polar_minimum_float32.log"
+    }
+  ],
+  "versions": {
+    "current": {
+      "python": "3.12.13",
+      "jax": "0.11.0",
+      "numpy": "2.4.4"
+    },
+    "minimum": {
+      "python": "3.11.15",
+      "jax": "0.6.0",
+      "numpy": "1.26.4"
+    }
+  },
+  "source_unchanged": true,
+  "changed_files": [],
+  "source_hashes": {
+    "geojax/geometry/_numerics.py": "27b27f69b3c436073840eac2b20c2b8f97d6dbc511eb5ee32ba7a8afa085f1dc",
+    "geojax/geometry/low_rank.py": "d83e46f89cb3f2f02a002bd381019ab6c0aba7fb9777d66ce777c9547830baf2",
+    "geojax/geometry/lie_groups.py": "634330a620fa289d9c43529faa832b9b92b51990f8a6034ad1a969ef3b75f675",
+    "tests/test_low_rank_audit_fixes.py": "3d3dcde3d94e7f473f7698ca501ca301935da94b489fcd02e16964d853ac1d31",
+    "tests/test_logarithm_audit_fixes.py": "4a0fdccb233536a4c618a5fa1cfc6ee2c147d91c9973e075f45d58185d3ea803"
+  },
+  "superseded_runs": [
+    {
+      "name": "final_range_polar_current_float64",
+      "returncode": 0,
+      "elapsed_seconds": 405.12314408300153,
+      "command": [
+        "/Users/kisung/Desktop/develop/geojax/.tox/py312-stable-float64/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_low_rank.py",
+        "tests/test_low_rank_audit_fixes.py",
+        "tests/test_lie_groups.py",
+        "tests/test_logarithm_audit_fixes.py",
+        "-q",
+        "--durations=5"
+      ],
+      "reason": "Before shared range-safe symmetric_part and smallest-normal regression; replaced by current_float64_shared."
+    }
+  ]
+}

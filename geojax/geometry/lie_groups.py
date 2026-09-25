@@ -17,6 +17,7 @@ from .base import (
     validate_positive,
 )
 from ._numerics import matrix_expm, stable_metric_norm, stable_norm, sqrt_nonnegative
+from .shape import _proper_procrustes
 
 Array = Any
 Shape = Union[int, Sequence[int], Tuple[int, ...]]
@@ -43,8 +44,8 @@ def _principal_orthogonal_log(M: Array) -> Array:
     """Principal real skew logarithm away from eigenvalue -1.
 
     Orthogonal matrices are normal, so a unitary eigendecomposition evaluates
-    the principal matrix logarithm.  The custom JVP below supplies its Frechet
-    derivative without differentiating eigenvectors.
+    the principal matrix logarithm. The custom JVP below supplies its group
+    differential without differentiating eigenvectors.
     """
     M = jnp.asarray(M)
     Mc = M.astype(_complex_dtype(M.dtype))
@@ -55,35 +56,97 @@ def _principal_orthogonal_log(M: Array) -> Array:
     return _skew(jnp.real(result)).astype(M.dtype)
 
 
-@_principal_orthogonal_log.defjvp
-def _principal_orthogonal_log_jvp(primals, tangents):
-    (M,), (E,) = primals, tangents
+def _orthogonal_log_frechet(M: Array, E: Array) -> Array:
+    """Spectral inverse of ``D exp(log(M))``, used only by an implicit solve.
+
+    ``custom_linear_solve`` differentiates the defining linear equation, not
+    this eigenbasis calculation.  Its repeated-eigenvalue limit is 1/lambda;
+    no differentiation of nonsymmetric eigenvectors is needed at any order.
+    """
     M = jnp.asarray(M)
     complex_dtype = _complex_dtype(M.dtype)
-    Mc = M.astype(complex_dtype)
-    Ec = jnp.asarray(E).astype(complex_dtype)
-    eigvals, eigvecs = jnp.linalg.eig(Mc)
+    eigvals, eigvecs = jnp.linalg.eig(M.astype(complex_dtype))
     log_eigvals = 1j * jnp.angle(eigvals)
-
     eig_i = eigvals[..., :, None]
     eig_j = eigvals[..., None, :]
     log_i = log_eigvals[..., :, None]
     log_j = log_eigvals[..., None, :]
     denominator = eig_i - eig_j
-    eps = jnp.finfo(M.dtype).eps
-    separated = jnp.abs(denominator) > 32.0 * eps
+    separated = jnp.abs(denominator) > 32.0 * jnp.finfo(M.dtype).eps
     safe_denominator = jnp.where(separated, denominator, jnp.ones_like(denominator))
-    divided_difference = jnp.where(
-        separated,
-        (log_i - log_j) / safe_denominator,
-        1.0 / eig_i,
-    )
-
+    divided_difference = jnp.where(separated, (log_i - log_j) / safe_denominator, 1.0 / eig_i)
     eigvecs_inv = jnp.linalg.inv(eigvecs)
-    rotated_E = eigvecs_inv @ Ec @ eigvecs
-    derivative = eigvecs @ (divided_difference * rotated_E) @ eigvecs_inv
-    tangent_out = _skew(jnp.real(derivative)).astype(M.dtype)
-    return _principal_orthogonal_log(M), tangent_out
+    rotated_E = eigvecs_inv @ jnp.asarray(E).astype(complex_dtype) @ eigvecs
+    result = eigvecs @ (divided_difference * rotated_E) @ eigvecs_inv
+    return jnp.real(result).astype(M.dtype)
+
+
+@_principal_orthogonal_log.defjvp
+def _principal_orthogonal_log_jvp(primals, tangents):
+    (M,), (E,) = primals, tangents
+    logarithm = _principal_orthogonal_log(M)
+
+    rotation = matrix_expm(logarithm)
+
+    def operator(H):
+        derivative = jax.jvp(matrix_expm, (logarithm,), (_skew(H),))[1]
+        return _skew(_transpose(rotation) @ derivative) + _sym(H)
+
+    def solve_with_rotation(operator, rhs, point):
+        def spectral(B):
+            return _skew(_orthogonal_log_frechet(point, point @ _skew(B))) + _sym(B)
+
+        solution = spectral(rhs)
+        # The ambient spectral inverse can amplify roundoff in symmetric
+        # modes near a pi rotation even when its skew restriction is regular.
+        # Refine against the actual tangent operator to remove those errors.
+        for _ in range(2):
+            solution = solution + spectral(rhs - operator(solution))
+        return solution
+
+    # Invert the left-trivialized differential on skew matrices. The identity
+    # on the symmetric complement makes this a genuine full-space inverse for
+    # implicit AD, without introducing the artificial ambient singularity at
+    # a single pi rotation. The adjoint is the same operator at -logarithm.
+    derivative = jax.lax.custom_linear_solve(
+        operator,
+        _skew(_transpose(rotation) @ E),
+        solve=lambda op, rhs: solve_with_rotation(op, rhs, rotation),
+        transpose_solve=lambda op, rhs: solve_with_rotation(op, rhs, _transpose(rotation)),
+    )
+    return logarithm, _skew(derivative)
+
+
+def _orthogonal_cut_mask(M: Array) -> Array:
+    """Detect the principal-log boundary without differentiating the test."""
+    M = jax.lax.stop_gradient(M)
+    identity = jnp.eye(M.shape[-1], dtype=M.dtype)
+    distance = jnp.min(jnp.linalg.svd(M + identity, compute_uv=False), axis=-1)
+    return distance <= 32.0 * M.shape[-1] * jnp.finfo(M.dtype).eps
+
+
+@jax.custom_jvp
+def _orthogonal_squared_distance(M: Array) -> Array:
+    """Squared principal eigenangle norm, including its finite cut value."""
+    logarithm = _principal_orthogonal_log(M)
+    local_value = jnp.sum(logarithm * logarithm, axis=(-2, -1))
+    eigenvalues = jnp.linalg.eigvals(M.astype(_complex_dtype(M.dtype)))
+    cut_value = jnp.sum(jnp.angle(eigenvalues) ** 2, axis=-1).astype(M.dtype)
+    return jnp.where(_orthogonal_cut_mask(M), cut_value, local_value)
+
+
+@_orthogonal_squared_distance.defjvp
+def _orthogonal_squared_distance_jvp(primals, tangents):
+    (M,), (E,) = primals, tangents
+    value = _orthogonal_squared_distance(M)
+    logarithm = _principal_orthogonal_log(M)
+    # At an orthogonal M, D ||log(M)||_F^2[E] = 2 <M log(M), E>.
+    # This first variation also removes the inactive eigenangle fallback from
+    # differentiated objectives. At a genuine cut, the distance remains finite
+    # but there is no unique derivative, which is explicitly marked NaN.
+    gradient = 2.0 * (M @ logarithm)
+    gradient = jnp.where(_orthogonal_cut_mask(M)[..., None, None], jnp.nan, gradient)
+    return value, jnp.sum(gradient * E, axis=(-2, -1))
 
 
 @dataclass(frozen=True, init=False)
@@ -141,13 +204,18 @@ class SpecialOrthogonal(ExactGeometryMixin):
         return orthogonal & orientation
 
     def project(self, A: Array) -> Array:
+        """Nearest proper orthogonal factor, differentiable at unique optima.
+
+        Repeated positive singular values and regular rank-(n-1) inputs are
+        supported. On an orientation-reversing input, a tie in the smallest
+        singular value makes the optimum nonunique and its derivative
+        undefined; the primal still returns a selected closest rotation.
+        """
         A = self._check_shape(A, name="A")
-        U, _, Vh = jnp.linalg.svd(A, full_matrices=False)
-        provisional = U @ Vh
-        last_sign = jnp.where(jnp.linalg.det(provisional) < 0.0, -1.0, 1.0)
-        signs = jnp.ones(U.shape[:-1], dtype=U.dtype)
-        signs = signs.at[..., -1].set(last_sign)
-        return (U * signs[..., None, :]) @ Vh
+        # This is the same unique orientation-preserving polar problem as
+        # shape alignment. Its implicit derivative survives repeated singular
+        # values; raw singular-vector derivatives do not, even at identity.
+        return _proper_procrustes(A)
 
     def is_tangent(self, R: Array, U: Array, atol: float | None = None) -> Array:
         tol = self.atol if atol is None else atol
@@ -175,9 +243,7 @@ class SpecialOrthogonal(ExactGeometryMixin):
     def _relative_log(self, relative: Array) -> Array:
         relative = jnp.asarray(relative)
         log_relative = _principal_orthogonal_log(relative)
-        identity = jnp.eye(self.n, dtype=relative.dtype)
-        distance_to_cut = jnp.min(jnp.linalg.svd(relative + identity, compute_uv=False), axis=-1)
-        at_cut = distance_to_cut <= 32.0 * self.n * jnp.finfo(relative.dtype).eps
+        at_cut = _orthogonal_cut_mask(relative)
         return jnp.where(at_cut[..., None, None], jnp.nan, log_relative)
 
     def exp(self, R: Array, U: Array) -> Array:
@@ -201,19 +267,7 @@ class SpecialOrthogonal(ExactGeometryMixin):
     def squared_dist(self, R: Array, Q: Array) -> Array:
         R, Q = self._check_shapes(("R", R), ("Q", Q))
         relative = _transpose(R) @ Q
-        logarithm = _principal_orthogonal_log(relative)
-        local_value = jnp.sum(logarithm * logarithm, axis=(-2, -1))
-
-        # A relative eigenvalue -1 makes the minimizing logarithm nonunique,
-        # but not the distance. Every minimizing logarithm has squared
-        # Frobenius norm equal to the sum of squared principal eigenangles.
-        eigenvalues = jnp.linalg.eigvals(relative.astype(_complex_dtype(relative.dtype)))
-        cut_value = jnp.sum(jnp.angle(eigenvalues) ** 2, axis=-1).astype(relative.dtype)
-        identity = jnp.eye(self.n, dtype=relative.dtype)
-        distance_to_cut = jnp.min(jnp.linalg.svd(relative + identity, compute_uv=False), axis=-1)
-        at_cut = distance_to_cut <= 32.0 * self.n * jnp.finfo(relative.dtype).eps
-        value = jnp.where(at_cut, cut_value, local_value)
-        return jnp.maximum(value, 0.0)
+        return _orthogonal_squared_distance(relative)
 
     def transport(self, R: Array, Q: Array, U: Array) -> Array:
         """Parallel transport along the selected shortest geodesic."""
@@ -433,7 +487,7 @@ class SpecialEuclidean(ExactGeometryMixin):
     def squared_dist(self, G: Array, H: Array) -> Array:
         rotation_dist_sq = self._rotations.squared_dist(self.rotation(G), self.rotation(H))
         translation_dist_sq = jnp.sum((self.translation(H) - self.translation(G)) ** 2, axis=-1)
-        return jnp.maximum(rotation_dist_sq + translation_dist_sq, 0.0)
+        return rotation_dist_sq + translation_dist_sq
 
     def transport(self, G: Array, H: Array, U: Array) -> Array:
         G = self.project(G)

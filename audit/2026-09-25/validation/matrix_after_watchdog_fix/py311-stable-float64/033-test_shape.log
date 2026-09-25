@@ -1,0 +1,28 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float64/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_shape.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_after_watchdog_fix/py311-stable-float64/033-test_shape.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_after_watchdog_fix/py311-stable-float64/033-test_shape.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float64/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.11.15, JAX 0.10.2, NumPy 2.4.4, float64
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 6 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape.py::test_kendall_shape_constraints_dimension_and_rotation_invariance PASSED [ 16%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape.py::test_kendall_horizontal_tangent_and_local_roundtrip PASSED [ 33%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape.py::test_kendall_planar_collinear_shapes_are_regular PASSED [ 50%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape.py::test_kendall_three_dimensional_rank_one_shape_is_singular PASSED [ 66%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape.py::test_kendall_log_rejects_nonunique_procrustes_alignment PASSED [ 83%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_shape.py::test_kendall_squared_distance_agrees_with_distance PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_after_watchdog_fix/py311-stable-float64/033-test_shape.xml -
+============================== slowest durations ===============================
+1.76s call     tests/test_shape.py::test_kendall_shape_constraints_dimension_and_rotation_invariance
+1.11s call     tests/test_shape.py::test_kendall_horizontal_tangent_and_local_roundtrip
+0.67s call     tests/test_shape.py::test_kendall_planar_collinear_shapes_are_regular
+0.38s call     tests/test_shape.py::test_kendall_log_rejects_nonunique_procrustes_alignment
+0.36s call     tests/test_shape.py::test_kendall_three_dimensional_rank_one_shape_is_singular
+0.06s call     tests/test_shape.py::test_kendall_squared_distance_agrees_with_distance
+
+(12 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================== 6 passed in 4.47s ===============================

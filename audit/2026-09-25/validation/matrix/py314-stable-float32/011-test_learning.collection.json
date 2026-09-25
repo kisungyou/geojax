@@ -1,0 +1,503 @@
+{
+  "collection_reports": [],
+  "deselected": [],
+  "exitstatus": 0,
+  "nodeids": [
+    "tests/test_learning.py::test_pairwise_distances_squared_matches_explicit_sphere_computation",
+    "tests/test_learning.py::test_pairwise_distances_supports_product_pytrees",
+    "tests/test_learning.py::test_pairwise_distances_supports_nested_product_containers",
+    "tests/test_learning.py::test_pairwise_distances_validates_eager_inputs_but_remains_jittable",
+    "tests/test_learning.py::test_pairwise_distances_uses_the_requested_distance_kernel_without_overflow",
+    "tests/test_learning.py::test_geodesic_interpolation_is_batched_jittable_and_has_correct_endpoints[M0]",
+    "tests/test_learning.py::test_geodesic_interpolation_is_batched_jittable_and_has_correct_endpoints[M1]",
+    "tests/test_learning.py::test_geodesic_interpolation_combines_time_and_endpoint_batch_axes",
+    "tests/test_learning.py::test_geodesic_interpolation_rejects_invalid_points_and_times_eagerly",
+    "tests/test_learning.py::test_learning_helpers_reject_retraction_proxy_geometry",
+    "tests/test_learning.py::test_geodesic_interpolation_rejects_numerical_local_logarithm",
+    "tests/test_learning.py::test_tangent_space_map_keeps_framework_parameters_outside_geojax",
+    "tests/test_learning.py::test_tangent_space_map_rejects_a_malformed_transform_output",
+    "tests/test_learning.py::test_pairwise_distances_requires_an_actual_boolean_flag[0]",
+    "tests/test_learning.py::test_pairwise_distances_requires_an_actual_boolean_flag[1]",
+    "tests/test_learning.py::test_pairwise_distances_requires_an_actual_boolean_flag[None]",
+    "tests/test_learning.py::test_pairwise_distances_requires_an_actual_boolean_flag[yes]",
+    "tests/test_learning.py::test_tangent_space_map_requires_a_callable_transform",
+    "tests/test_learning.py::test_nearest_neighbors_validates_flags_layout_and_requested_count",
+    "tests/test_learning.py::test_geometry_helpers_reject_nonfinite_and_nontangent_intermediate_values",
+    "tests/test_learning.py::test_geodesic_interpolation_rejects_complex_times",
+    "tests/test_learning.py::test_compiled_deterministic_autoencoder_step_decreases_loss_and_preserves_latents[M0]",
+    "tests/test_learning.py::test_compiled_deterministic_autoencoder_step_decreases_loss_and_preserves_latents[M1]",
+    "tests/test_learning.py::test_intrinsic_graph_aggregation_is_compiled_differentiable_and_permutation_equivariant[M0]",
+    "tests/test_learning.py::test_intrinsic_graph_aggregation_is_compiled_differentiable_and_permutation_equivariant[M1]",
+    "tests/test_learning.py::test_intrinsic_graph_aggregation_is_compiled_differentiable_and_permutation_equivariant[M2]"
+  ],
+  "runtime_reports": [
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_squared_matches_explicit_sphere_computation",
+      "outcome": "passed",
+      "seconds": 0.00020583398872986436,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_squared_matches_explicit_sphere_computation",
+      "outcome": "passed",
+      "seconds": 10.022774458979256,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_squared_matches_explicit_sphere_computation",
+      "outcome": "passed",
+      "seconds": 0.0004522919771261513,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_supports_product_pytrees",
+      "outcome": "passed",
+      "seconds": 0.00024937500711530447,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_supports_product_pytrees",
+      "outcome": "passed",
+      "seconds": 6.379871499957517,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_supports_product_pytrees",
+      "outcome": "passed",
+      "seconds": 0.00030329200671985745,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_supports_nested_product_containers",
+      "outcome": "passed",
+      "seconds": 0.00029625004390254617,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_supports_nested_product_containers",
+      "outcome": "passed",
+      "seconds": 6.284237791958731,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_supports_nested_product_containers",
+      "outcome": "passed",
+      "seconds": 0.001131540979258716,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_validates_eager_inputs_but_remains_jittable",
+      "outcome": "passed",
+      "seconds": 0.000526708026882261,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_validates_eager_inputs_but_remains_jittable",
+      "outcome": "passed",
+      "seconds": 0.5100969159975648,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_validates_eager_inputs_but_remains_jittable",
+      "outcome": "passed",
+      "seconds": 0.00011116702808067203,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_uses_the_requested_distance_kernel_without_overflow",
+      "outcome": "passed",
+      "seconds": 0.0002315840101800859,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_uses_the_requested_distance_kernel_without_overflow",
+      "outcome": "passed",
+      "seconds": 1.674252083990723,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_uses_the_requested_distance_kernel_without_overflow",
+      "outcome": "passed",
+      "seconds": 0.0002020419924519956,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_geodesic_interpolation_is_batched_jittable_and_has_correct_endpoints[M0]",
+      "outcome": "passed",
+      "seconds": 0.00058058399008587,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_geodesic_interpolation_is_batched_jittable_and_has_correct_endpoints[M0]",
+      "outcome": "passed",
+      "seconds": 4.7949031660100445,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_geodesic_interpolation_is_batched_jittable_and_has_correct_endpoints[M0]",
+      "outcome": "passed",
+      "seconds": 0.0005330830463208258,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_geodesic_interpolation_is_batched_jittable_and_has_correct_endpoints[M1]",
+      "outcome": "passed",
+      "seconds": 0.0004977500066161156,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_geodesic_interpolation_is_batched_jittable_and_has_correct_endpoints[M1]",
+      "outcome": "passed",
+      "seconds": 3.0246803750051185,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_geodesic_interpolation_is_batched_jittable_and_has_correct_endpoints[M1]",
+      "outcome": "passed",
+      "seconds": 0.0005607919883914292,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_geodesic_interpolation_combines_time_and_endpoint_batch_axes",
+      "outcome": "passed",
+      "seconds": 0.00021337502403184772,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_geodesic_interpolation_combines_time_and_endpoint_batch_axes",
+      "outcome": "passed",
+      "seconds": 4.247449917020276,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_geodesic_interpolation_combines_time_and_endpoint_batch_axes",
+      "outcome": "passed",
+      "seconds": 0.0004272079677321017,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_geodesic_interpolation_rejects_invalid_points_and_times_eagerly",
+      "outcome": "passed",
+      "seconds": 0.0002749999985098839,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_geodesic_interpolation_rejects_invalid_points_and_times_eagerly",
+      "outcome": "passed",
+      "seconds": 0.5554373339982703,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_geodesic_interpolation_rejects_invalid_points_and_times_eagerly",
+      "outcome": "passed",
+      "seconds": 0.00019874999998137355,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_learning_helpers_reject_retraction_proxy_geometry",
+      "outcome": "passed",
+      "seconds": 0.0001961250090971589,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_learning_helpers_reject_retraction_proxy_geometry",
+      "outcome": "passed",
+      "seconds": 1.2294572920072824,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_learning_helpers_reject_retraction_proxy_geometry",
+      "outcome": "passed",
+      "seconds": 0.0001533749746158719,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_geodesic_interpolation_rejects_numerical_local_logarithm",
+      "outcome": "passed",
+      "seconds": 0.00012266705743968487,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_geodesic_interpolation_rejects_numerical_local_logarithm",
+      "outcome": "passed",
+      "seconds": 1.6453878339962102,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_geodesic_interpolation_rejects_numerical_local_logarithm",
+      "outcome": "passed",
+      "seconds": 0.00028091605054214597,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_tangent_space_map_keeps_framework_parameters_outside_geojax",
+      "outcome": "passed",
+      "seconds": 0.00018750003073364496,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_tangent_space_map_keeps_framework_parameters_outside_geojax",
+      "outcome": "passed",
+      "seconds": 6.992266000015661,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_tangent_space_map_keeps_framework_parameters_outside_geojax",
+      "outcome": "passed",
+      "seconds": 0.0002892500488087535,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_tangent_space_map_rejects_a_malformed_transform_output",
+      "outcome": "passed",
+      "seconds": 0.00019691704073920846,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_tangent_space_map_rejects_a_malformed_transform_output",
+      "outcome": "passed",
+      "seconds": 0.24937945802230388,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_tangent_space_map_rejects_a_malformed_transform_output",
+      "outcome": "passed",
+      "seconds": 0.0002983750309795141,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_requires_an_actual_boolean_flag[0]",
+      "outcome": "passed",
+      "seconds": 0.001659250003285706,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_requires_an_actual_boolean_flag[0]",
+      "outcome": "passed",
+      "seconds": 0.015557958977296948,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_requires_an_actual_boolean_flag[0]",
+      "outcome": "passed",
+      "seconds": 0.0004717910196632147,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_requires_an_actual_boolean_flag[1]",
+      "outcome": "passed",
+      "seconds": 0.0005830830195918679,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_requires_an_actual_boolean_flag[1]",
+      "outcome": "passed",
+      "seconds": 0.0008923750137910247,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_requires_an_actual_boolean_flag[1]",
+      "outcome": "passed",
+      "seconds": 0.0002871250035241246,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_requires_an_actual_boolean_flag[None]",
+      "outcome": "passed",
+      "seconds": 0.0008386250119656324,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_requires_an_actual_boolean_flag[None]",
+      "outcome": "passed",
+      "seconds": 0.002261583984363824,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_requires_an_actual_boolean_flag[None]",
+      "outcome": "passed",
+      "seconds": 0.0005657500005327165,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_requires_an_actual_boolean_flag[yes]",
+      "outcome": "passed",
+      "seconds": 0.00026583397993817925,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_requires_an_actual_boolean_flag[yes]",
+      "outcome": "passed",
+      "seconds": 0.0004877920146100223,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_pairwise_distances_requires_an_actual_boolean_flag[yes]",
+      "outcome": "passed",
+      "seconds": 9.516702266409993e-05,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_tangent_space_map_requires_a_callable_transform",
+      "outcome": "passed",
+      "seconds": 0.0005006670253351331,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_tangent_space_map_requires_a_callable_transform",
+      "outcome": "passed",
+      "seconds": 0.004020542022772133,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_tangent_space_map_requires_a_callable_transform",
+      "outcome": "passed",
+      "seconds": 0.0001169589813798666,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_nearest_neighbors_validates_flags_layout_and_requested_count",
+      "outcome": "passed",
+      "seconds": 0.0002602500026114285,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_nearest_neighbors_validates_flags_layout_and_requested_count",
+      "outcome": "passed",
+      "seconds": 4.972403249994386,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_nearest_neighbors_validates_flags_layout_and_requested_count",
+      "outcome": "passed",
+      "seconds": 0.00046145799569785595,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_geometry_helpers_reject_nonfinite_and_nontangent_intermediate_values",
+      "outcome": "passed",
+      "seconds": 0.00034395797410979867,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_geometry_helpers_reject_nonfinite_and_nontangent_intermediate_values",
+      "outcome": "passed",
+      "seconds": 0.2385704170446843,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_geometry_helpers_reject_nonfinite_and_nontangent_intermediate_values",
+      "outcome": "passed",
+      "seconds": 0.0001522079692222178,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_geodesic_interpolation_rejects_complex_times",
+      "outcome": "passed",
+      "seconds": 0.00013587495777755976,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_geodesic_interpolation_rejects_complex_times",
+      "outcome": "passed",
+      "seconds": 0.017673707974608988,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_geodesic_interpolation_rejects_complex_times",
+      "outcome": "passed",
+      "seconds": 0.00011870905291289091,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_compiled_deterministic_autoencoder_step_decreases_loss_and_preserves_latents[M0]",
+      "outcome": "passed",
+      "seconds": 0.0009879170102067292,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_compiled_deterministic_autoencoder_step_decreases_loss_and_preserves_latents[M0]",
+      "outcome": "passed",
+      "seconds": 10.690457083983347,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_compiled_deterministic_autoencoder_step_decreases_loss_and_preserves_latents[M0]",
+      "outcome": "passed",
+      "seconds": 0.000659791985526681,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_compiled_deterministic_autoencoder_step_decreases_loss_and_preserves_latents[M1]",
+      "outcome": "passed",
+      "seconds": 0.0010944170062430203,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_compiled_deterministic_autoencoder_step_decreases_loss_and_preserves_latents[M1]",
+      "outcome": "passed",
+      "seconds": 3.0665358750266023,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_compiled_deterministic_autoencoder_step_decreases_loss_and_preserves_latents[M1]",
+      "outcome": "passed",
+      "seconds": 0.0016173750045709312,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_intrinsic_graph_aggregation_is_compiled_differentiable_and_permutation_equivariant[M0]",
+      "outcome": "passed",
+      "seconds": 0.0007073750020936131,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_intrinsic_graph_aggregation_is_compiled_differentiable_and_permutation_equivariant[M0]",
+      "outcome": "passed",
+      "seconds": 2.830781124997884,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_intrinsic_graph_aggregation_is_compiled_differentiable_and_permutation_equivariant[M0]",
+      "outcome": "passed",
+      "seconds": 0.0010134170297533274,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_intrinsic_graph_aggregation_is_compiled_differentiable_and_permutation_equivariant[M1]",
+      "outcome": "passed",
+      "seconds": 0.0008743330254219472,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_intrinsic_graph_aggregation_is_compiled_differentiable_and_permutation_equivariant[M1]",
+      "outcome": "passed",
+      "seconds": 10.993495957984123,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_intrinsic_graph_aggregation_is_compiled_differentiable_and_permutation_equivariant[M1]",
+      "outcome": "passed",
+      "seconds": 0.00041391700506210327,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_intrinsic_graph_aggregation_is_compiled_differentiable_and_permutation_equivariant[M2]",
+      "outcome": "passed",
+      "seconds": 0.0005346669931896031,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_intrinsic_graph_aggregation_is_compiled_differentiable_and_permutation_equivariant[M2]",
+      "outcome": "passed",
+      "seconds": 6.981011208961718,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_learning.py::test_intrinsic_graph_aggregation_is_compiled_differentiable_and_permutation_equivariant[M2]",
+      "outcome": "passed",
+      "seconds": 0.0004511249717324972,
+      "when": "teardown"
+    }
+  ]
+}

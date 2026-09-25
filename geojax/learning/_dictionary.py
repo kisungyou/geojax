@@ -26,6 +26,7 @@ from ._utils import (
     take_point,
     take_samples,
     tree_all_finite,
+    weighted_tangent_sum,
 )
 
 
@@ -78,10 +79,20 @@ def _code_one(
         100.0 * float(jnp.finfo(gram.dtype).eps) * atoms.n_samples,
     )
     code = jnp.full((atoms.n_samples,), 1.0 / atoms.n_samples)
+
+    def code_objective(weights: Any) -> Any:
+        # Evaluating weights.T @ gram @ weights loses the small residual to
+        # cancellation when atoms nearly reconstruct the sample.  It can
+        # even report a negative squared norm.  Evaluate the defining
+        # tangent residual before squaring, and add ridge separately so a
+        # small regularizer is not rounded out of the Gram diagonal.
+        residual = weighted_tangent_sum(manifold, logs, weights)
+        return 0.5 * (manifold.inner(point, residual, residual) + ridge * jnp.sum(weights**2))
+
     history = []
     converged = False
     for iteration in range(1, maxiter + 1):
-        objective = 0.5 * code @ gram @ code
+        objective = code_objective(code)
         history.append(objective)
         candidate = _project_simplex(code - step * (normalized_gram @ code))
         stationarity = jnp.linalg.norm(candidate - code) / step
@@ -92,7 +103,7 @@ def _code_one(
         code = candidate
     projected = _project_simplex(code - step * (normalized_gram @ code))
     stationarity = jnp.linalg.norm(projected - code) / step
-    final_objective = 0.5 * code @ gram @ code
+    final_objective = code_objective(code)
     if not history or float(final_objective) != float(history[-1]):
         history.append(final_objective)
     return (

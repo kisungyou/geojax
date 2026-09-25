@@ -1,0 +1,144 @@
+Versions
+========
+
+* Platform:         darwin; (macOS-26.6.2-arm64-arm-64bit-Mach-O)
+* Python version:   3.13.11 (CPython)
+* Sphinx version:   9.1.0
+* Docutils version: 0.22.4
+* Jinja2 version:   3.1.6
+* Pygments version: 2.19.2
+
+Last Messages
+=============
+
+    reading sources... [ 37%]
+    guide/optimization
+
+    reading sources... [ 40%]
+    index
+
+    reading sources... [ 42%]
+    tutorials/barycentric_dictionary
+
+    /private/tmp/geojax-corrections/documentation/docs/tutorials/barycentric_dictionary.md: Executing notebook using local CWD [mystnb]
+
+Loaded Extensions
+=================
+
+* sphinx.ext.mathjax (9.1.0)
+* alabaster (1.0.0)
+* sphinxcontrib.applehelp (2.0.0)
+* sphinxcontrib.devhelp (2.0.0)
+* sphinxcontrib.htmlhelp (2.1.0)
+* sphinxcontrib.serializinghtml (2.0.0)
+* sphinxcontrib.qthelp (2.0.0)
+* myst_nb (1.4.0)
+* sphinxcontrib.bibtex (2.7.0)
+* sphinx.ext.autodoc (9.1.0)
+* sphinx.ext.napoleon (9.1.0)
+* sphinx_copybutton (0.5.2)
+* pydata_sphinx_theme (unknown version)
+
+Traceback
+=========
+
+    Traceback (most recent call last):
+      File "/Users/kisung/miniconda3/lib/python3.13/site-packages/nbclient/client.py", line 782, in _async_poll_for_reply
+        msg = await ensure_async(self.kc.shell_channel.get_msg(timeout=new_timeout))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jupyter_core/utils/__init__.py", line 214, in ensure_async
+        result = await obj
+                 ^^^^^^^^^
+      File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jupyter_client/channels.py", line 330, in get_msg
+        raise Empty
+    _queue.Empty
+    
+    During handling of the above exception, another exception occurred:
+    
+    Traceback (most recent call last):
+      File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+        executenb(
+        ~~~~~~~~~^
+            nb,
+            ^^^
+        ...<4 lines>...
+            **kwargs,
+            ^^^^^^^^^
+        )
+        ^
+      File "/Users/kisung/miniconda3/lib/python3.13/site-packages/nbclient/client.py", line 1323, in execute
+        return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+      File "/Users/kisung/miniconda3/lib/python3.13/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+        return loop.run_until_complete(inner)
+               ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+      File "/Users/kisung/miniconda3/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+        return future.result()
+               ~~~~~~~~~~~~~^^
+      File "/Users/kisung/miniconda3/lib/python3.13/site-packages/nbclient/client.py", line 709, in async_execute
+        await self.async_execute_cell(
+            cell, index, execution_count=self.code_cells_executed + 1
+        )
+      File "/Users/kisung/miniconda3/lib/python3.13/site-packages/nbclient/client.py", line 1005, in async_execute_cell
+        exec_reply = await self.task_poll_for_reply
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/Users/kisung/miniconda3/lib/python3.13/site-packages/nbclient/client.py", line 806, in _async_poll_for_reply
+        error_on_timeout_execute_reply = await self._async_handle_timeout(timeout, cell)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/Users/kisung/miniconda3/lib/python3.13/site-packages/nbclient/client.py", line 856, in _async_handle_timeout
+        raise CellTimeoutError.error_from_timeout_and_cell(
+            "Cell execution timed out", timeout, cell
+        )
+    nbclient.exceptions.CellTimeoutError: A cell timed out while it was being executed, after 300 seconds.
+    The message was: Cell execution timed out.
+    Here is a preview of the cell contents:
+    -------------------
+    ['initial_codes = geodesic_barycentric_coding(', '    M,', '    data,', '    initial_atoms,', '    ridge=0.1,']
+    ...
+    ['', 'print(f"initial coding objective: {float(initial_codes.objective):.7f}")', 'print(f"learned dictionary objective: {float(learned.objective):.7f}")', 'print("simplex sums:", np.round(np.asarray(jnp.sum(learned.codes, axis=1)), 7))', 'print("outer dictionary updates:", learned.iterations)']
+    -------------------
+    
+    
+    The above exception was the direct cause of the following exception:
+    
+    Traceback (most recent call last):
+      File "/Users/kisung/miniconda3/lib/python3.13/site-packages/sphinx/cmd/build.py", line 432, in build_main
+        app.build(args.force_all, args.filenames)
+        ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/Users/kisung/miniconda3/lib/python3.13/site-packages/sphinx/application.py", line 438, in build
+        self.builder.build_all()
+        ~~~~~~~~~~~~~~~~~~~~~~^^
+      File "/Users/kisung/miniconda3/lib/python3.13/site-packages/sphinx/builders/__init__.py", line 325, in build_all
+        self.build(None, summary=__('all source files'), method='all')
+        ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/Users/kisung/miniconda3/lib/python3.13/site-packages/sphinx/builders/__init__.py", line 409, in build
+        updated_docnames = set(self.read())
+                               ~~~~~~~~~^^
+      File "/Users/kisung/miniconda3/lib/python3.13/site-packages/sphinx/builders/__init__.py", line 525, in read
+        self._read_serial(docnames)
+        ~~~~~~~~~~~~~~~~~^^^^^^^^^^
+      File "/Users/kisung/miniconda3/lib/python3.13/site-packages/sphinx/builders/__init__.py", line 590, in _read_serial
+        self.read_doc(docname)
+        ~~~~~~~~~~~~~^^^^^^^^^
+      File "/Users/kisung/miniconda3/lib/python3.13/site-packages/sphinx/builders/__init__.py", line 653, in read_doc
+        doctree = _parse_str_to_doctree(
+            content,
+        ...<6 lines>...
+            transforms=self._registry.get_transforms(),
+        )
+      File "/Users/kisung/miniconda3/lib/python3.13/site-packages/sphinx/util/docutils.py", line 902, in _parse_str_to_doctree
+        parser.parse(content, document)
+        ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+      File "/Users/kisung/miniconda3/lib/python3.13/site-packages/myst_nb/sphinx_.py", line 156, in parse
+        with create_client(
+             ~~~~~~~~~~~~~^
+            notebook, document_path, nb_config, logger, nb_reader.read_fmt
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        ) as nb_client:
+        ^
+      File "/Users/kisung/miniconda3/lib/python3.13/site-packages/myst_nb/core/execute/base.py", line 80, in __enter__
+        self.start_client()
+        ~~~~~~~~~~~~~~~~~^^
+      File "/Users/kisung/miniconda3/lib/python3.13/site-packages/myst_nb/core/execute/direct.py", line 51, in start_client
+        raise ExecutionError(str(self.path)) from result.err
+    myst_nb.core.execute.base.ExecutionError: /private/tmp/geojax-corrections/documentation/docs/tutorials/barycentric_dictionary.md

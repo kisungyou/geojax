@@ -1,0 +1,77 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float32/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_optimization.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py311-stable-float32/027-test_optimization.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py311-stable-float32/027-test_optimization.xml"]
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py311-stable-float32/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.11.15, JAX 0.10.2, NumPy 2.4.4, float32
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 34 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_only_class_style_solvers_are_public PASSED [  2%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_minimize_rejects_functional_solver_callbacks PASSED [  5%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_public_solvers_smoke[solver0] PASSED [  8%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_public_solvers_smoke[solver1] PASSED [ 11%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_public_solvers_smoke[solver2] PASSED [ 14%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_public_solvers_smoke[solver3] PASSED [ 17%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_public_solvers_smoke[solver4] PASSED [ 20%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_public_solvers_smoke[solver5] PASSED [ 23%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_public_solvers_smoke[solver6] PASSED [ 26%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_minimize_hessian_vector_fallback_and_user_rhess PASSED [ 29%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_sphere_hessian_conversion_includes_embedding_curvature PASSED [ 32%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_grassmann_automatic_hessian_uses_exact_conversion PASSED [ 35%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_minimize_hessian_vector_construction_paths PASSED [ 38%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[steep] PASSED [ 41%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[S-D] PASSED [ 44%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[F-R] PASSED [ 47%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[P-R] PASSED [ 50%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[P-R-SATO] PASSED [ 52%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[H-S] PASSED [ 55%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[H-S-SATO] PASSED [ 58%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[H-Z] PASSED [ 61%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[L-S] PASSED [ 64%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_conjugate_gradient_beta_safeguards_and_unknown_rule PASSED [ 67%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_conjugate_gradient_product_pytree_smoke PASSED [ 70%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_lbfgs_recomputes_curvature_after_nonisometric_transport PASSED [ 73%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_lbfgs_rejects_nonpositive_memory PASSED [ 76%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_truncated_cg_reports_the_final_residual PASSED [ 79%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_truncated_cg_falls_back_from_nonpositive_preconditioner PASSED [ 82%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_conjugate_gradient_falls_back_from_nonpositive_preconditioner PASSED [ 85%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_trust_region_rejects_nonfinite_trial_and_shrinks_radius PASSED [ 88%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_trust_region_shrinks_a_tiny_radius_without_an_absolute_floor PASSED [ 91%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_lbfgs_smoke_with_nonisometric_rank_stratum_transport PASSED [ 94%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_nelder_mead_initial_scale_is_applied_once PASSED [ 97%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_optimization.py::test_nelder_mead_diameter_uses_every_vertex_pair PASSED [100%]
+
+- generated xml file: /Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix_final_a/py311-stable-float32/027-test_optimization.xml -
+============================== slowest durations ===============================
+3.01s call     tests/test_optimization.py::test_public_solvers_smoke[solver0]
+1.84s call     tests/test_optimization.py::test_public_solvers_smoke[solver2]
+1.70s call     tests/test_optimization.py::test_lbfgs_smoke_with_nonisometric_rank_stratum_transport
+1.15s call     tests/test_optimization.py::test_conjugate_gradient_product_pytree_smoke
+0.95s call     tests/test_optimization.py::test_grassmann_automatic_hessian_uses_exact_conversion
+0.87s call     tests/test_optimization.py::test_public_solvers_smoke[solver5]
+0.64s call     tests/test_optimization.py::test_public_solvers_smoke[solver1]
+0.57s call     tests/test_optimization.py::test_public_solvers_smoke[solver4]
+0.31s call     tests/test_optimization.py::test_minimize_hessian_vector_fallback_and_user_rhess
+0.29s call     tests/test_optimization.py::test_sphere_hessian_conversion_includes_embedding_curvature
+0.27s call     tests/test_optimization.py::test_conjugate_gradient_falls_back_from_nonpositive_preconditioner
+0.27s call     tests/test_optimization.py::test_nelder_mead_initial_scale_is_applied_once
+0.22s call     tests/test_optimization.py::test_public_solvers_smoke[solver6]
+0.16s call     tests/test_optimization.py::test_minimize_hessian_vector_construction_paths
+0.13s call     tests/test_optimization.py::test_lbfgs_recomputes_curvature_after_nonisometric_transport
+0.10s call     tests/test_optimization.py::test_minimize_rejects_functional_solver_callbacks
+0.10s call     tests/test_optimization.py::test_public_solvers_smoke[solver3]
+0.08s call     tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[steep]
+0.07s call     tests/test_optimization.py::test_trust_region_rejects_nonfinite_trial_and_shrinks_radius
+0.07s call     tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[F-R]
+0.05s call     tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[H-Z]
+0.02s call     tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[P-R]
+0.01s call     tests/test_optimization.py::test_truncated_cg_reports_the_final_residual
+0.01s call     tests/test_optimization.py::test_truncated_cg_falls_back_from_nonpositive_preconditioner
+0.01s call     tests/test_optimization.py::test_conjugate_gradient_beta_safeguards_and_unknown_rule
+0.01s call     tests/test_optimization.py::test_trust_region_shrinks_a_tiny_radius_without_an_absolute_floor
+0.01s call     tests/test_optimization.py::test_conjugate_gradient_beta_rules_are_finite_descent_updates[H-S-SATO]
+
+(75 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================= 34 passed in 13.24s ==============================

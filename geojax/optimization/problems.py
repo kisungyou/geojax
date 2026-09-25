@@ -180,6 +180,11 @@ class LeastSquares(Minimize):
 
     def cost_and_grad(self, x: Array) -> tuple[Array, Array]:
         """Evaluate the least-squares objective and gradient with one residual trace."""
+        if self._adjoint_jacobian_callback is not None:
+            residual = self.residual_value(x)
+            cost = 0.5 * tree_vdot(residual, residual)
+            gradient = self._adjoint_jacobian_callback(x, residual)
+            return cost, validate_tangent(self.M, x, gradient, name="adjoint Jacobian output")
         residual, pullback = jax.vjp(self.residual_value, x)
         residual = _validate_real_finite_leaves(residual, name="residual")
         cost = 0.5 * tree_vdot(residual, residual)

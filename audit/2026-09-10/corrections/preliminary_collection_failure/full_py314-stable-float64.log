@@ -1,0 +1,40 @@
+
+Validation step 1
+Using Python 3.14.6 environment at: /Users/kisung/Desktop/develop/geojax/.tox/py314-stable-float64
+Resolved 1 package in 43ms
+Prepared 1 package in 3ms
+Uninstalled 1 package in 20ms
+Installed 1 package in 8ms
+ - geojax==0.2.0 (from file:///Users/kisung/Desktop/geometric/geojax/.tox/.tmp/package/87/geojax-0.2.0-py3-none-any.whl)
+ + geojax==0.2.0 (from file:///private/tmp/geojax-corrections/dist/geojax-0.2.0-py3-none-any.whl)
+
+Validation step 2
+/Users/kisung/Desktop/develop/geojax/.tox/py314-stable-float64/lib/python3.14/site-packages/geojax/__init__.py
+
+Validation step 3
+============================= test session starts ==============================
+platform darwin -- Python 3.14.6, pytest-9.0.3, pluggy-1.6.0
+GeoJAX matrix: Python 3.14.6, JAX 0.11.0, NumPy 2.4.4, float64
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collected 1073 items / 1 error / 1 skipped
+
+==================================== ERRORS ====================================
+_________________ ERROR collecting tests/test_documentation.py _________________
+ImportError while importing test module '/Users/kisung/Desktop/develop/geojax/tests/test_documentation.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/Users/kisung/.local/share/uv/python/cpython-3.14.6-macos-aarch64-none/lib/python3.14/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Users/kisung/Desktop/develop/geojax/tests/test_documentation.py:10: in <module>
+    from docs.audit_html import audit_site, tex_syntax_errors
+E   ModuleNotFoundError: No module named 'docs'
+=========================== short test summary info ============================
+ERROR ../../../../../Users/kisung/Desktop/develop/geojax/tests/test_documentation.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+========================= 1 skipped, 1 error in 3.90s ==========================
+
+Validation step 4
+No data to report.

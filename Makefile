@@ -95,6 +95,7 @@ release-check: release-source-check
 	$(MAKE) quality
 	$(MAKE) test-matrix
 	$(MAKE) website
+	$(MAKE) release-source-check
 	$(MAKE) package-check
 
 clean:

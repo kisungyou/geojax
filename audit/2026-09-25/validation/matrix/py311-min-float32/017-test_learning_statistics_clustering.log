@@ -1,0 +1,47 @@
+Command: ["/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/bin/python", "-I", "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", "--repository", "/Users/kisung/Desktop/develop/geojax", "--worker", "/Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py", "--manifest", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py311-min-float32/017-test_learning_statistics_clustering.collection.json", "--junit", "/Users/kisung/Desktop/develop/geojax/audit/2026-09-25/validation/matrix/py311-min-float32/017-test_learning_statistics_clustering.xml", "--trace-after", "90.0"]
+============================= test session starts ==============================
+platform darwin -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0 -- /Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/bin/python
+cachedir: .pytest_cache
+GeoJAX matrix: Python 3.11.15, JAX 0.6.0, NumPy 1.26.4, float32
+rootdir: /Users/kisung/Desktop/develop/geojax
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 28 items
+
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_pairwise_distances_blocking_nearest_neighbors_and_gradients PASSED [  3%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_weighted_frechet_mean_and_median_match_euclidean_targets PASSED [  7%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_frechet_median_diagnostics_are_evaluated_at_returned_point PASSED [ 10%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_smoothed_frechet_median_handles_coincident_samples_monotonically PASSED [ 14%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_minimum_enclosing_ball_contains_all_euclidean_samples PASSED [ 17%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_kernel_regression_and_cross_validation_validate_sample_targets PASSED [ 21%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_clustering_methods_separate_a_simple_two_cluster_problem[<lambda>0] PASSED [ 25%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_clustering_methods_separate_a_simple_two_cluster_problem[<lambda>1] PASSED [ 28%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_clustering_methods_separate_a_simple_two_cluster_problem[<lambda>2] PASSED [ 32%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_clustering_methods_separate_a_simple_two_cluster_problem[<lambda>3] PASSED [ 35%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_clustering_methods_separate_a_simple_two_cluster_problem[<lambda>4] PASSED [ 39%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_hierarchical_clustering_linkages_and_invalid_ward_request PASSED [ 42%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_lightweight_coreset_is_reproducible_and_usable_by_weighted_kmeans PASSED [ 46%]
+../../../../../../../Users/kisung/Desktop/develop/geojax/tests/test_learning_statistics_clustering.py::test_center_based_methods_support_nested_product_points Timeout (0:01:30)!
+Thread 0x00000001edb7e180 (most recent call first):
+  File "/Users/kisung/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/inspect.py", line 3188 in _bind
+  File PASSED [ 50%]
+Wall timeout after 600 seconds; terminating process group.
+Current thread 0x00000001edb7e180 (most recent call first):
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/lib/python3.11/site-packages/_pytest/faulthandler.py", line 100 in pytest_runtest_protocol
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/lib/python3.11/site-packages/pluggy/_callers.py", line 152 in _multicall
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/lib/python3.11/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/lib/python3.11/site-packages/pluggy/_hooks.py", line 512 in __call__
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/lib/python3.11/site-packages/_pytest/main.py", line 396 in pytest_runtestloop
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/lib/python3.11/site-packages/pluggy/_callers.py", line 121 in _multicall
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/lib/python3.11/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/lib/python3.11/site-packages/pluggy/_hooks.py", line 512 in __call__
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/lib/python3.11/site-packages/_pytest/main.py", line 372 in _main
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/lib/python3.11/site-packages/_pytest/main.py", line 318 in wrap_session
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/lib/python3.11/site-packages/_pytest/main.py", line 365 in pytest_cmdline_main
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/lib/python3.11/site-packages/pluggy/_callers.py", line 121 in _multicall
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/lib/python3.11/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/lib/python3.11/site-packages/pluggy/_hooks.py", line 512 in __call__
+  File "/Users/kisung/Desktop/develop/geojax/.tox/py311-min-float32/lib/python3.11/site-packages/_pytest/config/__init__.py", line 199 in main
+  File "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", line 183 in _worker
+  File "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", line 459 in main
+  File "/Users/kisung/Desktop/develop/geojax/scripts/run_test_suite.py", line 466 in <module>

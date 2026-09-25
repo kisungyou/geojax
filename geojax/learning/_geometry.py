@@ -10,7 +10,7 @@ import jax.numpy as jnp
 from geojax.geometry import Product
 
 from ._capabilities import require_exact_operations
-from ._data import as_manifold_data
+from ._data import ManifoldData, as_manifold_data
 from ._results import NeighborsResult
 from ._utils import (
     event_shapes,
@@ -29,8 +29,14 @@ def _values(manifold: Any, data: Any, *, name: str) -> tuple[Any, int]:
     # Membership validation is an eager boundary concern. During JAX tracing,
     # geometry kernels remain composable and callers are expected to have
     # validated data once with ``as_manifold_data`` before compilation.
-    check = "shape" if tree_contains_tracer(data) else "belongs"
-    adapted = as_manifold_data(manifold, data, check=check)
+    raw = data.values if isinstance(data, ManifoldData) else data
+    if tree_contains_tracer(raw):
+        adapted = as_manifold_data(manifold, data, check="shape")
+    else:
+        # Closed-over arrays are concrete inputs too, but JAX would trace
+        # the validation arithmetic without this compile-time boundary.
+        with jax.ensure_compile_time_eval():
+            adapted = as_manifold_data(manifold, data, check="belongs")
     return adapted.values, adapted.n_samples
 
 

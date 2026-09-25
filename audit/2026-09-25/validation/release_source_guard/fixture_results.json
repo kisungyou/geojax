@@ -1,0 +1,194 @@
+{
+  "scenarios": [
+    {
+      "actual_release_recipe_sha256": "964025ed1b02cd46129fd9434a9b4bdb1788a1e955de39fd206d1c33ce3cc3a3",
+      "actual_source_verifier_sha256": "7b06d54a263228daf662ef561776b73812d2e7f5020826790a6b76dd99b07f51",
+      "command": [
+        "make",
+        "release-check",
+        "PYTHON=/Users/kisung/miniconda3/bin/python",
+        "DIRTY_WEBSITE=1"
+      ],
+      "exit_code": 0,
+      "expected_outcome_verified": true,
+      "fixture_directory": "/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-release-guard-before-dirty-ikwgoqp_",
+      "git_status_after": " M docs/_static/tutorials/dimension-reduction.png\n",
+      "log": "audit/2026-09-25/validation/release_source_guard/before-dirty.log",
+      "package_check_ran": true,
+      "scenario": "before-dirty",
+      "seconds": 0.2839483330026269,
+      "setup_commands": [
+        [
+          "git",
+          "init",
+          "-q"
+        ],
+        [
+          "git",
+          "config",
+          "user.name",
+          "GeoJAX audit fixture"
+        ],
+        [
+          "git",
+          "config",
+          "user.email",
+          "audit@example.invalid"
+        ],
+        [
+          "git",
+          "add",
+          "."
+        ],
+        [
+          "git",
+          "-c",
+          "commit.gpgsign=false",
+          "commit",
+          "-qm",
+          "Isolated release guard fixture"
+        ],
+        [
+          "git",
+          "-c",
+          "tag.gpgsign=false",
+          "tag",
+          "-a",
+          "v0.2.0",
+          "-m",
+          "Local audit fixture only"
+        ]
+      ],
+      "source_check_invocations": 1,
+      "tracked_png_modified": true,
+      "website_ran": true
+    },
+    {
+      "actual_release_recipe_sha256": "f4821342c2dba010a60acd6c86c9b629594904ec190a44619c64bfaef784db5c",
+      "actual_source_verifier_sha256": "7b06d54a263228daf662ef561776b73812d2e7f5020826790a6b76dd99b07f51",
+      "command": [
+        "make",
+        "release-check",
+        "PYTHON=/Users/kisung/miniconda3/bin/python",
+        "DIRTY_WEBSITE=0"
+      ],
+      "exit_code": 0,
+      "expected_outcome_verified": true,
+      "fixture_directory": "/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-release-guard-final-clean-xin2axmz",
+      "git_status_after": "",
+      "log": "audit/2026-09-25/validation/release_source_guard/final-clean.log",
+      "package_check_ran": true,
+      "scenario": "final-clean",
+      "seconds": 0.3405182080459781,
+      "setup_commands": [
+        [
+          "git",
+          "init",
+          "-q"
+        ],
+        [
+          "git",
+          "config",
+          "user.name",
+          "GeoJAX audit fixture"
+        ],
+        [
+          "git",
+          "config",
+          "user.email",
+          "audit@example.invalid"
+        ],
+        [
+          "git",
+          "add",
+          "."
+        ],
+        [
+          "git",
+          "-c",
+          "commit.gpgsign=false",
+          "commit",
+          "-qm",
+          "Isolated release guard fixture"
+        ],
+        [
+          "git",
+          "-c",
+          "tag.gpgsign=false",
+          "tag",
+          "-a",
+          "v0.2.0",
+          "-m",
+          "Local audit fixture only"
+        ]
+      ],
+      "source_check_invocations": 2,
+      "tracked_png_modified": false,
+      "website_ran": true
+    },
+    {
+      "actual_release_recipe_sha256": "f4821342c2dba010a60acd6c86c9b629594904ec190a44619c64bfaef784db5c",
+      "actual_source_verifier_sha256": "7b06d54a263228daf662ef561776b73812d2e7f5020826790a6b76dd99b07f51",
+      "command": [
+        "make",
+        "release-check",
+        "PYTHON=/Users/kisung/miniconda3/bin/python",
+        "DIRTY_WEBSITE=1"
+      ],
+      "exit_code": 2,
+      "expected_outcome_verified": true,
+      "fixture_directory": "/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/geojax-release-guard-final-dirty-_7a2lnn3",
+      "git_status_after": " M docs/_static/tutorials/dimension-reduction.png\n",
+      "log": "audit/2026-09-25/validation/release_source_guard/final-dirty.log",
+      "package_check_ran": false,
+      "scenario": "final-dirty",
+      "seconds": 0.27330666698981076,
+      "setup_commands": [
+        [
+          "git",
+          "init",
+          "-q"
+        ],
+        [
+          "git",
+          "config",
+          "user.name",
+          "GeoJAX audit fixture"
+        ],
+        [
+          "git",
+          "config",
+          "user.email",
+          "audit@example.invalid"
+        ],
+        [
+          "git",
+          "add",
+          "."
+        ],
+        [
+          "git",
+          "-c",
+          "commit.gpgsign=false",
+          "commit",
+          "-qm",
+          "Isolated release guard fixture"
+        ],
+        [
+          "git",
+          "-c",
+          "tag.gpgsign=false",
+          "tag",
+          "-a",
+          "v0.2.0",
+          "-m",
+          "Local audit fixture only"
+        ]
+      ],
+      "source_check_invocations": 2,
+      "tracked_png_modified": true,
+      "website_ran": true
+    }
+  ],
+  "status": "passed"
+}

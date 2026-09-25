@@ -1,0 +1,788 @@
+{
+  "collection_reports": [],
+  "deselected": [],
+  "exitstatus": 0,
+  "nodeids": [
+    "tests/test_low_rank_audit_fixes.py::test_repeated_positive_and_zero_distance_gradient_and_hessian[1]",
+    "tests/test_low_rank_audit_fixes.py::test_repeated_positive_and_zero_distance_gradient_and_hessian[2]",
+    "tests/test_low_rank_audit_fixes.py::test_projector_and_projection_derivatives_are_basis_independent[1]",
+    "tests/test_low_rank_audit_fixes.py::test_projector_and_projection_derivatives_are_basis_independent[2]",
+    "tests/test_low_rank_audit_fixes.py::test_log_jvp_vjp_and_hessian_of_distance_along_horizontal_geodesic[1]",
+    "tests/test_low_rank_audit_fixes.py::test_log_jvp_vjp_and_hessian_of_distance_along_horizontal_geodesic[2]",
+    "tests/test_low_rank_audit_fixes.py::test_bures_distance_directional_derivative_and_adjoint_identity[1]",
+    "tests/test_low_rank_audit_fixes.py::test_bures_distance_directional_derivative_and_adjoint_identity[2]",
+    "tests/test_low_rank_audit_fixes.py::test_sylvester_differentiation_preserves_equation_and_null_constraint[1]",
+    "tests/test_low_rank_audit_fixes.py::test_sylvester_differentiation_preserves_equation_and_null_constraint[2]",
+    "tests/test_low_rank_audit_fixes.py::test_ordinary_frechet_mean_at_repeated_spectra[1]",
+    "tests/test_low_rank_audit_fixes.py::test_ordinary_frechet_mean_at_repeated_spectra[2]",
+    "tests/test_low_rank_audit_fixes.py::test_jit_vmap_and_direct_batch_agree_for_regular_log_and_gradient",
+    "tests/test_low_rank_audit_fixes.py::test_rotated_support_hessian_matches_finite_difference_and_analytic_geodesic",
+    "tests/test_low_rank_audit_fixes.py::test_exp_accepts_regular_horizontal_path_beyond_positive_overlap[1]",
+    "tests/test_low_rank_audit_fixes.py::test_exp_accepts_regular_horizontal_path_beyond_positive_overlap[2]",
+    "tests/test_low_rank_audit_fixes.py::test_exp_rejects_rank_loss_in_repeated_compressed_eigenspace[False]",
+    "tests/test_low_rank_audit_fixes.py::test_exp_rejects_rank_loss_in_repeated_compressed_eigenspace[True]",
+    "tests/test_low_rank_audit_fixes.py::test_exp_domain_certificate_is_rotation_invariant_and_batched",
+    "tests/test_low_rank_audit_fixes.py::test_exp_positive_horizontal_generator_with_large_dynamic_range",
+    "tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[rectangular]",
+    "tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[psd]",
+    "tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[elliptope]",
+    "tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[spectrahedron]",
+    "tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[rectangular]",
+    "tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[psd]",
+    "tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[elliptope]",
+    "tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[spectrahedron]",
+    "tests/test_low_rank_audit_fixes.py::test_rectangular_projection_nested_derivative_with_discarded_spectrum[False]",
+    "tests/test_low_rank_audit_fixes.py::test_rectangular_projection_nested_derivative_with_discarded_spectrum[True]",
+    "tests/test_low_rank_audit_fixes.py::test_tall_rectangular_projection_keeps_thin_matrix_working_shapes",
+    "tests/test_low_rank_audit_fixes.py::test_bures_sylvester_and_metric_broadcast_base_and_tangent_batches",
+    "tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[-1-1]",
+    "tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[-1-2]",
+    "tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[1-1]",
+    "tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[1-2]",
+    "tests/test_low_rank_audit_fixes.py::test_bures_log_scaling_preserves_inputs_at_opposite_extreme_scales",
+    "tests/test_low_rank_audit_fixes.py::test_bures_finite_range_endpoints_preserve_points_metric_and_distance_gradient[1]",
+    "tests/test_low_rank_audit_fixes.py::test_bures_finite_range_endpoints_preserve_points_metric_and_distance_gradient[2]",
+    "tests/test_low_rank_audit_fixes.py::test_low_rank_projection_extreme_spectrum_keeps_rotating_support_derivative",
+    "tests/test_low_rank_audit_fixes.py::test_low_rank_projection_preserves_the_smallest_normal_positive_spectrum"
+  ],
+  "runtime_reports": [
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_repeated_positive_and_zero_distance_gradient_and_hessian[1]",
+      "outcome": "passed",
+      "seconds": 0.0004261249559931457,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_repeated_positive_and_zero_distance_gradient_and_hessian[1]",
+      "outcome": "passed",
+      "seconds": 3.0701731250155717,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_repeated_positive_and_zero_distance_gradient_and_hessian[1]",
+      "outcome": "passed",
+      "seconds": 0.00029020803049206734,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_repeated_positive_and_zero_distance_gradient_and_hessian[2]",
+      "outcome": "passed",
+      "seconds": 0.0002382080419920385,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_repeated_positive_and_zero_distance_gradient_and_hessian[2]",
+      "outcome": "passed",
+      "seconds": 2.613317665993236,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_repeated_positive_and_zero_distance_gradient_and_hessian[2]",
+      "outcome": "passed",
+      "seconds": 0.0001616249792277813,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_projector_and_projection_derivatives_are_basis_independent[1]",
+      "outcome": "passed",
+      "seconds": 0.00025091698626056314,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_projector_and_projection_derivatives_are_basis_independent[1]",
+      "outcome": "passed",
+      "seconds": 1.8371704170131125,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_projector_and_projection_derivatives_are_basis_independent[1]",
+      "outcome": "passed",
+      "seconds": 0.00011133303632959723,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_projector_and_projection_derivatives_are_basis_independent[2]",
+      "outcome": "passed",
+      "seconds": 0.0001954169711098075,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_projector_and_projection_derivatives_are_basis_independent[2]",
+      "outcome": "passed",
+      "seconds": 1.7053895000135526,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_projector_and_projection_derivatives_are_basis_independent[2]",
+      "outcome": "passed",
+      "seconds": 0.0001842500059865415,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_log_jvp_vjp_and_hessian_of_distance_along_horizontal_geodesic[1]",
+      "outcome": "passed",
+      "seconds": 0.00025466701481491327,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_log_jvp_vjp_and_hessian_of_distance_along_horizontal_geodesic[1]",
+      "outcome": "passed",
+      "seconds": 6.315446500026155,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_log_jvp_vjp_and_hessian_of_distance_along_horizontal_geodesic[1]",
+      "outcome": "passed",
+      "seconds": 0.00019691704073920846,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_log_jvp_vjp_and_hessian_of_distance_along_horizontal_geodesic[2]",
+      "outcome": "passed",
+      "seconds": 0.0002627080539241433,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_log_jvp_vjp_and_hessian_of_distance_along_horizontal_geodesic[2]",
+      "outcome": "passed",
+      "seconds": 5.1728181669604965,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_log_jvp_vjp_and_hessian_of_distance_along_horizontal_geodesic[2]",
+      "outcome": "passed",
+      "seconds": 0.00017862499225884676,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_distance_directional_derivative_and_adjoint_identity[1]",
+      "outcome": "passed",
+      "seconds": 0.0002736670430749655,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_distance_directional_derivative_and_adjoint_identity[1]",
+      "outcome": "passed",
+      "seconds": 4.364000500005204,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_distance_directional_derivative_and_adjoint_identity[1]",
+      "outcome": "passed",
+      "seconds": 0.0001496670302003622,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_distance_directional_derivative_and_adjoint_identity[2]",
+      "outcome": "passed",
+      "seconds": 0.00023974996292963624,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_distance_directional_derivative_and_adjoint_identity[2]",
+      "outcome": "passed",
+      "seconds": 4.331470415985677,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_distance_directional_derivative_and_adjoint_identity[2]",
+      "outcome": "passed",
+      "seconds": 0.00020362500799819827,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_sylvester_differentiation_preserves_equation_and_null_constraint[1]",
+      "outcome": "passed",
+      "seconds": 0.00030479097040370107,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_sylvester_differentiation_preserves_equation_and_null_constraint[1]",
+      "outcome": "passed",
+      "seconds": 0.8035776659962721,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_sylvester_differentiation_preserves_equation_and_null_constraint[1]",
+      "outcome": "passed",
+      "seconds": 0.00023454200709238648,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_sylvester_differentiation_preserves_equation_and_null_constraint[2]",
+      "outcome": "passed",
+      "seconds": 0.00026641698786988854,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_sylvester_differentiation_preserves_equation_and_null_constraint[2]",
+      "outcome": "passed",
+      "seconds": 0.7774363329517655,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_sylvester_differentiation_preserves_equation_and_null_constraint[2]",
+      "outcome": "passed",
+      "seconds": 0.00014679203741252422,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_ordinary_frechet_mean_at_repeated_spectra[1]",
+      "outcome": "passed",
+      "seconds": 0.00023408298147842288,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_ordinary_frechet_mean_at_repeated_spectra[1]",
+      "outcome": "passed",
+      "seconds": 6.594079917005729,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_ordinary_frechet_mean_at_repeated_spectra[1]",
+      "outcome": "passed",
+      "seconds": 0.00041191698983311653,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_ordinary_frechet_mean_at_repeated_spectra[2]",
+      "outcome": "passed",
+      "seconds": 0.0004797080182470381,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_ordinary_frechet_mean_at_repeated_spectra[2]",
+      "outcome": "passed",
+      "seconds": 4.271869499993045,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_ordinary_frechet_mean_at_repeated_spectra[2]",
+      "outcome": "passed",
+      "seconds": 0.00017737498274073005,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_jit_vmap_and_direct_batch_agree_for_regular_log_and_gradient",
+      "outcome": "passed",
+      "seconds": 9.616598254069686e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_jit_vmap_and_direct_batch_agree_for_regular_log_and_gradient",
+      "outcome": "passed",
+      "seconds": 8.09563670901116,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_jit_vmap_and_direct_batch_agree_for_regular_log_and_gradient",
+      "outcome": "passed",
+      "seconds": 0.00019595801131799817,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_rotated_support_hessian_matches_finite_difference_and_analytic_geodesic",
+      "outcome": "passed",
+      "seconds": 0.00011408299906179309,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_rotated_support_hessian_matches_finite_difference_and_analytic_geodesic",
+      "outcome": "passed",
+      "seconds": 3.0379300829954445,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_rotated_support_hessian_matches_finite_difference_and_analytic_geodesic",
+      "outcome": "passed",
+      "seconds": 0.00011920899851247668,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_exp_accepts_regular_horizontal_path_beyond_positive_overlap[1]",
+      "outcome": "passed",
+      "seconds": 0.00024337501963600516,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_exp_accepts_regular_horizontal_path_beyond_positive_overlap[1]",
+      "outcome": "passed",
+      "seconds": 0.41839320899453014,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_exp_accepts_regular_horizontal_path_beyond_positive_overlap[1]",
+      "outcome": "passed",
+      "seconds": 0.00014750001719221473,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_exp_accepts_regular_horizontal_path_beyond_positive_overlap[2]",
+      "outcome": "passed",
+      "seconds": 0.00022845895728096366,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_exp_accepts_regular_horizontal_path_beyond_positive_overlap[2]",
+      "outcome": "passed",
+      "seconds": 0.5668403330491856,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_exp_accepts_regular_horizontal_path_beyond_positive_overlap[2]",
+      "outcome": "passed",
+      "seconds": 0.0001366250216960907,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_exp_rejects_rank_loss_in_repeated_compressed_eigenspace[False]",
+      "outcome": "passed",
+      "seconds": 0.0002299170009791851,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_exp_rejects_rank_loss_in_repeated_compressed_eigenspace[False]",
+      "outcome": "passed",
+      "seconds": 0.28047212498495355,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_exp_rejects_rank_loss_in_repeated_compressed_eigenspace[False]",
+      "outcome": "passed",
+      "seconds": 0.0001350410166196525,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_exp_rejects_rank_loss_in_repeated_compressed_eigenspace[True]",
+      "outcome": "passed",
+      "seconds": 0.00021733297035098076,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_exp_rejects_rank_loss_in_repeated_compressed_eigenspace[True]",
+      "outcome": "passed",
+      "seconds": 0.2483172079664655,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_exp_rejects_rank_loss_in_repeated_compressed_eigenspace[True]",
+      "outcome": "passed",
+      "seconds": 0.00013629102613776922,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_exp_domain_certificate_is_rotation_invariant_and_batched",
+      "outcome": "passed",
+      "seconds": 0.00010479101911187172,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_exp_domain_certificate_is_rotation_invariant_and_batched",
+      "outcome": "passed",
+      "seconds": 0.4681988749653101,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_exp_domain_certificate_is_rotation_invariant_and_batched",
+      "outcome": "passed",
+      "seconds": 0.00011445902055129409,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_exp_positive_horizontal_generator_with_large_dynamic_range",
+      "outcome": "passed",
+      "seconds": 0.00015679094940423965,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_exp_positive_horizontal_generator_with_large_dynamic_range",
+      "outcome": "passed",
+      "seconds": 0.3368800420430489,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_exp_positive_horizontal_generator_with_large_dynamic_range",
+      "outcome": "passed",
+      "seconds": 0.00010429200483486056,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[rectangular]",
+      "outcome": "passed",
+      "seconds": 0.00020650000078603625,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[rectangular]",
+      "outcome": "passed",
+      "seconds": 2.4887020419701003,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[rectangular]",
+      "outcome": "passed",
+      "seconds": 0.00012699997751042247,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[psd]",
+      "outcome": "passed",
+      "seconds": 0.00020012498134747148,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[psd]",
+      "outcome": "passed",
+      "seconds": 2.424478832981549,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[psd]",
+      "outcome": "passed",
+      "seconds": 0.00011929101310670376,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[elliptope]",
+      "outcome": "passed",
+      "seconds": 0.00021125003695487976,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[elliptope]",
+      "outcome": "passed",
+      "seconds": 1.4401702499599196,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[elliptope]",
+      "outcome": "passed",
+      "seconds": 0.00011329096741974354,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[spectrahedron]",
+      "outcome": "passed",
+      "seconds": 0.00018612499115988612,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[spectrahedron]",
+      "outcome": "passed",
+      "seconds": 0.48224004200892523,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projections_and_retractions_differentiate_tangents_as_identity[spectrahedron]",
+      "outcome": "passed",
+      "seconds": 0.00013329199282452464,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[rectangular]",
+      "outcome": "passed",
+      "seconds": 0.00020541599951684475,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[rectangular]",
+      "outcome": "passed",
+      "seconds": 2.930933208030183,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[rectangular]",
+      "outcome": "passed",
+      "seconds": 0.00013749999925494194,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[psd]",
+      "outcome": "passed",
+      "seconds": 0.0002447920269332826,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[psd]",
+      "outcome": "passed",
+      "seconds": 4.330642792047001,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[psd]",
+      "outcome": "passed",
+      "seconds": 0.00012466596672311425,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[elliptope]",
+      "outcome": "passed",
+      "seconds": 0.0002128329942934215,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[elliptope]",
+      "outcome": "passed",
+      "seconds": 3.0325823749881238,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[elliptope]",
+      "outcome": "passed",
+      "seconds": 0.00013550004223361611,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[spectrahedron]",
+      "outcome": "passed",
+      "seconds": 0.00020929204765707254,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[spectrahedron]",
+      "outcome": "passed",
+      "seconds": 0.8515540409716778,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_related_rank_projection_jvp_vjp_and_finite_difference[spectrahedron]",
+      "outcome": "passed",
+      "seconds": 0.0001347920042462647,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_rectangular_projection_nested_derivative_with_discarded_spectrum[False]",
+      "outcome": "passed",
+      "seconds": 0.00023095798678696156,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_rectangular_projection_nested_derivative_with_discarded_spectrum[False]",
+      "outcome": "passed",
+      "seconds": 1.9717934160144068,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_rectangular_projection_nested_derivative_with_discarded_spectrum[False]",
+      "outcome": "passed",
+      "seconds": 0.0001318340073339641,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_rectangular_projection_nested_derivative_with_discarded_spectrum[True]",
+      "outcome": "passed",
+      "seconds": 0.00021395896328613162,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_rectangular_projection_nested_derivative_with_discarded_spectrum[True]",
+      "outcome": "passed",
+      "seconds": 1.0180844590067863,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_rectangular_projection_nested_derivative_with_discarded_spectrum[True]",
+      "outcome": "passed",
+      "seconds": 0.0001259999698959291,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_tall_rectangular_projection_keeps_thin_matrix_working_shapes",
+      "outcome": "passed",
+      "seconds": 9.620800847187638e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_tall_rectangular_projection_keeps_thin_matrix_working_shapes",
+      "outcome": "passed",
+      "seconds": 0.6045471669640392,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_tall_rectangular_projection_keeps_thin_matrix_working_shapes",
+      "outcome": "passed",
+      "seconds": 0.00010008399840444326,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_sylvester_and_metric_broadcast_base_and_tangent_batches",
+      "outcome": "passed",
+      "seconds": 8.587504271417856e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_sylvester_and_metric_broadcast_base_and_tangent_batches",
+      "outcome": "passed",
+      "seconds": 1.700310041953344,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_sylvester_and_metric_broadcast_base_and_tangent_batches",
+      "outcome": "passed",
+      "seconds": 0.00013587501598522067,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[-1-1]",
+      "outcome": "passed",
+      "seconds": 0.00028000003658235073,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[-1-1]",
+      "outcome": "passed",
+      "seconds": 6.040007541014347,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[-1-1]",
+      "outcome": "passed",
+      "seconds": 0.00016345898620784283,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[-1-2]",
+      "outcome": "passed",
+      "seconds": 0.00030208402313292027,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[-1-2]",
+      "outcome": "passed",
+      "seconds": 5.517207542026881,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[-1-2]",
+      "outcome": "passed",
+      "seconds": 0.00023499998496845365,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[1-1]",
+      "outcome": "passed",
+      "seconds": 0.0004814159474335611,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[1-1]",
+      "outcome": "passed",
+      "seconds": 6.600173166021705,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[1-1]",
+      "outcome": "passed",
+      "seconds": 0.0002334999735467136,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[1-2]",
+      "outcome": "passed",
+      "seconds": 0.0003749579773284495,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[1-2]",
+      "outcome": "passed",
+      "seconds": 5.583755375002511,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_log_derivatives_are_invariant_under_extreme_unit_changes[1-2]",
+      "outcome": "passed",
+      "seconds": 0.00016320799477398396,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_log_scaling_preserves_inputs_at_opposite_extreme_scales",
+      "outcome": "passed",
+      "seconds": 9.849999332800508e-05,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_log_scaling_preserves_inputs_at_opposite_extreme_scales",
+      "outcome": "passed",
+      "seconds": 2.4716705000028014,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_log_scaling_preserves_inputs_at_opposite_extreme_scales",
+      "outcome": "passed",
+      "seconds": 0.0001364590134471655,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_finite_range_endpoints_preserve_points_metric_and_distance_gradient[1]",
+      "outcome": "passed",
+      "seconds": 0.0002209590165875852,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_finite_range_endpoints_preserve_points_metric_and_distance_gradient[1]",
+      "outcome": "passed",
+      "seconds": 1.4827909579616971,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_finite_range_endpoints_preserve_points_metric_and_distance_gradient[1]",
+      "outcome": "passed",
+      "seconds": 0.00014479202218353748,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_finite_range_endpoints_preserve_points_metric_and_distance_gradient[2]",
+      "outcome": "passed",
+      "seconds": 0.00022116699256002903,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_finite_range_endpoints_preserve_points_metric_and_distance_gradient[2]",
+      "outcome": "passed",
+      "seconds": 1.779941916000098,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_bures_finite_range_endpoints_preserve_points_metric_and_distance_gradient[2]",
+      "outcome": "passed",
+      "seconds": 0.008795375004410744,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_low_rank_projection_extreme_spectrum_keeps_rotating_support_derivative",
+      "outcome": "passed",
+      "seconds": 0.000639250036329031,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_low_rank_projection_extreme_spectrum_keeps_rotating_support_derivative",
+      "outcome": "passed",
+      "seconds": 0.28460975002963096,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_low_rank_projection_extreme_spectrum_keeps_rotating_support_derivative",
+      "outcome": "passed",
+      "seconds": 0.00012179202167317271,
+      "when": "teardown"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_low_rank_projection_preserves_the_smallest_normal_positive_spectrum",
+      "outcome": "passed",
+      "seconds": 0.00010908301919698715,
+      "when": "setup"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_low_rank_projection_preserves_the_smallest_normal_positive_spectrum",
+      "outcome": "passed",
+      "seconds": 0.3296061250148341,
+      "when": "call"
+    },
+    {
+      "nodeid": "tests/test_low_rank_audit_fixes.py::test_low_rank_projection_preserves_the_smallest_normal_positive_spectrum",
+      "outcome": "passed",
+      "seconds": 0.00011666701175272465,
+      "when": "teardown"
+    }
+  ]
+}
