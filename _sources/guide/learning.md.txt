@@ -91,7 +91,9 @@ mathematical objective.
 {func}`geojax.learning.pairwise_distances` returns ordinary or squared exact
 distances. Collections broadcast over leading batch axes, Product values remain
 pytrees, and `block_size` limits temporary right-hand blocks while retaining a
-dense result.
+dense result. The returned matrix still requires
+$O(n_\mathrm{left}n_\mathrm{right})$ memory; blocking controls intermediate
+geometry evaluations, not the output size.
 
 ```python
 from geojax.learning import pairwise_distances
@@ -115,9 +117,21 @@ target tangent spaces. These wrappers are compatible with `jax.jit`,
 ## Statistical algorithms
 
 Fréchet means minimize weighted squared distance and use GeoJAX's manifold
-optimizer. Medians use a guarded Riemannian Weiszfeld iteration. Clustering
-provides intrinsic Lloyd updates, medoids, valid metric-space linkage rules,
-spectral graph methods, mean shift, and competitive quantization
+optimizer. Their default line search starts with a half-gradient step and
+uses retraction-curve derivatives to check progress when objective changes
+are comparable to floating-point rounding. Convergence still requires the
+reported gradient tolerance; a small step alone does not certify a mean.
+An explicitly supplied solver retains its own line-search settings.
+Custom retractions that encounter JAX tracing errors from Python or NumPy
+scalar conversions use the previous Armijo strategy without the derivative-based
+safeguard; unrelated errors still propagate.
+Medians use a guarded Riemannian Weiszfeld iteration for a
+Huber-smoothed distance objective; the returned diagnostics distinguish that
+objective from the unsmoothed median loss. The minimum enclosing ball uses a
+farthest-point approximation, so its convergence flag certifies stabilization
+of that iteration rather than global optimality on an arbitrary manifold.
+Clustering provides intrinsic Lloyd updates, medoids, valid metric-space
+linkage rules, spectral graph methods, mean shift, and competitive quantization
 {cite:p}`karcher1977center,lloyd1982least,zelnik2005self`.
 
 Dimension-reduction methods consume exact pairwise distances. PGA differs: it
@@ -125,7 +139,19 @@ forms its covariance Gram matrix with `M.inner` at the Fréchet mean, so the
 result remains valid for Product manifolds and metrics that are not ambient
 Frobenius metrics {cite:p}`fletcher2004principal`. Classical MDS and kernel
 methods report negative eigenvalue mass rather than pretending every manifold
-distance is Euclidean.
+distance is Euclidean. Classical scaling normalizes the distance scale before
+forming its Gram matrix and reports both normalized and physical spectra. It
+raises when squaring the physical scale is not representable in the selected
+dtype instead of returning overflowed diagnostics. GeoJAX's `phate` follows
+the PHATE diffusion-potential construction but uses classical scaling for the
+final metric embedding; it is a dependency-free dense approximation rather
+than the reference package's metric-MDS optimizer.
+
+Dense spectral and graph routines materialize $n\times n$ distance, affinity,
+or Laplacian matrices. They therefore require $O(n^2)$ memory, and dense
+eigendecompositions can require $O(n^3)$ work. For large datasets, reduce the
+sample set first or use the mini-batch and coreset routines rather than treating
+`block_size` as a sparse-graph substitute.
 
 The exact empirical Wasserstein routine solves the finite weighted transport
 problem and reports its transport plan, marginal residuals, reduced costs, and
@@ -136,6 +162,10 @@ Inference separates three null hypotheses. Fréchet ANOVA compares object-valued
 populations through their means and variances, the Biswas--Ghosh statistic uses
 only interpoint distances, and the Wasserstein test compares empirical measures
 {cite:p}`dubey2019frechet,biswas2014nonparametric`.
+Permutation calibration is finite-sample valid only under exchangeability of
+the pooled labels. A distance statistic need not characterize equality of
+distributions on every metric space; any stronger consistency claim requires
+the assumptions in the cited result.
 
 For group proportions $\gamma_j$, Fréchet variances $V_j$, variance estimators
 $\sigma_j^2$, and
@@ -178,6 +208,12 @@ $$
 
 while `knn_classifier` votes among the $k$ closest training observations. Both
 work with any exact-distance geometry, including nested Product data.
+`NearestCentroidModel.predict_proba` converts negative squared distances into a
+Gibbs score with a query-local scale. Those rows sum to one, but they are not
+calibrated posterior probabilities. Centroid and tangent-feature models expose
+whether their internal Fréchet reference fits converged; callers should inspect
+`converged`, `reason`, and the stored fit diagnostics before treating a model as
+fully resolved.
 
 Tangent classifiers first compute a reference Fréchet mean $\widehat\mu$ and
 an intrinsic metric Gram matrix
@@ -263,7 +299,10 @@ introduced. `minibatch_frechet_mean` and `minibatch_kmeans` use shuffled batches
 and decaying log-map steps, following the stochastic Riemannian optimization
 view {cite:p}`bonnabel2013stochastic`. They require an explicit key and return
 objective and update histories; they are approximations to the corresponding
-full-batch estimators.
+full-batch estimators. A convergence flag additionally requires a full-data
+stationarity check, so learning-rate decay alone cannot masquerade as
+convergence. Competitive quantization applies the same distinction between a
+flat objective history and stationary prototypes.
 
 ## Barycentric coding and dictionaries
 
@@ -307,8 +346,9 @@ with the coincident contribution set to zero; distance ranks use midranks
 around an intrinsic median {cite:p}`fletcher2009median`. A weighted trimmed
 fit reports its objective with weights renormalized over the retained measure.
 
-For partially labeled data, `label_propagation` diffuses class scores over a
-geodesic-distance affinity graph while clamping known labels
+For partially labeled data, `label_propagation` diffuses class scores with a
+symmetric normalized affinity operator and hard-clamps known labels after each
+update
 {cite:p}`zhou2003consistency`. `manifold_regularized_regression` solves the
 dense transductive objective
 

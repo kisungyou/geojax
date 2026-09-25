@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=24d0db4c" />
   
@@ -451,8 +451,9 @@ package installation checks. A release should pass the complete matrix rather
 than only the maintainer’s active Python environment.</p>
 <section id="current-environment">
 <h2>Current environment<a class="headerlink" href="#current-environment" title="Link to this heading">#</a></h2>
-<p>Run both JAX precision modes before committing:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span><span class="nb">test</span>
+<p>Check style and run both JAX precision modes before committing:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>quality
+make<span class="w"> </span><span class="nb">test</span>
 make<span class="w"> </span>test-float32
 </pre></div>
 </div>
@@ -508,6 +509,21 @@ to be active, making the matrix independent of a developer’s base
 environment. Missing versions are errors; they are never silently skipped.
 The supported minor versions also live in <code class="docutils literal notranslate"><span class="pre">.python-versions</span></code>, so
 <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">python</span> <span class="pre">install</span></code> can prepare all of them directly.</p>
+<p>Each tox environment builds a wheel, changes to an isolated temporary working
+directory, clears pytest’s source-tree <code class="docutils literal notranslate"><span class="pre">pythonpath</span></code>, and asserts that
+<code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">geojax</span></code> resolves inside that environment. The matrix therefore tests
+the installed artifact rather than accidentally importing the checkout.
+Installed module contents must also match the source exactly.</p>
+<p>The runner starts a fresh process for each test file, so JAX compilation caches
+cannot accumulate across the complete suite. It records the collected tests,
+execution results, timings, and source hashes, then combines coverage before
+enforcing the global and learning thresholds. Every test file is required;
+an unexplained empty collection, incomplete run, failure, or timeout fails the
+environment. Each file has a 600-second wall limit enforced by its parent
+process. A timed-out worker receives a stack-snapshot request before
+termination. Background traceback timers are disabled: a CPython watchdog
+was observed blocking pytest after a completed test. Reports are retained in
+timestamped subdirectories under <code class="docutils literal notranslate"><span class="pre">.tox/verification/&lt;environment&gt;/</span></code>.</p>
 <p>For a faster laptop run with bounded and coverage-safe concurrency:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>test-matrix-parallel
 </pre></div>
@@ -551,9 +567,26 @@ and memory, for example <code class="docutils literal notranslate"><span class="
 <code class="docutils literal notranslate"><span class="pre">ml-dtypes</span></code>, <code class="docutils literal notranslate"><span class="pre">opt-einsum</span></code>, pytest, and coverage tooling, preventing a new
 upstream release from changing an otherwise identical release check. Update
 these pins deliberately, then run the complete matrix before merging the
-change. Tox also fixes the Python hash seed and stores coverage data inside
-each environment, so sequential and modestly parallel runs have the same
-isolation guarantees.</p>
+change. Coverage data is stored separately for every environment and run, so
+sequential and modestly parallel runs have the same isolation guarantees.</p>
+<p>GitHub CI runs all ten pinned combinations above with the same complete-suite
+runner and uploads the reports even when a job fails. It also runs quality
+checks, rebuilds the documentation, and installs both generated package
+formats outside the checkout.</p>
+</section>
+<section id="completed-correctness-audit">
+<h2>Completed correctness audit<a class="headerlink" href="#completed-correctness-audit" title="Link to this heading">#</a></h2>
+<p>The 25 September 2026 audit of commit <code class="docutils literal notranslate"><span class="pre">b7361be</span></code> passed all ten complete
+installed-wheel environments: 11,465 test executions passed, with 15 expected
+skips. Branch-aware coverage exceeded the 85% global and 95% learning
+thresholds in every environment. A separate 140-test supplement passed with
+JAX 0.11.2 and the real optional OTT backend, with no skips.</p>
+<p>Independent mathematical and statistical cross-checks passed, and all 25
+documentation notebooks and 97 code cells executed successfully. This
+validation used macOS ARM64 CPU; GPU and TPU execution remain untested. The
+<a class="reference external" href="https://github.com/kisungyou/geojax/blob/b7361beb5b42fe716c32a8e583710b5d23a31703/CORRECTNESS_AUDIT.md">complete audit report</a>
+records the corrections, reproducible evidence, and remaining numerical and
+statistical limitations.</p>
 </section>
 <section id="documentation">
 <h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">#</a></h2>
@@ -561,10 +594,10 @@ isolation guarantees.</p>
 </pre></div>
 </div>
 <p>This executes every MyST Markdown tutorial from a clean Sphinx environment,
-treats warnings as errors, and audits rendered mathematics and local
-references. <code class="docutils literal notranslate"><span class="pre">jupyter_execute/</span></code> and <code class="docutils literal notranslate"><span class="pre">.jupyter_cache/</span></code> are transient: the build
-deletes both after the HTML audit succeeds. The <code class="docutils literal notranslate"><span class="pre">.md</span></code> tutorial is always the
-maintained source.</p>
+treats Sphinx warnings and execution errors as build failures, and audits
+rendered mathematics and local references. <code class="docutils literal notranslate"><span class="pre">jupyter_execute/</span></code> and
+<code class="docutils literal notranslate"><span class="pre">.jupyter_cache/</span></code> are transient: the build deletes both after the HTML audit
+succeeds. The <code class="docutils literal notranslate"><span class="pre">.md</span></code> tutorial is always the maintained source.</p>
 </section>
 <section id="release-candidate">
 <h2>Release candidate<a class="headerlink" href="#release-candidate" title="Link to this heading">#</a></h2>
@@ -572,8 +605,13 @@ maintained source.</p>
 </pre></div>
 </div>
 <p>The release target requires the complete tox matrix, rebuilds every tutorial,
-creates clean wheel and source archives, and applies Twine’s strict metadata
-validation. It does not upload or publish anything.</p>
+creates clean wheel and source archives, applies Twine’s strict metadata
+validation, and installs both artifacts from a temporary directory. It first
+requires a clean commit carrying the annotated version tag, then checks the
+source again after documentation generation and before packaging. Tutorial
+execution can regenerate tracked figures, so those changes must be reviewed
+and committed before tagging the release. The target prints the SHA-256
+digest of each artifact. It does not upload or publish anything.</p>
 </section>
 </section>
 
@@ -627,6 +665,7 @@ validation. It does not upload or publish anything.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#current-environment">Current environment</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#numerical-stability">Numerical stability</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supported-matrix">Supported matrix</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#completed-correctness-audit">Completed correctness audit</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#documentation">Documentation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-candidate">Release candidate</a></li>
 </ul>

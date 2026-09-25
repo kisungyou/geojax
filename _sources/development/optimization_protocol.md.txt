@@ -56,18 +56,22 @@ f(x)=\frac12\lVert r(x)\rVert_2^2,
 $$
 
 where $J_x=\mathrm Dr(x)$ and the adjoint is taken between the Euclidean
-residual metric and $g_x$. It adds:
+residual metric and $g_x$. Residual leaves must be real-valued; complex
+residuals require an explicit real representation, such as concatenated real
+and imaginary parts. It adds:
 
 ```text
 residual_value(x)
 residual_norm(x)
+cost_and_grad(x)
 jacobian_vec(x, u)
 adjoint_jacobian(x, z)
 normal_operator(x, u, damping=0)
 ```
 
 JAX supplies Jacobian-vector and vector-Jacobian products by default, so no
-dense Jacobian is formed. User callbacks may replace either product.
+dense Jacobian is formed. The combined objective/gradient path reuses one
+residual linearization. User callbacks may replace either product.
 
 `FiniteSum` defines
 
@@ -90,7 +94,14 @@ compiled independently:
 compiled_cost = jax.jit(cost)
 compiled_gradient = jax.jit(jax.grad(cost))
 compiled_hessian_product = jax.jit(problem.rhess_vec)
+compiled_jacobian_product = jax.jit(problem.jacobian_vec)
+compiled_batch_gradient = jax.jit(problem.batch_cost_and_grad)
 ```
+
+Static contracts such as pytree structure, shapes, dtypes, and real-valued
+outputs are checked while tracing. Data-dependent finiteness and index-bound
+errors are raised by direct eager calls; callers of compiled kernels must
+supply values satisfying those same preconditions.
 
 `solve()` is intentionally outside that boundary. Solver drivers use Python
 loops for line-search decisions, stopping callbacks, wall-clock limits,
@@ -162,10 +173,10 @@ f(R_x(\alpha d))
 \leq f(x)+c_1\alpha\,g_x(\operatorname{grad}f(x),d).
 $$
 
-`StrongWolfe` also checks a curvature condition by pairing the new gradient
-with the transported original direction. This is the exact curve derivative
-for geodesics with parallel transport and a standard vector-transport proxy
-for general retractions.
+`StrongWolfe` also checks a curvature condition using the actual derivative of
+$\alpha\mapsto f(R_x(\alpha d))$. JAX forward-mode differentiation computes the
+retraction-curve velocity, which is paired with the trial gradient. Therefore
+the configured retraction must be JAX-differentiable in its scalar multiplier.
 
 Line searches live in `geojax.optimization.linesearch`; solvers must not embed
 private Armijo loops.
@@ -247,8 +258,11 @@ linesearch, beta, reason, extra
 
 Line-search counts and multipliers belong in `linesearch`. Trust ratios,
 regularization or damping values, inner iteration counts, stochastic learning
-rates, and block summaries belong in `extra`. A terminating history row always
-has a nonempty `reason`.
+rates, and block summaries belong in `extra`. Stochastic-gradient rows mark
+`extra["evaluation_scope"]` as `"full"` or `"mini_batch"`; the row's `cost` and
+`gradnorm` use that stated scope. A terminating row is refreshed to the full
+objective and gradient. A terminating history row always has a nonempty
+`reason`.
 
 ## Extension checklist
 

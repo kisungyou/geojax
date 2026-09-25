@@ -128,7 +128,7 @@ axes[1].axhline(0.5, color="0.45", linestyle="--", linewidth=1.0)
 axes[1].set(
     title="Propagated class-one score",
     xlabel="angle",
-    ylabel="class-one probability",
+    ylabel="normalized class score",
     ylim=(-0.03, 1.03),
 )
 axes[1].grid(alpha=0.18)
@@ -165,9 +165,10 @@ plt.show()
 ```
 
 Graph predictions depend on the bandwidth, neighborhood size, graph
-connectivity, and regularization. An unlabeled connected component carries no
-class evidence; GeoJAX reports uniform scores there rather than inventing a
-label from array order.
+connectivity, and regularization. Every connected component must contain at
+least one observed label; GeoJAX rejects an uninformed component rather than
+inventing a label from array order. The displayed normalized scores are graph
+diffusion scores, not calibrated posterior probabilities.
 
 ## References
 

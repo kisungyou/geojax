@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=24d0db4c" />
   
@@ -489,8 +489,8 @@ projection embedding removes this ambiguity:</p>
 d_{\operatorname{Gr}}([X],[Y])=\arccos\left(|X^\top Y|\right).
 \]</div>
 <p><code class="docutils literal notranslate"><span class="pre">GrassmannProjection</span></code> supplies this embedding, while its intrinsic operations
-use principal-angle geometry <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id27" title="Alan Edelman, Tomás A. Arias, and Steven T. Smith. The geometry of algorithms with orthogonality constraints. SIAM Journal on Matrix Analysis and Applications, 20(2):303–353, 1998. doi:10.1137/S0895479895290954.">Edelman <em>et al.</em>, 1998</a>]</span>. GeoJAX learns the
-regularized closed-form RMML metric of <span class="bibtex-citation" id="id2">Zhu <em>et al.</em> [<a class="reference internal" href="#id72" title="Pengfei Zhu, Hao Cheng, Qinghua Hu, Qilong Wang, and Changqing Zhang. Towards generalized and efficient metric learning on Riemannian manifold. In Proceedings of the Twenty-Seventh International Joint Conference on Artificial Intelligence, 3235–3241. 2018. doi:10.24963/ijcai.2018/449.">2018</a>]</span> in the
+use principal-angle geometry <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id28" title="Alan Edelman, Tomás A. Arias, and Steven T. Smith. The geometry of algorithms with orthogonality constraints. SIAM Journal on Matrix Analysis and Applications, 20(2):303–353, 1998. doi:10.1137/S0895479895290954.">Edelman <em>et al.</em>, 1998</a>]</span>. GeoJAX learns the
+regularized closed-form RMML metric of <span class="bibtex-citation" id="id2">Zhu <em>et al.</em> [<a class="reference internal" href="#id73" title="Pengfei Zhu, Hao Cheng, Qinghua Hu, Qilong Wang, and Changqing Zhang. Towards generalized and efficient metric learning on Riemannian manifold. In Proceedings of the Twenty-Seventh International Joint Conference on Artificial Intelligence, 3235–3241. 2018. doi:10.24963/ijcai.2018/449.">2018</a>]</span> in the
 nine-dimensional projector coordinates.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -578,9 +578,9 @@ nine-dimensional projector coordinates.</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>metric shape: (9, 9)
-metric eigenvalues: [1.     1.     1.     1.     1.     1.     1.0011 1.0041 2.5633]
+metric eigenvalues: [1.     1.     1.     1.     1.     1.     1.0005 1.0021 1.601 ]
 intrinsic 1-NN accuracy: 0.896
-learned   1-NN accuracy: 0.979
+learned   1-NN accuracy: 0.938
 similar pairs: 552
 dissimilar pairs: 576
 </pre></div>
@@ -719,7 +719,7 @@ reweights projector directions without changing any manifold observation.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/27f500222919768d6e02db85c5cce4324c8ad3967c2a88fad4393922735875ca.png" src="../_images/27f500222919768d6e02db85c5cce4324c8ad3967c2a88fad4393922735875ca.png" />
+<img alt="../_images/f3cce293c667742d3cef2ad151db3ea1451f8fb746a278158e4f6b6d3f12d345.png" src="../_images/f3cce293c667742d3cef2ad151db3ea1451f8fb746a278158e4f6b6d3f12d345.png" />
 </div>
 </div>
 <p>RMML needs an equivariant embedding, not merely a distance function. Here the
@@ -732,11 +732,11 @@ change the invariance of the learned comparison.</p>
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id3">
 <div role="list" class="citation-list">
-<div class="citation" id="id27" role="doc-biblioentry">
+<div class="citation" id="id28" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">EAS98</a><span class="fn-bracket">]</span></span>
 <p>Alan Edelman, Tomás A. Arias, and Steven T. Smith. The geometry of algorithms with orthogonality constraints. <em>SIAM Journal on Matrix Analysis and Applications</em>, 20(2):303–353, 1998. <a class="reference external" href="https://doi.org/10.1137/S0895479895290954">doi:10.1137/S0895479895290954</a>.</p>
 </div>
-<div class="citation" id="id72" role="doc-biblioentry">
+<div class="citation" id="id73" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">ZCH+18</a><span class="fn-bracket">]</span></span>
 <p>Pengfei Zhu, Hao Cheng, Qinghua Hu, Qilong Wang, and Changqing Zhang. Towards generalized and efficient metric learning on Riemannian manifold. In <em>Proceedings of the Twenty-Seventh International Joint Conference on Artificial Intelligence</em>, 3235–3241. 2018. <a class="reference external" href="https://doi.org/10.24963/ijcai.2018/449">doi:10.24963/ijcai.2018/449</a>.</p>
 </div>

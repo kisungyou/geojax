@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=24d0db4c" />
   
@@ -474,7 +474,7 @@ least-squares methods exploit residual structure that a generic scalar
 objective hides. This tutorial places those choices on the same two-dimensional
 problem so that both the iterates and convergence histories are visible. The
 problem is a mildly scaled Rosenbrock-type least-squares valley
-<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id59" title="H. H. Rosenbrock. An automatic method for finding the greatest or least value of a function. The Computer Journal, 3(3):175–184, 1960. doi:10.1093/comjnl/3.3.175.">Rosenbrock, 1960</a>]</span>.</p>
+<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id60" title="H. H. Rosenbrock. An automatic method for finding the greatest or least value of a function. The Computer Journal, 3(3):175–184, 1960. doi:10.1093/comjnl/3.3.175.">Rosenbrock, 1960</a>]</span>.</p>
 <p>Consider the residual</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -617,12 +617,12 @@ subproblem step here, keeping the comparison compact and deterministic.</p>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>solver                    iter    final cost     grad norm
 -----------------------------------------------------------
-Steepest descent           145     8.292e-12     1.878e-06
-Conjugate gradient          46     4.494e-12     1.311e-06
-L-BFGS                      15     4.805e-14     6.750e-07
+Steepest descent           133     8.521e-12     1.772e-06
+Conjugate gradient          46     3.255e-13     1.907e-06
+L-BFGS                      15     4.661e-14     6.648e-07
 Trust regions                7     4.921e-14     3.034e-07
 Newton-CG                   20     4.145e-13     1.188e-06
-Cubic regularization        65     9.771e-12     1.849e-06
+Cubic regularization       100     4.502e-11     6.045e-06
 Gauss-Newton                15     2.242e-13     1.540e-06
 Levenberg-Marquardt         13     1.492e-12     7.193e-07
 </pre></div>
@@ -724,7 +724,7 @@ differently to the valley’s changing orientation.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/7057a9718893c69fa419548d206a2b994c7ef09b0b047f771296206f0b7a23c4.png" src="../_images/7057a9718893c69fa419548d206a2b994c7ef09b0b047f771296206f0b7a23c4.png" />
+<img alt="../_images/60a191576c1716bfb6e337c8b015dfbfdc29ea8d82dfa54134238794497eb896.png" src="../_images/60a191576c1716bfb6e337c8b015dfbfdc29ea8d82dfa54134238794497eb896.png" />
 </div>
 </div>
 <p>The comparison suggests a practical progression. Start with conjugate gradient
@@ -733,42 +733,42 @@ regularization when accurate Hessian products justify their cost. When the
 model is genuinely a sum of squared residuals, preserve that structure with
 <code class="docutils literal notranslate"><span class="pre">LeastSquares</span></code>; Gauss–Newton and Levenberg–Marquardt can then operate on
 <span class="math notranslate nohighlight">\(J_x^*J_x\)</span> without forming either the Jacobian or the full Hessian. Standard
-Euclidean derivations appear in <span class="bibtex-citation" id="id2">Nocedal and Wright [<a class="reference internal" href="#id56" title="Jorge Nocedal and Stephen J. Wright. Numerical Optimization. Springer, 2 edition, 2006. doi:10.1007/978-0-387-40065-5.">2006</a>]</span>; the
+Euclidean derivations appear in <span class="bibtex-citation" id="id2">Nocedal and Wright [<a class="reference internal" href="#id57" title="Jorge Nocedal and Stephen J. Wright. Numerical Optimization. Springer, 2 edition, 2006. doi:10.1007/978-0-387-40065-5.">2006</a>]</span>; the
 Riemannian counterparts are developed in
-<span class="bibtex-citation" id="id3">Absil <em>et al.</em> [<a class="reference internal" href="#id9" title="P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. Optimization Algorithms on Matrix Manifolds. Princeton University Press, 2008. doi:10.1515/9781400830244.">2008</a>]</span> and <span class="bibtex-citation" id="id4">Boumal [<a class="reference internal" href="#id25" title="Nicolas Boumal. An Introduction to Optimization on Smooth Manifolds. Cambridge University Press, 2023. doi:10.1017/9781009166164.">2023</a>]</span>.
+<span class="bibtex-citation" id="id3">Absil <em>et al.</em> [<a class="reference internal" href="#id10" title="P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. Optimization Algorithms on Matrix Manifolds. Princeton University Press, 2008. doi:10.1515/9781400830244.">2008</a>]</span> and <span class="bibtex-citation" id="id4">Boumal [<a class="reference internal" href="#id26" title="Nicolas Boumal. An Introduction to Optimization on Smooth Manifolds. Cambridge University Press, 2023. doi:10.1017/9781009166164.">2023</a>]</span>.
 The damping and cubic models trace to
-<span class="bibtex-citation" id="id5">Levenberg [<a class="reference internal" href="#id44" title="Kenneth Levenberg. A method for the solution of certain non-linear problems in least squares. Quarterly of Applied Mathematics, 2(2):164–168, 1944. doi:10.1090/qam/10666.">1944</a>]</span>, <span class="bibtex-citation" id="id6">Marquardt [<a class="reference internal" href="#id50" title="Donald W. Marquardt. An algorithm for least-squares estimation of nonlinear parameters. Journal of the Society for Industrial and Applied Mathematics, 11(2):431–441, 1963. doi:10.1137/0111030.">1963</a>]</span>, and
-<span class="bibtex-citation" id="id7">Cartis <em>et al.</em> [<a class="reference internal" href="#id28" title="Coralia Cartis, Nicholas I. M. Gould, and Philippe L. Toint. Adaptive cubic regularisation methods for unconstrained optimization. part i: motivation, convergence and numerical results. Mathematical Programming, 127:245–295, 2011. doi:10.1007/s10107-009-0286-5.">2011</a>]</span>.</p>
+<span class="bibtex-citation" id="id5">Levenberg [<a class="reference internal" href="#id45" title="Kenneth Levenberg. A method for the solution of certain non-linear problems in least squares. Quarterly of Applied Mathematics, 2(2):164–168, 1944. doi:10.1090/qam/10666.">1944</a>]</span>, <span class="bibtex-citation" id="id6">Marquardt [<a class="reference internal" href="#id51" title="Donald W. Marquardt. An algorithm for least-squares estimation of nonlinear parameters. Journal of the Society for Industrial and Applied Mathematics, 11(2):431–441, 1963. doi:10.1137/0111030.">1963</a>]</span>, and
+<span class="bibtex-citation" id="id7">Cartis <em>et al.</em> [<a class="reference internal" href="#id29" title="Coralia Cartis, Nicholas I. M. Gould, and Philippe L. Toint. Adaptive cubic regularisation methods for unconstrained optimization. part i: motivation, convergence and numerical results. Mathematical Programming, 127:245–295, 2011. doi:10.1007/s10107-009-0286-5.">2011</a>]</span>.</p>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id8">
 <div role="list" class="citation-list">
-<div class="citation" id="id9" role="doc-biblioentry">
+<div class="citation" id="id10" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">AMS08</a><span class="fn-bracket">]</span></span>
 <p>P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. <em>Optimization Algorithms on Matrix Manifolds</em>. Princeton University Press, 2008. <a class="reference external" href="https://doi.org/10.1515/9781400830244">doi:10.1515/9781400830244</a>.</p>
 </div>
-<div class="citation" id="id25" role="doc-biblioentry">
+<div class="citation" id="id26" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">Bou23</a><span class="fn-bracket">]</span></span>
 <p>Nicolas Boumal. <em>An Introduction to Optimization on Smooth Manifolds</em>. Cambridge University Press, 2023. <a class="reference external" href="https://doi.org/10.1017/9781009166164">doi:10.1017/9781009166164</a>.</p>
 </div>
-<div class="citation" id="id28" role="doc-biblioentry">
+<div class="citation" id="id29" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id7">CGT11</a><span class="fn-bracket">]</span></span>
 <p>Coralia Cartis, Nicholas I. M. Gould, and Philippe L. Toint. Adaptive cubic regularisation methods for unconstrained optimization. part i: motivation, convergence and numerical results. <em>Mathematical Programming</em>, 127:245–295, 2011. <a class="reference external" href="https://doi.org/10.1007/s10107-009-0286-5">doi:10.1007/s10107-009-0286-5</a>.</p>
 </div>
-<div class="citation" id="id44" role="doc-biblioentry">
+<div class="citation" id="id45" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">Lev44</a><span class="fn-bracket">]</span></span>
 <p>Kenneth Levenberg. A method for the solution of certain non-linear problems in least squares. <em>Quarterly of Applied Mathematics</em>, 2(2):164–168, 1944. <a class="reference external" href="https://doi.org/10.1090/qam/10666">doi:10.1090/qam/10666</a>.</p>
 </div>
-<div class="citation" id="id50" role="doc-biblioentry">
+<div class="citation" id="id51" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">Mar63</a><span class="fn-bracket">]</span></span>
 <p>Donald W. Marquardt. An algorithm for least-squares estimation of nonlinear parameters. <em>Journal of the Society for Industrial and Applied Mathematics</em>, 11(2):431–441, 1963. <a class="reference external" href="https://doi.org/10.1137/0111030">doi:10.1137/0111030</a>.</p>
 </div>
-<div class="citation" id="id56" role="doc-biblioentry">
+<div class="citation" id="id57" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">NW06</a><span class="fn-bracket">]</span></span>
 <p>Jorge Nocedal and Stephen J. Wright. <em>Numerical Optimization</em>. Springer, 2 edition, 2006. <a class="reference external" href="https://doi.org/10.1007/978-0-387-40065-5">doi:10.1007/978-0-387-40065-5</a>.</p>
 </div>
-<div class="citation" id="id59" role="doc-biblioentry">
+<div class="citation" id="id60" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Ros60</a><span class="fn-bracket">]</span></span>
 <p>H. H. Rosenbrock. An automatic method for finding the greatest or least value of a function. <em>The Computer Journal</em>, 3(3):175–184, 1960. <a class="reference external" href="https://doi.org/10.1093/comjnl/3.3.175">doi:10.1093/comjnl/3.3.175</a>.</p>
 </div>

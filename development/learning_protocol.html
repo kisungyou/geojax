@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=24d0db4c" />
   
@@ -454,7 +454,7 @@ OTT-JAX is isolated in the optional <code class="docutils literal notranslate"><
 PHATE may be test or documentation oracles but cannot be imported by the
 runtime package. This boundary follows the separation between geometric
 primitives and model-level learning used throughout geometric machine learning
-<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id22" title="Michael M. Bronstein, Joan Bruna, Taco Cohen, and Petar Veličković. Geometric deep learning: grids, groups, graphs, geodesics, and gauges. arXiv preprint arXiv:2104.13478, 2021. doi:10.48550/arXiv.2104.13478.">Bronstein <em>et al.</em>, 2021</a>]</span>.</p>
+<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id23" title="Michael M. Bronstein, Joan Bruna, Taco Cohen, and Petar Veličković. Geometric deep learning: grids, groups, graphs, geodesics, and gauges. arXiv preprint arXiv:2104.13478, 2021. doi:10.48550/arXiv.2104.13478.">Bronstein <em>et al.</em>, 2021</a>]</span>.</p>
 <section id="data-boundary">
 <h2>Data boundary<a class="headerlink" href="#data-boundary" title="Link to this heading">#</a></h2>
 <p>Every high-level method starts with <code class="docutils literal notranslate"><span class="pre">(manifold,</span> <span class="pre">data,</span> <span class="pre">...)</span></code>. Raw canonical data
@@ -501,7 +501,16 @@ and permutation tests carry no end-to-end gradient guarantee.</p>
 <p>Randomized methods receive an explicit JAX key. Public parameter names follow
 <code class="docutils literal notranslate"><span class="pre">n_clusters</span></code>, <code class="docutils literal notranslate"><span class="pre">n_neighbors</span></code>, <code class="docutils literal notranslate"><span class="pre">n_components</span></code>, <code class="docutils literal notranslate"><span class="pre">sample_weight</span></code>, <code class="docutils literal notranslate"><span class="pre">maxiter</span></code>, and
 <code class="docutils literal notranslate"><span class="pre">tol</span></code>. Iterative immutable results expose <code class="docutils literal notranslate"><span class="pre">objective</span></code>, <code class="docutils literal notranslate"><span class="pre">iterations</span></code>,
-<code class="docutils literal notranslate"><span class="pre">converged</span></code>, <code class="docutils literal notranslate"><span class="pre">reason</span></code>, and family-specific diagnostics.</p>
+<code class="docutils literal notranslate"><span class="pre">converged</span></code>, <code class="docutils literal notranslate"><span class="pre">reason</span></code>, and family-specific diagnostics. Treat <code class="docutils literal notranslate"><span class="pre">converged</span></code> as
+the stable machine-readable status; <code class="docutils literal notranslate"><span class="pre">reason</span></code> is descriptive text and may gain
+detail as an algorithm’s convergence certificate improves.</p>
+<p>An outer model may retain an incomplete internal fit when that point is still
+finite and geometrically valid, but it must propagate the status through its
+own <code class="docutils literal notranslate"><span class="pre">converged</span></code> and <code class="docutils literal notranslate"><span class="pre">reason</span></code> fields and retain the component result in
+<code class="docutils literal notranslate"><span class="pre">diagnostics</span></code>. Inference routines that require a resolved null statistic must
+instead fail explicitly when an internal mean does not converge. Small updates
+from a decaying learning rate are not a convergence certificate: stochastic
+summaries also evaluate a full-data stationarity residual.</p>
 <p>Fitted predictors own the geometry and validated training representation they
 need for prediction. A classifier must preserve the user’s class labels while
 keeping encoded labels inside numerical kernels. A manifold-response model
@@ -515,6 +524,12 @@ must have a penalty whose value is not constant on its feasible set.</p>
 with cubic work must say so. Implementations should use <code class="docutils literal notranslate"><span class="pre">squared_dist</span></code> in
 smooth squared-distance objectives and preserve each geometry’s cut-locus
 branch policy.</p>
+<p>Spectral methods must normalize their physical scale before eigendecomposition
+and report the normalization in diagnostics. If mapping the normalized result
+back to physical units would overflow the active dtype, the method raises a
+clear rescaling error rather than returning nonfinite eigenvalues. Probability
+labels on distance classifiers must be described as scores unless the model
+implements and validates a probabilistic calibration procedure.</p>
 <p>A new method is incomplete until tests cover:</p>
 <ul class="simple">
 <li><p>analytic Euclidean behavior and at least one curved geometry;</p></li>
@@ -535,17 +550,17 @@ self-contained Markdown and may not retain generated notebooks.</p>
 <p>The implementation literature is part of the protocol: algorithm docstrings
 and scientific tutorials must identify the objective actually computed. For
 example, entropically regularized transport must not be presented as the exact
-linear program <span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id64" title="Marco Cuturi. Sinkhorn distances: lightspeed computation of optimal transport. In Advances in Neural Information Processing Systems, volume 26, 2292–2300. 2013.">Cuturi, 2013</a>]</span>.</p>
+linear program <span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id65" title="Marco Cuturi. Sinkhorn distances: lightspeed computation of optimal transport. In Advances in Neural Information Processing Systems, volume 26, 2292–2300. 2013.">Cuturi, 2013</a>]</span>.</p>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id3">
 <div role="list" class="citation-list">
-<div class="citation" id="id22" role="doc-biblioentry">
+<div class="citation" id="id23" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">BBCVelivckovic21</a><span class="fn-bracket">]</span></span>
 <p>Michael M. Bronstein, Joan Bruna, Taco Cohen, and Petar Veličković. Geometric deep learning: grids, groups, graphs, geodesics, and gauges. <em>arXiv preprint arXiv:2104.13478</em>, 2021. <a class="reference external" href="https://doi.org/10.48550/arXiv.2104.13478">doi:10.48550/arXiv.2104.13478</a>.</p>
 </div>
-<div class="citation" id="id64" role="doc-biblioentry">
+<div class="citation" id="id65" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">Cut13</a><span class="fn-bracket">]</span></span>
 <p>Marco Cuturi. Sinkhorn distances: lightspeed computation of optimal transport. In <em>Advances in Neural Information Processing Systems</em>, volume 26, 2292–2300. 2013.</p>
 </div>

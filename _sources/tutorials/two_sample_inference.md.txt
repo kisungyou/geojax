@@ -116,6 +116,11 @@ count is intentionally small because every permutation solves an exact linear
 transport problem.
 Substantially more permutations are required for a final analysis; these
 counts keep the executable demonstration quick and deterministic.
+Their finite-sample interpretation requires exchangeability of the pooled
+labels under the null. Moreover, energy and related distance statistics
+characterize equality in distribution only under appropriate metric-space
+conditions, such as strong negative type; the permutation calculation alone
+does not establish that geometric property.
 
 ## Visual report
 

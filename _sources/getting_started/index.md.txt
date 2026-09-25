@@ -17,12 +17,13 @@ python -m pip install "geojax==0.1.1"
 
 ### Option 2: development version from GitHub
 
-The `main` branch and this website document the unreleased 0.2.0 development
-version, including `geojax.learning`.
+The pinned commit below contains the audited, unreleased 0.2.0 API documented
+on this website, including `geojax.learning`.
 
 ```bash
 git clone https://github.com/kisungyou/geojax.git
 cd geojax
+git checkout b7361beb5b42fe716c32a8e583710b5d23a31703
 python -m pip install .
 ```
 

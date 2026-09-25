@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=24d0db4c" />
   
@@ -457,7 +457,7 @@
 </ol>
 <p>This separation is consistent with established Riemannian optimization
 interfaces and algorithmic treatments
-<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id3" title="P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. Optimization Algorithms on Matrix Manifolds. Princeton University Press, 2008. doi:10.1515/9781400830244.">Absil <em>et al.</em>, 2008</a>, <a class="reference internal" href="#id19" title="Nicolas Boumal. An Introduction to Optimization on Smooth Manifolds. Cambridge University Press, 2023. doi:10.1017/9781009166164.">Boumal, 2023</a>, <a class="reference internal" href="#id20" title="Nicolas Boumal, Bamdev Mishra, P.-A. Absil, and Rodolphe Sepulchre. Manopt, a Matlab toolbox for optimization on manifolds. Journal of Machine Learning Research, 15(42):1455–1459, 2014. URL: https://jmlr.org/papers/v15/boumal14a.html.">Boumal <em>et al.</em>, 2014</a>]</span>.</p>
+<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id4" title="P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. Optimization Algorithms on Matrix Manifolds. Princeton University Press, 2008. doi:10.1515/9781400830244.">Absil <em>et al.</em>, 2008</a>, <a class="reference internal" href="#id20" title="Nicolas Boumal. An Introduction to Optimization on Smooth Manifolds. Cambridge University Press, 2023. doi:10.1017/9781009166164.">Boumal, 2023</a>, <a class="reference internal" href="#id21" title="Nicolas Boumal, Bamdev Mishra, P.-A. Absil, and Rodolphe Sepulchre. Manopt, a Matlab toolbox for optimization on manifolds. Journal of Machine Learning Research, 15(42):1455–1459, 2014. URL: https://jmlr.org/papers/v15/boumal14a.html.">Boumal <em>et al.</em>, 2014</a>]</span>.</p>
 <p>The public entry point is</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">Minimize</span><span class="p">(</span><span class="n">M</span><span class="o">=</span><span class="n">M</span><span class="p">,</span> <span class="n">cost</span><span class="o">=</span><span class="n">cost</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="n">solver</span><span class="p">)</span>
 <span class="n">solution</span><span class="p">,</span> <span class="n">final_cost</span><span class="p">,</span> <span class="n">history</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
@@ -513,16 +513,20 @@ f(x)=\frac12\lVert r(x)\rVert_2^2,
 \operatorname{grad} f(x)=J_x^*r(x),
 \]</div>
 <p>where <span class="math notranslate nohighlight">\(J_x=\mathrm Dr(x)\)</span> and the adjoint is taken between the Euclidean
-residual metric and <span class="math notranslate nohighlight">\(g_x\)</span>. It adds:</p>
+residual metric and <span class="math notranslate nohighlight">\(g_x\)</span>. Residual leaves must be real-valued; complex
+residuals require an explicit real representation, such as concatenated real
+and imaginary parts. It adds:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>residual_value(x)
 residual_norm(x)
+cost_and_grad(x)
 jacobian_vec(x, u)
 adjoint_jacobian(x, z)
 normal_operator(x, u, damping=0)
 </pre></div>
 </div>
 <p>JAX supplies Jacobian-vector and vector-Jacobian products by default, so no
-dense Jacobian is formed. User callbacks may replace either product.</p>
+dense Jacobian is formed. The combined objective/gradient path reuses one
+residual linearization. User callbacks may replace either product.</p>
 <p><code class="docutils literal notranslate"><span class="pre">FiniteSum</span></code> defines</p>
 <div class="math notranslate nohighlight">
 \[
@@ -541,8 +545,14 @@ compiled independently:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">compiled_cost</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cost</span><span class="p">)</span>
 <span class="n">compiled_gradient</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">cost</span><span class="p">))</span>
 <span class="n">compiled_hessian_product</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">rhess_vec</span><span class="p">)</span>
+<span class="n">compiled_jacobian_product</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">jacobian_vec</span><span class="p">)</span>
+<span class="n">compiled_batch_gradient</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">batch_cost_and_grad</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Static contracts such as pytree structure, shapes, dtypes, and real-valued
+outputs are checked while tracing. Data-dependent finiteness and index-bound
+errors are raised by direct eager calls; callers of compiled kernels must
+supply values satisfying those same preconditions.</p>
 <p><code class="docutils literal notranslate"><span class="pre">solve()</span></code> is intentionally outside that boundary. Solver drivers use Python
 loops for line-search decisions, stopping callbacks, wall-clock limits,
 printing, and <code class="docutils literal notranslate"><span class="pre">InfoEntry</span></code> construction. They also convert accepted diagnostics
@@ -604,10 +614,10 @@ when</p>
 f(R_x(\alpha d))
 \leq f(x)+c_1\alpha\,g_x(\operatorname{grad}f(x),d).
 \]</div>
-<p><code class="docutils literal notranslate"><span class="pre">StrongWolfe</span></code> also checks a curvature condition by pairing the new gradient
-with the transported original direction. This is the exact curve derivative
-for geodesics with parallel transport and a standard vector-transport proxy
-for general retractions.</p>
+<p><code class="docutils literal notranslate"><span class="pre">StrongWolfe</span></code> also checks a curvature condition using the actual derivative of
+<span class="math notranslate nohighlight">\(\alpha\mapsto f(R_x(\alpha d))\)</span>. JAX forward-mode differentiation computes the
+retraction-curve velocity, which is paired with the trial gradient. Therefore
+the configured retraction must be JAX-differentiable in its scalar multiplier.</p>
 <p>Line searches live in <code class="docutils literal notranslate"><span class="pre">geojax.optimization.linesearch</span></code>; solvers must not embed
 private Armijo loops.</p>
 </section>
@@ -705,8 +715,11 @@ linesearch, beta, reason, extra
 </div>
 <p>Line-search counts and multipliers belong in <code class="docutils literal notranslate"><span class="pre">linesearch</span></code>. Trust ratios,
 regularization or damping values, inner iteration counts, stochastic learning
-rates, and block summaries belong in <code class="docutils literal notranslate"><span class="pre">extra</span></code>. A terminating history row always
-has a nonempty <code class="docutils literal notranslate"><span class="pre">reason</span></code>.</p>
+rates, and block summaries belong in <code class="docutils literal notranslate"><span class="pre">extra</span></code>. Stochastic-gradient rows mark
+<code class="docutils literal notranslate"><span class="pre">extra[&quot;evaluation_scope&quot;]</span></code> as <code class="docutils literal notranslate"><span class="pre">&quot;full&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;mini_batch&quot;</span></code>; the row’s <code class="docutils literal notranslate"><span class="pre">cost</span></code> and
+<code class="docutils literal notranslate"><span class="pre">gradnorm</span></code> use that stated scope. A terminating row is refreshed to the full
+objective and gradient. A terminating history row always has a nonempty
+<code class="docutils literal notranslate"><span class="pre">reason</span></code>.</p>
 </section>
 <section id="extension-checklist">
 <h2>Extension checklist<a class="headerlink" href="#extension-checklist" title="Link to this heading">#</a></h2>
@@ -726,15 +739,15 @@ has a nonempty <code class="docutils literal notranslate"><span class="pre">reas
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id2">
 <div role="list" class="citation-list">
-<div class="citation" id="id3" role="doc-biblioentry">
+<div class="citation" id="id4" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">AMS08</a><span class="fn-bracket">]</span></span>
 <p>P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. <em>Optimization Algorithms on Matrix Manifolds</em>. Princeton University Press, 2008. <a class="reference external" href="https://doi.org/10.1515/9781400830244">doi:10.1515/9781400830244</a>.</p>
 </div>
-<div class="citation" id="id19" role="doc-biblioentry">
+<div class="citation" id="id20" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Bou23</a><span class="fn-bracket">]</span></span>
 <p>Nicolas Boumal. <em>An Introduction to Optimization on Smooth Manifolds</em>. Cambridge University Press, 2023. <a class="reference external" href="https://doi.org/10.1017/9781009166164">doi:10.1017/9781009166164</a>.</p>
 </div>
-<div class="citation" id="id20" role="doc-biblioentry">
+<div class="citation" id="id21" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">BMAS14</a><span class="fn-bracket">]</span></span>
 <p>Nicolas Boumal, Bamdev Mishra, P.-A. Absil, and Rodolphe Sepulchre. Manopt, a Matlab toolbox for optimization on manifolds. <em>Journal of Machine Learning Research</em>, 15(42):1455–1459, 2014. URL: <a class="reference external" href="https://jmlr.org/papers/v15/boumal14a.html">https://jmlr.org/papers/v15/boumal14a.html</a>.</p>
 </div>

@@ -168,6 +168,7 @@ machine-readable capability metadata:
 | `operation_kind("exp")` | `"exact"` or `"proxy"` |
 | `operation_kind("log")` | `"exact"`, `"numerical-local"`, or `"proxy"` |
 | `operation_kind("dist")` | `"exact"`, `"numerical-local"`, or `"proxy"` |
+| `operation_kind("squared_dist")` | Distance status unless explicitly specialized |
 | `operation_kind("transport")` | `"parallel"`, `"isometric"`, or `"vector"` |
 | `operation_kind("ehess_to_rhess")` | `"exact"` or `"projection"` |
 | `operation_kind("rgrad_jvp")` | `"exact"` or `"projection"` |
@@ -316,6 +317,11 @@ Core pointwise protocol operations accept points shaped
 dimensions. NumPy-style broadcasting applies to compatible leading shapes.
 Reducers such as sample means document their reduction axes separately.
 `Product` applies the pointwise contract leafwise.
+
+Retraction steps, `lincomb` coefficients, and `random_tangent` scales may be
+scalars or arrays broadcastable over `batch_shape`. They never broadcast over
+event axes; GeoJAX expands them across the complete event before scaling each
+sample.
 
 Event axes are part of the manifold definition, not broadcast dimensions.
 Consequently, `belongs` and `is_tangent` return `False` for malformed event

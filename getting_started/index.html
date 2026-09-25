@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=24d0db4c" />
   
@@ -427,10 +427,11 @@ documentation pages.</p>
 </section>
 <section id="option-2-development-version-from-github">
 <h3>Option 2: development version from GitHub<a class="headerlink" href="#option-2-development-version-from-github" title="Link to this heading">#</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">main</span></code> branch and this website document the unreleased 0.2.0 development
-version, including <code class="docutils literal notranslate"><span class="pre">geojax.learning</span></code>.</p>
+<p>The pinned commit below contains the audited, unreleased 0.2.0 API documented
+on this website, including <code class="docutils literal notranslate"><span class="pre">geojax.learning</span></code>.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/kisungyou/geojax.git
 <span class="nb">cd</span><span class="w"> </span>geojax
+git<span class="w"> </span>checkout<span class="w"> </span>b7361beb5b42fe716c32a8e583710b5d23a31703
 python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.
 </pre></div>
 </div>

@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=24d0db4c" />
   
@@ -485,7 +485,7 @@ fits multinomial logistic regression or regularized discriminant analysis.
 The basis uses the Riemannian inner product and therefore also works for SPD
 and Product metrics that are not ambient Frobenius metrics.
 Distance-to-mean and tangent-coordinate classifiers are standard geometric
-learning patterns <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id8" title="Alexandre Barachant, Stéphane Bonnet, Marco Congedo, and Christian Jutten. Multiclass brain–computer interface classification by Riemannian geometry. IEEE Transactions on Biomedical Engineering, 59(4):920–928, 2012. doi:10.1109/TBME.2011.2172210.">Barachant <em>et al.</em>, 2012</a>, <a class="reference internal" href="#id27" title="Maurice Fréchet. Les éléments aléatoires de nature quelconque dans un espace distancié. Annales de l'Institut Henri Poincaré, 10(4):215–310, 1948. URL: https://www.numdam.org/item/AIHP_1948__10_4_215_0/.">Fréchet, 1948</a>]</span>.</p>
+learning patterns <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id9" title="Alexandre Barachant, Stéphane Bonnet, Marco Congedo, and Christian Jutten. Multiclass brain–computer interface classification by Riemannian geometry. IEEE Transactions on Biomedical Engineering, 59(4):920–928, 2012. doi:10.1109/TBME.2011.2172210.">Barachant <em>et al.</em>, 2012</a>, <a class="reference internal" href="#id28" title="Maurice Fréchet. Les éléments aléatoires de nature quelconque dans un espace distancié. Annales de l'Institut Henri Poincaré, 10(4):215–310, 1948. URL: https://www.numdam.org/item/AIHP_1948__10_4_215_0/.">Fréchet, 1948</a>]</span>.</p>
 <p>We compare all four strategies on noisy circular observations.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -633,9 +633,9 @@ an extrapolation of that chart rather than a new intrinsic identity.</p>
         <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.8</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">accuracies</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Maximum class probability&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Maximum normalized class score&quot;</span><span class="p">,</span>
     <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;query angle&quot;</span><span class="p">,</span>
-    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;confidence&quot;</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;normalized score&quot;</span><span class="p">,</span>
     <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">),</span>
     <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mf">0.48</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">),</span>
 <span class="p">)</span>
@@ -657,24 +657,27 @@ an extrapolation of that chart rather than a new intrinsic identity.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/339fd1e3427c814df8cd3ce87f4b696842531f04a760c1d14e41d1a69a891843.png" src="../_images/339fd1e3427c814df8cd3ce87f4b696842531f04a760c1d14e41d1a69a891843.png" />
+<img alt="../_images/43b3ee16a9d33f6ec6b1efb26938a18cfa67f721a1aca14ee16e9ee0f8575dbd.png" src="../_images/43b3ee16a9d33f6ec6b1efb26938a18cfa67f721a1aca14ee16e9ee0f8575dbd.png" />
 </div>
 </div>
 <p>Nearest-centroid prediction is interpretable and stable when classes are
 unimodal. k-NN adapts to nonlinear class regions but stores the complete
 training set. Tangent logistic regression and discriminant analysis connect
 to familiar supervised models, with the important cost that their coordinates
-are local to one reference point.</p>
+are local to one reference point. The normalized curves share the
+<code class="docutils literal notranslate"><span class="pre">predict_proba</span></code> interface, but only express each fitted rule’s relative class
+scores; in particular, nearest-centroid and k-NN scores are not calibrated
+posterior probabilities and should not be compared across models as such.</p>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id2">
 <div role="list" class="citation-list">
-<div class="citation" id="id8" role="doc-biblioentry">
+<div class="citation" id="id9" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">BBCJ12</a><span class="fn-bracket">]</span></span>
 <p>Alexandre Barachant, Stéphane Bonnet, Marco Congedo, and Christian Jutten. Multiclass brain–computer interface classification by Riemannian geometry. <em>IEEE Transactions on Biomedical Engineering</em>, 59(4):920–928, 2012. <a class="reference external" href="https://doi.org/10.1109/TBME.2011.2172210">doi:10.1109/TBME.2011.2172210</a>.</p>
 </div>
-<div class="citation" id="id27" role="doc-biblioentry">
+<div class="citation" id="id28" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Frechet48</a><span class="fn-bracket">]</span></span>
 <p>Maurice Fréchet. Les éléments aléatoires de nature quelconque dans un espace distancié. <em>Annales de l'Institut Henri Poincaré</em>, 10(4):215–310, 1948. URL: <a class="reference external" href="https://www.numdam.org/item/AIHP_1948__10_4_215_0/">https://www.numdam.org/item/AIHP_1948__10_4_215_0/</a>.</p>
 </div>

@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=24d0db4c" />
   
@@ -454,7 +454,7 @@ validates a collection once and then consumes those operations without making
 assumptions about whether a point is a vector, matrix, or Product pytree. This
 follows the metric-statistics view of random objects while retaining JAX
 transformations for differentiable primitives
-<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id35" title="Michael M. Bronstein, Joan Bruna, Taco Cohen, and Petar Veličković. Geometric deep learning: grids, groups, graphs, geodesics, and gauges. arXiv preprint arXiv:2104.13478, 2021. doi:10.48550/arXiv.2104.13478.">Bronstein <em>et al.</em>, 2021</a>, <a class="reference internal" href="#id78" title="Paromita Dubey and Hans-Georg Müller. Fréchet analysis of variance for random objects. Biometrika, 106(4):803–821, 2019. doi:10.1093/biomet/asz052.">Dubey and Müller, 2019</a>, <a class="reference internal" href="#id41" title="Maurice Fréchet. Les éléments aléatoires de nature quelconque dans un espace distancié. Annales de l'Institut Henri Poincaré, 10(4):215–310, 1948. URL: https://www.numdam.org/item/AIHP_1948__10_4_215_0/.">Fréchet, 1948</a>]</span>.</p>
+<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id36" title="Michael M. Bronstein, Joan Bruna, Taco Cohen, and Petar Veličković. Geometric deep learning: grids, groups, graphs, geodesics, and gauges. arXiv preprint arXiv:2104.13478, 2021. doi:10.48550/arXiv.2104.13478.">Bronstein <em>et al.</em>, 2021</a>, <a class="reference internal" href="#id79" title="Paromita Dubey and Hans-Georg Müller. Fréchet analysis of variance for random objects. Biometrika, 106(4):803–821, 2019. doi:10.1093/biomet/asz052.">Dubey and Müller, 2019</a>, <a class="reference internal" href="#id42" title="Maurice Fréchet. Les éléments aléatoires de nature quelconque dans un espace distancié. Annales de l'Institut Henri Poincaré, 10(4):215–310, 1948. URL: https://www.numdam.org/item/AIHP_1948__10_4_215_0/.">Fréchet, 1948</a>]</span>.</p>
 <section id="canonical-datasets">
 <h2>Canonical datasets<a class="headerlink" href="#canonical-datasets" title="Link to this heading">#</a></h2>
 <p>For an array geometry with event shape <code class="docutils literal notranslate"><span class="pre">M.shape</span></code>, the canonical dataset layout
@@ -544,7 +544,9 @@ mathematical objective.</p>
 <p><a class="reference internal" href="../api/learning.html#geojax.learning.pairwise_distances" title="geojax.learning.pairwise_distances"><code class="xref py py-func docutils literal notranslate"><span class="pre">geojax.learning.pairwise_distances()</span></code></a> returns ordinary or squared exact
 distances. Collections broadcast over leading batch axes, Product values remain
 pytrees, and <code class="docutils literal notranslate"><span class="pre">block_size</span></code> limits temporary right-hand blocks while retaining a
-dense result.</p>
+dense result. The returned matrix still requires
+<span class="math notranslate nohighlight">\(O(n_\mathrm{left}n_\mathrm{right})\)</span> memory; blocking controls intermediate
+geometry evaluations, not the output size.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">geojax.learning</span><span class="w"> </span><span class="kn">import</span> <span class="n">pairwise_distances</span>
 
 <span class="n">squared</span> <span class="o">=</span> <span class="n">pairwise_distances</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">queries</span><span class="p">,</span> <span class="n">prototypes</span><span class="p">,</span> <span class="n">squared</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -561,24 +563,51 @@ target tangent spaces. These wrappers are compatible with <code class="docutils 
 <section id="statistical-algorithms">
 <h2>Statistical algorithms<a class="headerlink" href="#statistical-algorithms" title="Link to this heading">#</a></h2>
 <p>Fréchet means minimize weighted squared distance and use GeoJAX’s manifold
-optimizer. Medians use a guarded Riemannian Weiszfeld iteration. Clustering
-provides intrinsic Lloyd updates, medoids, valid metric-space linkage rules,
-spectral graph methods, mean shift, and competitive quantization
-<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id48" title="Hermann Karcher. Riemannian center of mass and mollifier smoothing. Communications on Pure and Applied Mathematics, 30(5):509–541, 1977. doi:10.1002/cpa.3160300502.">Karcher, 1977</a>, <a class="reference internal" href="#id56" title="Stuart P. Lloyd. Least squares quantization in PCM. IEEE Transactions on Information Theory, 28(2):129–137, 1982. doi:10.1109/TIT.1982.1056489.">Lloyd, 1982</a>, <a class="reference internal" href="#id84" title="Lihi Zelnik-Manor and Pietro Perona. Self-tuning spectral clustering. In Advances in Neural Information Processing Systems, volume 17, 1601–1608. 2005.">Zelnik-Manor and Perona, 2005</a>]</span>.</p>
+optimizer. Their default line search starts with a half-gradient step and
+uses retraction-curve derivatives to check progress when objective changes
+are comparable to floating-point rounding. Convergence still requires the
+reported gradient tolerance; a small step alone does not certify a mean.
+An explicitly supplied solver retains its own line-search settings.
+Custom retractions that encounter JAX tracing errors from Python or NumPy
+scalar conversions use the previous Armijo strategy without the derivative-based
+safeguard; unrelated errors still propagate.
+Medians use a guarded Riemannian Weiszfeld iteration for a
+Huber-smoothed distance objective; the returned diagnostics distinguish that
+objective from the unsmoothed median loss. The minimum enclosing ball uses a
+farthest-point approximation, so its convergence flag certifies stabilization
+of that iteration rather than global optimality on an arbitrary manifold.
+Clustering provides intrinsic Lloyd updates, medoids, valid metric-space
+linkage rules, spectral graph methods, mean shift, and competitive quantization
+<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id49" title="Hermann Karcher. Riemannian center of mass and mollifier smoothing. Communications on Pure and Applied Mathematics, 30(5):509–541, 1977. doi:10.1002/cpa.3160300502.">Karcher, 1977</a>, <a class="reference internal" href="#id57" title="Stuart P. Lloyd. Least squares quantization in PCM. IEEE Transactions on Information Theory, 28(2):129–137, 1982. doi:10.1109/TIT.1982.1056489.">Lloyd, 1982</a>, <a class="reference internal" href="#id85" title="Lihi Zelnik-Manor and Pietro Perona. Self-tuning spectral clustering. In Advances in Neural Information Processing Systems, volume 17, 1601–1608. 2005.">Zelnik-Manor and Perona, 2005</a>]</span>.</p>
 <p>Dimension-reduction methods consume exact pairwise distances. PGA differs: it
 forms its covariance Gram matrix with <code class="docutils literal notranslate"><span class="pre">M.inner</span></code> at the Fréchet mean, so the
 result remains valid for Product manifolds and metrics that are not ambient
-Frobenius metrics <span class="bibtex-citation" id="id3">[<a class="reference internal" href="#id79" title="P. Thomas Fletcher, Conglin Lu, Stephen M. Pizer, and Sarang Joshi. Principal geodesic analysis for the study of nonlinear statistics of shape. IEEE Transactions on Medical Imaging, 23(8):995–1005, 2004. doi:10.1109/TMI.2004.831793.">Fletcher <em>et al.</em>, 2004</a>]</span>. Classical MDS and kernel
+Frobenius metrics <span class="bibtex-citation" id="id3">[<a class="reference internal" href="#id80" title="P. Thomas Fletcher, Conglin Lu, Stephen M. Pizer, and Sarang Joshi. Principal geodesic analysis for the study of nonlinear statistics of shape. IEEE Transactions on Medical Imaging, 23(8):995–1005, 2004. doi:10.1109/TMI.2004.831793.">Fletcher <em>et al.</em>, 2004</a>]</span>. Classical MDS and kernel
 methods report negative eigenvalue mass rather than pretending every manifold
-distance is Euclidean.</p>
+distance is Euclidean. Classical scaling normalizes the distance scale before
+forming its Gram matrix and reports both normalized and physical spectra. It
+raises when squaring the physical scale is not representable in the selected
+dtype instead of returning overflowed diagnostics. GeoJAX’s <code class="docutils literal notranslate"><span class="pre">phate</span></code> follows
+the PHATE diffusion-potential construction but uses classical scaling for the
+final metric embedding; it is a dependency-free dense approximation rather
+than the reference package’s metric-MDS optimizer.</p>
+<p>Dense spectral and graph routines materialize <span class="math notranslate nohighlight">\(n\times n\)</span> distance, affinity,
+or Laplacian matrices. They therefore require <span class="math notranslate nohighlight">\(O(n^2)\)</span> memory, and dense
+eigendecompositions can require <span class="math notranslate nohighlight">\(O(n^3)\)</span> work. For large datasets, reduce the
+sample set first or use the mini-batch and coreset routines rather than treating
+<code class="docutils literal notranslate"><span class="pre">block_size</span></code> as a sparse-graph substitute.</p>
 <p>The exact empirical Wasserstein routine solves the finite weighted transport
 problem and reports its transport plan, marginal residuals, reduced costs, and
 duality gap. <code class="docutils literal notranslate"><span class="pre">sinkhorn_divergence</span></code> is a separate optional OTT-JAX operation;
-regularization is never labeled exact <span class="bibtex-citation" id="id4">[<a class="reference internal" href="#id77" title="Marco Cuturi. Sinkhorn distances: lightspeed computation of optimal transport. In Advances in Neural Information Processing Systems, volume 26, 2292–2300. 2013.">Cuturi, 2013</a>]</span>.</p>
+regularization is never labeled exact <span class="bibtex-citation" id="id4">[<a class="reference internal" href="#id78" title="Marco Cuturi. Sinkhorn distances: lightspeed computation of optimal transport. In Advances in Neural Information Processing Systems, volume 26, 2292–2300. 2013.">Cuturi, 2013</a>]</span>.</p>
 <p>Inference separates three null hypotheses. Fréchet ANOVA compares object-valued
 populations through their means and variances, the Biswas–Ghosh statistic uses
 only interpoint distances, and the Wasserstein test compares empirical measures
-<span class="bibtex-citation" id="id5">[<a class="reference internal" href="#id76" title="Munmun Biswas and Anil K. Ghosh. A nonparametric two-sample test applicable to high dimensional data. Journal of Multivariate Analysis, 123:160–171, 2014. doi:10.1016/j.jmva.2013.09.004.">Biswas and Ghosh, 2014</a>, <a class="reference internal" href="#id78" title="Paromita Dubey and Hans-Georg Müller. Fréchet analysis of variance for random objects. Biometrika, 106(4):803–821, 2019. doi:10.1093/biomet/asz052.">Dubey and Müller, 2019</a>]</span>.</p>
+<span class="bibtex-citation" id="id5">[<a class="reference internal" href="#id77" title="Munmun Biswas and Anil K. Ghosh. A nonparametric two-sample test applicable to high dimensional data. Journal of Multivariate Analysis, 123:160–171, 2014. doi:10.1016/j.jmva.2013.09.004.">Biswas and Ghosh, 2014</a>, <a class="reference internal" href="#id79" title="Paromita Dubey and Hans-Georg Müller. Fréchet analysis of variance for random objects. Biometrika, 106(4):803–821, 2019. doi:10.1093/biomet/asz052.">Dubey and Müller, 2019</a>]</span>.
+Permutation calibration is finite-sample valid only under exchangeability of
+the pooled labels. A distance statistic need not characterize equality of
+distributions on every metric space; any stronger consistency claim requires
+the assumptions in the cited result.</p>
 <p>For group proportions <span class="math notranslate nohighlight">\(\gamma_j\)</span>, Fréchet variances <span class="math notranslate nohighlight">\(V_j\)</span>, variance estimators
 <span class="math notranslate nohighlight">\(\sigma_j^2\)</span>, and</p>
 <div class="math notranslate nohighlight">
@@ -603,7 +632,7 @@ exchangeable group labels.</p>
 matrices after an equivariant embedding, regularizes both matrices, and uses
 their weighted log-Euclidean closed form. The <code class="docutils literal notranslate"><span class="pre">balance</span></code> parameter controls the
 relative contributions; the default midpoint matches the core RMML
-construction <span class="bibtex-citation" id="id6">[<a class="reference internal" href="#id85" title="Pengfei Zhu, Hao Cheng, Qinghua Hu, Qilong Wang, and Changqing Zhang. Towards generalized and efficient metric learning on Riemannian manifold. In Proceedings of the Twenty-Seventh International Joint Conference on Artificial Intelligence, 3235–3241. 2018. doi:10.24963/ijcai.2018/449.">Zhu <em>et al.</em>, 2018</a>]</span>.</p>
+construction <span class="bibtex-citation" id="id6">[<a class="reference internal" href="#id86" title="Pengfei Zhu, Hao Cheng, Qinghua Hu, Qilong Wang, and Changqing Zhang. Towards generalized and efficient metric learning on Riemannian manifold. In Proceedings of the Twenty-Seventh International Joint Conference on Artificial Intelligence, 3235–3241. 2018. doi:10.24963/ijcai.2018/449.">Zhu <em>et al.</em>, 2018</a>]</span>.</p>
 </section>
 <section id="supervised-prediction">
 <h2>Supervised prediction<a class="headerlink" href="#supervised-prediction" title="Link to this heading">#</a></h2>
@@ -615,7 +644,13 @@ predicts</p>
 \widehat c(x)=\arg\min_c d(x,\widehat\mu_c),
 \]</div>
 <p>while <code class="docutils literal notranslate"><span class="pre">knn_classifier</span></code> votes among the <span class="math notranslate nohighlight">\(k\)</span> closest training observations. Both
-work with any exact-distance geometry, including nested Product data.</p>
+work with any exact-distance geometry, including nested Product data.
+<code class="docutils literal notranslate"><span class="pre">NearestCentroidModel.predict_proba</span></code> converts negative squared distances into a
+Gibbs score with a query-local scale. Those rows sum to one, but they are not
+calibrated posterior probabilities. Centroid and tangent-feature models expose
+whether their internal Fréchet reference fits converged; callers should inspect
+<code class="docutils literal notranslate"><span class="pre">converged</span></code>, <code class="docutils literal notranslate"><span class="pre">reason</span></code>, and the stored fit diagnostics before treating a model as
+fully resolved.</p>
 <p>Tangent classifiers first compute a reference Fréchet mean <span class="math notranslate nohighlight">\(\widehat\mu\)</span> and
 an intrinsic metric Gram matrix</p>
 <div class="math notranslate nohighlight">
@@ -640,7 +675,7 @@ across a cut locus.</p>
 =\operatorname{Exp}_{p}\!\left((t-\overline t)v\right)
 \]</div>
 <p>by intrinsic least squares, profiling <span class="math notranslate nohighlight">\(v\in T_p\mathcal M\)</span> while optimizing
-the intercept <span class="math notranslate nohighlight">\(p\)</span> <span class="bibtex-citation" id="id7">[<a class="reference internal" href="#id27" title="P. Thomas Fletcher. Geodesic regression and the theory of least squares on Riemannian manifolds. International Journal of Computer Vision, 105(2):171–185, 2013. doi:10.1007/s11263-012-0591-y.">Fletcher, 2013</a>]</span>. This is a parametric
+the intercept <span class="math notranslate nohighlight">\(p\)</span> <span class="bibtex-citation" id="id7">[<a class="reference internal" href="#id28" title="P. Thomas Fletcher. Geodesic regression and the theory of least squares on Riemannian manifolds. International Journal of Computer Vision, 105(2):171–185, 2013. doi:10.1007/s11263-012-0591-y.">Fletcher, 2013</a>]</span>. This is a parametric
 geodesic model, so systematic curvature away from one geodesic remains in the
 residuals.</p>
 <p><code class="docutils literal notranslate"><span class="pre">local_polynomial_regression</span></code> instead estimates a conditional Fréchet mean.
@@ -656,7 +691,7 @@ S_r=\sum_i K_h(t_i-t)(t_i-t)^r,
 positive Nadaraya–Watson weights. Signed local-linear objectives need not be
 globally convex on a general manifold, so GeoJAX initializes them with the
 positive local Fréchet mean and reports no global-optimum claim
-<span class="bibtex-citation" id="id8">[<a class="reference internal" href="#id30" title="Alexander Petersen and Hans-Georg Müller. Fréchet regression for random objects with Euclidean predictors. The Annals of Statistics, 47(2):691–719, 2019. doi:10.1214/17-AOS1624.">Petersen and Müller, 2019</a>]</span>.</p>
+<span class="bibtex-citation" id="id8">[<a class="reference internal" href="#id31" title="Alexander Petersen and Hans-Georg Müller. Fréchet regression for random objects with Euclidean predictors. The Annals of Statistics, 47(2):691–719, 2019. doi:10.1214/17-AOS1624.">Petersen and Müller, 2019</a>]</span>.</p>
 </section>
 <section id="uncertainty-and-testing">
 <h2>Uncertainty and testing<a class="headerlink" href="#uncertainty-and-testing" title="Link to this heading">#</a></h2>
@@ -665,10 +700,10 @@ means, and reports the requested quantile of replicate distances from the
 original estimate as a bootstrap geodesic ball. It is an approximate
 percentile region, not a curvature-corrected confidence set.</p>
 <p>The energy statistic compares between-sample and within-sample distances
-<span class="bibtex-citation" id="id9">[<a class="reference internal" href="#id31" title="Gábor J. Székely and Maria L. Rizzo. Energy statistics: a class of statistics based on distances. Journal of Statistical Planning and Inference, 143(8):1249–1272, 2013. doi:10.1016/j.jspi.2013.03.018.">Székely and Rizzo, 2013</a>]</span>. On a completely general metric space, equality
+<span class="bibtex-citation" id="id9">[<a class="reference internal" href="#id32" title="Gábor J. Székely and Maria L. Rizzo. Energy statistics: a class of statistics based on distances. Journal of Statistical Planning and Inference, 143(8):1249–1272, 2013. doi:10.1016/j.jspi.2013.03.018.">Székely and Rizzo, 2013</a>]</span>. On a completely general metric space, equality
 characterization requires an appropriate negative-type condition. The MMD
 test similarly requires a positive-semidefinite kernel
-<span class="bibtex-citation" id="id10">[<a class="reference internal" href="#id28" title="Arthur Gretton, Karsten M. Borgwardt, Malte J. Rasch, Bernhard Schölkopf, and Alexander Smola. A kernel two-sample test. Journal of Machine Learning Research, 13(25):723–773, 2012. URL: https://www.jmlr.org/papers/v13/gretton12a.html.">Gretton <em>et al.</em>, 2012</a>]</span>: GeoJAX checks the observed Gram eigenvalues by
+<span class="bibtex-citation" id="id10">[<a class="reference internal" href="#id29" title="Arthur Gretton, Karsten M. Borgwardt, Malte J. Rasch, Bernhard Schölkopf, and Alexander Smola. A kernel two-sample test. Journal of Machine Learning Research, 13(25):723–773, 2012. URL: https://www.jmlr.org/papers/v13/gretton12a.html.">Gretton <em>et al.</em>, 2012</a>]</span>: GeoJAX checks the observed Gram eigenvalues by
 default because an RBF of squared geodesic distance is not universally PSD.
 The check uses the larger of the requested tolerance and a dtype-aware
 eigensolver backward-error bound, so roundoff-scale negative eigenvalues in
@@ -692,9 +727,12 @@ recursion. A user-provided <code class="docutils literal notranslate"><span clas
 an explicit positive <code class="docutils literal notranslate"><span class="pre">initial_weight</span></code>, so no undocumented pseudo-observation is
 introduced. <code class="docutils literal notranslate"><span class="pre">minibatch_frechet_mean</span></code> and <code class="docutils literal notranslate"><span class="pre">minibatch_kmeans</span></code> use shuffled batches
 and decaying log-map steps, following the stochastic Riemannian optimization
-view <span class="bibtex-citation" id="id11">[<a class="reference internal" href="#id24" title="Silvère Bonnabel. Stochastic gradient descent on Riemannian manifolds. IEEE Transactions on Automatic Control, 58(9):2217–2229, 2013. doi:10.1109/TAC.2013.2254619.">Bonnabel, 2013</a>]</span>. They require an explicit key and return
+view <span class="bibtex-citation" id="id11">[<a class="reference internal" href="#id25" title="Silvère Bonnabel. Stochastic gradient descent on Riemannian manifolds. IEEE Transactions on Automatic Control, 58(9):2217–2229, 2013. doi:10.1109/TAC.2013.2254619.">Bonnabel, 2013</a>]</span>. They require an explicit key and return
 objective and update histories; they are approximations to the corresponding
-full-batch estimators.</p>
+full-batch estimators. A convergence flag additionally requires a full-data
+stationarity check, so learning-rate decay alone cannot masquerade as
+convergence. Competitive quantization applies the same distinction between a
+flat objective history and stationary prototypes.</p>
 </section>
 <section id="barycentric-coding-and-dictionaries">
 <h2>Barycentric coding and dictionaries<a class="headerlink" href="#barycentric-coding-and-dictionaries" title="Link to this heading">#</a></h2>
@@ -712,7 +750,7 @@ reconstructs each observation as the weighted Fréchet mean of its atoms.
 <code class="docutils literal notranslate"><span class="pre">manifold_dictionary_learning</span></code> alternates these codes with a Product-manifold
 optimization of the fixed-code intrinsic residual. Backtracking accepts only
 atom updates that do not increase the reported reconstruction objective
-<span class="bibtex-citation" id="id12">[<a class="reference internal" href="#id29" title="Jeffrey Ho, Yuchen Xie, and Baba Vemuri. On a nonlinear generalization of sparse coding and dictionary learning. In Proceedings of the 30th International Conference on Machine Learning, volume 28 of Proceedings of Machine Learning Research, 1480–1488. 2013. URL: https://proceedings.mlr.press/v28/ho13a.html.">Ho <em>et al.</em>, 2013</a>]</span>. These are dense barycentric codes; the simplex
+<span class="bibtex-citation" id="id12">[<a class="reference internal" href="#id30" title="Jeffrey Ho, Yuchen Xie, and Baba Vemuri. On a nonlinear generalization of sparse coding and dictionary learning. In Proceedings of the 30th International Conference on Machine Learning, volume 28 of Proceedings of Machine Learning Research, 1480–1488. 2013. URL: https://proceedings.mlr.press/v28/ho13a.html.">Ho <em>et al.</em>, 2013</a>]</span>. These are dense barycentric codes; the simplex
 <span class="math notranslate nohighlight">\(\ell_1\)</span> norm is constant, so the routine does not claim lasso sparsity. When
 sample weights are supplied, atom optimization, backtracking acceptance, and
 the returned objective all use the same normalized weighted criterion.</p>
@@ -733,11 +771,12 @@ D(x)=1-\left\|
 \right\|_x,
 \]</div>
 <p>with the coincident contribution set to zero; distance ranks use midranks
-around an intrinsic median <span class="bibtex-citation" id="id13">[<a class="reference internal" href="#id26" title="P. Thomas Fletcher, Suresh Venkatasubramanian, and Sarang Joshi. The geometric median on Riemannian manifolds with application to robust atlas estimation. NeuroImage, 45(1, Supplement 1):S143–S152, 2009. doi:10.1016/j.neuroimage.2008.10.052.">Fletcher <em>et al.</em>, 2009</a>]</span>. A weighted trimmed
+around an intrinsic median <span class="bibtex-citation" id="id13">[<a class="reference internal" href="#id27" title="P. Thomas Fletcher, Suresh Venkatasubramanian, and Sarang Joshi. The geometric median on Riemannian manifolds with application to robust atlas estimation. NeuroImage, 45(1, Supplement 1):S143–S152, 2009. doi:10.1016/j.neuroimage.2008.10.052.">Fletcher <em>et al.</em>, 2009</a>]</span>. A weighted trimmed
 fit reports its objective with weights renormalized over the retained measure.</p>
-<p>For partially labeled data, <code class="docutils literal notranslate"><span class="pre">label_propagation</span></code> diffuses class scores over a
-geodesic-distance affinity graph while clamping known labels
-<span class="bibtex-citation" id="id14">[<a class="reference internal" href="#id32" title="Dengyong Zhou, Olivier Bousquet, Thomas Navin Lal, Jason Weston, and Bernhard Schölkopf. Learning with local and global consistency. In Advances in Neural Information Processing Systems, volume 16. 2003. URL: https://proceedings.neurips.cc/paper/2003/hash/87682805257e619d49b8e0dfdc14affa-Abstract.html.">Zhou <em>et al.</em>, 2003</a>]</span>. <code class="docutils literal notranslate"><span class="pre">manifold_regularized_regression</span></code> solves the
+<p>For partially labeled data, <code class="docutils literal notranslate"><span class="pre">label_propagation</span></code> diffuses class scores with a
+symmetric normalized affinity operator and hard-clamps known labels after each
+update
+<span class="bibtex-citation" id="id14">[<a class="reference internal" href="#id33" title="Dengyong Zhou, Olivier Bousquet, Thomas Navin Lal, Jason Weston, and Bernhard Schölkopf. Learning with local and global consistency. In Advances in Neural Information Processing Systems, volume 16. 2003. URL: https://proceedings.neurips.cc/paper/2003/hash/87682805257e619d49b8e0dfdc14affa-Abstract.html.">Zhou <em>et al.</em>, 2003</a>]</span>. <code class="docutils literal notranslate"><span class="pre">manifold_regularized_regression</span></code> solves the
 dense transductive objective</p>
 <div class="math notranslate nohighlight">
 \[
@@ -745,7 +784,7 @@ dense transductive objective</p>
 +\lambda_A\|f\|_2^2
 +\lambda_I f^\top L_G f,
 \]</div>
-<p>where <span class="math notranslate nohighlight">\(L_G\)</span> is the graph Laplacian <span class="bibtex-citation" id="id15">[<a class="reference internal" href="#id25" title="Mikhail Belkin, Partha Niyogi, and Vikas Sindhwani. Manifold regularization: a geometric framework for learning from labeled and unlabeled examples. Journal of Machine Learning Research, 7(85):2399–2434, 2006. URL: https://www.jmlr.org/papers/v7/belkin06a.html.">Belkin <em>et al.</em>, 2006</a>]</span>. The current
+<p>where <span class="math notranslate nohighlight">\(L_G\)</span> is the graph Laplacian <span class="bibtex-citation" id="id15">[<a class="reference internal" href="#id26" title="Mikhail Belkin, Partha Niyogi, and Vikas Sindhwani. Manifold regularization: a geometric framework for learning from labeled and unlabeled examples. Journal of Machine Learning Research, 7(85):2399–2434, 2006. URL: https://www.jmlr.org/papers/v7/belkin06a.html.">Belkin <em>et al.</em>, 2006</a>]</span>. The current
 result predicts only the supplied graph vertices; it does not claim the RKHS
 out-of-sample extension of the full manifold-regularization framework. For a
 <span class="math notranslate nohighlight">\(k\)</span>-nearest-neighbor graph, the diagonal is excluded before sorting, so tied
@@ -800,80 +839,80 @@ end-to-end differentiable.</p>
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id16">
 <div role="list" class="citation-list">
-<div class="citation" id="id25" role="doc-biblioentry">
+<div class="citation" id="id26" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id15">BNS06</a><span class="fn-bracket">]</span></span>
 <p>Mikhail Belkin, Partha Niyogi, and Vikas Sindhwani. Manifold regularization: a geometric framework for learning from labeled and unlabeled examples. <em>Journal of Machine Learning Research</em>, 7(85):2399–2434, 2006. URL: <a class="reference external" href="https://www.jmlr.org/papers/v7/belkin06a.html">https://www.jmlr.org/papers/v7/belkin06a.html</a>.</p>
 </div>
-<div class="citation" id="id76" role="doc-biblioentry">
+<div class="citation" id="id77" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">BG14</a><span class="fn-bracket">]</span></span>
 <p>Munmun Biswas and Anil K. Ghosh. A nonparametric two-sample test applicable to high dimensional data. <em>Journal of Multivariate Analysis</em>, 123:160–171, 2014. <a class="reference external" href="https://doi.org/10.1016/j.jmva.2013.09.004">doi:10.1016/j.jmva.2013.09.004</a>.</p>
 </div>
-<div class="citation" id="id24" role="doc-biblioentry">
+<div class="citation" id="id25" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id11">Bon13</a><span class="fn-bracket">]</span></span>
 <p>Silvère Bonnabel. Stochastic gradient descent on Riemannian manifolds. <em>IEEE Transactions on Automatic Control</em>, 58(9):2217–2229, 2013. <a class="reference external" href="https://doi.org/10.1109/TAC.2013.2254619">doi:10.1109/TAC.2013.2254619</a>.</p>
 </div>
-<div class="citation" id="id35" role="doc-biblioentry">
+<div class="citation" id="id36" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">BBCVelivckovic21</a><span class="fn-bracket">]</span></span>
 <p>Michael M. Bronstein, Joan Bruna, Taco Cohen, and Petar Veličković. Geometric deep learning: grids, groups, graphs, geodesics, and gauges. <em>arXiv preprint arXiv:2104.13478</em>, 2021. <a class="reference external" href="https://doi.org/10.48550/arXiv.2104.13478">doi:10.48550/arXiv.2104.13478</a>.</p>
 </div>
-<div class="citation" id="id77" role="doc-biblioentry">
+<div class="citation" id="id78" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">Cut13</a><span class="fn-bracket">]</span></span>
 <p>Marco Cuturi. Sinkhorn distances: lightspeed computation of optimal transport. In <em>Advances in Neural Information Processing Systems</em>, volume 26, 2292–2300. 2013.</p>
 </div>
-<div class="citation" id="id78" role="doc-biblioentry">
+<div class="citation" id="id79" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span>DMuller19<span class="fn-bracket">]</span></span>
 <span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id5">2</a>)</span>
 <p>Paromita Dubey and Hans-Georg Müller. Fréchet analysis of variance for random objects. <em>Biometrika</em>, 106(4):803–821, 2019. <a class="reference external" href="https://doi.org/10.1093/biomet/asz052">doi:10.1093/biomet/asz052</a>.</p>
 </div>
-<div class="citation" id="id27" role="doc-biblioentry">
+<div class="citation" id="id28" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id7">Fle13</a><span class="fn-bracket">]</span></span>
 <p>P. Thomas Fletcher. Geodesic regression and the theory of least squares on Riemannian manifolds. <em>International Journal of Computer Vision</em>, 105(2):171–185, 2013. <a class="reference external" href="https://doi.org/10.1007/s11263-012-0591-y">doi:10.1007/s11263-012-0591-y</a>.</p>
 </div>
-<div class="citation" id="id79" role="doc-biblioentry">
+<div class="citation" id="id80" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">FLPJ04</a><span class="fn-bracket">]</span></span>
 <p>P. Thomas Fletcher, Conglin Lu, Stephen M. Pizer, and Sarang Joshi. Principal geodesic analysis for the study of nonlinear statistics of shape. <em>IEEE Transactions on Medical Imaging</em>, 23(8):995–1005, 2004. <a class="reference external" href="https://doi.org/10.1109/TMI.2004.831793">doi:10.1109/TMI.2004.831793</a>.</p>
 </div>
-<div class="citation" id="id26" role="doc-biblioentry">
+<div class="citation" id="id27" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id13">FVJ09</a><span class="fn-bracket">]</span></span>
 <p>P. Thomas Fletcher, Suresh Venkatasubramanian, and Sarang Joshi. The geometric median on Riemannian manifolds with application to robust atlas estimation. <em>NeuroImage</em>, 45(1, Supplement 1):S143–S152, 2009. <a class="reference external" href="https://doi.org/10.1016/j.neuroimage.2008.10.052">doi:10.1016/j.neuroimage.2008.10.052</a>.</p>
 </div>
-<div class="citation" id="id41" role="doc-biblioentry">
+<div class="citation" id="id42" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Frechet48</a><span class="fn-bracket">]</span></span>
 <p>Maurice Fréchet. Les éléments aléatoires de nature quelconque dans un espace distancié. <em>Annales de l'Institut Henri Poincaré</em>, 10(4):215–310, 1948. URL: <a class="reference external" href="https://www.numdam.org/item/AIHP_1948__10_4_215_0/">https://www.numdam.org/item/AIHP_1948__10_4_215_0/</a>.</p>
 </div>
-<div class="citation" id="id28" role="doc-biblioentry">
+<div class="citation" id="id29" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id10">GBR+12</a><span class="fn-bracket">]</span></span>
 <p>Arthur Gretton, Karsten M. Borgwardt, Malte J. Rasch, Bernhard Schölkopf, and Alexander Smola. A kernel two-sample test. <em>Journal of Machine Learning Research</em>, 13(25):723–773, 2012. URL: <a class="reference external" href="https://www.jmlr.org/papers/v13/gretton12a.html">https://www.jmlr.org/papers/v13/gretton12a.html</a>.</p>
 </div>
-<div class="citation" id="id29" role="doc-biblioentry">
+<div class="citation" id="id30" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id12">HXV13</a><span class="fn-bracket">]</span></span>
 <p>Jeffrey Ho, Yuchen Xie, and Baba Vemuri. On a nonlinear generalization of sparse coding and dictionary learning. In <em>Proceedings of the 30th International Conference on Machine Learning</em>, volume 28 of Proceedings of Machine Learning Research, 1480–1488. 2013. URL: <a class="reference external" href="https://proceedings.mlr.press/v28/ho13a.html">https://proceedings.mlr.press/v28/ho13a.html</a>.</p>
 </div>
-<div class="citation" id="id48" role="doc-biblioentry">
+<div class="citation" id="id49" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">Kar77</a><span class="fn-bracket">]</span></span>
 <p>Hermann Karcher. Riemannian center of mass and mollifier smoothing. <em>Communications on Pure and Applied Mathematics</em>, 30(5):509–541, 1977. <a class="reference external" href="https://doi.org/10.1002/cpa.3160300502">doi:10.1002/cpa.3160300502</a>.</p>
 </div>
-<div class="citation" id="id56" role="doc-biblioentry">
+<div class="citation" id="id57" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">Llo82</a><span class="fn-bracket">]</span></span>
 <p>Stuart P. Lloyd. Least squares quantization in PCM. <em>IEEE Transactions on Information Theory</em>, 28(2):129–137, 1982. <a class="reference external" href="https://doi.org/10.1109/TIT.1982.1056489">doi:10.1109/TIT.1982.1056489</a>.</p>
 </div>
-<div class="citation" id="id30" role="doc-biblioentry">
+<div class="citation" id="id31" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id8">PMuller19</a><span class="fn-bracket">]</span></span>
 <p>Alexander Petersen and Hans-Georg Müller. Fréchet regression for random objects with Euclidean predictors. <em>The Annals of Statistics</em>, 47(2):691–719, 2019. <a class="reference external" href="https://doi.org/10.1214/17-AOS1624">doi:10.1214/17-AOS1624</a>.</p>
 </div>
-<div class="citation" id="id31" role="doc-biblioentry">
+<div class="citation" id="id32" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id9">SzekelyR13</a><span class="fn-bracket">]</span></span>
 <p>Gábor J. Székely and Maria L. Rizzo. Energy statistics: a class of statistics based on distances. <em>Journal of Statistical Planning and Inference</em>, 143(8):1249–1272, 2013. <a class="reference external" href="https://doi.org/10.1016/j.jspi.2013.03.018">doi:10.1016/j.jspi.2013.03.018</a>.</p>
 </div>
-<div class="citation" id="id84" role="doc-biblioentry">
+<div class="citation" id="id85" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">ZMP05</a><span class="fn-bracket">]</span></span>
 <p>Lihi Zelnik-Manor and Pietro Perona. Self-tuning spectral clustering. In <em>Advances in Neural Information Processing Systems</em>, volume 17, 1601–1608. 2005.</p>
 </div>
-<div class="citation" id="id32" role="doc-biblioentry">
+<div class="citation" id="id33" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id14">ZBL+03</a><span class="fn-bracket">]</span></span>
 <p>Dengyong Zhou, Olivier Bousquet, Thomas Navin Lal, Jason Weston, and Bernhard Schölkopf. Learning with local and global consistency. In <em>Advances in Neural Information Processing Systems</em>, volume 16. 2003. URL: <a class="reference external" href="https://proceedings.neurips.cc/paper/2003/hash/87682805257e619d49b8e0dfdc14affa-Abstract.html">https://proceedings.neurips.cc/paper/2003/hash/87682805257e619d49b8e0dfdc14affa-Abstract.html</a>.</p>
 </div>
-<div class="citation" id="id85" role="doc-biblioentry">
+<div class="citation" id="id86" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">ZCH+18</a><span class="fn-bracket">]</span></span>
 <p>Pengfei Zhu, Hao Cheng, Qinghua Hu, Qilong Wang, and Changqing Zhang. Towards generalized and efficient metric learning on Riemannian manifold. In <em>Proceedings of the Twenty-Seventh International Joint Conference on Artificial Intelligence</em>, 3235–3241. 2018. <a class="reference external" href="https://doi.org/10.24963/ijcai.2018/449">doi:10.24963/ijcai.2018/449</a>.</p>
 </div>

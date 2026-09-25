@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=24d0db4c" />
   
@@ -472,13 +472,13 @@
 hand is represented by <span class="math notranslate nohighlight">\(22\)</span> joints in <span class="math notranslate nohighlight">\(\mathbb R^3\)</span>. We want to compare the
 shape of a pose without letting its location, physical scale, or global
 orientation dominate the result. Kendall’s quotient construction supplies the
-statistical shape space used here <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id37" title="David G. Kendall. Shape manifolds, procrustean metrics, and complex projective spaces. Bulletin of the London Mathematical Society, 16(2):81–121, 1984. doi:10.1112/blms/16.2.81.">Kendall, 1984</a>]</span>.</p>
+statistical shape space used here <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id38" title="David G. Kendall. Shape manifolds, procrustean metrics, and complex projective spaces. Bulletin of the London Mathematical Society, 16(2):81–121, 1984. doi:10.1112/blms/16.2.81.">Kendall, 1984</a>]</span>.</p>
 <p>The data are a 52-pose subset of the SHREC’17 3D hand-gesture dataset,
 distributed by the <a class="reference external" href="https://github.com/geomstats/geomstats/tree/master/geomstats/datasets/data/hands">Geomstats dataset
 module</a>.
 There are 25 <strong>Grab</strong> poses and 27 <strong>Expand</strong> poses. The source study is De
 Smedt et al.’s SHREC’17 hand-gesture track
-<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id43" title="Quentin De Smedt, Hazem Wannous, Jean-Philippe Vandeborre, Joris Guerry, Bertrand Le Saux, and David Filliat. SHREC'17 track: 3d hand gesture recognition using a depth and skeletal dataset. In Eurographics Workshop on 3D Object Retrieval, 33–38. The Eurographics Association, 2017. doi:10.2312/3dor.20171049.">De Smedt <em>et al.</em>, 2017</a>]</span>.</p>
+<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id44" title="Quentin De Smedt, Hazem Wannous, Jean-Philippe Vandeborre, Joris Guerry, Bertrand Le Saux, and David Filliat. SHREC'17 track: 3d hand gesture recognition using a depth and skeletal dataset. In Eurographics Workshop on 3D Object Retrieval, 33–38. The Eurographics Association, 2017. doi:10.2312/3dor.20171049.">De Smedt <em>et al.</em>, 2017</a>]</span>.</p>
 <p>GeoJAX vendors the two small source text files with this page, so the
 documentation remains executable without downloading data at build time. See
 the accompanying <a class="reference download internal" download="" href="../_downloads/b0243b3de80a6336f6c80c681630d5a1/NOTICE.txt"><span class="xref download myst">license and provenance
@@ -605,7 +605,7 @@ evaluated.</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>All projected hands are regular pre-shapes: True
-Largest centroid norm: 7.182e-16
+Largest centroid norm: 7.135e-16
 Largest unit-norm error: 2.220e-16
 Intrinsic dimension: 59
 </pre></div>
@@ -639,8 +639,8 @@ a deterministic illustrative split, not a claim of benchmark performance.</p>
     <span class="n">M</span><span class="p">,</span>
     <span class="n">hands</span><span class="p">[</span><span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">train_mask</span><span class="p">)],</span>
     <span class="n">labels</span><span class="p">[</span><span class="n">train_mask</span><span class="p">],</span>
-    <span class="n">maxiter</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
-    <span class="n">tol</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span>
+    <span class="n">maxiter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">tol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">means</span> <span class="o">=</span> <span class="n">classifier</span><span class="o">.</span><span class="n">centers</span>
 <span class="n">mean_histories</span> <span class="o">=</span> <span class="p">[]</span>
@@ -660,8 +660,8 @@ a deterministic illustrative split, not a claim of benchmark performance.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Grab  : 18 training poses, 60 iterations, final norm 1.140e-06 (Maximum iteration count reached: options.maxiter = 60.)
-Expand: 21 training poses, 48 iterations, final norm 4.872e-08 (gradient tolerance reached)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Grab  : 18 training poses,  7 iterations, final norm 2.214e-07 (gradient tolerance reached)
+Expand: 21 training poses,  4 iterations, final norm 2.164e-08 (gradient tolerance reached)
 Distance between group means: 0.2602
 </pre></div>
 </div>
@@ -711,7 +711,7 @@ Expand: Grab= 0, Expand= 6
 a different question: whether the two object-valued populations have equal
 location and variation in the metric space. The test combines between-group
 mean separation with differences in within-group Fréchet variance
-<span class="bibtex-citation" id="id3">[<a class="reference internal" href="#id66" title="Paromita Dubey and Hans-Georg Müller. Fréchet analysis of variance for random objects. Biometrika, 106(4):803–821, 2019. doi:10.1093/biomet/asz052.">Dubey and Müller, 2019</a>]</span>.</p>
+<span class="bibtex-citation" id="id3">[<a class="reference internal" href="#id67" title="Paromita Dubey and Hans-Georg Müller. Fréchet analysis of variance for random objects. Biometrika, 106(4):803–821, 2019. doi:10.1093/biomet/asz052.">Dubey and Müller, 2019</a>]</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fanova</span> <span class="o">=</span> <span class="n">frechet_anova</span><span class="p">(</span>
@@ -719,8 +719,8 @@ mean separation with differences in within-group Fréchet variance
     <span class="n">hands</span><span class="p">,</span>
     <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">labels</span><span class="p">),</span>
     <span class="n">method</span><span class="o">=</span><span class="s2">&quot;asymptotic&quot;</span><span class="p">,</span>
-    <span class="n">maxiter</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
-    <span class="n">tol</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span>
+    <span class="n">maxiter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">tol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fréchet ANOVA statistic:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">fanova</span><span class="o">.</span><span class="n">statistic</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -850,7 +850,7 @@ Expand. Stars mark the held-out observations.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/04de73f3fe337269ce81ec4c23a28763d3147faac5815600ccc6150280d234fd.png" src="../_images/04de73f3fe337269ce81ec4c23a28763d3147faac5815600ccc6150280d234fd.png" />
+<img alt="../_images/1a7d67b7ba3d345f11eb53a0135bc4e50605188cf16a64f077ea3a2d660bdb41.png" src="../_images/1a7d67b7ba3d345f11eb53a0135bc4e50605188cf16a64f077ea3a2d660bdb41.png" />
 </div>
 </div>
 <p>The group means summarize the characteristic joint configuration after
@@ -863,15 +863,15 @@ uncertainty estimates, and comparisons with tangent-space or skeletal models.</p
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id4">
 <div role="list" class="citation-list">
-<div class="citation" id="id43" role="doc-biblioentry">
+<div class="citation" id="id44" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">DSWV+17</a><span class="fn-bracket">]</span></span>
 <p>Quentin De Smedt, Hazem Wannous, Jean-Philippe Vandeborre, Joris Guerry, Bertrand Le Saux, and David Filliat. SHREC'17 track: 3d hand gesture recognition using a depth and skeletal dataset. In <em>Eurographics Workshop on 3D Object Retrieval</em>, 33–38. The Eurographics Association, 2017. <a class="reference external" href="https://doi.org/10.2312/3dor.20171049">doi:10.2312/3dor.20171049</a>.</p>
 </div>
-<div class="citation" id="id66" role="doc-biblioentry">
+<div class="citation" id="id67" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">DMuller19</a><span class="fn-bracket">]</span></span>
 <p>Paromita Dubey and Hans-Georg Müller. Fréchet analysis of variance for random objects. <em>Biometrika</em>, 106(4):803–821, 2019. <a class="reference external" href="https://doi.org/10.1093/biomet/asz052">doi:10.1093/biomet/asz052</a>.</p>
 </div>
-<div class="citation" id="id37" role="doc-biblioentry">
+<div class="citation" id="id38" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Ken84</a><span class="fn-bracket">]</span></span>
 <p>David G. Kendall. Shape manifolds, procrustean metrics, and complex projective spaces. <em>Bulletin of the London Mathematical Society</em>, 16(2):81–121, 1984. <a class="reference external" href="https://doi.org/10.1112/blms/16.2.81">doi:10.1112/blms/16.2.81</a>.</p>
 </div>

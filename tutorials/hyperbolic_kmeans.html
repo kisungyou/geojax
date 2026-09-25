@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=24d0db4c" />
   
@@ -469,8 +469,8 @@
   <section class="tex2jax_ignore mathjax_ignore" id="intrinsic-k-means-in-the-hyperbolic-plane">
 <h1>Intrinsic k-means in the hyperbolic plane<a class="headerlink" href="#intrinsic-k-means-in-the-hyperbolic-plane" title="Link to this heading">#</a></h1>
 <p>Euclidean k-means alternates nearest-center assignments and arithmetic means
-<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id44" title="Stuart P. Lloyd. Least squares quantization in PCM. IEEE Transactions on Information Theory, 28(2):129–137, 1982. doi:10.1109/TIT.1982.1056489.">Lloyd, 1982</a>]</span>. On a Riemannian manifold, distances become geodesic
-and each center becomes a Frechet mean <span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id29" title="Maurice Fréchet. Les éléments aléatoires de nature quelconque dans un espace distancié. Annales de l'Institut Henri Poincaré, 10(4):215–310, 1948. URL: https://www.numdam.org/item/AIHP_1948__10_4_215_0/.">Fréchet, 1948</a>, <a class="reference internal" href="#id36" title="Hermann Karcher. Riemannian center of mass and mollifier smoothing. Communications on Pure and Applied Mathematics, 30(5):509–541, 1977. doi:10.1002/cpa.3160300502.">Karcher, 1977</a>]</span>.
+<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id45" title="Stuart P. Lloyd. Least squares quantization in PCM. IEEE Transactions on Information Theory, 28(2):129–137, 1982. doi:10.1109/TIT.1982.1056489.">Lloyd, 1982</a>]</span>. On a Riemannian manifold, distances become geodesic
+and each center becomes a Frechet mean <span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id30" title="Maurice Fréchet. Les éléments aléatoires de nature quelconque dans un espace distancié. Annales de l'Institut Henri Poincaré, 10(4):215–310, 1948. URL: https://www.numdam.org/item/AIHP_1948__10_4_215_0/.">Fréchet, 1948</a>, <a class="reference internal" href="#id37" title="Hermann Karcher. Riemannian center of mass and mollifier smoothing. Communications on Pure and Applied Mathematics, 30(5):509–541, 1977. doi:10.1002/cpa.3160300502.">Karcher, 1977</a>]</span>.
 For clusters <span class="math notranslate nohighlight">\(G_1,\ldots,G_K\)</span> on a geometry <span class="math notranslate nohighlight">\(M\)</span>, the objective is</p>
 <div class="math notranslate nohighlight">
 \[
@@ -488,7 +488,7 @@ For clusters <span class="math notranslate nohighlight">\(G_1,\ldots,G_K\)</span
 \]</div>
 <p>The Poincare disk gives a compact view of the same points, while GeoJAX keeps
 all fitting operations on the hyperboloid. These two equivalent models and
-their distance geometry are reviewed by <span class="bibtex-citation" id="id3">Ratcliffe [<a class="reference internal" href="#id53" title="John G. Ratcliffe. Foundations of Hyperbolic Manifolds. Springer, 2 edition, 2006. doi:10.1007/978-0-387-47322-2.">2006</a>]</span>.</p>
+their distance geometry are reviewed by <span class="bibtex-citation" id="id3">Ratcliffe [<a class="reference internal" href="#id54" title="John G. Ratcliffe. Foundations of Hyperbolic Manifolds. Springer, 2 edition, 2006. doi:10.1007/978-0-387-47322-2.">2006</a>]</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
@@ -521,7 +521,7 @@ their distance geometry are reviewed by <span class="bibtex-citation" id="id3">R
 <span class="n">keys</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">17</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
 
 <span class="n">disk_points</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span>
-    <span class="n">center</span> <span class="o">+</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">36</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">center</span> <span class="o">+</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">center</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">disk_centers</span><span class="p">,</span> <span class="n">cluster_scales</span><span class="p">,</span> <span class="n">keys</span><span class="p">)</span>
 <span class="p">])</span>
 <span class="n">radius</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">disk_points</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -534,7 +534,7 @@ their distance geometry are reviewed by <span class="bibtex-citation" id="id3">R
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>number of observations: 108
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>number of observations: 54
 all points lie on H^2: True
 </pre></div>
 </div>
@@ -555,6 +555,10 @@ current tangent space and returns with the exponential map:</p>
 \right).
 \]</div>
 <p>This fixed-point calculation is nested inside each Lloyd iteration.</p>
+<p>The executable example uses 54 well-separated observations, one seeded
+initialization, and a moderate stopping tolerance so the live documentation
+build stays quick. For a final scientific fit, increase <code class="docutils literal notranslate"><span class="pre">n_init</span></code> and
+<code class="docutils literal notranslate"><span class="pre">center_maxiter</span></code> and tighten <code class="docutils literal notranslate"><span class="pre">tol</span></code> after checking the reported diagnostics.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">kmeans</span><span class="p">(</span>
@@ -563,10 +567,10 @@ current tangent space and returns with the exponential map:</p>
     <span class="n">n_clusters</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
     <span class="n">key</span><span class="o">=</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">29</span><span class="p">),</span>
     <span class="n">init</span><span class="o">=</span><span class="s2">&quot;kmeans++&quot;</span><span class="p">,</span>
-    <span class="n">n_init</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-    <span class="n">maxiter</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
-    <span class="n">center_maxiter</span><span class="o">=</span><span class="mi">35</span><span class="p">,</span>
-    <span class="n">tol</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span>
+    <span class="n">n_init</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">maxiter</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+    <span class="n">center_maxiter</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">tol</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">center_disk</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">to_poincare</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">centers</span><span class="p">)</span>
@@ -582,11 +586,11 @@ current tangent space and returns with the exponential map:</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>estimated centers in the Poincare disk:
-[[ 0.43  -0.396]
- [-0.53  -0.102]
- [ 0.31   0.46 ]]
-cluster sizes: [36 36 36]
-final mean squared distance: 0.08774179817021743
+[[ 0.431 -0.409]
+ [-0.51  -0.103]
+ [ 0.296  0.482]]
+cluster sizes: [18 18 18]
+final mean squared distance: 0.0961343603354514
 termination: objective tolerance reached
 </pre></div>
 </div>
@@ -670,7 +674,7 @@ the fitted geometry. Stars mark the fitted hyperbolic Frechet centers.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/6b67dc0affa8254d2040e1f2d1903d897d2ed14c2f1dfb5f19167ed47a8844bf.png" src="../_images/6b67dc0affa8254d2040e1f2d1903d897d2ed14c2f1dfb5f19167ed47a8844bf.png" />
+<img alt="../_images/c36167a88bbe857e17e0dcf04d0735e47010f81bc47de75f97f7a46ea5193079.png" src="../_images/c36167a88bbe857e17e0dcf04d0735e47010f81bc47de75f97f7a46ea5193079.png" />
 </div>
 </div>
 <p>The fitted centers remain on the upper sheet by construction. More
@@ -690,19 +694,19 @@ hyperbolic distances on <span class="math notranslate nohighlight">\(\mathbb H^2
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id4">
 <div role="list" class="citation-list">
-<div class="citation" id="id29" role="doc-biblioentry">
+<div class="citation" id="id30" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">Frechet48</a><span class="fn-bracket">]</span></span>
 <p>Maurice Fréchet. Les éléments aléatoires de nature quelconque dans un espace distancié. <em>Annales de l'Institut Henri Poincaré</em>, 10(4):215–310, 1948. URL: <a class="reference external" href="https://www.numdam.org/item/AIHP_1948__10_4_215_0/">https://www.numdam.org/item/AIHP_1948__10_4_215_0/</a>.</p>
 </div>
-<div class="citation" id="id36" role="doc-biblioentry">
+<div class="citation" id="id37" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">Kar77</a><span class="fn-bracket">]</span></span>
 <p>Hermann Karcher. Riemannian center of mass and mollifier smoothing. <em>Communications on Pure and Applied Mathematics</em>, 30(5):509–541, 1977. <a class="reference external" href="https://doi.org/10.1002/cpa.3160300502">doi:10.1002/cpa.3160300502</a>.</p>
 </div>
-<div class="citation" id="id44" role="doc-biblioentry">
+<div class="citation" id="id45" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Llo82</a><span class="fn-bracket">]</span></span>
 <p>Stuart P. Lloyd. Least squares quantization in PCM. <em>IEEE Transactions on Information Theory</em>, 28(2):129–137, 1982. <a class="reference external" href="https://doi.org/10.1109/TIT.1982.1056489">doi:10.1109/TIT.1982.1056489</a>.</p>
 </div>
-<div class="citation" id="id53" role="doc-biblioentry">
+<div class="citation" id="id54" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">Rat06</a><span class="fn-bracket">]</span></span>
 <p>John G. Ratcliffe. <em>Foundations of Hyperbolic Manifolds</em>. Springer, 2 edition, 2006. <a class="reference external" href="https://doi.org/10.1007/978-0-387-47322-2">doi:10.1007/978-0-387-47322-2</a>.</p>
 </div>

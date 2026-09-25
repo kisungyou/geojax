@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=24d0db4c" />
   
@@ -487,11 +487,11 @@ d(\theta,\varphi)
 \]</div>
 <p>Thus opposite edges of the displayed square are identified. Several groups
 below cross those edges, making ordinary Euclidean clustering of the angle
-table inappropriate. The methods follow <span class="bibtex-citation" id="id1">Lloyd [<a class="reference internal" href="#id47" title="Stuart P. Lloyd. Least squares quantization in PCM. IEEE Transactions on Information Theory, 28(2):129–137, 1982. doi:10.1109/TIT.1982.1056489.">1982</a>]</span>,
-<span class="bibtex-citation" id="id2">Kaufman and Rousseeuw [<a class="reference internal" href="#id79" title="Leonard Kaufman and Peter J. Rousseeuw. Finding Groups in Data: An Introduction to Cluster Analysis. John Wiley and Sons, New York, 1990. doi:10.1002/9780470316801.">1990</a>]</span>, <span class="bibtex-citation" id="id3">Zelnik-Manor and Perona [<a class="reference internal" href="#id75" title="Lihi Zelnik-Manor and Pietro Perona. Self-tuning spectral clustering. In Advances in Neural Information Processing Systems, volume 17, 1601–1608. 2005.">2005</a>]</span>,
-<span class="bibtex-citation" id="id4">Comaniciu and Meer [<a class="reference internal" href="#id78" title="Dorin Comaniciu and Peter Meer. Mean shift: a robust approach toward feature space analysis. IEEE Transactions on Pattern Analysis and Machine Intelligence, 24(5):603–619, 2002. doi:10.1109/34.1000236.">2002</a>]</span>, and the Riemannian quantization method of
-<span class="bibtex-citation" id="id5">Le Brigant and Puechmorel [<a class="reference internal" href="#id80" title="Alice Le Brigant and Stéphane Puechmorel. Quantization and clustering on Riemannian manifolds with an application to air traffic analysis. Journal of Multivariate Analysis, 173:685–703, 2019. doi:10.1016/j.jmva.2019.05.008.">2019</a>]</span>. The coreset heuristic is adapted from
-<span class="bibtex-citation" id="id6">Bachem <em>et al.</em> [<a class="reference internal" href="#id77" title="Olivier Bachem, Mario Lucic, and Andreas Krause. Scalable k-Means clustering via lightweight coresets. In Proceedings of the 24th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining, 1119–1127. 2018. doi:10.1145/3219819.3219973.">2018</a>]</span>.</p>
+table inappropriate. The methods follow <span class="bibtex-citation" id="id1">Lloyd [<a class="reference internal" href="#id48" title="Stuart P. Lloyd. Least squares quantization in PCM. IEEE Transactions on Information Theory, 28(2):129–137, 1982. doi:10.1109/TIT.1982.1056489.">1982</a>]</span>,
+<span class="bibtex-citation" id="id2">Kaufman and Rousseeuw [<a class="reference internal" href="#id80" title="Leonard Kaufman and Peter J. Rousseeuw. Finding Groups in Data: An Introduction to Cluster Analysis. John Wiley and Sons, New York, 1990. doi:10.1002/9780470316801.">1990</a>]</span>, <span class="bibtex-citation" id="id3">Zelnik-Manor and Perona [<a class="reference internal" href="#id76" title="Lihi Zelnik-Manor and Pietro Perona. Self-tuning spectral clustering. In Advances in Neural Information Processing Systems, volume 17, 1601–1608. 2005.">2005</a>]</span>,
+<span class="bibtex-citation" id="id4">Comaniciu and Meer [<a class="reference internal" href="#id79" title="Dorin Comaniciu and Peter Meer. Mean shift: a robust approach toward feature space analysis. IEEE Transactions on Pattern Analysis and Machine Intelligence, 24(5):603–619, 2002. doi:10.1109/34.1000236.">2002</a>]</span>, and the Riemannian quantization method of
+<span class="bibtex-citation" id="id5">Le Brigant and Puechmorel [<a class="reference internal" href="#id81" title="Alice Le Brigant and Stéphane Puechmorel. Quantization and clustering on Riemannian manifolds with an application to air traffic analysis. Journal of Multivariate Analysis, 173:685–703, 2019. doi:10.1016/j.jmva.2019.05.008.">2019</a>]</span>. The coreset heuristic is adapted from
+<span class="bibtex-citation" id="id6">Bachem <em>et al.</em> [<a class="reference internal" href="#id78" title="Olivier Bachem, Mario Lucic, and Andreas Krause. Scalable k-Means clustering via lightweight coresets. In Proceedings of the 24th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining, 1119–1127. 2018. doi:10.1145/3219819.3219973.">2018</a>]</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">replace</span>
@@ -610,13 +610,13 @@ table inappropriate. The methods follow <span class="bibtex-citation" id="id1">L
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Intrinsic k-means         clusters= 3  iterations=  3  objective=0.05035
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Intrinsic k-means         clusters= 3  iterations=  2  objective=0.05035
 k-medoids                 clusters= 3  iterations=  2  objective=0.20311
 Average linkage           clusters= 3  iterations= 41  objective=11.88972
-Spectral                  clusters= 3  iterations=  2  objective=0.05035
+Spectral                  clusters= 3  iterations= 40  objective=0.05035
 Mean shift                clusters= 3  iterations= 11  objective=0.05044
 Competitive quantization  clusters= 3  iterations= 12  objective=0.05405
-Coreset k-means           clusters= 3  iterations=  3  objective=0.05492
+Coreset k-means           clusters= 3  iterations=  2  objective=0.05490
 </pre></div>
 </div>
 </div>
@@ -725,27 +725,27 @@ through the intrinsic updates or through their distance matrix.</p>
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id7">
 <div role="list" class="citation-list">
-<div class="citation" id="id77" role="doc-biblioentry">
+<div class="citation" id="id78" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">BLK18</a><span class="fn-bracket">]</span></span>
 <p>Olivier Bachem, Mario Lucic, and Andreas Krause. Scalable k-Means clustering via lightweight coresets. In <em>Proceedings of the 24th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</em>, 1119–1127. 2018. <a class="reference external" href="https://doi.org/10.1145/3219819.3219973">doi:10.1145/3219819.3219973</a>.</p>
 </div>
-<div class="citation" id="id78" role="doc-biblioentry">
+<div class="citation" id="id79" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">CM02</a><span class="fn-bracket">]</span></span>
 <p>Dorin Comaniciu and Peter Meer. Mean shift: a robust approach toward feature space analysis. <em>IEEE Transactions on Pattern Analysis and Machine Intelligence</em>, 24(5):603–619, 2002. <a class="reference external" href="https://doi.org/10.1109/34.1000236">doi:10.1109/34.1000236</a>.</p>
 </div>
-<div class="citation" id="id79" role="doc-biblioentry">
+<div class="citation" id="id80" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">KR90</a><span class="fn-bracket">]</span></span>
 <p>Leonard Kaufman and Peter J. Rousseeuw. <em>Finding Groups in Data: An Introduction to Cluster Analysis</em>. John Wiley and Sons, New York, 1990. <a class="reference external" href="https://doi.org/10.1002/9780470316801">doi:10.1002/9780470316801</a>.</p>
 </div>
-<div class="citation" id="id80" role="doc-biblioentry">
+<div class="citation" id="id81" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">LBP19</a><span class="fn-bracket">]</span></span>
 <p>Alice Le Brigant and Stéphane Puechmorel. Quantization and clustering on Riemannian manifolds with an application to air traffic analysis. <em>Journal of Multivariate Analysis</em>, 173:685–703, 2019. <a class="reference external" href="https://doi.org/10.1016/j.jmva.2019.05.008">doi:10.1016/j.jmva.2019.05.008</a>.</p>
 </div>
-<div class="citation" id="id47" role="doc-biblioentry">
+<div class="citation" id="id48" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Llo82</a><span class="fn-bracket">]</span></span>
 <p>Stuart P. Lloyd. Least squares quantization in PCM. <em>IEEE Transactions on Information Theory</em>, 28(2):129–137, 1982. <a class="reference external" href="https://doi.org/10.1109/TIT.1982.1056489">doi:10.1109/TIT.1982.1056489</a>.</p>
 </div>
-<div class="citation" id="id75" role="doc-biblioentry">
+<div class="citation" id="id76" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">ZMP05</a><span class="fn-bracket">]</span></span>
 <p>Lihi Zelnik-Manor and Pietro Perona. Self-tuning spectral clustering. In <em>Advances in Neural Information Processing Systems</em>, volume 17, 1601–1608. 2005.</p>
 </div>

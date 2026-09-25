@@ -30,7 +30,7 @@
 <link href="_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/custom.css?v=24d0db4c" />
   
@@ -493,10 +493,10 @@
 </li>
       <li><a href="api/optimization.html#geojax.optimization.ConjugateGradient">ConjugateGradient (class in geojax.optimization)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/optimization.html#geojax.optimization.ConstantSchedule">ConstantSchedule (class in geojax.optimization)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/optimization.html#geojax.optimization.ConstantStep">ConstantStep (class in geojax.optimization)</a>
 </li>
       <li><a href="api/geometry.html#geojax.geometry.StiefelLogInfo.converged">converged (geojax.geometry.StiefelLogInfo attribute)</a>
@@ -510,6 +510,8 @@
       <li><a href="api/geometry.html#geojax.geometry.CorrelationLEC">CorrelationLEC (class in geojax.geometry)</a>
 </li>
       <li><a href="api/optimization.html#geojax.optimization.CosineDecay">CosineDecay (class in geojax.optimization)</a>
+</li>
+      <li><a href="api/optimization.html#geojax.optimization.LeastSquares.cost_and_grad">cost_and_grad() (geojax.optimization.LeastSquares method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -581,8 +583,32 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/geometry.html#geojax.geometry.Stiefel.egrad2rgrad">egrad2rgrad() (geojax.geometry.Stiefel method)</a>
+      <li><a href="api/geometry.html#geojax.geometry.base.GeometryMixin.egrad2rgrad">egrad2rgrad() (geojax.geometry.base.GeometryMixin method)</a>
+
+      <ul>
+        <li><a href="api/geometry.html#geojax.geometry.CorrelationAffineQuotient.egrad2rgrad">(geojax.geometry.CorrelationAffineQuotient method)</a>
 </li>
+        <li><a href="api/geometry.html#geojax.geometry.Elliptope.egrad2rgrad">(geojax.geometry.Elliptope method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.FixedRank.egrad2rgrad">(geojax.geometry.FixedRank method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.GeneralizedGrassmann.egrad2rgrad">(geojax.geometry.GeneralizedGrassmann method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.GeneralizedStiefel.egrad2rgrad">(geojax.geometry.GeneralizedStiefel method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.KendallShape.egrad2rgrad">(geojax.geometry.KendallShape method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.RankKPSD.egrad2rgrad">(geojax.geometry.RankKPSD method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.RankKPSDBuresWasserstein.egrad2rgrad">(geojax.geometry.RankKPSDBuresWasserstein method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.Spectrahedron.egrad2rgrad">(geojax.geometry.Spectrahedron method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.Stiefel.egrad2rgrad">(geojax.geometry.Stiefel method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.StiefelEuclidean.egrad2rgrad">(geojax.geometry.StiefelEuclidean method)</a>
+</li>
+      </ul></li>
       <li><a href="api/geometry.html#geojax.geometry.base.ManifoldProtocol.egrad_to_rgrad">egrad_to_rgrad() (geojax.geometry.base.ManifoldProtocol method)</a>
 
       <ul>
@@ -608,9 +634,13 @@
 </li>
         <li><a href="api/geometry.html#geojax.geometry.GeneralizedStiefel.ehess_to_rhess">(geojax.geometry.GeneralizedStiefel method)</a>
 </li>
+        <li><a href="api/geometry.html#geojax.geometry.Grassmann.ehess_to_rhess">(geojax.geometry.Grassmann method)</a>
+</li>
         <li><a href="api/geometry.html#geojax.geometry.GrassmannProjection.ehess_to_rhess">(geojax.geometry.GrassmannProjection method)</a>
 </li>
         <li><a href="api/geometry.html#geojax.geometry.KendallShape.ehess_to_rhess">(geojax.geometry.KendallShape method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.Oblique.ehess_to_rhess">(geojax.geometry.Oblique method)</a>
 </li>
         <li><a href="api/geometry.html#geojax.geometry.Product.ehess_to_rhess">(geojax.geometry.Product method)</a>
 </li>
@@ -643,6 +673,8 @@
         <li><a href="api/learning.html#geojax.learning.EquivariantEmbeddingProtocol.embed">(geojax.learning.EquivariantEmbeddingProtocol method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/geometry.html#geojax.geometry.GrassmannProjection.embed_tangent">embed_tangent() (geojax.geometry.GrassmannProjection method)</a>
 </li>
       <li><a href="api/geometry.html#geojax.geometry.SphereExtrinsic.embedding_dist">embedding_dist() (geojax.geometry.SphereExtrinsic method)</a>
@@ -651,8 +683,6 @@
 </li>
       <li><a href="api/learning.html#geojax.learning.empirical_wasserstein_distance">empirical_wasserstein_distance() (in module geojax.learning)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/learning.html#geojax.learning.EnclosingBallResult">EnclosingBallResult (class in geojax.learning)</a>
 </li>
       <li><a href="api/learning.html#geojax.learning.energy_two_sample_test">energy_two_sample_test() (in module geojax.learning)</a>
@@ -1117,8 +1147,6 @@
 </li>
       <li><a href="api/optimization.html#geojax.optimization.NelderMead">NelderMead (class in geojax.optimization)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/optimization.html#geojax.optimization.NewtonCG">NewtonCG (class in geojax.optimization)</a>
 </li>
       <li><a href="api/geometry.html#geojax.geometry.base.ManifoldProtocol.norm">norm() (geojax.geometry.base.ManifoldProtocol method)</a>
@@ -1129,10 +1157,28 @@
       </ul></li>
       <li><a href="api/optimization.html#geojax.optimization.LeastSquares.normal_operator">normal_operator() (geojax.optimization.LeastSquares method)</a>
 </li>
-      <li><a href="api/geometry.html#geojax.geometry.GrassmannProjection.normalize">normalize() (geojax.geometry.GrassmannProjection method)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/geometry.html#geojax.geometry.base.GeometryMixin.normalize">normalize() (geojax.geometry.base.GeometryMixin method)</a>
 
       <ul>
-        <li><a href="api/geometry.html#geojax.geometry.Sphere.normalize">(geojax.geometry.Sphere method)</a>
+        <li><a href="api/geometry.html#geojax.geometry.CorrelationAffineQuotient.normalize">(geojax.geometry.CorrelationAffineQuotient method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.Elliptope.normalize">(geojax.geometry.Elliptope method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.FixedRank.normalize">(geojax.geometry.FixedRank method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.GeneralizedGrassmann.normalize">(geojax.geometry.GeneralizedGrassmann method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.GeneralizedStiefel.normalize">(geojax.geometry.GeneralizedStiefel method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.KendallShape.normalize">(geojax.geometry.KendallShape method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.RankKPSD.normalize">(geojax.geometry.RankKPSD method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.RankKPSDBuresWasserstein.normalize">(geojax.geometry.RankKPSDBuresWasserstein method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.Spectrahedron.normalize">(geojax.geometry.Spectrahedron method)</a>
 </li>
         <li><a href="api/geometry.html#geojax.geometry.Stiefel.normalize">(geojax.geometry.Stiefel method)</a>
 </li>
@@ -1223,28 +1269,70 @@
       </ul></li>
       <li><a href="api/learning.html#geojax.learning.paired_frechet_test">paired_frechet_test() (in module geojax.learning)</a>
 </li>
-      <li><a href="api/learning.html#geojax.learning.pairwise_distances">pairwise_distances() (in module geojax.learning)</a>
+      <li><a href="api/learning.html#geojax.learning.MetricLearningModel.pairwise_distances">pairwise_distances() (geojax.learning.MetricLearningModel method)</a>
+
+      <ul>
+        <li><a href="api/learning.html#geojax.learning.pairwise_distances">(in module geojax.learning)</a>
 </li>
+      </ul></li>
       <li><a href="api/optimization.html#geojax.optimization.ParticleSwarm">ParticleSwarm (class in geojax.optimization)</a>
 </li>
       <li><a href="api/learning.html#geojax.learning.phate">phate() (in module geojax.learning)</a>
 </li>
       <li><a href="api/geometry.html#geojax.geometry.PoincareBall">PoincareBall (class in geojax.geometry)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/optimization.html#geojax.optimization.PolynomialDecay">PolynomialDecay (class in geojax.optimization)</a>
 </li>
+      <li><a href="api/learning.html#geojax.learning.GeodesicRegressionModel.predict">predict() (geojax.learning.GeodesicRegressionModel method)</a>
+
+      <ul>
+        <li><a href="api/learning.html#geojax.learning.KernelRegressionModel.predict">(geojax.learning.KernelRegressionModel method)</a>
+</li>
+        <li><a href="api/learning.html#geojax.learning.KNearestNeighborsModel.predict">(geojax.learning.KNearestNeighborsModel method)</a>
+</li>
+        <li><a href="api/learning.html#geojax.learning.LocalPolynomialRegressionModel.predict">(geojax.learning.LocalPolynomialRegressionModel method)</a>
+</li>
+        <li><a href="api/learning.html#geojax.learning.NearestCentroidModel.predict">(geojax.learning.NearestCentroidModel method)</a>
+</li>
+        <li><a href="api/learning.html#geojax.learning.TangentSpaceClassifierModel.predict">(geojax.learning.TangentSpaceClassifierModel method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/learning.html#geojax.learning.KNearestNeighborsModel.predict_proba">predict_proba() (geojax.learning.KNearestNeighborsModel method)</a>
+
+      <ul>
+        <li><a href="api/learning.html#geojax.learning.NearestCentroidModel.predict_proba">(geojax.learning.NearestCentroidModel method)</a>
+</li>
+        <li><a href="api/learning.html#geojax.learning.TangentSpaceClassifierModel.predict_proba">(geojax.learning.TangentSpaceClassifierModel method)</a>
+</li>
+      </ul></li>
       <li><a href="api/learning.html#geojax.learning.principal_geodesic_analysis">principal_geodesic_analysis() (in module geojax.learning)</a>
 </li>
       <li><a href="api/geometry.html#geojax.geometry.ProbabilitySimplex">ProbabilitySimplex (class in geojax.geometry)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/geometry.html#geojax.geometry.Product">Product (class in geojax.geometry)</a>
 </li>
-      <li><a href="api/geometry.html#geojax.geometry.GrassmannProjection.proj">proj() (geojax.geometry.GrassmannProjection method)</a>
+      <li><a href="api/geometry.html#geojax.geometry.base.GeometryMixin.proj">proj() (geojax.geometry.base.GeometryMixin method)</a>
 
       <ul>
-        <li><a href="api/geometry.html#geojax.geometry.Sphere.proj">(geojax.geometry.Sphere method)</a>
+        <li><a href="api/geometry.html#geojax.geometry.CorrelationAffineQuotient.proj">(geojax.geometry.CorrelationAffineQuotient method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.Elliptope.proj">(geojax.geometry.Elliptope method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.FixedRank.proj">(geojax.geometry.FixedRank method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.GeneralizedGrassmann.proj">(geojax.geometry.GeneralizedGrassmann method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.GeneralizedStiefel.proj">(geojax.geometry.GeneralizedStiefel method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.KendallShape.proj">(geojax.geometry.KendallShape method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.RankKPSD.proj">(geojax.geometry.RankKPSD method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.RankKPSDBuresWasserstein.proj">(geojax.geometry.RankKPSDBuresWasserstein method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.Spectrahedron.proj">(geojax.geometry.Spectrahedron method)</a>
 </li>
         <li><a href="api/geometry.html#geojax.geometry.Stiefel.proj">(geojax.geometry.Stiefel method)</a>
 </li>
@@ -1255,6 +1343,8 @@
 
       <ul>
         <li><a href="api/geometry.html#geojax.geometry.GrassmannProjection.project">(geojax.geometry.GrassmannProjection method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.SpecialOrthogonal.project">(geojax.geometry.SpecialOrthogonal method)</a>
 </li>
         <li><a href="api/geometry.html#geojax.geometry.Sphere.project">(geojax.geometry.Sphere method)</a>
 </li>
@@ -1269,10 +1359,26 @@
         <li><a href="api/geometry.html#geojax.geometry.SphereExtrinsic.project_embedding">(geojax.geometry.SphereExtrinsic method)</a>
 </li>
       </ul></li>
-      <li><a href="api/geometry.html#geojax.geometry.GrassmannProjection.projection">projection() (geojax.geometry.GrassmannProjection method)</a>
+      <li><a href="api/geometry.html#geojax.geometry.base.GeometryMixin.projection">projection() (geojax.geometry.base.GeometryMixin method)</a>
 
       <ul>
-        <li><a href="api/geometry.html#geojax.geometry.Sphere.projection">(geojax.geometry.Sphere method)</a>
+        <li><a href="api/geometry.html#geojax.geometry.CorrelationAffineQuotient.projection">(geojax.geometry.CorrelationAffineQuotient method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.Elliptope.projection">(geojax.geometry.Elliptope method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.FixedRank.projection">(geojax.geometry.FixedRank method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.GeneralizedGrassmann.projection">(geojax.geometry.GeneralizedGrassmann method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.GeneralizedStiefel.projection">(geojax.geometry.GeneralizedStiefel method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.KendallShape.projection">(geojax.geometry.KendallShape method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.RankKPSD.projection">(geojax.geometry.RankKPSD method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.RankKPSDBuresWasserstein.projection">(geojax.geometry.RankKPSDBuresWasserstein method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.Spectrahedron.projection">(geojax.geometry.Spectrahedron method)</a>
 </li>
         <li><a href="api/geometry.html#geojax.geometry.Stiefel.projection">(geojax.geometry.Stiefel method)</a>
 </li>
@@ -1480,6 +1586,8 @@
 </li>
         <li><a href="api/geometry.html#geojax.geometry.StiefelEuclidean.squared_dist">(geojax.geometry.StiefelEuclidean method)</a>
 </li>
+        <li><a href="api/geometry.html#geojax.geometry.Torus.squared_dist">(geojax.geometry.Torus method)</a>
+</li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -1537,10 +1645,26 @@
 </li>
       <li><a href="api/geometry.html#geojax.geometry.Hyperboloid.to_poincare">to_poincare() (geojax.geometry.Hyperboloid method)</a>
 </li>
-      <li><a href="api/geometry.html#geojax.geometry.GrassmannProjection.to_tangent">to_tangent() (geojax.geometry.GrassmannProjection method)</a>
+      <li><a href="api/geometry.html#geojax.geometry.base.GeometryMixin.to_tangent">to_tangent() (geojax.geometry.base.GeometryMixin method)</a>
 
       <ul>
-        <li><a href="api/geometry.html#geojax.geometry.Sphere.to_tangent">(geojax.geometry.Sphere method)</a>
+        <li><a href="api/geometry.html#geojax.geometry.CorrelationAffineQuotient.to_tangent">(geojax.geometry.CorrelationAffineQuotient method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.Elliptope.to_tangent">(geojax.geometry.Elliptope method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.FixedRank.to_tangent">(geojax.geometry.FixedRank method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.GeneralizedGrassmann.to_tangent">(geojax.geometry.GeneralizedGrassmann method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.GeneralizedStiefel.to_tangent">(geojax.geometry.GeneralizedStiefel method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.KendallShape.to_tangent">(geojax.geometry.KendallShape method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.RankKPSD.to_tangent">(geojax.geometry.RankKPSD method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.RankKPSDBuresWasserstein.to_tangent">(geojax.geometry.RankKPSDBuresWasserstein method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.Spectrahedron.to_tangent">(geojax.geometry.Spectrahedron method)</a>
 </li>
         <li><a href="api/geometry.html#geojax.geometry.Stiefel.to_tangent">(geojax.geometry.Stiefel method)</a>
 </li>
@@ -1549,7 +1673,13 @@
       </ul></li>
       <li><a href="api/geometry.html#geojax.geometry.Torus">Torus (class in geojax.geometry)</a>
 </li>
-      <li><a href="api/geometry.html#geojax.geometry.base.RetractionGeometryMixin.transp">transp() (geojax.geometry.base.RetractionGeometryMixin method)</a>
+      <li><a href="api/learning.html#geojax.learning.MetricLearningModel.transform">transform() (geojax.learning.MetricLearningModel method)</a>
+
+      <ul>
+        <li><a href="api/learning.html#geojax.learning.TangentFeatureMap.transform">(geojax.learning.TangentFeatureMap method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/geometry.html#geojax.geometry.base.GeometryMixin.transp">transp() (geojax.geometry.base.GeometryMixin method)</a>
 
       <ul>
         <li><a href="api/geometry.html#geojax.geometry.CorrelationAffineQuotient.transp">(geojax.geometry.CorrelationAffineQuotient method)</a>
@@ -1558,17 +1688,15 @@
 </li>
         <li><a href="api/geometry.html#geojax.geometry.FixedRank.transp">(geojax.geometry.FixedRank method)</a>
 </li>
-        <li><a href="api/geometry.html#geojax.geometry.Grassmann.transp">(geojax.geometry.Grassmann method)</a>
+        <li><a href="api/geometry.html#geojax.geometry.GeneralizedGrassmann.transp">(geojax.geometry.GeneralizedGrassmann method)</a>
 </li>
-        <li><a href="api/geometry.html#geojax.geometry.GrassmannProjection.transp">(geojax.geometry.GrassmannProjection method)</a>
+        <li><a href="api/geometry.html#geojax.geometry.GeneralizedStiefel.transp">(geojax.geometry.GeneralizedStiefel method)</a>
+</li>
+        <li><a href="api/geometry.html#geojax.geometry.KendallShape.transp">(geojax.geometry.KendallShape method)</a>
 </li>
         <li><a href="api/geometry.html#geojax.geometry.RankKPSD.transp">(geojax.geometry.RankKPSD method)</a>
 </li>
         <li><a href="api/geometry.html#geojax.geometry.RankKPSDBuresWasserstein.transp">(geojax.geometry.RankKPSDBuresWasserstein method)</a>
-</li>
-        <li><a href="api/geometry.html#geojax.geometry.SPDBuresWasserstein.transp">(geojax.geometry.SPDBuresWasserstein method)</a>
-</li>
-        <li><a href="api/geometry.html#geojax.geometry.SpecialOrthogonal.transp">(geojax.geometry.SpecialOrthogonal method)</a>
 </li>
         <li><a href="api/geometry.html#geojax.geometry.Spectrahedron.transp">(geojax.geometry.Spectrahedron method)</a>
 </li>

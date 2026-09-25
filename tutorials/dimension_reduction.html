@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=24d0db4c" />
   
@@ -483,10 +483,18 @@ all six from the same validated manifold dataset.</p>
 <p>on the flat torus <span class="math notranslate nohighlight">\(T^2\)</span>. The path repeatedly crosses the edges of its angular
 chart, but it is continuous on the manifold. MDS is the global metric
 baseline; Sammon reweights stress toward nearby pairs
-<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id70" title="John W. Sammon. A nonlinear mapping for data structure analysis. IEEE Transactions on Computers, C-18(5):401–409, 1969. doi:10.1109/T-C.1969.222678.">Sammon, 1969</a>]</span>; Isomap follows a neighborhood graph
-<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id71" title="Joshua B. Tenenbaum, Vin de Silva, and John C. Langford. A global geometric framework for nonlinear dimensionality reduction. Science, 290(5500):2319–2323, 2000. doi:10.1126/science.290.5500.2319.">Tenenbaum <em>et al.</em>, 2000</a>]</span>; t-SNE emphasizes probabilistic neighborhoods
-<span class="bibtex-citation" id="id3">[<a class="reference internal" href="#id72" title="Laurens van der Maaten and Geoffrey Hinton. Visualizing data using t-SNE. Journal of Machine Learning Research, 9:2579–2605, 2008.">van der Maaten and Hinton, 2008</a>]</span>; and PHATE emphasizes multiscale
-transitions <span class="bibtex-citation" id="id4">[<a class="reference internal" href="#id69" title="Kevin R. Moon, David van Dijk, Zheng Wang, Scott Gigante, Daniel B. Burkhardt, William S. Chen, Kristina Yim, Antonia van den Elzen, Matthew J. Hirn, Ronald R. Coifman, Natalia B. Ivanova, Guy Wolf, and Smita Krishnaswamy. Visualizing structure and transitions in high-dimensional biological data. Nature Biotechnology, 37:1482–1492, 2019. doi:10.1038/s41587-019-0336-3.">Moon <em>et al.</em>, 2019</a>]</span>.</p>
+<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id71" title="John W. Sammon. A nonlinear mapping for data structure analysis. IEEE Transactions on Computers, C-18(5):401–409, 1969. doi:10.1109/T-C.1969.222678.">Sammon, 1969</a>]</span>; Isomap follows a neighborhood graph
+<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id72" title="Joshua B. Tenenbaum, Vin de Silva, and John C. Langford. A global geometric framework for nonlinear dimensionality reduction. Science, 290(5500):2319–2323, 2000. doi:10.1126/science.290.5500.2319.">Tenenbaum <em>et al.</em>, 2000</a>]</span>; t-SNE emphasizes probabilistic neighborhoods
+<span class="bibtex-citation" id="id3">[<a class="reference internal" href="#id73" title="Laurens van der Maaten and Geoffrey Hinton. Visualizing data using t-SNE. Journal of Machine Learning Research, 9:2579–2605, 2008.">van der Maaten and Hinton, 2008</a>]</span>; and PHATE emphasizes multiscale
+transitions <span class="bibtex-citation" id="id4">[<a class="reference internal" href="#id70" title="Kevin R. Moon, David van Dijk, Zheng Wang, Scott Gigante, Daniel B. Burkhardt, William S. Chen, Kristina Yim, Antonia van den Elzen, Matthew J. Hirn, Ronald R. Coifman, Natalia B. Ivanova, Guy Wolf, and Smita Krishnaswamy. Visualizing structure and transitions in high-dimensional biological data. Nature Biotechnology, 37:1482–1492, 2019. doi:10.1038/s41587-019-0336-3.">Moon <em>et al.</em>, 2019</a>]</span>. GeoJAX implements the PHATE affinity,
+diffusion-time, and potential-distance stages directly, then uses classical
+scaling for the final metric embedding. It is therefore a dense,
+dependency-free approximation rather than a bit-for-bit reproduction of the
+reference PHATE optimizer.</p>
+<p>The geodesic RBF similarity on a torus is not guaranteed to be positive
+semidefinite. For this comparison we therefore request kernel PCA’s explicit
+positive-spectral-part approximation with <code class="docutils literal notranslate"><span class="pre">allow_indefinite=True</span></code>; the default
+remains strict and rejects an indefinite kernel matrix.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
@@ -522,7 +530,7 @@ transitions <span class="bibtex-citation" id="id4">[<a class="reference internal
 <span class="n">path_position</span> <span class="o">=</span> <span class="n">phase</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
 
 <span class="n">mds</span> <span class="o">=</span> <span class="n">classical_mds</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">kpca</span> <span class="o">=</span> <span class="n">kernel_pca</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">kpca</span> <span class="o">=</span> <span class="n">kernel_pca</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">allow_indefinite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">iso</span> <span class="o">=</span> <span class="n">isomap</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">n_neighbors</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">mutual</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">sammon</span> <span class="o">=</span> <span class="n">sammon_mapping</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
 <span class="n">stochastic</span> <span class="o">=</span> <span class="n">tsne</span><span class="p">(</span>
@@ -563,9 +571,9 @@ transitions <span class="bibtex-citation" id="id4">[<a class="reference internal
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Classical MDS    objective=0.36379  reason=eigendecomposition completed
 Kernel PCA       objective=-8.89371  reason=centered-kernel eigendecomposition completed
 Isomap           objective=0.16379  reason=all-pairs graph distances computed
-Sammon mapping   objective=0.14073  reason=Last stepsize smaller than options.minstepsize = 1e-10.
-t-SNE            objective=0.37587  reason=requested iterations completed
-PHATE            objective=0.14245  reason=diffusion potential embedded
+Sammon mapping   objective=0.12269  reason=Gradient norm tolerance reached: 9.26534e-07 &lt;= 1e-06.
+t-SNE            objective=0.39088  reason=requested iterations completed
+PHATE            objective=0.23151  reason=diffusion potential embedded
 </pre></div>
 </div>
 </div>
@@ -651,7 +659,7 @@ color records position on the closed path.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/923929cd0b3fe34c29fa2f70f540331c02df909315d85f2420c8355a6bcd84c9.png" src="../_images/923929cd0b3fe34c29fa2f70f540331c02df909315d85f2420c8355a6bcd84c9.png" />
+<img alt="../_images/8e9c3b25935347c6cde5329877e3057d783afd1155bab4a7bc49214f52b35eae.png" src="../_images/8e9c3b25935347c6cde5329877e3057d783afd1155bab4a7bc49214f52b35eae.png" />
 </div>
 </div>
 <p>The implementations are dense: storing pairwise distances costs <span class="math notranslate nohighlight">\(O(n^2)\)</span> and
@@ -665,19 +673,19 @@ long edges before any reduction method begins.</p>
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id5">
 <div role="list" class="citation-list">
-<div class="citation" id="id69" role="doc-biblioentry">
+<div class="citation" id="id70" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">MvDW+19</a><span class="fn-bracket">]</span></span>
 <p>Kevin R. Moon, David van Dijk, Zheng Wang, Scott Gigante, Daniel B. Burkhardt, William S. Chen, Kristina Yim, Antonia van den Elzen, Matthew J. Hirn, Ronald R. Coifman, Natalia B. Ivanova, Guy Wolf, and Smita Krishnaswamy. Visualizing structure and transitions in high-dimensional biological data. <em>Nature Biotechnology</em>, 37:1482–1492, 2019. <a class="reference external" href="https://doi.org/10.1038/s41587-019-0336-3">doi:10.1038/s41587-019-0336-3</a>.</p>
 </div>
-<div class="citation" id="id70" role="doc-biblioentry">
+<div class="citation" id="id71" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Sam69</a><span class="fn-bracket">]</span></span>
 <p>John W. Sammon. A nonlinear mapping for data structure analysis. <em>IEEE Transactions on Computers</em>, C-18(5):401–409, 1969. <a class="reference external" href="https://doi.org/10.1109/T-C.1969.222678">doi:10.1109/T-C.1969.222678</a>.</p>
 </div>
-<div class="citation" id="id71" role="doc-biblioentry">
+<div class="citation" id="id72" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">TdSL00</a><span class="fn-bracket">]</span></span>
 <p>Joshua B. Tenenbaum, Vin de Silva, and John C. Langford. A global geometric framework for nonlinear dimensionality reduction. <em>Science</em>, 290(5500):2319–2323, 2000. <a class="reference external" href="https://doi.org/10.1126/science.290.5500.2319">doi:10.1126/science.290.5500.2319</a>.</p>
 </div>
-<div class="citation" id="id72" role="doc-biblioentry">
+<div class="citation" id="id73" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">vdMH08</a><span class="fn-bracket">]</span></span>
 <p>Laurens van der Maaten and Geoffrey Hinton. Visualizing data using t-SNE. <em>Journal of Machine Learning Research</em>, 9:2579–2605, 2008.</p>
 </div>

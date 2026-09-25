@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=24d0db4c" />
   
@@ -470,7 +470,7 @@
 <h1>Dominant eigenvector on the circle<a class="headerlink" href="#dominant-eigenvector-on-the-circle" title="Link to this heading">#</a></h1>
 <p>This first problem is the classical Rayleigh-quotient example for optimization
 on a sphere and appears throughout the matrix-manifold optimization literature
-<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id3" title="P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. Optimization Algorithms on Matrix Manifolds. Princeton University Press, 2008. doi:10.1515/9781400830244.">Absil <em>et al.</em>, 2008</a>, <a class="reference internal" href="#id20" title="Nicolas Boumal, Bamdev Mishra, P.-A. Absil, and Rodolphe Sepulchre. Manopt, a Matlab toolbox for optimization on manifolds. Journal of Machine Learning Research, 15(42):1455–1459, 2014. URL: https://jmlr.org/papers/v15/boumal14a.html.">Boumal <em>et al.</em>, 2014</a>, <a class="reference internal" href="#id26" title="Alan Edelman, Tomás A. Arias, and Steven T. Smith. The geometry of algorithms with orthogonality constraints. SIAM Journal on Matrix Analysis and Applications, 20(2):303–353, 1998. doi:10.1137/S0895479895290954.">Edelman <em>et al.</em>, 1998</a>]</span>. We use
+<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id4" title="P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. Optimization Algorithms on Matrix Manifolds. Princeton University Press, 2008. doi:10.1515/9781400830244.">Absil <em>et al.</em>, 2008</a>, <a class="reference internal" href="#id21" title="Nicolas Boumal, Bamdev Mishra, P.-A. Absil, and Rodolphe Sepulchre. Manopt, a Matlab toolbox for optimization on manifolds. Journal of Machine Learning Research, 15(42):1455–1459, 2014. URL: https://jmlr.org/papers/v15/boumal14a.html.">Boumal <em>et al.</em>, 2014</a>, <a class="reference internal" href="#id27" title="Alan Edelman, Tomás A. Arias, and Steven T. Smith. The geometry of algorithms with orthogonality constraints. SIAM Journal on Matrix Analysis and Applications, 20(2):303–353, 1998. doi:10.1137/S0895479895290954.">Edelman <em>et al.</em>, 1998</a>]</span>. We use
 <span class="math notranslate nohighlight">\(S^1\subset\mathbb{R}^2\)</span> so that the optimizer and objective can be seen
 directly.</p>
 <p>For a symmetric matrix <span class="math notranslate nohighlight">\(A\)</span>, a dominant eigenvector maximizes the Rayleigh
@@ -542,9 +542,9 @@ tangent line, and follows geodesics on the circle.</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>largest eigenvalue : 3.4142135624
-estimated vector   : [-0.92387954 -0.38268341]
-angular error      : 1.490e-08 radians
-iterations         : 12
+estimated vector   : [-0.92387954 -0.38268342]
+angular error      : 0.000e+00 radians
+iterations         : 13
 </pre></div>
 </div>
 </div>
@@ -612,7 +612,7 @@ minima. The final panel shows convergence of the Riemannian gradient norm.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/3265f00225fc3a29d55934a75622a57bb5d997ccb4b8c31a4c13853a4b5f42a2.png" src="../_images/3265f00225fc3a29d55934a75622a57bb5d997ccb4b8c31a4c13853a4b5f42a2.png" />
+<img alt="../_images/10f3ceaa368bbb7a2d05c967d997f05d0cc335d2fac41dd71043a05b2890f25a.png" src="../_images/10f3ceaa368bbb7a2d05c967d997f05d0cc335d2fac41dd71043a05b2890f25a.png" />
 </div>
 </div>
 <p>The estimated vector agrees with the direct eigendecomposition up to numerical
@@ -623,15 +623,15 @@ penalty or post-hoc normalization is needed in the optimization model.</p>
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id2">
 <div role="list" class="citation-list">
-<div class="citation" id="id3" role="doc-biblioentry">
+<div class="citation" id="id4" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">AMS08</a><span class="fn-bracket">]</span></span>
 <p>P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. <em>Optimization Algorithms on Matrix Manifolds</em>. Princeton University Press, 2008. <a class="reference external" href="https://doi.org/10.1515/9781400830244">doi:10.1515/9781400830244</a>.</p>
 </div>
-<div class="citation" id="id20" role="doc-biblioentry">
+<div class="citation" id="id21" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">BMAS14</a><span class="fn-bracket">]</span></span>
 <p>Nicolas Boumal, Bamdev Mishra, P.-A. Absil, and Rodolphe Sepulchre. Manopt, a Matlab toolbox for optimization on manifolds. <em>Journal of Machine Learning Research</em>, 15(42):1455–1459, 2014. URL: <a class="reference external" href="https://jmlr.org/papers/v15/boumal14a.html">https://jmlr.org/papers/v15/boumal14a.html</a>.</p>
 </div>
-<div class="citation" id="id26" role="doc-biblioentry">
+<div class="citation" id="id27" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">EAS98</a><span class="fn-bracket">]</span></span>
 <p>Alan Edelman, Tomás A. Arias, and Steven T. Smith. The geometry of algorithms with orthogonality constraints. <em>SIAM Journal on Matrix Analysis and Applications</em>, 20(2):303–353, 1998. <a class="reference external" href="https://doi.org/10.1137/S0895479895290954">doi:10.1137/S0895479895290954</a>.</p>
 </div>

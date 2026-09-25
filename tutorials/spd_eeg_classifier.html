@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=24d0db4c" />
   
@@ -481,9 +481,9 @@ C
 <p>Covariance matrices are symmetric positive definite (SPD), so treating them
 as unconstrained vectors discards their natural geometry. Riemannian
 covariance classifiers have a long history in brain–computer interfaces
-<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id11" title="Alexandre Barachant, Stéphane Bonnet, Marco Congedo, and Christian Jutten. Multiclass brain–computer interface classification by Riemannian geometry. IEEE Transactions on Biomedical Engineering, 59(4):920–928, 2012. doi:10.1109/TBME.2011.2172210.">Barachant <em>et al.</em>, 2012</a>]</span>, while SPD-valued neural layers provide a
+<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id12" title="Alexandre Barachant, Stéphane Bonnet, Marco Congedo, and Christian Jutten. Multiclass brain–computer interface classification by Riemannian geometry. IEEE Transactions on Biomedical Engineering, 59(4):920–928, 2012. doi:10.1109/TBME.2011.2172210.">Barachant <em>et al.</em>, 2012</a>]</span>, while SPD-valued neural layers provide a
 way to learn nonlinear representations without leaving the cone
-<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id34" title="Zhiwu Huang and Luc Van Gool. A Riemannian network for SPD matrix learning. In Proceedings of the AAAI Conference on Artificial Intelligence, volume 31, 2036–2042. 2017. doi:10.1609/aaai.v31i1.10866.">Huang and Van Gool, 2017</a>]</span>.</p>
+<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id35" title="Zhiwu Huang and Luc Van Gool. A Riemannian network for SPD matrix learning. In Proceedings of the AAAI Conference on Artificial Intelligence, volume 31, 2036–2042. 2017. doi:10.1609/aaai.v31i1.10866.">Huang and Van Gool, 2017</a>]</span>.</p>
 <p>This tutorial builds a small, deterministic network on real motor-imagery EEG.
 It compares log-Euclidean, affine-invariant, and Bures–Wasserstein prototype
 heads while keeping the data, encoder, initialization, and optimization
@@ -492,8 +492,8 @@ pattern, not to claim benchmark-level EEG decoding.</p>
 <section id="public-data-and-reproducible-scope">
 <h2>Public data and reproducible scope<a class="headerlink" href="#public-data-and-reproducible-scope" title="Link to this heading">#</a></h2>
 <p>The source is the open PhysioNet EEG Motor Movement/Imagery Dataset
-<span class="bibtex-citation" id="id3">[<a class="reference internal" href="#id58" title="Gerwin Schalk. EEG motor movement/imagery dataset. 2009. URL: https://physionet.org/content/eegmmidb/1.0.0/, doi:10.13026/C28G6P.">Schalk, 2009</a>]</span>, recorded with the BCI2000 system
-<span class="bibtex-citation" id="id4">[<a class="reference internal" href="#id57" title="Gerwin Schalk, Dennis J. McFarland, Thilo Hinterberger, Niels Birbaumer, and Jonathan R. Wolpaw. BCI2000: a general-purpose brain–computer interface (BCI) system. IEEE Transactions on Biomedical Engineering, 51(6):1034–1043, 2004. doi:10.1109/TBME.2004.827072.">Schalk <em>et al.</em>, 2004</a>]</span>. We use:</p>
+<span class="bibtex-citation" id="id3">[<a class="reference internal" href="#id59" title="Gerwin Schalk. EEG motor movement/imagery dataset. 2009. URL: https://physionet.org/content/eegmmidb/1.0.0/, doi:10.13026/C28G6P.">Schalk, 2009</a>]</span>, recorded with the BCI2000 system
+<span class="bibtex-citation" id="id4">[<a class="reference internal" href="#id58" title="Gerwin Schalk, Dennis J. McFarland, Thilo Hinterberger, Niels Birbaumer, and Jonathan R. Wolpaw. BCI2000: a general-purpose brain–computer interface (BCI) system. IEEE Transactions on Biomedical Engineering, 51(6):1034–1043, 2004. doi:10.1109/TBME.2004.827072.">Schalk <em>et al.</em>, 2004</a>]</span>. We use:</p>
 <ul class="simple">
 <li><p>subjects S001 through S005;</p></li>
 <li><p>unilateral motor-imagery runs R04, R08, and R12;</p></li>
@@ -993,7 +993,7 @@ however, replace repeated-subject evaluation for a scientific benchmark.</p>
 --------------------------------------------------------------------------
 Log-Euclidean             80          0.767           0.613        True
 Affine-invariant          80          0.773           0.600        True
-Bures-Wasserstein        110          0.793           0.653        True
+Bures-Wasserstein        120          0.793           0.613        True
 </pre></div>
 </div>
 </div>
@@ -1097,7 +1097,7 @@ majority-class accuracy in R12.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/7872eb469fb1a5b3ec2e513e5ed22d821da8b9f2e711791caba562aeb284cc41.png" src="../_images/7872eb469fb1a5b3ec2e513e5ed22d821da8b9f2e711791caba562aeb284cc41.png" />
+<img alt="../_images/5e8bfca3cdb0d69b48a78ba5e84ba5959b583d7f418cf5c557e2314e32bf68a6.png" src="../_images/5e8bfca3cdb0d69b48a78ba5e84ba5959b583d7f418cf5c557e2314e32bf68a6.png" />
 </div>
 </div>
 </section>
@@ -1200,11 +1200,11 @@ prototypes.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/ipykernel_96728/3891900132.py:82: UserWarning: This figure was using a layout engine that is incompatible with subplots_adjust and/or tight_layout; not calling subplots_adjust.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/var/folders/d7/f3pc8_lj28s325sl08mrk43w0000gn/T/ipykernel_88529/3891900132.py:82: UserWarning: This figure was using a layout engine that is incompatible with subplots_adjust and/or tight_layout; not calling subplots_adjust.
   fig.subplots_adjust(bottom=0.22)
 </pre></div>
 </div>
-<img alt="../_images/11d2a1b7bcffa94507cb6567324f6a97b0a47ccbe8bbc94fecf394f136ade584.png" src="../_images/11d2a1b7bcffa94507cb6567324f6a97b0a47ccbe8bbc94fecf394f136ade584.png" />
+<img alt="../_images/2e813abaf5f213ef6c5ebf1b00da9f6d9193772e141e4851bc91601ffc055fa3.png" src="../_images/2e813abaf5f213ef6c5ebf1b00da9f6d9193772e141e4851bc91601ffc055fa3.png" />
 </div>
 </div>
 </section>
@@ -1286,7 +1286,7 @@ prototypes, not an additional embedding.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/11a2f9a42da250c8d2f4699cff70e94a99468e595b69352493898199065cb3c8.png" src="../_images/11a2f9a42da250c8d2f4699cff70e94a99468e595b69352493898199065cb3c8.png" />
+<img alt="../_images/504ea459f2ceb26c7748369f08284fd26c18d9f415ae5a1805753d3154e72f07.png" src="../_images/504ea459f2ceb26c7748369f08284fd26c18d9f415ae5a1805753d3154e72f07.png" />
 </div>
 </div>
 </section>
@@ -1313,19 +1313,19 @@ distance to Riemannian means.</p>
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id5">
 <div role="list" class="citation-list">
-<div class="citation" id="id11" role="doc-biblioentry">
+<div class="citation" id="id12" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">BBCJ12</a><span class="fn-bracket">]</span></span>
 <p>Alexandre Barachant, Stéphane Bonnet, Marco Congedo, and Christian Jutten. Multiclass brain–computer interface classification by Riemannian geometry. <em>IEEE Transactions on Biomedical Engineering</em>, 59(4):920–928, 2012. <a class="reference external" href="https://doi.org/10.1109/TBME.2011.2172210">doi:10.1109/TBME.2011.2172210</a>.</p>
 </div>
-<div class="citation" id="id34" role="doc-biblioentry">
+<div class="citation" id="id35" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">HVG17</a><span class="fn-bracket">]</span></span>
 <p>Zhiwu Huang and Luc Van Gool. A Riemannian network for SPD matrix learning. In <em>Proceedings of the AAAI Conference on Artificial Intelligence</em>, volume 31, 2036–2042. 2017. <a class="reference external" href="https://doi.org/10.1609/aaai.v31i1.10866">doi:10.1609/aaai.v31i1.10866</a>.</p>
 </div>
-<div class="citation" id="id58" role="doc-biblioentry">
+<div class="citation" id="id59" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">Sch09</a><span class="fn-bracket">]</span></span>
 <p>Gerwin Schalk. EEG motor movement/imagery dataset. 2009. URL: <a class="reference external" href="https://physionet.org/content/eegmmidb/1.0.0/">https://physionet.org/content/eegmmidb/1.0.0/</a>, <a class="reference external" href="https://doi.org/10.13026/C28G6P">doi:10.13026/C28G6P</a>.</p>
 </div>
-<div class="citation" id="id57" role="doc-biblioentry">
+<div class="citation" id="id58" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">SMH+04</a><span class="fn-bracket">]</span></span>
 <p>Gerwin Schalk, Dennis J. McFarland, Thilo Hinterberger, Niels Birbaumer, and Jonathan R. Wolpaw. BCI2000: a general-purpose brain–computer interface (BCI) system. <em>IEEE Transactions on Biomedical Engineering</em>, 51(6):1034–1043, 2004. <a class="reference external" href="https://doi.org/10.1109/TBME.2004.827072">doi:10.1109/TBME.2004.827072</a>.</p>
 </div>

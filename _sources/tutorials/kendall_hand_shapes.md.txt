@@ -166,8 +166,8 @@ classifier = nearest_centroid_classifier(
     M,
     hands[jnp.asarray(train_mask)],
     labels[train_mask],
-    maxiter=60,
-    tol=1e-7,
+    maxiter=100,
+    tol=1e-6,
 )
 means = classifier.centers
 mean_histories = []
@@ -222,8 +222,8 @@ fanova = frechet_anova(
     hands,
     jnp.asarray(labels),
     method="asymptotic",
-    maxiter=60,
-    tol=1e-7,
+    maxiter=100,
+    tol=1e-6,
 )
 
 print("Fréchet ANOVA statistic:", f"{float(fanova.statistic):.4f}")

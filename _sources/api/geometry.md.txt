@@ -25,11 +25,17 @@ rule independently to every leaf of its factor pytree.
 | `exp(x, u)` | point and tangent | Exact exponential, numerical-local operation, or retraction proxy according to `operation_kind("exp")`. |
 | `invretr(x, y)` | base and endpoint | Local inverse of the advertised retraction. |
 | `log(x, y)` | base and endpoint | Exact, numerical-local, or proxy displacement according to `operation_kind("log")`. Genuine cut loci follow each class's documented branch policy. |
-| `squared_dist(x, y)` / `dist(x, y)` | two points | Scalar per batch element with the status reported by `operation_kind("dist")`. |
+| `squared_dist(x, y)` / `dist(x, y)` | two points | Scalar per batch element with status reported by `operation_kind("squared_dist")` or `operation_kind("dist")`, respectively. By default the squared-distance status inherits the distance status. |
 | `transport(x, y, u)` | endpoints and source tangent | A target tangent. `operation_kind("transport")` reports `parallel`, `isometric`, or `vector`. |
 | `egrad_to_rgrad(x, egrad)` | point and ambient gradient | Metric-dual tangent gradient. |
 | `random_point(key, sample_shape=())` | JAX key and static shape | Samples shaped `sample_shape + M.shape`. |
 | `random_tangent(key, x, scale=1, normalize=False)` | JAX key and point | Tangent samples matching `x`; normalization uses the Riemannian norm before `scale`. |
+
+Array-valued coefficients in `lincomb`, retraction steps `t`, and tangent
+scales follow leading batch dimensions only. GeoJAX appends singleton event
+axes before multiplication, so a coefficient shaped `batch_shape` scales whole
+tangent samples rather than coordinates. The same rule is applied recursively
+to every `Product` leaf.
 
 Numerical repairs use dtype-aware interior margins. A configured `eps` is
 never allowed to disappear through float32 rounding, and fixed-rank repairs

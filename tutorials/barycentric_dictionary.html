@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=24d0db4c" />
   
@@ -477,7 +477,7 @@ observation <span class="math notranslate nohighlight">\(P\)</span>:</p>
 \[
 \sum_{j=1}^m w_j\operatorname{Log}_P(D_j)\approx 0.
 \]</div>
-<p>We use the log-Euclidean geometry of <span class="bibtex-citation" id="id1">Arsigny <em>et al.</em> [<a class="reference internal" href="#id7" title="Vincent Arsigny, Pierre Fillard, Xavier Pennec, and Nicholas Ayache. Geometric means in a novel vector space structure on symmetric positive-definite matrices. SIAM Journal on Matrix Analysis and Applications, 29(1):328–347, 2007. doi:10.1137/050637996.">2007</a>]</span>, for which</p>
+<p>We use the log-Euclidean geometry of <span class="bibtex-citation" id="id1">Arsigny <em>et al.</em> [<a class="reference internal" href="#id8" title="Vincent Arsigny, Pierre Fillard, Xavier Pennec, and Nicholas Ayache. Geometric means in a novel vector space structure on symmetric positive-definite matrices. SIAM Journal on Matrix Analysis and Applications, 29(1):328–347, 2007. doi:10.1137/050637996.">2007</a>]</span>, for which</p>
 <div class="math notranslate nohighlight">
 \[
 d_{\mathrm{LE}}(P,Q)
@@ -488,7 +488,7 @@ d_{\mathrm{LE}}(P,Q)
 \]</div>
 <p>GeoJAX minimizes the squared Karcher residual plus an <span class="math notranslate nohighlight">\(\ell_2\)</span> ridge term and
 alternates code estimation with Product-manifold atom optimization
-<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id16" title="Jeffrey Ho, Yuchen Xie, and Baba Vemuri. On a nonlinear generalization of sparse coding and dictionary learning. In Proceedings of the 30th International Conference on Machine Learning, volume 28 of Proceedings of Machine Learning Research, 1480–1488. 2013. URL: https://proceedings.mlr.press/v28/ho13a.html.">Ho <em>et al.</em>, 2013</a>]</span>. The atoms therefore remain SPD matrices throughout
+<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id17" title="Jeffrey Ho, Yuchen Xie, and Baba Vemuri. On a nonlinear generalization of sparse coding and dictionary learning. In Proceedings of the 30th International Conference on Machine Learning, volume 28 of Proceedings of Machine Learning Research, 1480–1488. 2013. URL: https://proceedings.mlr.press/v28/ho13a.html.">Ho <em>et al.</em>, 2013</a>]</span>. The atoms therefore remain SPD matrices throughout
 learning.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -579,8 +579,8 @@ not lasso-sparse codes.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>initial coding objective: 0.1221743
-learned dictionary objective: 0.0612784
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>initial coding objective: 0.0948966
+learned dictionary objective: 0.0577330
 simplex sums: [1. 1. 1. 1. 1. 1. 1.]
 outer dictionary updates: 1
 </pre></div>
@@ -694,7 +694,7 @@ between atoms along the covariance trajectory.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/dedd184490ef34894cc0e0adab8efdabd58d90b2936ae002790020e0dae014a6.png" src="../_images/dedd184490ef34894cc0e0adab8efdabd58d90b2936ae002790020e0dae014a6.png" />
+<img alt="../_images/066f609de6f0fbb518a48ad06acc8937b7c383eac6055172206d90d7aa44c7d3.png" src="../_images/066f609de6f0fbb518a48ad06acc8937b7c383eac6055172206d90d7aa44c7d3.png" />
 </div>
 </div>
 <p>The Karcher equation is local to each observation and depends on the selected
@@ -706,11 +706,11 @@ logarithms, exponentials, and inner products instead.</p>
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id3">
 <div role="list" class="citation-list">
-<div class="citation" id="id7" role="doc-biblioentry">
+<div class="citation" id="id8" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">AFPA07</a><span class="fn-bracket">]</span></span>
 <p>Vincent Arsigny, Pierre Fillard, Xavier Pennec, and Nicholas Ayache. Geometric means in a novel vector space structure on symmetric positive-definite matrices. <em>SIAM Journal on Matrix Analysis and Applications</em>, 29(1):328–347, 2007. <a class="reference external" href="https://doi.org/10.1137/050637996">doi:10.1137/050637996</a>.</p>
 </div>
-<div class="citation" id="id16" role="doc-biblioentry">
+<div class="citation" id="id17" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">HXV13</a><span class="fn-bracket">]</span></span>
 <p>Jeffrey Ho, Yuchen Xie, and Baba Vemuri. On a nonlinear generalization of sparse coding and dictionary learning. In <em>Proceedings of the 30th International Conference on Machine Learning</em>, volume 28 of Proceedings of Machine Learning Research, 1480–1488. 2013. URL: <a class="reference external" href="https://proceedings.mlr.press/v28/ho13a.html">https://proceedings.mlr.press/v28/ho13a.html</a>.</p>
 </div>

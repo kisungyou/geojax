@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=24d0db4c" />
   
@@ -475,13 +475,13 @@ recover its dominant intrinsic direction with principal geodesic analysis (PGA),
 and regress a scalar response directly on SPD predictors.</p>
 <p>PGA applies ordinary PCA to logarithm vectors at a Fréchet mean, but its Gram
 matrix is formed with the manifold metric rather than an ambient dot product
-<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id66" title="P. Thomas Fletcher, Conglin Lu, Stephen M. Pizer, and Sarang Joshi. Principal geodesic analysis for the study of nonlinear statistics of shape. IEEE Transactions on Medical Imaging, 23(8):995–1005, 2004. doi:10.1109/TMI.2004.831793.">Fletcher <em>et al.</em>, 2004</a>]</span>. With the log-Euclidean metric,</p>
+<span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id67" title="P. Thomas Fletcher, Conglin Lu, Stephen M. Pizer, and Sarang Joshi. Principal geodesic analysis for the study of nonlinear statistics of shape. IEEE Transactions on Medical Imaging, 23(8):995–1005, 2004. doi:10.1109/TMI.2004.831793.">Fletcher <em>et al.</em>, 2004</a>]</span>. With the log-Euclidean metric,</p>
 <div class="math notranslate nohighlight">
 \[
 d(P,Q)=\lVert\log P-\log Q\rVert_F,
 \]</div>
 <p>so this experiment also has a transparent matrix-log interpretation
-<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id7" title="Vincent Arsigny, Pierre Fillard, Xavier Pennec, and Nicholas Ayache. Geometric means in a novel vector space structure on symmetric positive-definite matrices. SIAM Journal on Matrix Analysis and Applications, 29(1):328–347, 2007. doi:10.1137/050637996.">Arsigny <em>et al.</em>, 2007</a>]</span>.</p>
+<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id8" title="Vincent Arsigny, Pierre Fillard, Xavier Pennec, and Nicholas Ayache. Geometric means in a novel vector space structure on symmetric positive-definite matrices. SIAM Journal on Matrix Analysis and Applications, 29(1):328–347, 2007. doi:10.1137/050637996.">Arsigny <em>et al.</em>, 2007</a>]</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
@@ -652,7 +652,7 @@ response.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/b5bbb4dee350a745fe0e001adbf6a9419d9e80a328a251f3f154b2485e50aa17.png" src="../_images/b5bbb4dee350a745fe0e001adbf6a9419d9e80a328a251f3f154b2485e50aa17.png" />
+<img alt="../_images/48f0a633e575f58c5cc1b35869887cafbeea412314461b41410c489ca40ec7a9.png" src="../_images/48f0a633e575f58c5cc1b35869887cafbeea412314461b41410c489ca40ec7a9.png" />
 </div>
 </div>
 <p>The analysis never vectorizes the covariance matrices by hand. Changing <code class="docutils literal notranslate"><span class="pre">M</span></code>
@@ -662,11 +662,11 @@ changes the distance, mean, tangent metric, and therefore both fitted methods.</
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id3">
 <div role="list" class="citation-list">
-<div class="citation" id="id7" role="doc-biblioentry">
+<div class="citation" id="id8" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">AFPA07</a><span class="fn-bracket">]</span></span>
 <p>Vincent Arsigny, Pierre Fillard, Xavier Pennec, and Nicholas Ayache. Geometric means in a novel vector space structure on symmetric positive-definite matrices. <em>SIAM Journal on Matrix Analysis and Applications</em>, 29(1):328–347, 2007. <a class="reference external" href="https://doi.org/10.1137/050637996">doi:10.1137/050637996</a>.</p>
 </div>
-<div class="citation" id="id66" role="doc-biblioentry">
+<div class="citation" id="id67" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">FLPJ04</a><span class="fn-bracket">]</span></span>
 <p>P. Thomas Fletcher, Conglin Lu, Stephen M. Pizer, and Sarang Joshi. Principal geodesic analysis for the study of nonlinear statistics of shape. <em>IEEE Transactions on Medical Imaging</em>, 23(8):995–1005, 2004. <a class="reference external" href="https://doi.org/10.1109/TMI.2004.831793">doi:10.1109/TMI.2004.831793</a>.</p>
 </div>

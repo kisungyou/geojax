@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=24d0db4c" />
   
@@ -470,7 +470,7 @@
 <h1>Semi-Supervised Learning on the Circle<a class="headerlink" href="#semi-supervised-learning-on-the-circle" title="Link to this heading">#</a></h1>
 <p>Unlabeled manifold observations still reveal neighborhood structure. Given a
 geodesic-distance affinity matrix <span class="math notranslate nohighlight">\(W\)</span>, label propagation smooths class scores
-over the graph while preserving known labels <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id19" title="Dengyong Zhou, Olivier Bousquet, Thomas Navin Lal, Jason Weston, and Bernhard Schölkopf. Learning with local and global consistency. In Advances in Neural Information Processing Systems, volume 16. 2003. URL: https://proceedings.neurips.cc/paper/2003/hash/87682805257e619d49b8e0dfdc14affa-Abstract.html.">Zhou <em>et al.</em>, 2003</a>]</span>.
+over the graph while preserving known labels <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id20" title="Dengyong Zhou, Olivier Bousquet, Thomas Navin Lal, Jason Weston, and Bernhard Schölkopf. Learning with local and global consistency. In Advances in Neural Information Processing Systems, volume 16. 2003. URL: https://proceedings.neurips.cc/paper/2003/hash/87682805257e619d49b8e0dfdc14affa-Abstract.html.">Zhou <em>et al.</em>, 2003</a>]</span>.
 For a scalar response, graph-regularized prediction minimizes</p>
 <div class="math notranslate nohighlight">
 \[
@@ -479,7 +479,7 @@ For a scalar response, graph-regularized prediction minimizes</p>
 +\lambda_I f^\top L_G f,
 \]</div>
 <p>where <span class="math notranslate nohighlight">\(L_G=\operatorname{diag}(W\mathbf 1)-W\)</span>
-<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id12" title="Mikhail Belkin, Partha Niyogi, and Vikas Sindhwani. Manifold regularization: a geometric framework for learning from labeled and unlabeled examples. Journal of Machine Learning Research, 7(85):2399–2434, 2006. URL: https://www.jmlr.org/papers/v7/belkin06a.html.">Belkin <em>et al.</em>, 2006</a>]</span>. These are transductive methods: this tutorial
+<span class="bibtex-citation" id="id2">[<a class="reference internal" href="#id13" title="Mikhail Belkin, Partha Niyogi, and Vikas Sindhwani. Manifold regularization: a geometric framework for learning from labeled and unlabeled examples. Journal of Machine Learning Research, 7(85):2399–2434, 2006. URL: https://www.jmlr.org/papers/v7/belkin06a.html.">Belkin <em>et al.</em>, 2006</a>]</span>. These are transductive methods: this tutorial
 predicts the supplied graph vertices, not unseen points.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -547,7 +547,7 @@ predicts the supplied graph vertices, not unseen points.</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>label-propagation accuracy: 0.981
-graph-regression MSE:       0.05657
+graph-regression MSE:       0.05520
 </pre></div>
 </div>
 </div>
@@ -591,7 +591,7 @@ responses with the graph-smoothed transductive fit.</p>
 <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
     <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Propagated class-one score&quot;</span><span class="p">,</span>
     <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;angle&quot;</span><span class="p">,</span>
-    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;class-one probability&quot;</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;normalized class score&quot;</span><span class="p">,</span>
     <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">0.03</span><span class="p">,</span> <span class="mf">1.03</span><span class="p">),</span>
 <span class="p">)</span>
 <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.18</span><span class="p">)</span>
@@ -629,23 +629,24 @@ responses with the graph-smoothed transductive fit.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/33283966817a358cab8a7a24e4edf2c82a8d7ced1a0b74ae18cf503d9eb8d8f6.png" src="../_images/33283966817a358cab8a7a24e4edf2c82a8d7ced1a0b74ae18cf503d9eb8d8f6.png" />
+<img alt="../_images/3701aeb2ef9c38ca96267eadc25e862eb08e8b5bcc03fd4d4998f4ed345b2838.png" src="../_images/3701aeb2ef9c38ca96267eadc25e862eb08e8b5bcc03fd4d4998f4ed345b2838.png" />
 </div>
 </div>
 <p>Graph predictions depend on the bandwidth, neighborhood size, graph
-connectivity, and regularization. An unlabeled connected component carries no
-class evidence; GeoJAX reports uniform scores there rather than inventing a
-label from array order.</p>
+connectivity, and regularization. Every connected component must contain at
+least one observed label; GeoJAX rejects an uninformed component rather than
+inventing a label from array order. The displayed normalized scores are graph
+diffusion scores, not calibrated posterior probabilities.</p>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id3">
 <div role="list" class="citation-list">
-<div class="citation" id="id12" role="doc-biblioentry">
+<div class="citation" id="id13" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">BNS06</a><span class="fn-bracket">]</span></span>
 <p>Mikhail Belkin, Partha Niyogi, and Vikas Sindhwani. Manifold regularization: a geometric framework for learning from labeled and unlabeled examples. <em>Journal of Machine Learning Research</em>, 7(85):2399–2434, 2006. URL: <a class="reference external" href="https://www.jmlr.org/papers/v7/belkin06a.html">https://www.jmlr.org/papers/v7/belkin06a.html</a>.</p>
 </div>
-<div class="citation" id="id19" role="doc-biblioentry">
+<div class="citation" id="id20" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">ZBL+03</a><span class="fn-bracket">]</span></span>
 <p>Dengyong Zhou, Olivier Bousquet, Thomas Navin Lal, Jason Weston, and Bernhard Schölkopf. Learning with local and global consistency. In <em>Advances in Neural Information Processing Systems</em>, volume 16. 2003. URL: <a class="reference external" href="https://proceedings.neurips.cc/paper/2003/hash/87682805257e619d49b8e0dfdc14affa-Abstract.html">https://proceedings.neurips.cc/paper/2003/hash/87682805257e619d49b8e0dfdc14affa-Abstract.html</a>.</p>
 </div>

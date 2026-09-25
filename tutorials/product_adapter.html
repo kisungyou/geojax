@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=24d0db4c" />
   
@@ -477,7 +477,7 @@ d_M(x,y)^2=\sum_{r=1}^R d_{M_r}(x_r,y_r)^2.
 \]</div>
 <p>GeoJAX keeps the factor pytree as the point representation. The data adapter
 validates all leaves against one shared sample axis, which is the same product
-construction used by manifold optimization <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id3" title="P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. Optimization Algorithms on Matrix Manifolds. Princeton University Press, 2008. doi:10.1515/9781400830244.">Absil <em>et al.</em>, 2008</a>]</span>.</p>
+construction used by manifold optimization <span class="bibtex-citation" id="id1">[<a class="reference internal" href="#id4" title="P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. Optimization Algorithms on Matrix Manifolds. Princeton University Press, 2008. doi:10.1515/9781400830244.">Absil <em>et al.</em>, 2008</a>]</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
@@ -561,10 +561,10 @@ geometry while the distance matrix combines the factor contributions.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mean direction: [0.3561 0.9344]
-mean phase: 0.3278
-mean amplitude: 1.0908
-Fréchet termination: Last stepsize smaller than options.minstepsize = 1e-10.
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mean direction: [0.3624 0.932 ]
+mean phase: 0.3190
+mean amplitude: 1.0918
+Fréchet termination: gradient tolerance reached
 </pre></div>
 </div>
 </div>
@@ -614,7 +614,7 @@ heat map is not any one factor’s distance: it is the metric combination above.
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/a9338d726b0854d33bece34a7c892cd2796ff0444e0290a4a934d2a4ff69e602.png" src="../_images/a9338d726b0854d33bece34a7c892cd2796ff0444e0290a4a934d2a4ff69e602.png" />
+<img alt="../_images/63de3817fadb88b25c417581e5225bf0fc7076383aacfaceca89e1cf4cac66aa.png" src="../_images/63de3817fadb88b25c417581e5225bf0fc7076383aacfaceca89e1cf4cac66aa.png" />
 </div>
 </div>
 <p>An inconsistent sample count, a different nested structure, or an off-manifold
@@ -625,7 +625,7 @@ only when <code class="docutils literal notranslate"><span class="pre">sample_ax
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id2">
 <div role="list" class="citation-list">
-<div class="citation" id="id3" role="doc-biblioentry">
+<div class="citation" id="id4" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">AMS08</a><span class="fn-bracket">]</span></span>
 <p>P.-A. Absil, Robert Mahony, and Rodolphe Sepulchre. <em>Optimization Algorithms on Matrix Manifolds</em>. Princeton University Press, 2008. <a class="reference external" href="https://doi.org/10.1515/9781400830244">doi:10.1515/9781400830244</a>.</p>
 </div>

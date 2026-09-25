@@ -8,8 +8,8 @@ Tutorials are MyST Markdown notebooks. They must be deterministic, import only
 the public GeoJAX API, include the mathematics needed to understand the task,
 and finish with numerical diagnostics plus at least one informative figure.
 
-The site build executes every tutorial and treats execution warnings as build
-failures:
+The site build executes every tutorial and treats Sphinx warnings and
+execution errors as build failures:
 
 ```bash
 make website
