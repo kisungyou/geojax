@@ -124,6 +124,21 @@ runner and uploads the reports even when a job fails. It also runs quality
 checks, rebuilds the documentation, and installs both generated package
 formats outside the checkout.
 
+## Completed correctness audit
+
+The 25 September 2026 audit of commit `b7361be` passed all ten complete
+installed-wheel environments: 11,465 test executions passed, with 15 expected
+skips. Branch-aware coverage exceeded the 85% global and 95% learning
+thresholds in every environment. A separate 140-test supplement passed with
+JAX 0.11.2 and the real optional OTT backend, with no skips.
+
+Independent mathematical and statistical cross-checks passed, and all 25
+documentation notebooks and 97 code cells executed successfully. This
+validation used macOS ARM64 CPU; GPU and TPU execution remain untested. The
+[complete audit report](https://github.com/kisungyou/geojax/blob/b7361beb5b42fe716c32a8e583710b5d23a31703/CORRECTNESS_AUDIT.md)
+records the corrections, reproducible evidence, and remaining numerical and
+statistical limitations.
+
 ## Documentation
 
 ```bash
@@ -131,10 +146,10 @@ make website
 ```
 
 This executes every MyST Markdown tutorial from a clean Sphinx environment,
-treats warnings as errors, and audits rendered mathematics and local
-references. `jupyter_execute/` and `.jupyter_cache/` are transient: the build
-deletes both after the HTML audit succeeds. The `.md` tutorial is always the
-maintained source.
+treats Sphinx warnings and execution errors as build failures, and audits
+rendered mathematics and local references. `jupyter_execute/` and
+`.jupyter_cache/` are transient: the build deletes both after the HTML audit
+succeeds. The `.md` tutorial is always the maintained source.
 
 ## Release candidate
 
@@ -145,5 +160,8 @@ make release-check
 The release target requires the complete tox matrix, rebuilds every tutorial,
 creates clean wheel and source archives, applies Twine's strict metadata
 validation, and installs both artifacts from a temporary directory. It first
-requires a clean commit carrying the annotated version tag, and prints the
-SHA-256 digest of each artifact. It does not upload or publish anything.
+requires a clean commit carrying the annotated version tag, then checks the
+source again after documentation generation and before packaging. Tutorial
+execution can regenerate tracked figures, so those changes must be reviewed
+and committed before tagging the release. The target prints the SHA-256
+digest of each artifact. It does not upload or publish anything.

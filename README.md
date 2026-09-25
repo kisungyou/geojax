@@ -49,14 +49,16 @@ python -m pip install "geojax==0.1.1"
 ```bash
 git clone https://github.com/kisungyou/geojax.git
 cd geojax
+git checkout b7361beb5b42fe716c32a8e583710b5d23a31703
 python -m pip install .
 ```
 
 For development, replace the final command with
 `python -m pip install -e ".[dev,docs,examples]"`.
 
-The website built from `main` documents 0.2.0. Until that version is published,
-features under `geojax.learning` require the GitHub installation.
+This pinned commit contains the audited, unreleased 0.2.0 API documented on
+the website. Until 0.2.0 is published, features under `geojax.learning` require
+the GitHub installation.
 
 ## Quick Starts
 
@@ -221,7 +223,7 @@ along with the
 [optimization protocol](https://www.kisungyou.com/geojax/development/optimization_protocol.html)
 describe the contracts expected from new implementations. Maintainers can
 follow the
-[release checklist](https://github.com/kisungyou/geojax/blob/main/RELEASING.md)
+[release checklist](https://github.com/kisungyou/geojax/blob/b7361beb5b42fe716c32a8e583710b5d23a31703/RELEASING.md)
 for manual TestPyPI and PyPI publication.
 
 ## Citation
@@ -229,7 +231,7 @@ for manual TestPyPI and PyPI publication.
 Academic users can cite the project using
 [`CITATION.cff`](https://github.com/kisungyou/geojax/blob/main/CITATION.cff).
 Release history is recorded in
-[`CHANGELOG.md`](https://github.com/kisungyou/geojax/blob/main/CHANGELOG.md).
+[`CHANGELOG.md`](https://github.com/kisungyou/geojax/blob/b7361beb5b42fe716c32a8e583710b5d23a31703/CHANGELOG.md).
 
 ## License
 
